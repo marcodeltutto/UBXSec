@@ -1,0 +1,16 @@
+
+BEGIN_PROLOG
+#
+# Module configuration
+#
+
+NeutrinoFlashMatchAna: {
+module_type:           "NeutrinoFlashMatchAna"
+PFParticleProducer:    "pandoraNuF"
+HitProducer:           "pandoraCosmicHitRemovalGF"
+GeantModule:           "largeant"
+SpacePointProducer:    "pandoraNuF"
+FlashMatchProducer:    "NeutrinoFlashMatch"
+}
+
+END_PROLOG

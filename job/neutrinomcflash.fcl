@@ -1,0 +1,10 @@
+
+BEGIN_PROLOG
+#
+# Module configuration
+#
+NeutrinoMCFlash: {
+  module_type:              "NeutrinoMCFlash"
+  MCTruthProduct:           "generator" 
+}
+END_PROLOG

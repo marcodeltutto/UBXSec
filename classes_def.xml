@@ -1,0 +1,37 @@
+<!--                                                                                  -->
+<!--  $Id: classes_def.xml,v 1.10 2010/04/12 18:12:28  Exp $                          -->
+<!--  $Author:  $                                                                     -->
+<!--  $Date: 2010/04/12 18:12:28 $                                                    -->
+<!--                                                                                  -->
+<!--  Include art::Wrapper lines for objects that we would like to put into the event -->
+<!--  Include the non-wrapper lines for all objects on the art::Wrapper lines and     -->
+<!--  for all objects that are data members of those objects.                         -->
+
+
+<lcgdict>
+ <!-- support classes (e.g., elements of data product classes) -->
+ 
+ <!-- associations -->
+ <class name="art::Assns<anab::FlashMatch,recob::PFParticle,void>"           />
+ <class name="art::Assns<recob::PFParticle,anab::FlashMatch,void>"           />
+ 
+ <!-- art association wrappers -->
+ <class name="art::Wrapper<art::Assns<anab::FlashMatch,recob::PFParticle,void> >" />
+ <class name="art::Wrapper<art::Assns<recob::PFParticle,anab::FlashMatch,void> >" />
+
+
+  <!-- support classes (e.g., elements of data product classes) -->
+  <class name="ubana::FlashMatch"/>
+  <class name="art::Wrapper<ubana::FlashMatch>"/>
+  <class name="std::vector<ubana::FlashMatch>"/>
+  <class name="art::Wrapper< std::vector<ubana::FlashMatch> >"/>
+
+  <!-- associations -->
+  <class name="art::Assns<ubana::FlashMatch,recob::PFParticle,void>"           />
+  <class name="art::Assns<recob::PFParticle,ubana::FlashMatch,void>"           />
+        
+  <!-- art association wrappers -->
+  <class name="art::Wrapper<art::Assns<ubana::FlashMatch,recob::PFParticle,void> >" />
+  <class name="art::Wrapper<art::Assns<recob::PFParticle,ubana::FlashMatch,void> >" />
+
+</lcgdict>

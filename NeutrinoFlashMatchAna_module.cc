@@ -543,7 +543,7 @@ void NeutrinoFlashMatchAna::GetRecoToTrueMatches(const lar_pandora::PFParticlesT
                 foundMatches = true;
             }
         }
-    }
+    } // recoParticlesToHits loop ends
 
     if (!foundMatches)
         return;

@@ -7,8 +7,6 @@ link_libraries( ${LIB_NAME} -L$ENV{BOOST_LIB} -lboost_system ${ROOTLIB} )
 
 art_make( BASENAME_ONLY
   LIBRARY_NAME     uboonecode_uboone_UBXSec
-          EXCLUDE 
-                   NeutrinoFlashMatch_module_back.cc 
           LIB_LIBRARIES
                    uboonecode_uboone_BasicTool_GeoAlgo
 		   uboonecode_uboone_SelectionTool_OpT0FinderBase

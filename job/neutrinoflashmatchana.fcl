@@ -6,10 +6,10 @@ BEGIN_PROLOG
 
 NeutrinoFlashMatchAna: {
 module_type:           "NeutrinoFlashMatchAna"
-PFParticleProducer:    "pandoraNuF"
-HitProducer:           "pandoraCosmicHitRemovalGF"
+PFParticleProducer:    "pandoraNu"
+HitProducer:           "pandoraCosmicHitRemoval"
 GeantModule:           "largeant"
-SpacePointProducer:    "pandoraNuF"
+SpacePointProducer:    "pandoraNu"
 FlashMatchProducer:    "NeutrinoFlashMatch"
 }
 

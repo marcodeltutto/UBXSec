@@ -29,9 +29,13 @@
   <!-- associations -->
   <class name="art::Assns<ubana::FlashMatch,recob::PFParticle,void>"           />
   <class name="art::Assns<recob::PFParticle,ubana::FlashMatch,void>"           />
-        
+  <class name="art::Assns<recob::Track,ubana::FlashMatch,void>"                />
+  <class name="art::Assns<ubana::FlashMatch,recob::Track,void>"                />
+
   <!-- art association wrappers -->
   <class name="art::Wrapper<art::Assns<ubana::FlashMatch,recob::PFParticle,void> >" />
   <class name="art::Wrapper<art::Assns<recob::PFParticle,ubana::FlashMatch,void> >" />
+  <class name="art::Wrapper<art::Assns<recob::Track,ubana::FlashMatch,void> >"      />
+  <class name="art::Wrapper<art::Assns<ubana::FlashMatch,recob::Track,void> >"      />
 
 </lcgdict>

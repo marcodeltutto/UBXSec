@@ -28,7 +28,7 @@
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/OpFlash.h"
 #include "lardataobj/AnalysisBase/FlashMatch.h"
-#include "uboone/LLApp/OpT0FinderApp/FlashMatch.h" // new!
+#include "uboone/UBXSec/FlashMatch.h" // new!
 #include "nusimdata/SimulationBase/MCTruth.h"
 
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
@@ -138,6 +138,8 @@ NeutrinoFlashMatch::NeutrinoFlashMatch(fhicl::ParameterSet const & p)
 void NeutrinoFlashMatch::produce(art::Event & e)
 {
 
+  std::cout << "NeutrinoFlashMatch starts." << std::endl;
+
   // Instantiate the output
   std::unique_ptr< std::vector<ubana::FlashMatch>>                   flashMatchTrackVector      (new std::vector<ubana::FlashMatch>);
   std::unique_ptr< art::Assns<ubana::FlashMatch, recob::Track>>      assnOutFlashMatchTrack     (new art::Assns<ubana::FlashMatch, recob::Track>     );
@@ -197,6 +199,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
   // Don't waste other time if there are no flashes in the beam spill
   if (nBeamFlashes == 0) {
+    std::cout << "Zero beam flashes in this event." << std::endl;
     e.put(std::move(flashMatchTrackVector));
     e.put(std::move(assnOutFlashMatchTrack));
     e.put(std::move(assnOutFlashMatchPFParticle));
@@ -205,6 +208,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
   // For now let's only consider cases where we have only 1 flash in the beam spill
   if (nBeamFlashes > 1) {
+    std::cout << "More than one beam flashes in this event." << std::endl;
     e.put(std::move(flashMatchTrackVector));
     e.put(std::move(assnOutFlashMatchTrack));
     e.put(std::move(assnOutFlashMatchPFParticle));
@@ -238,7 +242,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     ::art::Handle<std::vector<recob::OpFlash> > nuMcflash_h;
     e.getByLabel(_nuMcFlash_producer,nuMcflash_h);
     if( !nuMcflash_h.isValid() || nuMcflash_h->empty() ) {
-      std::cerr << "Don't neutrino MC flashe." << std::endl;
+      std::cerr << "Don't have neutrino MC flashes." << std::endl;
       return;
     }
 
@@ -377,6 +381,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
   if (_debug) _tree1->Fill();
 
+    std::cout << "NeutrinoFlashMatch ends." << std::endl;
 }
 
 

@@ -26,7 +26,7 @@
 #include "lardataobj/RecoBase/Hit.h"
 #include "larsim/MCCheater/BackTracker.h"
 #include "lardataobj/AnalysisBase/FlashMatch.h"
-#include "uboone/LLApp/OpT0FinderApp/FlashMatch.h" // new!
+#include "uboone/UBXSec/FlashMatch.h" // new!
 #include "lardata/Utilities/AssociationUtil.h"
 
 #include "lardataobj/RecoBase/PFParticle.h"
@@ -166,6 +166,8 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree2->Branch("beam_spec",          "std::vector<double>", &_beam_spec);
   _tree2->Branch("fixx_spec",          "std::vector<double>", &_fixx_spec);
   _tree2->Branch("is_muon",            &_is_muon,            "is_muon/I");
+  _tree2->Branch("muon_is_reco",       &_muon_is_reco,       "muon_is_reco/I");
+
 }
 
 void NeutrinoFlashMatchAna::analyze(art::Event const & e)
@@ -337,7 +339,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   }
   if (_debug) std::cout << "Neutrino related PFPs in this event: " << neutrinoOriginPFP.size() << std::endl;
 
-/*
+
   
   // Get the FlashMatch tag from the ART event
   art::Handle<std::vector<ubana::FlashMatch>> flashMatchHandle;
@@ -376,7 +378,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
     _beam_spec = flashMatch->GetRecoFlashSpec();
     _fixx_spec = flashMatch->GetXFixedHypoFlashSpec();
 
-    // Get the tracks associated with this FM
+    // Get the PFPs associated with this FM
     std::vector<art::Ptr<recob::PFParticle>> flashMatchToPFP_v = flashMatchToPFPAssns.at(flashMatch.key());
     if(_debug) std::cout << "Number of PFP associated with this Flash Match: " << flashMatchToPFP_v.size() << std::endl;
 
@@ -418,7 +420,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   
 
 
-  */
+  
 
 
 

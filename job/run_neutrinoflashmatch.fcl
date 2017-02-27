@@ -18,7 +18,7 @@
 #include "neutrinoflashmatch.fcl"
 #include "neutrinoflashmatchana.fcl"
 
-process_name : neutrinomcflash      #The process name must NOT contain any underscores
+process_name : NeutrinoFlashMatch      #The process name must NOT contain any underscores
 
 services:
 {
@@ -64,14 +64,14 @@ physics:
 
  producers:
  {
-   ophitBeam         : @local::microboone_ophit_saturation_beam
-   ophitCosmic       : @local::microboone_ophit_saturation_cosmic
-   saturation : @local::correct_saturation_mc
-   simpleFlashBeam   : @local::UBFlashBeamMC
-   simpleFlashCosmic : @local::UBFlashCosmicMC
+   ophitBeam          : @local::microboone_ophit_saturation_beam
+   ophitCosmic        : @local::microboone_ophit_saturation_cosmic
+   saturation         : @local::correct_saturation_mc
+   simpleFlashBeam    : @local::UBFlashBeamMC
+   simpleFlashCosmic  : @local::UBFlashCosmicMC
 
-   NeutrinoMCFlash: @local::NeutrinoMCFlash
-   NeutrinoFlashMatch: @local::NeutrinoFlashMatch
+   NeutrinoMCFlash    : @local::NeutrinoMCFlash
+   NeutrinoFlashMatch : @local::NeutrinoFlashMatch
  }
 
  analyzers:
@@ -79,18 +79,17 @@ physics:
    NeutrinoFlashMatchAna: @local::NeutrinoFlashMatchAna
  }
 
- reco: [ saturation, 
-         ophitBeam, ophitCosmic, simpleFlashBeam, simpleFlashCosmic, NeutrinoMCFlash, 
-         NeutrinoFlashMatch 
-       ]
+ #reco: [ saturation, ophitBeam, ophitCosmic, simpleFlashBeam, simpleFlashCosmic, NeutrinoMCFlash, NeutrinoFlashMatch ]
+
+ reco: [ NeutrinoMCFlash, NeutrinoFlashMatch]
 
  #define the output stream, there could be more than one if using filters 
  stream1:  [ out1 ]
 
  #trigger_paths is a keyword and contains the paths that modify the art::event, 
  #ie filters and producers
- #trigger_paths: [reco]
- trigger_paths: []
+ trigger_paths: [reco]
+ #trigger_paths: []
 
  ana: [ NeutrinoFlashMatchAna ]
 

@@ -1,6 +1,30 @@
+#include "cetlib/exception.h"
+#include "messagefacility/MessageLogger/MessageLogger.h"
+#include "art/Framework/Principal/Handle.h"
+#include "canvas/Persistency/Common/FindManyP.h"
+#include "canvas/Persistency/Common/FindOneP.h"
+
+
+#include "lardataobj/AnalysisBase/CosmicTag.h"
+#include "larcore/Geometry/Geometry.h"
+#include "lardataobj/RecoBase/Hit.h"
+#include "lardataobj/RecoBase/Cluster.h"
+#include "lardataobj/RecoBase/PFParticle.h"
+#include "lardataobj/RecoBase/Seed.h"
+#include "lardataobj/RecoBase/Shower.h"
+#include "lardataobj/RecoBase/SpacePoint.h"
+#include "lardataobj/RecoBase/Track.h"
+#include "lardataobj/RecoBase/Vertex.h"
+#include "lardataobj/RecoBase/Wire.h"
+#include "nusimdata/SimulationBase/MCParticle.h"
+#include "nusimdata/SimulationBase/MCTruth.h"
+#include "larcoreobj/SimpleTypesAndConstants/RawTypes.h"
+#include "lardata/DetectorInfoServices/DetectorClocksService.h"
+
+
 
 #include "lardataobj/RecoBase/PFParticle.h"
-#include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
+//#include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 
 #include "uboone/UBXSec/MyPandoraHelper.h"
 
@@ -8,11 +32,12 @@
 void MyPandoraHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits,
                                            const lar_pandora::HitsToMCParticles &trueHitsToParticles,
                                            lar_pandora::MCParticlesToPFParticles &matchedParticles,
-                                           lar_pandora::MCParticlesToHits &matchedHits) const
+                                           lar_pandora::MCParticlesToHits &matchedHits) 
 {
     PFParticleSet recoVeto; MCParticleSet trueVeto;
+    bool _recursiveMatching = false;
 
-    this->GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedHits, recoVeto, trueVeto);
+    GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedHits, recoVeto, trueVeto, _recursiveMatching);
 }
 
 //___________________________________________________________________________________________________
@@ -21,7 +46,8 @@ void MyPandoraHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits 
                                            lar_pandora::MCParticlesToPFParticles &matchedParticles,
                                            lar_pandora::MCParticlesToHits &matchedHits,
                                            PFParticleSet &vetoReco,
-                                           MCParticleSet &vetoTrue) const
+                                           MCParticleSet &vetoTrue,
+                                           bool _recursiveMatching) 
 {
     bool foundMatches(false);
 
@@ -88,5 +114,5 @@ void MyPandoraHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits 
     }
 
     if (_recursiveMatching)
-        this->GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedHits, vetoReco, vetoTrue);
+        GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedHits, vetoReco, vetoTrue, _recursiveMatching);
 }

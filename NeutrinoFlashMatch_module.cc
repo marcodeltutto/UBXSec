@@ -44,6 +44,8 @@
 #include "uboone/LLSelectionTool/OpT0Finder/Algorithms/LightPath.h"
 #include "uboone/LLSelectionTool/OpT0Finder/Algorithms/PhotonLibHypothesis.h"
 
+#include "uboone/UBXSec/MyPandoraHelper.h"
+
 #include "TTree.h"
 
 #include <memory>
@@ -67,7 +69,6 @@ public:
   flashana::QCluster_t GetQCluster(std::vector<art::Ptr<recob::Track>>);
   void CollectTracksAndPFP(lar_pandora::PFParticlesToTracks, lar_pandora::PFParticleVector, art::Ptr<recob::PFParticle>,  lar_pandora::PFParticleVector &, lar_pandora::TrackVector &);
   int  GetTrajectory(std::vector<art::Ptr<recob::Track>>, ::geoalgo::Trajectory &);
-  bool InFV(double *);
   flashana::Flash_t Trial(std::vector<art::Ptr<recob::Track>> track_v, double t0, flashana::Flash_t flashBeam); 
 
   // Required functions.
@@ -263,7 +264,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
   std::vector<lar_pandora::PFParticleVector> pfp_v_v;
   std::vector<flashana::Flash_t> xfixed_hypo_v;
 
-  this->GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
+  MyPandoraHelper::GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
 
   if(_debug) std::cout << " For this event we have " << track_v_v.size() << " pandora slices." << std::endl;
   xfixed_hypo_v.resize(track_v_v.size());
@@ -373,7 +374,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
  
   int iList = 0; // 1 nu int per spill
   double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),mclist[iList]->GetNeutrino().Nu().Vy(),mclist[iList]->GetNeutrino().Nu().Vz()}; 
-  if (this->InFV(truth_nu_vtx)) _fv = 1;
+  if (MyPandoraHelper::InFV(truth_nu_vtx)) _fv = 1;
   else _fv = 0;
 
   _ccnc    = mclist[iList]->GetNeutrino().CCNC();
@@ -406,7 +407,6 @@ void NeutrinoFlashMatch::GetTPCObjects(lar_pandora::PFParticleVector pfParticleL
 
       double nu_vertex_xyz[3]={0.,0.,0.};
       nu_vertex_v[0]->XYZ(nu_vertex_xyz);
-      //if (!this->InFV(nu_vertex_xyz)) continue;
 
       lar_pandora::TrackVector track_v;
       lar_pandora::PFParticleVector pfp_v;
@@ -432,25 +432,6 @@ void NeutrinoFlashMatch::GetTPCObjects(lar_pandora::PFParticleVector pfParticleL
 
 
 
-//______________________________________________________________________________________________________________________________________
-bool NeutrinoFlashMatch::InFV(double * nu_vertex_xyz){
-
-  double x = nu_vertex_xyz[0];
-  double y = nu_vertex_xyz[1];
-  double z = nu_vertex_xyz[2];
-
-  //This defines our current settings for the fiducial volume
-  double FVx = 256.35;
-  double FVy = 233;
-  double FVz = 1036.8;
-  double borderx = 10.;
-  double bordery = 20.;
-  double borderz = 10.;
-
-  if(x < (FVx - borderx) && (x > borderx) && (y < (FVy/2. - bordery)) && (y > (-FVy/2. + bordery)) && (z < (FVz - borderz)) && (z > borderz)) return true;
-  return false;
-
-}
 
 
 

@@ -72,7 +72,6 @@ private:
   typedef std::set< art::Ptr<recob::PFParticle> > PFParticleSet;
   typedef std::set< art::Ptr<simb::MCParticle> >  MCParticleSet;
 
-  bool InFV(double * nu_vertex_xyz);
 
   TTree* _tree1;
   int _run, _subrun, _event;
@@ -309,7 +308,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
          double start[3] = {_mc_muon_start_x, _mc_muon_start_y, _mc_muon_start_z};
          double stop[3]  = {_mc_muon_end_x,   _mc_muon_end_y,   _mc_muon_end_z};
 
-         if (this->InFV(start) && this->InFV(stop))
+         if (MyPandoraHelper::InFV(start) && MyPandoraHelper::InFV(stop))
            _mc_muon_contained = 1;
        }  
      }
@@ -410,42 +409,41 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
 
   int iList = 0; // 1 nu int per spill
   double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),mclist[iList]->GetNeutrino().Nu().Vy(),mclist[iList]->GetNeutrino().Nu().Vz()};
-  if (this->InFV(truth_nu_vtx)) _fv = 1;
+  if (MyPandoraHelper::InFV(truth_nu_vtx)) _fv = 1;
   else _fv = 0;
 
   _ccnc    = mclist[iList]->GetNeutrino().CCNC();
   _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
   
 
+  /* Save the number of slices in this event
+  std::vector<lar_pandora::TrackVector     > track_v_v;
+  std::vector<lar_pandora::PFParticleVector> pfp_v_v;
 
+  MyPandoraHelper::GetTPCObjects(e, _pfp_producer, pfp_v_v, track_v_v);
+
+  for (unsigned int slice = 0; slice < pfp_v_v.size(); slice++){
+    double reco_nu_vtx[3];
+    MyPandoraHelper::GetNuVertexFromTPCObject(pfp_v_v, reco_nu_vtx);
+    _slc_nuvtx_x[slice] = reco_nu_vtx[0];
+    _slc_nuvtx_y[slice] = reco_nu_vtx[1];
+    _slc_nuvtx_z[slice] = reco_nu_vtx[2];
+  }
+
+  _nslices = pfp_v_v.size();
+  _slc_nuvtx
+  _slc_flsmatch_score
+  _slc_nu_cosmic // 0 for nu, 1 for cosmic, 2 for mixed
+
+  _nbeamfls
+  _beamfls_pe
+  */
 
   _tree1->Fill();
 
   if(_debug) std::cout << "********** NeutrinoFlashMatchAna ends" << std::endl;
 }
 
-
-//______________________________________________________________________________________________________________________________________
-bool NeutrinoFlashMatchAna::InFV(double * nu_vertex_xyz){
-
-  double x = nu_vertex_xyz[0];
-  double y = nu_vertex_xyz[1];
-  double z = nu_vertex_xyz[2];
-
-  //This defines our current settings for the fiducial volume
-  double FVx = 256.35;
-  double FVy = 233;
-  double FVz = 1036.8;
-  double borderx = 10.;
-  double bordery = 20.;
-  double borderz = 10.;
-  //double cryoradius = 191.61;
-  //double cryoz = 1086.49 + 2*67.63;
-
-  if(x < (FVx - borderx) && (x > borderx) && (y < (FVy/2. - bordery)) && (y > (-FVy/2. + bordery)) && (z < (FVz - borderz)) && (z > borderz)) return true;
-  return false;
-
-}
 
 
 DEFINE_ART_MODULE(NeutrinoFlashMatchAna)

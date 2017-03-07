@@ -116,3 +116,149 @@ void MyPandoraHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits 
     if (_recursiveMatching)
         GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedHits, vetoReco, vetoTrue, _recursiveMatching);
 }
+
+
+//______________________________________________________________________________________
+void MyPandoraHelper::GetTPCObjects(art::Event & e, 
+                                    std::string _particleLabel, 
+                                    std::vector<lar_pandora::PFParticleVector> & pfp_v_v, 
+                                    std::vector<lar_pandora::TrackVector> & track_v_v){
+
+  //Vectors and maps we will use to store Pandora information
+  lar_pandora::PFParticleVector pfParticleList;              //vector of PFParticles
+  lar_pandora::PFParticlesToClusters pfParticleToClusterMap; //PFParticle-to-cluster map
+
+  //Use LArPandoraHelper functions to collect Pandora information
+  lar_pandora::LArPandoraHelper::CollectPFParticles(e, _particleLabel, pfParticleList, pfParticleToClusterMap); //collect PFParticles and build map PFParticles to Clusters
+
+  // Collect vertices and tracks
+  lar_pandora::VertexVector           allPfParticleVertices;
+  lar_pandora::PFParticlesToVertices  pfParticleToVertexMap;
+  lar_pandora::LArPandoraHelper::CollectVertices(e, _particleLabel, allPfParticleVertices, pfParticleToVertexMap);
+  lar_pandora::TrackVector            allPfParticleTracks;
+  lar_pandora::PFParticlesToTracks    pfParticleToTrackMap;
+  lar_pandora::LArPandoraHelper::CollectTracks(e, _particleLabel, allPfParticleTracks, pfParticleToTrackMap);
+
+  GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
+}
+
+
+
+//____________________________________________________________
+/*
+void MyPandoraHelper::GetNuVertexFromTPCObject(lar_pandora::PFParticleVector pfp_v, double *reco_nu_vtx){
+
+  for(unsigned int pfp = 0; pfp < pfp_v.size(); pfp++){
+
+    if(lar_pandora::LArPandoraHelper::IsNeutrino(pfp_v.at(pfp))) {
+
+
+    }
+  }
+
+}
+*/
+
+
+//______________________________________________________________________________________
+void MyPandoraHelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, 
+                                    lar_pandora::PFParticlesToTracks pfParticleToTrackMap, 
+                                    lar_pandora::PFParticlesToVertices  pfParticleToVertexMap, 
+                                    std::vector<lar_pandora::PFParticleVector> & pfp_v_v, 
+                                    std::vector<lar_pandora::TrackVector> & track_v_v) {
+
+  track_v_v.clear();
+  pfp_v_v.clear();
+
+  for (unsigned int n = 0; n < pfParticleList.size(); ++n) {
+    const art::Ptr<recob::PFParticle> particle = pfParticleList.at(n);
+
+    if(lar_pandora::LArPandoraHelper::IsNeutrino(particle)) {
+      std::cout << "IS NEUTRINO, pfp id " << particle->Self() << std::endl;
+      lar_pandora::VertexVector nu_vertex_v;
+      auto search = pfParticleToVertexMap.find(particle);
+      if(search != pfParticleToVertexMap.end()) {
+        nu_vertex_v = search->second;
+      }
+
+      double nu_vertex_xyz[3]={0.,0.,0.};
+      nu_vertex_v[0]->XYZ(nu_vertex_xyz);
+      //if (!this->InFV(nu_vertex_xyz)) continue;
+
+      lar_pandora::TrackVector track_v;
+      lar_pandora::PFParticleVector pfp_v;
+
+      std::cout << "Start track_v.size() " << track_v.size() << std::endl;
+      CollectTracksAndPFP(pfParticleToTrackMap, pfParticleList, particle, pfp_v, track_v);
+      std::cout << "End   track_v.size() " << track_v.size() << std::endl;
+
+      pfp_v_v.emplace_back(pfp_v);
+      track_v_v.emplace_back(track_v);
+
+      std::cout << "Number of pfp for this slice: "    << pfp_v.size()   << std::endl;
+      std::cout << "Number of tracks for this slice: " << track_v.size() << std::endl;
+
+      for (unsigned int i = 0; i < pfp_v.size(); i++) std::cout << "   pfp with ID " << pfp_v[i]->Self() << std::endl;
+    } // end if neutrino
+  } // end pfp loop
+
+}
+
+
+
+//______________________________________________________________________________________________________________________________________
+void MyPandoraHelper::CollectTracksAndPFP(lar_pandora::PFParticlesToTracks pfParticleToTrackMap,
+                                          lar_pandora::PFParticleVector pfParticleList,
+                                          art::Ptr<recob::PFParticle> particle,
+                                          lar_pandora::PFParticleVector &pfp_v,
+                                          lar_pandora::TrackVector &track_v) {
+
+  pfp_v.emplace_back(particle);
+
+  lar_pandora::PFParticlesToTracks::const_iterator trackMapIter = pfParticleToTrackMap.find(particle);
+  if (trackMapIter != pfParticleToTrackMap.end()) {
+    lar_pandora::TrackVector tracks = trackMapIter->second;
+    for (unsigned int trk = 0; trk < tracks.size(); trk++) {
+      track_v.emplace_back(tracks[trk]);
+    }
+  }
+  std::cout << "Inter track_v.size() " << track_v.size() << std::endl;
+  const std::vector<size_t> &daughterIDs = particle->Daughters();
+  for (unsigned int d = 0; d < daughterIDs.size(); d++) std::cout << "daughter has id " << daughterIDs[d] << std::endl;
+  if(daughterIDs.size() == 0) return;
+  else {
+    for (unsigned int m = 0; m < daughterIDs.size(); ++m) {
+      const art::Ptr<recob::PFParticle> daughter = pfParticleList.at(daughterIDs.at(m));
+      //pfp_v.emplace_back(daughter);
+      CollectTracksAndPFP(pfParticleToTrackMap, pfParticleList, daughter, pfp_v, track_v);
+    }
+  }
+
+}
+
+
+
+//______________________________________________________________________________________________________________________________________
+bool MyPandoraHelper::InFV(double * nu_vertex_xyz){
+
+  double x = nu_vertex_xyz[0];
+  double y = nu_vertex_xyz[1];
+  double z = nu_vertex_xyz[2];
+
+  //This defines our current settings for the fiducial volume
+  double FVx = 256.35;
+  double FVy = 233;
+  double FVz = 1036.8;
+  double borderx = 10.;
+  double bordery = 20.;
+  double borderz = 10.;
+  //double cryoradius = 191.61;
+  //double cryoz = 1086.49 + 2*67.63;
+
+  if(x < (FVx - borderx) && (x > borderx) && (y < (FVy/2. - bordery)) && (y > (-FVy/2. + bordery)) && (z < (FVz - borderz)) && (z > borderz)) return true;
+  return false;
+
+}
+
+
+

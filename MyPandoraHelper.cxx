@@ -119,7 +119,7 @@ void MyPandoraHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits 
 
 
 //______________________________________________________________________________________
-void MyPandoraHelper::GetTPCObjects(art::Event & e, 
+void MyPandoraHelper::GetTPCObjects(art::Event const & e, 
                                     std::string _particleLabel, 
                                     std::vector<lar_pandora::PFParticleVector> & pfp_v_v, 
                                     std::vector<lar_pandora::TrackVector> & track_v_v){
@@ -145,19 +145,56 @@ void MyPandoraHelper::GetTPCObjects(art::Event & e,
 
 
 //____________________________________________________________
-/*
-void MyPandoraHelper::GetNuVertexFromTPCObject(lar_pandora::PFParticleVector pfp_v, double *reco_nu_vtx){
+void MyPandoraHelper::GetNuVertexFromTPCObject(art::Event const & e, 
+                                               std::string _particleLabel,
+                                               lar_pandora::PFParticleVector pfp_v, 
+                                               double *reco_nu_vtx){
+
+  reco_nu_vtx[0] = -9999;
+  reco_nu_vtx[1] = -9999;
+  reco_nu_vtx[2] = -9999;
+
+  lar_pandora::VertexVector          vertexVector;
+  lar_pandora::PFParticlesToVertices particlesToVertices;
+  lar_pandora::LArPandoraHelper::CollectVertices(e, _particleLabel, vertexVector, particlesToVertices);
 
   for(unsigned int pfp = 0; pfp < pfp_v.size(); pfp++){
 
     if(lar_pandora::LArPandoraHelper::IsNeutrino(pfp_v.at(pfp))) {
 
-
+      lar_pandora::VertexVector vertex_v = particlesToVertices.find(pfp_v.at(pfp))->second;
+      if (vertex_v.size() > 1)
+        std::cout << "More than one vertex associated to neutrino PFP!" << std::endl;
+      else if (vertex_v.size() == 0)
+        std::cout << "Zero vertices associated to neutrino PFP!" << std::endl;
+      else {
+       vertex_v[0]->XYZ(reco_nu_vtx);
+       break;
+      }
     }
   }
 
 }
-*/
+
+
+
+//_________________________________________________________________
+art::Ptr<recob::PFParticle> MyPandoraHelper::GetNuPFP(lar_pandora::PFParticleVector pfp_v){
+
+  for (unsigned int pfp = 0; pfp < pfp_v.size(); pfp++) {
+
+    if(lar_pandora::LArPandoraHelper::IsNeutrino(pfp_v.at(pfp))) {
+      return pfp_v.at(pfp);
+    }
+  }
+  std::cout << "No neutrino PFP found." << std::endl;
+
+  art::Ptr<recob::PFParticle> temp;
+  return temp;
+
+}
+
+
 
 
 //______________________________________________________________________________________
@@ -257,6 +294,36 @@ bool MyPandoraHelper::InFV(double * nu_vertex_xyz){
 
   if(x < (FVx - borderx) && (x > borderx) && (y < (FVy/2. - bordery)) && (y > (-FVy/2. + bordery)) && (z < (FVz - borderz)) && (z > borderz)) return true;
   return false;
+
+}
+
+
+
+//__________________________________________________________________________
+int MyPandoraHelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP, lar_pandora::PFParticleVector pfp_v) {
+
+  bool isFromNu = false;
+  int nuOrigin = 0;
+  int cosmicOrigin = 0;
+
+  for ( unsigned int i = 0; i < pfp_v.size(); i++) {
+
+    for ( unsigned int j = 0; j < neutrinoOriginPFP.size(); j++) {
+
+      if (neutrinoOriginPFP[i] == pfp_v[j]) {
+        isFromNu = true;
+        nuOrigin ++;
+        break;
+      }
+    }
+
+    if (!isFromNu) cosmicOrigin++;
+    isFromNu = false;
+
+  }
+
+  if (nuOrigin > 0) return 0;
+  else return 1;
 
 }
 

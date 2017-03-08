@@ -61,6 +61,7 @@ private:
   std::string _spacepointLabel;
   std::string _cosmic_tag_producer;
   std::string _flash_match_producer;
+  std::string _opflash_producer_beam;
   bool _recursiveMatching = false;
   bool _debug = true;
 
@@ -76,7 +77,7 @@ private:
   TTree* _tree1;
   int _run, _subrun, _event;
   int _muon_is_reco;
-  int _nPFPtagged, _muonWasTagged;
+  int _nPFPtagged, _muon_is_flash_tagged;
   double _muon_tag_score;
   double _fm_score;
   int _fv, _ccnc, _nupdg;
@@ -85,6 +86,13 @@ private:
   double _mc_muon_start_x, _mc_muon_start_y, _mc_muon_start_z;
   double _mc_muon_end_x, _mc_muon_end_y, _mc_muon_end_z;
   int _mc_muon_contained;
+
+  int _nslices;
+  std::vector<double> _slc_flsmatch_score;
+  std::vector<double> _slc_nuvtx_x, _slc_nuvtx_y, _slc_nuvtx_z;
+  std::vector<int> _slc_origin;
+  int _nbeamfls;
+  std::vector<double> _beamfls_time, _beamfls_pe;
 
   TTree* _tree2;
   int _total_matches, _nmatch;
@@ -103,6 +111,7 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _geantModuleLabel        = p.get<std::string>("GeantModule");
   _spacepointLabel         = p.get<std::string>("SpacePointProducer");
   _flash_match_producer    = p.get<std::string>("FlashMatchProducer");
+  _opflash_producer_beam   = p.get<std::string>("OpFlashBeamProducer");
 
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
@@ -111,7 +120,7 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree1->Branch("event",              &_event,              "event/I");
   _tree1->Branch("muon_is_reco",       &_muon_is_reco,       "muon_is_reco/I");
   _tree1->Branch("nPFPtagged",         &_nPFPtagged,         "nPFPtagged/I");
-  _tree1->Branch("muonWasTagged",      &_muonWasTagged,      "muonWasTagged/I");
+  _tree1->Branch("muon_is_flash_tagged",      &_muon_is_flash_tagged,      "muon_is_flash_tagged/I");
   _tree1->Branch("muon_tag_score",     &_muon_tag_score,     "muon_tag_score/D");
   _tree1->Branch("fm_score",           &_fm_score,           "fm_score/D");
   _tree1->Branch("fv",                 &_fv,                 "fv/I");
@@ -130,6 +139,16 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree1->Branch("mc_muon_end_y",      &_mc_muon_end_y,      "mc_muon_end_y/D");
   _tree1->Branch("mc_muon_end_z",      &_mc_muon_end_z,      "mc_muon_end_z/D");
   _tree1->Branch("mc_muon_contained",  &_mc_muon_contained,  "mc_muon_contained/I");
+
+  _tree1->Branch("nslices",            &_nslices,            "nslices/I");
+  _tree1->Branch("slc_flsmatch_score", "std::vector<double>", &_slc_flsmatch_score);
+  _tree1->Branch("slc_nuvtx_x",        "std::vector<double>", &_slc_nuvtx_x);
+  _tree1->Branch("slc_nuvtx_y",        "std::vector<double>", &_slc_nuvtx_y);
+  _tree1->Branch("slc_nuvtx_z",        "std::vector<double>", &_slc_nuvtx_z);
+  _tree1->Branch("slc_origin",         "std::vector<int>",    &_slc_origin);
+  _tree1->Branch("nbeamfls",           &_nbeamfls,            "nbeamfls/I");
+  _tree1->Branch("beamfls_time",       "std::vector<double>", &_beamfls_time);
+  _tree1->Branch("beamfls_pe",         "std::vector<double>", &_beamfls_pe);
 
   _tree2 = fs->make<TTree>("matchtree","");
   _tree2->Branch("run",                &_run,                "run/I");
@@ -378,7 +397,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
 
   
   // Loop through the taggedPFP and see if there is we flash matched the muon
-  _muonWasTagged = 0;
+  _muon_is_flash_tagged = 0;
   _muon_tag_score = -999;
   for (unsigned int i = 0; i < taggedPFP.size(); i++) {
     std::cout << "taggedPFP[" << i << "] has ID " << taggedPFP[i]->Self() << std::endl;
@@ -387,7 +406,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
         std::cout << ">>>>>>>>>>>>>>>>> A neutrino related PFP (with ID " << neutrinoOriginPFP[j]->Self() << ") was flash matched with score " << taggedPFPscore[i] << std::endl;
         if(taggedPFP[i] == muonPFP){
           std::cout << ">>>>>>>>>>>>>>>>> The muon recon PFP (with ID " << neutrinoOriginPFP[j]->Self() << ") was flash matched with score " << taggedPFPscore[i] << std::endl;
-          _muonWasTagged = 1;
+          _muon_is_flash_tagged = 1;
           _muon_tag_score = taggedPFPscore[i];
         }
       }
@@ -416,28 +435,63 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
   
 
-  /* Save the number of slices in this event
+  // Save the number of slices in this event
   std::vector<lar_pandora::TrackVector     > track_v_v;
   std::vector<lar_pandora::PFParticleVector> pfp_v_v;
 
   MyPandoraHelper::GetTPCObjects(e, _pfp_producer, pfp_v_v, track_v_v);
 
+  _nslices = pfp_v_v.size();
+  _slc_flsmatch_score.resize(_nslices);
+  _slc_nuvtx_x.resize(_nslices);
+  _slc_nuvtx_y.resize(_nslices);
+  _slc_nuvtx_z.resize(_nslices);
+  _slc_origin.resize(_nslices);
+
+  std::cout << "Preparing to save" << std::endl;
   for (unsigned int slice = 0; slice < pfp_v_v.size(); slice++){
+    std::cout << "Slice" << slice << std::endl;
+
+    // Slice origin (0 is neutrino, 1 is cosmic)
+    _slc_origin[slice] = MyPandoraHelper::GetSliceOrigin(neutrinoOriginPFP, pfp_v_v[slice]);
+
+    // Reco vertex
     double reco_nu_vtx[3];
-    MyPandoraHelper::GetNuVertexFromTPCObject(pfp_v_v, reco_nu_vtx);
+    MyPandoraHelper::GetNuVertexFromTPCObject(e, _pfp_producer, pfp_v_v[slice], reco_nu_vtx);
     _slc_nuvtx_x[slice] = reco_nu_vtx[0];
     _slc_nuvtx_y[slice] = reco_nu_vtx[1];
     _slc_nuvtx_z[slice] = reco_nu_vtx[2];
+    std::cout << "Reco vertex saved" << std::endl;
+
+    // Flash match
+    _slc_flsmatch_score[slice] = -9999;
+    art::Ptr<recob::PFParticle> NuPFP = MyPandoraHelper::GetNuPFP(pfp_v_v[slice]);
+    if ( std::find(taggedPFP.begin(), taggedPFP.end(), NuPFP) != taggedPFP.end() ){
+      std::cout << "Slice " << slice << " was flash tagged" << std::endl;
+      _slc_flsmatch_score[slice] = _fm_score;
+    }
+    std::cout << "Flash match saved" << std::endl;
   }
 
-  _nslices = pfp_v_v.size();
-  _slc_nuvtx
-  _slc_flsmatch_score
-  _slc_nu_cosmic // 0 for nu, 1 for cosmic, 2 for mixed
 
-  _nbeamfls
-  _beamfls_pe
-  */
+
+  // Flashes
+  ::art::Handle<std::vector<recob::OpFlash>> beamflash_h;
+  e.getByLabel(_opflash_producer_beam,beamflash_h);
+  if( !beamflash_h.isValid() || beamflash_h->empty() ) {
+    std::cerr << "Don't have good flashes." << std::endl;
+  }
+
+  _nbeamfls = beamflash_h->size();
+  _beamfls_pe.resize(_nbeamfls);
+  _beamfls_time.resize(_nbeamfls);
+
+  for (size_t n = 0; n < beamflash_h->size(); n++) {
+    auto const& flash = (*beamflash_h)[n];
+    _beamfls_pe[n]   = flash.TotalPE();
+    _beamfls_time[n] = flash.Time();
+  }
+  
 
   _tree1->Fill();
 

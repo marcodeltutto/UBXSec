@@ -11,6 +11,7 @@ HitProducer:           "pandoraCosmicHitRemoval"
 GeantModule:           "largeant"
 SpacePointProducer:    "pandoraNu"
 FlashMatchProducer:    "NeutrinoFlashMatch"
+OpFlashBeamProducer:   "simpleFlashBeam"
 }
 
 END_PROLOG

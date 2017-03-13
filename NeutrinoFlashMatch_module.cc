@@ -69,7 +69,7 @@ public:
   flashana::QCluster_t GetQCluster(std::vector<art::Ptr<recob::Track>>);
   void CollectTracksAndPFP(lar_pandora::PFParticlesToTracks, lar_pandora::PFParticleVector, art::Ptr<recob::PFParticle>,  lar_pandora::PFParticleVector &, lar_pandora::TrackVector &);
   int  GetTrajectory(std::vector<art::Ptr<recob::Track>>, ::geoalgo::Trajectory &);
-  flashana::Flash_t Trial(std::vector<art::Ptr<recob::Track>> track_v, double t0, flashana::Flash_t flashBeam); 
+  flashana::Flash_t Trial(std::vector<art::Ptr<recob::Track>> track_v, flashana::Flash_t flashBeam, double & _chi2, double & _ll); 
 
   // Required functions.
   void produce(art::Event & e) override;
@@ -88,6 +88,7 @@ private:
   std::vector<flashana::FlashMatch_t> _result;
 
   std::vector<double>    _xfixed_hypo_spec;
+  double _xfixed_chi2, _xfixed_ll;
 
   TTree* _tree1;
   int _run, _subrun, _event, _matchid, _flashid;
@@ -263,11 +264,14 @@ void NeutrinoFlashMatch::produce(art::Event & e)
   std::vector<lar_pandora::TrackVector     > track_v_v;
   std::vector<lar_pandora::PFParticleVector> pfp_v_v;
   std::vector<flashana::Flash_t> xfixed_hypo_v;
+  std::vector<double> xfixed_chi2_v, xfixed_ll_v;
 
   MyPandoraHelper::GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
 
   if(_debug) std::cout << " For this event we have " << track_v_v.size() << " pandora slices." << std::endl;
   xfixed_hypo_v.resize(track_v_v.size());
+  xfixed_chi2_v.resize(track_v_v.size());
+  xfixed_ll_v.resize(track_v_v.size());
 
   for (unsigned int tpcObj = 0; tpcObj < track_v_v.size(); tpcObj++) {
 
@@ -281,8 +285,10 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     // Emplace the QCluster to the FlashMatching Manager
     _mgr.Emplace(std::move(qcluster));
 
-
-    xfixed_hypo_v[tpcObj] = this->Trial(tpcObjTrk_v, beam_flashes[0].time, beam_flashes[0]);
+    double chi2, ll;
+    xfixed_hypo_v[tpcObj] = this->Trial(tpcObjTrk_v, beam_flashes[0], chi2, ll);
+    xfixed_chi2_v[tpcObj] = chi2;
+    xfixed_ll_v[tpcObj] = ll;
   }
 
   if(_debug) std::cout << "Finished emplacing beam flash and tpc objects" << std::endl;
@@ -333,6 +339,8 @@ void NeutrinoFlashMatch::produce(art::Event & e)
       for(size_t pmt=0; pmt<_hypo_flash_spec[_matchid].size(); ++pmt) _hypo_flash_spec[_matchid][pmt] = match.hypothesis[pmt];
     }
     _xfixed_hypo_spec = xfixed_hypo_v[_matchid].pe_v; 
+    _xfixed_chi2      = xfixed_chi2_v[_matchid];
+    _xfixed_ll        = xfixed_ll_v[_matchid];
 
     // Save x position
     _qll_xmin[_matchid] = match.tpc_point.x;
@@ -350,6 +358,8 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     fm.SetRecoFlashSpec       ( _beam_flash_spec );
     fm.SetMCFlashSpec         ( _numc_flash_spec );
     fm.SetXFixedHypoFlashSpec ( _xfixed_hypo_spec );
+    fm.SetXFixedChi2          ( _xfixed_chi2 );
+    fm.SetXFixedLl            ( _xfixed_ll );
 
     flashMatchTrackVector->emplace_back(std::move(fm));
     util::CreateAssn(*this, e, *flashMatchTrackVector, track_v, *assnOutFlashMatchTrack);
@@ -495,10 +505,12 @@ flashana::QCluster_t NeutrinoFlashMatch::GetQCluster(std::vector<art::Ptr<recob:
 }
 
 //______________________________________________________________________________________________________________________________________
-flashana::Flash_t NeutrinoFlashMatch::Trial(std::vector<art::Ptr<recob::Track>> track_v, double t0, flashana::Flash_t flashBeam) {
+flashana::Flash_t NeutrinoFlashMatch::Trial(std::vector<art::Ptr<recob::Track>> track_v, flashana::Flash_t flashBeam, double & _chi2, double & _ll) {
 
   flashana::QCluster_t summed_qcluster;
   summed_qcluster.clear();
+
+  double t0 = flashBeam.time;
 
   for (unsigned int trk = 0; trk < track_v.size(); trk++) {
 
@@ -524,20 +536,24 @@ flashana::Flash_t NeutrinoFlashMatch::Trial(std::vector<art::Ptr<recob::Track>> 
   ((flashana::PhotonLibHypothesis*)(_mgr.GetAlgo(flashana::kFlashHypothesis)))->FillEstimate(summed_qcluster,flashHypo);
 
   double O, H;
-  double _ll = 0;
+  _ll = 0;
+  _chi2 = 0;
 
   //   Loop over PMTs and construct log-likelihood
   for (int pmt = 0; pmt < 32; pmt++){
-//    std::cout << "pmt = " << pmt << std::endl;
     O = beam_flashes[0].pe_v[pmt];
     H = flashHypo.pe_v[pmt];
+
+    std::cout << "O: " << O << std::endl;
+    std::cout << "H: " << H << std::endl;
+
     if (H==0) continue;
 
+    _chi2 += std::pow((O - H), 2) / (H);
     _ll -= std::log10(TMath::Poisson(O,H));
-//    std::cout << "   O = " << O << std::endl;
-//    std::cout << "   H = " << H << std::endl;
-//    std::cout << "   std::log10(TMath::Poisson(O,H)) = " << std::log10(TMath::Poisson(O,H)) << std::endl;
-//    std::cout << "   -ll = " << _ll << std::endl;
+
+    std::cout << "_chi2: " << _chi2 << std::endl;
+    std::cout << "_ll:   " << _ll << std::endl;
   }
 
   std::cout << "------------ ------------ >>>>> TRIAL, -loglikelihood is: " << _ll << std::endl;

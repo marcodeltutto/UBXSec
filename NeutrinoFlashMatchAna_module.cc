@@ -28,6 +28,7 @@
 #include "lardataobj/AnalysisBase/FlashMatch.h"
 #include "uboone/UBXSec/FlashMatch.h" // new!
 #include "lardata/Utilities/AssociationUtil.h"
+#include "larcore/Geometry/Geometry.h"
 
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "uboone/UBXSec/MyPandoraHelper.h"
@@ -88,11 +89,13 @@ private:
   int _mc_muon_contained;
 
   int _nslices;
-  std::vector<double> _slc_flsmatch_score;
+  std::vector<double> _slc_flsmatch_score, _slc_flsmatch_xfixed_chi2, _slc_flsmatch_xfixed_ll;
   std::vector<double> _slc_nuvtx_x, _slc_nuvtx_y, _slc_nuvtx_z;
+  std::vector<int> _slc_nuvtx_fv;
   std::vector<int> _slc_origin;
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe;
+  std::vector<std::vector<double>> _beamfls_spec, _slc_flshypo_xfixed_spec;
 
   TTree* _tree2;
   int _total_matches, _nmatch;
@@ -142,13 +145,18 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
 
   _tree1->Branch("nslices",            &_nslices,            "nslices/I");
   _tree1->Branch("slc_flsmatch_score", "std::vector<double>", &_slc_flsmatch_score);
+  _tree1->Branch("slc_flsmatch_xfixed_chi2", "std::vector<double>", &_slc_flsmatch_xfixed_chi2);
+  _tree1->Branch("slc_flsmatch_xfixed_ll", "std::vector<double>", &_slc_flsmatch_xfixed_ll);
   _tree1->Branch("slc_nuvtx_x",        "std::vector<double>", &_slc_nuvtx_x);
   _tree1->Branch("slc_nuvtx_y",        "std::vector<double>", &_slc_nuvtx_y);
   _tree1->Branch("slc_nuvtx_z",        "std::vector<double>", &_slc_nuvtx_z);
+  _tree1->Branch("slc_nuvtx_fv",       "std::vector<int>",    &_slc_nuvtx_fv);
   _tree1->Branch("slc_origin",         "std::vector<int>",    &_slc_origin);
   _tree1->Branch("nbeamfls",           &_nbeamfls,            "nbeamfls/I");
   _tree1->Branch("beamfls_time",       "std::vector<double>", &_beamfls_time);
   _tree1->Branch("beamfls_pe",         "std::vector<double>", &_beamfls_pe);
+  _tree1->Branch("beamfls_spec",       "std::vector<std::vector<double>>", &_beamfls_spec);
+  _tree1->Branch("slc_flshypo_xfixed_spec", "std::vector<std::vector<double>>", &_slc_flshypo_xfixed_spec);
 
   _tree2 = fs->make<TTree>("matchtree","");
   _tree2->Branch("run",                &_run,                "run/I");
@@ -335,7 +343,11 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   if (_debug) std::cout << "Neutrino related PFPs in this event: " << neutrinoOriginPFP.size() << std::endl;
 
 
-  
+ 
+  art::Handle<std::vector<recob::PFParticle>> pfpHandle;
+  e.getByLabel(_pfp_producer, pfpHandle);
+  art::FindManyP<ubana::FlashMatch> pfpToFlashMatchAssns(pfpHandle, e, _flash_match_producer);
+
   // Get the FlashMatch tag from the ART event
   art::Handle<std::vector<ubana::FlashMatch>> flashMatchHandle;
   e.getByLabel(_flash_match_producer, flashMatchHandle);
@@ -443,10 +455,14 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
 
   _nslices = pfp_v_v.size();
   _slc_flsmatch_score.resize(_nslices);
+  _slc_flsmatch_xfixed_chi2.resize(_nslices);
+  _slc_flsmatch_xfixed_ll.resize(_nslices);
   _slc_nuvtx_x.resize(_nslices);
   _slc_nuvtx_y.resize(_nslices);
   _slc_nuvtx_z.resize(_nslices);
+  _slc_nuvtx_fv.resize(_nslices);
   _slc_origin.resize(_nslices);
+  _slc_flshypo_xfixed_spec.resize(_nslices);
 
   std::cout << "Preparing to save" << std::endl;
   for (unsigned int slice = 0; slice < pfp_v_v.size(); slice++){
@@ -461,15 +477,32 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
     _slc_nuvtx_x[slice] = reco_nu_vtx[0];
     _slc_nuvtx_y[slice] = reco_nu_vtx[1];
     _slc_nuvtx_z[slice] = reco_nu_vtx[2];
+    _slc_nuvtx_fv[slice] = (MyPandoraHelper::InFV(reco_nu_vtx) ? 1 : 0);
     std::cout << "Reco vertex saved" << std::endl;
 
     // Flash match
     _slc_flsmatch_score[slice] = -9999;
     art::Ptr<recob::PFParticle> NuPFP = MyPandoraHelper::GetNuPFP(pfp_v_v[slice]);
+    std::vector<art::Ptr<ubana::FlashMatch>> pfpToFlashMatch_v = pfpToFlashMatchAssns.at(NuPFP.key());
+    if (pfpToFlashMatch_v.size() > 1) {
+      std::cout << "More than one flash match per nu pfp!" << std::endl;
+      continue;
+    } else if (pfpToFlashMatch_v.size() == 0){
+      continue;
+    } else {
+      _slc_flsmatch_score[slice]       = pfpToFlashMatch_v[0]->GetScore(); 
+      _slc_flsmatch_xfixed_chi2[slice] = pfpToFlashMatch_v[0]->GetXFixedChi2();
+      _slc_flsmatch_xfixed_ll[slice]   = pfpToFlashMatch_v[0]->GetXFixedLl();
+      _slc_flshypo_xfixed_spec[slice]  = pfpToFlashMatch_v[0]->GetXFixedHypoFlashSpec();
+    }
+
+    /*
+    std::cout << "NEW--------------------- pfpToFlashMatch_v.size() " << pfpToFlashMatch_v.size() << std::endl;
     if ( std::find(taggedPFP.begin(), taggedPFP.end(), NuPFP) != taggedPFP.end() ){
       std::cout << "Slice " << slice << " was flash tagged" << std::endl;
       _slc_flsmatch_score[slice] = _fm_score;
     }
+    */
     std::cout << "Flash match saved" << std::endl;
   }
 
@@ -485,11 +518,20 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   _nbeamfls = beamflash_h->size();
   _beamfls_pe.resize(_nbeamfls);
   _beamfls_time.resize(_nbeamfls);
+  _beamfls_spec.resize(_nbeamfls);
+
+  ::art::ServiceHandle<geo::Geometry> geo;
 
   for (size_t n = 0; n < beamflash_h->size(); n++) {
     auto const& flash = (*beamflash_h)[n];
     _beamfls_pe[n]   = flash.TotalPE();
     _beamfls_time[n] = flash.Time();
+
+    _beamfls_spec[n].resize(32);
+    for (unsigned int i = 0; i < 32; i++) {
+      unsigned int opdet = geo->OpDetFromOpChannel(i);
+      _beamfls_spec[n][opdet] = flash.PE(i);
+    }
   }
   
 

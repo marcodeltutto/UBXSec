@@ -15,4 +15,9 @@ NeutrinoFlashMatch: {
 
   FlashMatchConfig: @local::flashmatch_config
 }
+
+# Re-use flash
+NeutrinoFlashMatch.FlashMatchConfig.FlashMatchManager.AllowReuseFlash: true
+NeutrinoFlashMatch.FlashMatchConfig.FlashMatchManager.Verbosity: 1
+
 END_PROLOG

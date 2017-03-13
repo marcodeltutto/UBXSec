@@ -41,6 +41,8 @@ namespace ubana {
     void SetRecoFlashSpec(std::vector<double>);
     void SetMCFlashSpec(std::vector<double>);
     void SetXFixedHypoFlashSpec(std::vector<double>);
+    void SetXFixedChi2(double);
+    void SetXFixedLl(double);
 
     // Getter methods
     const double &              GetScore()                const;
@@ -50,6 +52,8 @@ namespace ubana {
     const std::vector<double> & GetRecoFlashSpec()        const;
     const std::vector<double> & GetMCFlashSpec()          const;
     const std::vector<double> & GetXFixedHypoFlashSpec()  const;
+    const double &              GetXFixedChi2()           const;
+    const double &              GetXFixedLl()             const;
 
   private:
 
@@ -60,6 +64,8 @@ namespace ubana {
     std::vector<double> fRecoFlashSpec;
     std::vector<double> fMCFlashSpec;
     std::vector<double> fXFixedHypoFlashSpec;
+    double fXFixedChi2;
+    double fXFixedLl;
 
  };
 }

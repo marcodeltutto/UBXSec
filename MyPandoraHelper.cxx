@@ -310,7 +310,7 @@ int MyPandoraHelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neu
 
     for ( unsigned int j = 0; j < neutrinoOriginPFP.size(); j++) {
 
-      if (neutrinoOriginPFP[i] == pfp_v[j]) {
+      if (neutrinoOriginPFP[j] == pfp_v[i]) {
         isFromNu = true;
         nuOrigin ++;
         break;

@@ -129,12 +129,14 @@ void NeutrinoMCFlash::produce(art::Event & e)
    
       simb::MCParticle const& par = evt_mctruth.GetParticle(p);
       //if (par.PdgCode() != 14) continue;
-      std::cout << "Particle pdg: " << par.PdgCode() << std::endl;
-      std::cout << "Particle time: " << par.Trajectory().T(0) << std::endl;
-      std::cout << "    converted: " << ts->G4ToElecTime(par.Trajectory().T(0)) - trig_time << std::endl;
-      std::cout << "new Particle time: " << par.T() << std::endl;
-      std::cout << "new    converted: " << ts->G4ToElecTime(par.T()) - trig_time << std::endl;
-      std::cout << std::endl;
+      if (_debug){
+        std::cout << "Particle pdg: " << par.PdgCode() << std::endl;
+        std::cout << "Particle time: " << par.Trajectory().T(0) << std::endl;
+        std::cout << "    converted: " << ts->G4ToElecTime(par.Trajectory().T(0)) - trig_time << std::endl;
+        std::cout << "new Particle time: " << par.T() << std::endl;
+        std::cout << "new    converted: " << ts->G4ToElecTime(par.T()) - trig_time << std::endl;
+        std::cout << std::endl;
+      }
       if (par.PdgCode() == 14) nuTime = par.T();//ts->G4ToElecTime(par.T()) - trig_time;
     }
   }

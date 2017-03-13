@@ -29,6 +29,7 @@
 #include "uboone/UBXSec/FlashMatch.h" // new!
 #include "lardata/Utilities/AssociationUtil.h"
 #include "larcore/Geometry/Geometry.h"
+#include "uboone/RawData/utils/ubdaqSoftwareTriggerData.h"
 
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "uboone/UBXSec/MyPandoraHelper.h"
@@ -96,6 +97,8 @@ private:
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe;
   std::vector<std::vector<double>> _beamfls_spec, _slc_flshypo_xfixed_spec;
+  int _nsignal;
+  int _is_swtriggered;
 
   TTree* _tree2;
   int _total_matches, _nmatch;
@@ -142,6 +145,7 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree1->Branch("mc_muon_end_y",      &_mc_muon_end_y,      "mc_muon_end_y/D");
   _tree1->Branch("mc_muon_end_z",      &_mc_muon_end_z,      "mc_muon_end_z/D");
   _tree1->Branch("mc_muon_contained",  &_mc_muon_contained,  "mc_muon_contained/I");
+  _tree1->Branch("is_swtriggered",     &_is_swtriggered,     "is_swtriggered/I");
 
   _tree1->Branch("nslices",            &_nslices,            "nslices/I");
   _tree1->Branch("slc_flsmatch_score", "std::vector<double>", &_slc_flsmatch_score);
@@ -157,6 +161,7 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree1->Branch("beamfls_pe",         "std::vector<double>", &_beamfls_pe);
   _tree1->Branch("beamfls_spec",       "std::vector<std::vector<double>>", &_beamfls_spec);
   _tree1->Branch("slc_flshypo_xfixed_spec", "std::vector<std::vector<double>>", &_slc_flshypo_xfixed_spec);
+  _tree1->Branch("nsignal",            &_nsignal,             "nsignal/I");
 
   _tree2 = fs->make<TTree>("matchtree","");
   _tree2->Branch("run",                &_run,                "run/I");
@@ -354,7 +359,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
 
   if (!flashMatchHandle.isValid() || flashMatchHandle->empty()){
     std::cerr << "Cosmic tag is not valid or empty." << std::endl;
-    return;
+    //return;
   }
 
   // Look up the associations to pfparticle
@@ -364,7 +369,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
 
   if (flashMatchToPFPAssns.size() == 0){
     std::cerr << "No flash match tags in this event." << std::endl;
-    return;
+    //return;
   }
 
   _total_matches = flashMatchToPFPAssns.size();
@@ -445,7 +450,9 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
 
   _ccnc    = mclist[iList]->GetNeutrino().CCNC();
   _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
-  
+ 
+  _nsignal = 0;
+  if(_nupdg==14 && _ccnc==0 && _fv==1) _nsignal=1; 
 
   // Save the number of slices in this event
   std::vector<lar_pandora::TrackVector     > track_v_v;
@@ -454,9 +461,9 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   MyPandoraHelper::GetTPCObjects(e, _pfp_producer, pfp_v_v, track_v_v);
 
   _nslices = pfp_v_v.size();
-  _slc_flsmatch_score.resize(_nslices);
-  _slc_flsmatch_xfixed_chi2.resize(_nslices);
-  _slc_flsmatch_xfixed_ll.resize(_nslices);
+  _slc_flsmatch_score.resize(_nslices, -9999);
+  _slc_flsmatch_xfixed_chi2.resize(_nslices, -9999);
+  _slc_flsmatch_xfixed_ll.resize(_nslices, -9999);
   _slc_nuvtx_x.resize(_nslices);
   _slc_nuvtx_y.resize(_nslices);
   _slc_nuvtx_z.resize(_nslices);
@@ -534,6 +541,16 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
     }
   }
   
+
+  // SW Trigger
+  art::Handle<raw::ubdaqSoftwareTriggerData> softwareTriggerHandle;
+  e.getByLabel("swtrigger", softwareTriggerHandle);
+
+  if (softwareTriggerHandle->getNumberOfAlgorithms() == 1) {
+    std::vector<std::string> algoNames = softwareTriggerHandle->getListOfAlgorithms();
+    std::cout << "SW trigger name: " << algoNames[0] << std::endl;
+    _is_swtriggered = (softwareTriggerHandle->passedAlgo(algoNames[0]) ? 1 : 0);
+  }
 
   _tree1->Fill();
 

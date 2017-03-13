@@ -15,7 +15,8 @@ art_make( BASENAME_ONLY
 		   uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
 	  	   larcore_Geometry
 		   larcore_Geometry_Geometry_service
-	   	   #Simulation
+                   uboone_RawData
+                   #Simulation
 		   #Utilities
 		   #TimeService_service
 		   #MCBase
@@ -58,6 +59,8 @@ art_make( BASENAME_ONLY
 		   uboonecode_uboone_BasicTool_GeoAlgo
 		   uboonecode_uboone_SelectionTool_OpT0FinderBase
 		   uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
+         
+                   uboone_RawData
 
 	  	   larcore_Geometry
 		   larcore_Geometry_Geometry_service

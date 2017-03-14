@@ -544,16 +544,16 @@ flashana::Flash_t NeutrinoFlashMatch::Trial(std::vector<art::Ptr<recob::Track>> 
     O = beam_flashes[0].pe_v[pmt];
     H = flashHypo.pe_v[pmt];
 
-    //std::cout << "O: " << O << std::endl;
-    //std::cout << "H: " << H << std::endl;
+    std::cout << "O: " << O << std::endl;
+    std::cout << "H: " << H << std::endl;
 
     if (H==0) continue;
 
     _chi2 += std::pow((O - H), 2) / (H);
     _ll -= std::log10(TMath::Poisson(O,H));
 
-    //std::cout << "_chi2: " << _chi2 << std::endl;
-    //std::cout << "_ll:   " << _ll << std::endl;
+    std::cout << "_chi2: " << _chi2 << std::endl;
+    std::cout << "_ll:   " << _ll << std::endl;
   }
 
   //std::cout << "------------ ------------ >>>>> TRIAL, -loglikelihood is: " << _ll << std::endl;

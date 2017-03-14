@@ -153,7 +153,7 @@ void NeutrinoMCFlash::produce(art::Event & e)
 
     for(auto const& oneph : simph) {
 
-      if (oneph.Time > nuTime + 100 ) continue;
+      if (oneph.Time > nuTime + 800 ) continue;
       if (oneph.Time > nuTime - 1000){ 
         if (_debug) std::cout << " photon time " << oneph.Time << std::endl;
         pmt_v[0][opdet2opch[opdet]] += 1;

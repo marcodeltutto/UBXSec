@@ -97,6 +97,7 @@ private:
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe;
   std::vector<std::vector<double>> _beamfls_spec, _slc_flshypo_xfixed_spec;
+  std::vector<double> _numc_flash_spec;
   int _nsignal;
   int _is_swtriggered;
 
@@ -160,6 +161,7 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree1->Branch("beamfls_time",       "std::vector<double>", &_beamfls_time);
   _tree1->Branch("beamfls_pe",         "std::vector<double>", &_beamfls_pe);
   _tree1->Branch("beamfls_spec",       "std::vector<std::vector<double>>", &_beamfls_spec);
+  _tree1->Branch("numc_flash_spec",    "std::vector<double>", &_numc_flash_spec);
   _tree1->Branch("slc_flshypo_xfixed_spec", "std::vector<std::vector<double>>", &_slc_flshypo_xfixed_spec);
   _tree1->Branch("nsignal",            &_nsignal,             "nsignal/I");
 
@@ -550,6 +552,22 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
     std::vector<std::string> algoNames = softwareTriggerHandle->getListOfAlgorithms();
     std::cout << "SW trigger name: " << algoNames[0] << std::endl;
     _is_swtriggered = (softwareTriggerHandle->passedAlgo(algoNames[0]) ? 1 : 0);
+  }
+
+
+  // MC Flash
+  ::art::Handle<std::vector<recob::OpFlash> > nuMcflash_h;
+  e.getByLabel("NeutrinoMCFlash",nuMcflash_h);
+  if( !nuMcflash_h.isValid() || nuMcflash_h->empty() ) {
+    std::cerr << "Don't have neutrino MC flashes." << std::endl;
+    return;
+  }
+
+  auto const& flash = (*nuMcflash_h)[0];
+  _numc_flash_spec.resize(geo->NOpDets());
+  for (unsigned int i = 0; i < geo->NOpDets(); i++) {
+    unsigned int opdet = geo->OpDetFromOpChannel(i);
+    _numc_flash_spec[opdet] = flash.PE(i);
   }
 
   _tree1->Fill();

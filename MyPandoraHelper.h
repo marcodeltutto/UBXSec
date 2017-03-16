@@ -56,6 +56,8 @@ class MyPandoraHelper {
   static void GetNumberOfHitsPerPlane(art::Event const & e, std::string _particleLabel, lar_pandora::TrackVector track_v, int & nhits_u, int & nhits_v, int & nhits_w );
 
   static bool IsCrossingBoundary(recob::Track track, int & vtx_ok);
+
+  static bool GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v, recob::Track & out_track);
 };
 
 #endif //  MY_PANDORA_HELPER_H

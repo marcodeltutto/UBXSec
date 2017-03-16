@@ -5,13 +5,14 @@ BEGIN_PROLOG
 #
 
 NeutrinoFlashMatchAna: {
-module_type:           "NeutrinoFlashMatchAna"
-PFParticleProducer:    "pandoraNu"
-HitProducer:           "pandoraCosmicHitRemoval"
-GeantModule:           "largeant"
-SpacePointProducer:    "pandoraNu"
-FlashMatchProducer:    "NeutrinoFlashMatch"
-OpFlashBeamProducer:   "simpleFlashBeam"
+module_type:                  "NeutrinoFlashMatchAna"
+PFParticleProducer:           "pandoraNu"
+HitProducer:                  "pandoraCosmicHitRemoval"
+GeantModule:                  "largeant"
+SpacePointProducer:           "pandoraNu"
+NeutrinoFlashMatchProducer:   "NeutrinoFlashMatch"
+CosmicFlashMatchProducer:     "CosmicFlashMatch"
+OpFlashBeamProducer:          "simpleFlashBeam"
 }
 
 END_PROLOG

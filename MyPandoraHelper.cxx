@@ -451,4 +451,37 @@ bool MyPandoraHelper::IsCrossingBoundary(recob::Track track, int & vtx_ok){
 }
 
 
+//_________________________________________________________________________________
+bool MyPandoraHelper::GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v, recob::Track & out_track) {
+
+  if (track_v.size() == 0) {
+    return false;
+  }
+
+  int length = -1;
+  int longest_track = -1;
+  for (unsigned int t = 0; t < track_v.size(); t++){
+
+    if (track_v[t]->Length() > length){
+
+      length = track_v[t]->Length();
+      longest_track = t;
+
+    }
+
+  }
+
+  if (longest_track > -1){
+    out_track = (*track_v[longest_track]);
+    return true;
+  } else {
+    return false;
+  }
+
+
+}
+
+
+
+
 

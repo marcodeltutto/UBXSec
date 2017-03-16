@@ -37,6 +37,7 @@ namespace ubana {
     void SetScore(double);
     void SetEstimatedX(double);
     void SetTPCX(double);
+    void SetT0(double);
     void SetHypoFlashSpec(std::vector<double>);
     void SetRecoFlashSpec(std::vector<double>);
     void SetMCFlashSpec(std::vector<double>);
@@ -48,6 +49,7 @@ namespace ubana {
     const double &              GetScore()                const;
     const double &              GetEstimatedX()           const;
     const double &              GetTPCX()                 const;
+    const double &              GetT0()                   const;
     const std::vector<double> & GetHypoFlashSpec()        const;
     const std::vector<double> & GetRecoFlashSpec()        const;
     const std::vector<double> & GetMCFlashSpec()          const;
@@ -60,6 +62,7 @@ namespace ubana {
     double fScore;
     double fTPCX;
     double fEstimatedX;
+    double fT0;
     std::vector<double> fHypoFlashSpec;
     std::vector<double> fRecoFlashSpec;
     std::vector<double> fMCFlashSpec;

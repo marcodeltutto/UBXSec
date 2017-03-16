@@ -83,7 +83,7 @@ private:
   bool _debug;
 
   std::vector<::flashana::Flash_t>    beam_flashes;
-
+  std::vector<::flashana::Flash_t>    cosmic_flashes;
   ::flashana::FlashMatchManager       _mgr;
   std::vector<flashana::FlashMatch_t> _result;
 
@@ -237,7 +237,7 @@ void CosmicFlashMatch::produce(art::Event & e)
     cosmic_flashes[nCosmicFlashes-1] = f;
 
     _mgr.Emplace(std::move(f));
-    }
+
   } // flash loop
 
 
@@ -326,7 +326,7 @@ void CosmicFlashMatch::produce(art::Event & e)
     auto const& flash = _mgr.FlashArray()[_flashid];
     _t0[_matchid] = flash.time;
 
-    if(_debug) std::cout << "For this match, the score is " << match.score << std::endl;
+    if(_debug) std::cout << "For this match, the score is " << match.score << ", the tpc id is " << match.tpc_id << std::endl;
 
     // Get the TPC obj 
     lar_pandora::TrackVector      track_v = track_v_v[match.tpc_id];
@@ -350,6 +350,7 @@ void CosmicFlashMatch::produce(art::Event & e)
     fm.SetScore               ( _score[_matchid] );
     fm.SetTPCX                ( _tpc_xmin[_matchid] );
     fm.SetEstimatedX          ( _qll_xmin[_matchid] );
+    fm.SetT0                  ( _t0[_matchid] );
     fm.SetHypoFlashSpec       ( _hypo_flash_spec[_matchid] );
     fm.SetRecoFlashSpec       ( _beam_flash_spec );
     fm.SetMCFlashSpec         ( _numc_flash_spec );

@@ -62,7 +62,8 @@ private:
   std::string _geantModuleLabel;
   std::string _spacepointLabel;
   std::string _cosmic_tag_producer;
-  std::string _flash_match_producer;
+  std::string _neutrino_flash_match_producer;
+  std::string _cosmic_flash_match_producer;
   std::string _opflash_producer_beam;
   bool _recursiveMatching = false;
   bool _debug = true;
@@ -92,10 +93,12 @@ private:
 
   int _nslices;
   std::vector<double> _slc_flsmatch_score, _slc_flsmatch_xfixed_chi2, _slc_flsmatch_xfixed_ll;
+  std::vector<double> _slc_flsmatch_cosmic_score, _slc_flsmatch_cosmic_t0;
   std::vector<double> _slc_nuvtx_x, _slc_nuvtx_y, _slc_nuvtx_z;
   std::vector<int> _slc_nuvtx_fv;
   std::vector<int> _slc_origin;
   std::vector<int> _slc_nhits_u, _slc_nhits_v, _slc_nhits_w;
+  std::vector<double> _slc_longesttrack_length;
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe;
   std::vector<std::vector<double>> _beamfls_spec, _slc_flshypo_xfixed_spec;
@@ -115,12 +118,13 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   :
   EDAnalyzer(p) 
 {
-  _pfp_producer            = p.get<std::string>("PFParticleProducer");
-  _hitfinderLabel          = p.get<std::string>("HitProducer");
-  _geantModuleLabel        = p.get<std::string>("GeantModule");
-  _spacepointLabel         = p.get<std::string>("SpacePointProducer");
-  _flash_match_producer    = p.get<std::string>("FlashMatchProducer");
-  _opflash_producer_beam   = p.get<std::string>("OpFlashBeamProducer");
+  _pfp_producer                   = p.get<std::string>("PFParticleProducer");
+  _hitfinderLabel                 = p.get<std::string>("HitProducer");
+  _geantModuleLabel               = p.get<std::string>("GeantModule");
+  _spacepointLabel                = p.get<std::string>("SpacePointProducer");
+  _neutrino_flash_match_producer  = p.get<std::string>("NeutrinoFlashMatchProducer");
+  _cosmic_flash_match_producer    = p.get<std::string>("CosmicFlashMatchProducer");
+  _opflash_producer_beam          = p.get<std::string>("OpFlashBeamProducer");
 
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
@@ -155,6 +159,8 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree1->Branch("slc_flsmatch_score", "std::vector<double>", &_slc_flsmatch_score);
   _tree1->Branch("slc_flsmatch_xfixed_chi2", "std::vector<double>", &_slc_flsmatch_xfixed_chi2);
   _tree1->Branch("slc_flsmatch_xfixed_ll", "std::vector<double>", &_slc_flsmatch_xfixed_ll);
+  _tree1->Branch("slc_flsmatch_cosmic_score", "std::vector<double>", &_slc_flsmatch_cosmic_score);
+  _tree1->Branch("slc_flsmatch_cosmic_t0", "std::vector<double>", &_slc_flsmatch_cosmic_t0);
   _tree1->Branch("slc_nuvtx_x",        "std::vector<double>", &_slc_nuvtx_x);
   _tree1->Branch("slc_nuvtx_y",        "std::vector<double>", &_slc_nuvtx_y);
   _tree1->Branch("slc_nuvtx_z",        "std::vector<double>", &_slc_nuvtx_z);
@@ -163,6 +169,7 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree1->Branch("slc_nhits_u",        "std::vector<int>",    &_slc_nhits_u);
   _tree1->Branch("slc_nhits_v",        "std::vector<int>",    &_slc_nhits_v);
   _tree1->Branch("slc_nhits_w",        "std::vector<int>",    &_slc_nhits_w);
+  _tree1->Branch("slc_longesttrack_length",        "std::vector<double>",    &_slc_longesttrack_length);
   _tree1->Branch("nbeamfls",           &_nbeamfls,            "nbeamfls/I");
   _tree1->Branch("beamfls_time",       "std::vector<double>", &_beamfls_time);
   _tree1->Branch("beamfls_pe",         "std::vector<double>", &_beamfls_pe);
@@ -170,6 +177,7 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree1->Branch("numc_flash_spec",    "std::vector<double>", &_numc_flash_spec);
   _tree1->Branch("slc_flshypo_xfixed_spec", "std::vector<std::vector<double>>", &_slc_flshypo_xfixed_spec);
   _tree1->Branch("nsignal",            &_nsignal,             "nsignal/I");
+
 
   _tree2 = fs->make<TTree>("matchtree","");
   _tree2->Branch("run",                &_run,                "run/I");
@@ -359,11 +367,12 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
  
   art::Handle<std::vector<recob::PFParticle>> pfpHandle;
   e.getByLabel(_pfp_producer, pfpHandle);
-  art::FindManyP<ubana::FlashMatch> pfpToFlashMatchAssns(pfpHandle, e, _flash_match_producer);
+  art::FindManyP<ubana::FlashMatch> pfpToNeutrinoFlashMatchAssns(pfpHandle, e, _neutrino_flash_match_producer);
+  art::FindManyP<ubana::FlashMatch> pfpToCosmicFlashMatchAssns(pfpHandle, e, _cosmic_flash_match_producer);
 
   // Get the FlashMatch tag from the ART event
   art::Handle<std::vector<ubana::FlashMatch>> flashMatchHandle;
-  e.getByLabel(_flash_match_producer, flashMatchHandle);
+  e.getByLabel(_cosmic_flash_match_producer, flashMatchHandle);
 
   if (!flashMatchHandle.isValid() || flashMatchHandle->empty()){
     std::cerr << "Cosmic tag is not valid or empty." << std::endl;
@@ -371,7 +380,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   }
 
   // Look up the associations to pfparticle
-  art::FindManyP<recob::PFParticle> flashMatchToPFPAssns(flashMatchHandle, e, _flash_match_producer);
+  art::FindManyP<recob::PFParticle> flashMatchToPFPAssns(flashMatchHandle, e, _cosmic_flash_match_producer);
 
   if (_debug) std::cout << "Number of FlashMatch products in this event: " << flashMatchToPFPAssns.size() << std::endl;
 
@@ -482,6 +491,9 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   _slc_nhits_u.resize(_nslices, -9999);
   _slc_nhits_v.resize(_nslices, -9999);
   _slc_nhits_w.resize(_nslices, -9999);
+  _slc_flsmatch_cosmic_score.resize(_nslices, -9999);
+  _slc_flsmatch_cosmic_t0.resize(_nslices, -9999);
+  _slc_longesttrack_length.resize(_nslices, -9999);
     
   std::cout << "Preparing to save" << std::endl;
   for (unsigned int slice = 0; slice < pfp_v_v.size(); slice++){
@@ -499,20 +511,39 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
     _slc_nuvtx_fv[slice] = (MyPandoraHelper::InFV(reco_nu_vtx) ? 1 : 0);
     std::cout << "Reco vertex saved" << std::endl;
 
-    // Flash match
+    // Neutrino Flash match
     _slc_flsmatch_score[slice] = -9999;
     art::Ptr<recob::PFParticle> NuPFP = MyPandoraHelper::GetNuPFP(pfp_v_v[slice]);
-    std::vector<art::Ptr<ubana::FlashMatch>> pfpToFlashMatch_v = pfpToFlashMatchAssns.at(NuPFP.key());
+    std::cout << "NuPFP has id " << NuPFP->Self() << std::endl;
+    std::vector<art::Ptr<ubana::FlashMatch>> pfpToFlashMatch_v = pfpToNeutrinoFlashMatchAssns.at(NuPFP.key());
     if (pfpToFlashMatch_v.size() > 1) {
       std::cout << "More than one flash match per nu pfp!" << std::endl;
       continue;
     } else if (pfpToFlashMatch_v.size() == 0){
-      continue;
+    //  continue;
     } else {
       _slc_flsmatch_score[slice]       = pfpToFlashMatch_v[0]->GetScore(); 
       _slc_flsmatch_xfixed_chi2[slice] = pfpToFlashMatch_v[0]->GetXFixedChi2();
       _slc_flsmatch_xfixed_ll[slice]   = pfpToFlashMatch_v[0]->GetXFixedLl();
       _slc_flshypo_xfixed_spec[slice]  = pfpToFlashMatch_v[0]->GetXFixedHypoFlashSpec();
+    }
+
+    // Cosmic Flash Match
+    _slc_flsmatch_cosmic_score[slice] = -9999;
+    std::vector<art::Ptr<ubana::FlashMatch>> pfpToCosmicFlashMatch_v = pfpToCosmicFlashMatchAssns.at(NuPFP.key());
+    if (pfpToCosmicFlashMatch_v.size() > 1) {
+      std::cout << "More than one flash match per nu pfp!" << std::endl;
+      continue;
+    } else if (pfpToCosmicFlashMatch_v.size() == 0){
+      std::cout << "PFP to flash match ass for cosmic is zero." << std::endl;
+      //continue;
+    } else if (pfpToCosmicFlashMatch_v.size() == 1){
+      std::cout << "pfpToCosmicFlashMatch_v[0]->GetScore() is " << pfpToCosmicFlashMatch_v[0]->GetScore() << std::endl;
+      std::cout << "pfpToCosmicFlashMatch_v[0]->GetT0() is " << pfpToCosmicFlashMatch_v[0]->GetT0() << std::endl;
+      _slc_flsmatch_cosmic_score[slice] = pfpToCosmicFlashMatch_v[0]->GetScore();
+      _slc_flsmatch_cosmic_t0[slice]    = pfpToCosmicFlashMatch_v[0]->GetT0();
+    } else {
+      std::cout << "I don't know what fucking case this is." << std::endl;
     }
 
     // Hits
@@ -522,6 +553,16 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
     _slc_nhits_v[slice] = nhits_v;
     _slc_nhits_w[slice] = nhits_w;
 
+    // Longest track
+    std::cout << "HHH before" << std::endl;
+    recob::Track lt;
+    if (MyPandoraHelper::GetLongestTrackFromTPCObj(track_v_v[slice], lt)){
+      std::cout << "HHH after" << std::endl;
+      _slc_longesttrack_length[slice] = lt.Length();
+    } else {
+      _slc_longesttrack_length[slice] = -9999;
+    }
+    std::cout << "HHH after after" << std::endl;
 
     /*
     std::cout << "NEW--------------------- pfpToFlashMatch_v.size() " << pfpToFlashMatch_v.size() << std::endl;

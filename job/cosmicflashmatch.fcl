@@ -4,7 +4,7 @@ BEGIN_PROLOG
 #
 # Module configuration
 #
-NeutrinoFlashMatch: {
+CosmicFlashMatch: {
   module_type:              "CosmicFlashMatch"
   PFParticleModule:         "pandoraNu"
   DebugMode:                true
@@ -17,8 +17,8 @@ NeutrinoFlashMatch: {
 }
 
 # Re-use flash
-NeutrinoFlashMatch.FlashMatchConfig.FlashMatchManager.AllowReuseFlash: false
+CosmicFlashMatch.FlashMatchConfig.FlashMatchManager.AllowReuseFlash: false
 
-NeutrinoFlashMatch.FlashMatchConfig.FlashMatchManager.Verbosity: 1
+CosmicFlashMatch.FlashMatchConfig.FlashMatchManager.Verbosity: 1
 
 END_PROLOG

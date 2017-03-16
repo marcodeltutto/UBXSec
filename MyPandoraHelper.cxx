@@ -28,6 +28,65 @@
 
 #include "uboone/UBXSec/MyPandoraHelper.h"
 
+
+
+//___________________________________________________________________________________________________
+void MyPandoraHelper::GetRecoToTrueMatches(art::Event const & e,
+                                           std::string _pfp_producer,
+                                           std::string _spacepointLabel,
+                                           std::string _geantModuleLabel,
+                                           std::string _hitfinderLabel,
+                                           lar_pandora::MCParticlesToPFParticles &matchedParticles,
+                                           lar_pandora::MCParticlesToHits &matchedParticleHits)
+{
+
+   bool _debug = true; 
+
+  // --- Collect hits
+  lar_pandora::HitVector hitVector;
+  lar_pandora::LArPandoraHelper::CollectHits(e, _hitfinderLabel, hitVector);
+ 
+   // --- Collect PFParticles and match Reco Particles to Hits
+  lar_pandora::PFParticleVector  recoParticleVector;
+  lar_pandora::PFParticleVector  recoNeutrinoVector;
+  lar_pandora::PFParticlesToHits recoParticlesToHits;
+  lar_pandora::HitsToPFParticles recoHitsToParticles;
+
+  lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
+  lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
+  lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, _spacepointLabel, recoParticlesToHits, recoHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
+
+  if (_debug) {
+    std::cout << "  RecoNeutrinos: " << recoNeutrinoVector.size() << std::endl;
+    std::cout << "  RecoParticles: " << recoParticleVector.size() << std::endl;
+  }
+
+  // --- Collect MCParticles and match True Particles to Hits
+  lar_pandora::MCParticleVector     trueParticleVector;
+  lar_pandora::MCTruthToMCParticles truthToParticles;
+  lar_pandora::MCParticlesToMCTruth particlesToTruth;
+  lar_pandora::MCParticlesToHits    trueParticlesToHits;
+  lar_pandora::HitsToMCParticles    trueHitsToParticles;
+
+  if (!e.isRealData()) {
+    lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, trueParticleVector);
+    lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, truthToParticles, particlesToTruth);
+    lar_pandora::LArPandoraHelper::BuildMCParticleHitMaps(e, _geantModuleLabel, hitVector, trueParticlesToHits, trueHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
+  }
+
+  if (_debug) {
+    std::cout << "  TrueParticles: " << particlesToTruth.size() << std::endl;
+    std::cout << "  TrueEvents: " << truthToParticles.size() << std::endl;
+  }
+
+
+  GetRecoToTrueMatches(recoParticlesToHits,
+                       trueHitsToParticles,
+                       matchedParticles,
+                       matchedParticleHits);
+}
+
+
 //___________________________________________________________________________________________________
 void MyPandoraHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits,
                                            const lar_pandora::HitsToMCParticles &trueHitsToParticles,
@@ -324,6 +383,70 @@ int MyPandoraHelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neu
 
   if (nuOrigin > 0) return 0;
   else return 1;
+
+}
+
+
+
+//______________________________________________________________________________
+
+void MyPandoraHelper::GetNumberOfHitsPerPlane(art::Event const & e,
+                                              std::string _particleLabel,
+                                              lar_pandora::TrackVector track_v,
+                                              int & nhits_u, 
+                                              int & nhits_v, 
+                                              int & nhits_w ) {
+ 
+  nhits_u = 0;
+  nhits_v = 0;
+  nhits_w = 0;
+
+  lar_pandora::TrackVector trackVector;
+  lar_pandora::TracksToHits tracksToHits;
+  lar_pandora::LArPandoraHelper::CollectTracks( e, _particleLabel, trackVector, tracksToHits );
+
+  // Loop over the tracks in this TPC Object
+  for (unsigned int t = 0; t < track_v.size(); t++) {
+
+    // Get the hits associated with the track
+    lar_pandora::HitVector hit_v = tracksToHits.at(track_v[t]);
+
+    // Check where the hit is coming from
+    for (unsigned int h = 0; h < hit_v.size(); h++){
+
+      if (hit_v[h]->View() == 0) nhits_u++;
+      if (hit_v[h]->View() == 1) nhits_v++;
+      if (hit_v[h]->View() == 2) nhits_w++;
+
+    }
+  }
+
+}
+
+//_________________________________________________________________________________
+bool MyPandoraHelper::IsCrossingBoundary(recob::Track track, int & vtx_ok){
+
+  double vtx[3];
+  vtx[0] = track.Vertex().X();
+  vtx[1] = track.Vertex().Y();
+  vtx[2] = track.Vertex().Z();
+
+  double end[3];
+  end[0] = track.End().X();
+  end[1] = track.End().Y();
+  end[2] = track.End().Z();
+
+  if ( InFV(vtx) && !InFV(end) ) {
+    vtx_ok = 0;
+    return true;
+  } else if (!InFV(vtx) && InFV(end))  {
+    vtx_ok = 1;
+    return true;
+  }
+  else {
+    vtx_ok = -1;
+    return false;
+  }
 
 }
 

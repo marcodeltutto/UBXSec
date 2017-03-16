@@ -83,6 +83,7 @@ private:
   double _muon_tag_score;
   double _fm_score;
   int _fv, _ccnc, _nupdg;
+  double _nu_e;
   double _recon_muon_start_x, _recon_muon_start_y, _recon_muon_start_z;
   double _recon_muon_end_x, _recon_muon_end_y, _recon_muon_end_z;
   double _mc_muon_start_x, _mc_muon_start_y, _mc_muon_start_z;
@@ -94,6 +95,7 @@ private:
   std::vector<double> _slc_nuvtx_x, _slc_nuvtx_y, _slc_nuvtx_z;
   std::vector<int> _slc_nuvtx_fv;
   std::vector<int> _slc_origin;
+  std::vector<int> _slc_nhits_u, _slc_nhits_v, _slc_nhits_w;
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe;
   std::vector<std::vector<double>> _beamfls_spec, _slc_flshypo_xfixed_spec;
@@ -133,6 +135,7 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree1->Branch("fv",                 &_fv,                 "fv/I");
   _tree1->Branch("ccnc",               &_ccnc,               "ccnc/I");
   _tree1->Branch("nupdg",              &_nupdg,              "nupdg/I");
+  _tree1->Branch("nu_e",               &_nu_e,               "nu_e/D");
   _tree1->Branch("recon_muon_start_x", &_recon_muon_start_x, "recon_muon_start_x/D");
   _tree1->Branch("recon_muon_start_y", &_recon_muon_start_y, "recon_muon_start_y/D");
   _tree1->Branch("recon_muon_start_z", &_recon_muon_start_z, "recon_muon_start_z/D");
@@ -157,6 +160,9 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree1->Branch("slc_nuvtx_z",        "std::vector<double>", &_slc_nuvtx_z);
   _tree1->Branch("slc_nuvtx_fv",       "std::vector<int>",    &_slc_nuvtx_fv);
   _tree1->Branch("slc_origin",         "std::vector<int>",    &_slc_origin);
+  _tree1->Branch("slc_nhits_u",        "std::vector<int>",    &_slc_nhits_u);
+  _tree1->Branch("slc_nhits_v",        "std::vector<int>",    &_slc_nhits_v);
+  _tree1->Branch("slc_nhits_w",        "std::vector<int>",    &_slc_nhits_w);
   _tree1->Branch("nbeamfls",           &_nbeamfls,            "nbeamfls/I");
   _tree1->Branch("beamfls_time",       "std::vector<double>", &_beamfls_time);
   _tree1->Branch("beamfls_pe",         "std::vector<double>", &_beamfls_pe);
@@ -452,7 +458,8 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
 
   _ccnc    = mclist[iList]->GetNeutrino().CCNC();
   _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
- 
+  _nu_e    = mclist[iList]->GetNeutrino().Nu().E();
+
   _nsignal = 0;
   if(_nupdg==14 && _ccnc==0 && _fv==1) _nsignal=1; 
 
@@ -472,7 +479,10 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   _slc_nuvtx_fv.resize(_nslices);
   _slc_origin.resize(_nslices);
   _slc_flshypo_xfixed_spec.resize(_nslices);
-
+  _slc_nhits_u.resize(_nslices, -9999);
+  _slc_nhits_v.resize(_nslices, -9999);
+  _slc_nhits_w.resize(_nslices, -9999);
+    
   std::cout << "Preparing to save" << std::endl;
   for (unsigned int slice = 0; slice < pfp_v_v.size(); slice++){
     std::cout << "Slice" << slice << std::endl;
@@ -504,6 +514,14 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
       _slc_flsmatch_xfixed_ll[slice]   = pfpToFlashMatch_v[0]->GetXFixedLl();
       _slc_flshypo_xfixed_spec[slice]  = pfpToFlashMatch_v[0]->GetXFixedHypoFlashSpec();
     }
+
+    // Hits
+    int nhits_u, nhits_v, nhits_w;
+    MyPandoraHelper::GetNumberOfHitsPerPlane(e, _pfp_producer, track_v_v[slice], nhits_u, nhits_v, nhits_w);
+    _slc_nhits_u[slice] = nhits_u;
+    _slc_nhits_v[slice] = nhits_v;
+    _slc_nhits_w[slice] = nhits_w;
+
 
     /*
     std::cout << "NEW--------------------- pfpToFlashMatch_v.size() " << pfpToFlashMatch_v.size() << std::endl;

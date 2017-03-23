@@ -30,6 +30,7 @@
 #include "lardata/Utilities/AssociationUtil.h"
 #include "larcore/Geometry/Geometry.h"
 #include "uboone/RawData/utils/ubdaqSoftwareTriggerData.h"
+#include "lardataobj/AnalysisBase/T0.h"
 
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "uboone/UBXSec/MyPandoraHelper.h"
@@ -99,6 +100,8 @@ private:
   std::vector<int> _slc_origin;
   std::vector<int> _slc_nhits_u, _slc_nhits_v, _slc_nhits_w;
   std::vector<double> _slc_longesttrack_length;
+  std::vector<int> _slc_acpt_outoftime;
+
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe;
   std::vector<std::vector<double>> _beamfls_spec, _slc_flshypo_xfixed_spec;
@@ -170,6 +173,7 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree1->Branch("slc_nhits_v",        "std::vector<int>",    &_slc_nhits_v);
   _tree1->Branch("slc_nhits_w",        "std::vector<int>",    &_slc_nhits_w);
   _tree1->Branch("slc_longesttrack_length",        "std::vector<double>",    &_slc_longesttrack_length);
+  _tree1->Branch("slc_acpt_outoftime", "std::vector<int>",    &_slc_acpt_outoftime);
   _tree1->Branch("nbeamfls",           &_nbeamfls,            "nbeamfls/I");
   _tree1->Branch("beamfls_time",       "std::vector<double>", &_beamfls_time);
   _tree1->Branch("beamfls_pe",         "std::vector<double>", &_beamfls_pe);
@@ -449,7 +453,29 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   
 
 
-  
+  // ACPT
+  art::Handle<std::vector<anab::T0> > t0_h;
+  e.getByLabel(Form("T0TrackTaggerCosmic%s",_pfp_producer.c_str()),t0_h);
+  if(!t0_h.isValid()) {
+    std::cout << "T0 product not found..." << std::endl;
+    throw std::exception();
+  }
+  if(t0_h->empty()) {
+    std::cout << "t0 is empty." << std::endl;
+  }
+    
+  art::FindManyP<recob::Track> track_ptr_coll_v(t0_h, e, Form("T0TrackTaggerCosmic%s",_pfp_producer.c_str())); 
+
+  art::Handle<std::vector<recob::Track>> track_h;
+  e.getByLabel(_pfp_producer,track_h);
+  if (!track_h.isValid() || track_h->empty()) {
+    std::cout << "Track handle is not valid or empty." << std::endl;
+    //throw std::exception();
+  }
+
+  art::FindManyP<recob::OpFlash> opfls_ptr_coll_v(track_h, e, Form("T0TrackTaggerCosmic%s",_pfp_producer.c_str()));
+
+
 
 
 
@@ -494,6 +520,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   _slc_flsmatch_cosmic_score.resize(_nslices, -9999);
   _slc_flsmatch_cosmic_t0.resize(_nslices, -9999);
   _slc_longesttrack_length.resize(_nslices, -9999);
+  _slc_acpt_outoftime.resize(_nslices, -9999);
     
   std::cout << "Preparing to save" << std::endl;
   for (unsigned int slice = 0; slice < pfp_v_v.size(); slice++){
@@ -563,6 +590,21 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
       _slc_longesttrack_length[slice] = -9999;
     }
     std::cout << "HHH after after" << std::endl;
+
+    // ACPT
+    _slc_acpt_outoftime[slice] = 0;
+    for (unsigned int t = 0; t < track_v_v[slice].size(); t++) {
+      if(opfls_ptr_coll_v.at(track_v_v[slice][t].key()).size()>1) {
+        std::cout << "More than 1 association found (ACPT)!" << std::endl;
+        throw std::exception();
+      } else if (opfls_ptr_coll_v.at(track_v_v[slice][t].key()).size()==0){
+        continue;
+      } else {
+        art::Ptr<recob::OpFlash> flash_ptr = opfls_ptr_coll_v.at(track_v_v[slice][t].key()).at(0);
+        if (flash_ptr->Time() < 3 || flash_ptr->Time() > 5)
+        _slc_acpt_outoftime[slice] = 1;
+      }
+    }
 
     /*
     std::cout << "NEW--------------------- pfpToFlashMatch_v.size() " << pfpToFlashMatch_v.size() << std::endl;

@@ -13,6 +13,7 @@
 #include "photpropservices_microboone.fcl"
 
 #include "ubflashfinder.fcl"
+#include "T0RecoAnodeCathodePiercing.fcl"
 
 #include "neutrinomcflash.fcl"
 #include "neutrinoflashmatch.fcl"
@@ -74,6 +75,9 @@ physics:
    NeutrinoMCFlash    : @local::NeutrinoMCFlash
    NeutrinoFlashMatch : @local::NeutrinoFlashMatch
    CosmicFlashMatch   : @local::CosmicFlashMatch
+
+   T0TrackTaggerCosmicpandoraNu : @local::T0RecoAnodeCathodePiercing
+   T0TrackTaggerBeampandoraNu   : @local::T0RecoAnodeCathodePiercing
  }
 
  analyzers:
@@ -83,7 +87,8 @@ physics:
 
  #reco: [ saturation, ophitBeam, ophitCosmic, simpleFlashBeam, simpleFlashCosmic, NeutrinoMCFlash, NeutrinoFlashMatch ]
 
- reco: [ NeutrinoMCFlash, NeutrinoFlashMatch, CosmicFlashMatch]
+ reco: [ NeutrinoMCFlash, NeutrinoFlashMatch, CosmicFlashMatch,
+         T0TrackTaggerCosmicpandoraNu, T0TrackTaggerBeampandoraNu ]
 
  #define the output stream, there could be more than one if using filters 
  stream1:  [ out1 ]
@@ -103,6 +108,13 @@ physics:
 services.PmtGainService.PmtGainProvider.UseDB:             false
 services.ChannelStatusService.ChannelStatusProvider.UseDB: false
 services.DetPedestalService.DetPedestalRetrievalAlg.UseDB: false
+
+physics.producers.T0TrackTaggerCosmicpandoraNu.TrackProducer: "pandoraNu"
+physics.producers.T0TrackTaggerCosmicpandoraNu.FlashProducer: "simpleFlashCosmic"
+physics.producers.T0TrackTaggerBeampandoraNu.TrackProducer:   "pandoraNu"
+physics.producers.T0TrackTaggerBeampandoraNu.FlashProducer:   "simpleFlashBeam"
+physics.producers.T0TrackTaggerCosmicpandoraNu.debug:        true
+#physics.producers.T0TrackTaggerBeampandoraNu.debug:          true
 
 
 outputs:

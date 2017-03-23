@@ -60,8 +60,9 @@ private:
 
   TTree* _tree1;
   int _run, _subrun, _event;
-  double _res_range, _dedx;
-  int _trk_number, _plane;
+  std::vector<std::vector<double>> _res_range, _dedx, _dqdx;
+  std::vector<int> _trk_number;
+  std::vector<std::vector<int>> _plane;
   // Declare member data here.
 
 };
@@ -78,10 +79,11 @@ DeDxAna::DeDxAna(fhicl::ParameterSet const & p)
     _tree1->Branch("run",                &_run,                "run/I");
     _tree1->Branch("subrun",             &_subrun,             "subrun/I");
     _tree1->Branch("event",              &_event,              "event/I");
-    _tree1->Branch("res_range",          &_res_range,          "res_range/D");
-    _tree1->Branch("dedx",               &_dedx,               "dedx/D");
-    _tree1->Branch("plane",              &_plane,              "plane/I");
-    _tree1->Branch("trk_number",         &_trk_number,         "trk_number/I");
+    _tree1->Branch("res_range",          "std::vector<std::vector<double>>",          &_res_range);
+    _tree1->Branch("dedx",               "std::vector<std::vector<double>>",               &_dedx);
+    _tree1->Branch("dqdx",               "std::vector<std::vector<double>>",               &_dqdx);
+    _tree1->Branch("plane",              "std::vector<std::vector<int>>",                 &_plane);
+    _tree1->Branch("trk_number",         "std::vector<int>",                         &_trk_number);
 
 }
 
@@ -110,11 +112,17 @@ void DeDxAna::analyze(art::Event const & e) {
   } 
   std::cout << "track hit ass has size " << track_hit_ass.size() << std::endl;
 
+  _res_range.resize(track_h->size()); 
+  _dedx.resize(track_h->size());  
+  _dqdx.resize(track_h->size()) ;
+  _trk_number.resize(track_h->size()) ;
+  _plane.resize(track_h->size()) ;
+
   // Track loop
   for (unsigned int trk = 0; trk < track_h->size(); trk++) {
 
     std::cout << "***** Track " << trk << std::endl;
-    _trk_number = trk;
+    //_trk_number(trk) = (int) trk;
 
     auto const& track = (*track_h)[trk];
 
@@ -166,20 +174,21 @@ void DeDxAna::analyze(art::Event const & e) {
       if (!calos[ical]->PlaneID().isValid) continue;
       int planenum = calos[ical]->PlaneID().Plane;
       if (planenum<0||planenum>2) continue;
-      _plane = planenum;
       std::cout << "plane " << planenum << std::endl;
       std::cout << " ke " << calos[ical]->KineticEnergy() << std::endl;
       std::cout << " range " << calos[ical]->Range() << std::endl;
 
       const size_t NHits = calos[ical] -> dEdx().size();
+
       for(size_t iTrkHit = 0; iTrkHit < NHits; ++iTrkHit) {
 
-        _dedx = (calos[ical]->dEdx())[iTrkHit];
-        _res_range = (calos[ical]->ResidualRange())[iTrkHit];
-
-        _tree1->Fill();
+        _dedx.at(trk).emplace_back((calos[ical]->dEdx())[iTrkHit]);
+        _dqdx.at(trk).emplace_back((calos[ical]->dQdx())[iTrkHit]);
+        _res_range.at(trk).emplace_back((calos[ical]->ResidualRange())[iTrkHit]);
+        _plane.at(trk).emplace_back(planenum);
       }
     }
+
 
     // Other method
 
@@ -191,6 +200,8 @@ void DeDxAna::analyze(art::Event const & e) {
       }
     }
   }
+
+  _tree1->Fill();
 
 
 }

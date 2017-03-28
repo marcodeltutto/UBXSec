@@ -70,6 +70,7 @@ private:
   bool _debug = true;
 
   const simb::Origin_t NEUTRINO_ORIGIN = simb::kBeamNeutrino;
+  const simb::Origin_t COSMIC_ORIGIN   = simb::kCosmicRay;
 
   /// Maps used for PFParticle truth matching
   typedef std::map< art::Ptr<recob::PFParticle>, unsigned int > RecoParticleToNMatchedHits;
@@ -101,6 +102,8 @@ private:
   std::vector<int> _slc_nhits_u, _slc_nhits_v, _slc_nhits_w;
   std::vector<double> _slc_longesttrack_length;
   std::vector<int> _slc_acpt_outoftime;
+  std::vector<int> _slc_crosses_top_boundary;
+  std::vector<int> _slc_nuvtx_closetodeadregion;
 
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe;
@@ -174,6 +177,8 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
   _tree1->Branch("slc_nhits_w",        "std::vector<int>",    &_slc_nhits_w);
   _tree1->Branch("slc_longesttrack_length",        "std::vector<double>",    &_slc_longesttrack_length);
   _tree1->Branch("slc_acpt_outoftime", "std::vector<int>",    &_slc_acpt_outoftime);
+  _tree1->Branch("slc_crosses_top_boundary", "std::vector<int>",    &_slc_crosses_top_boundary);
+  _tree1->Branch("slc_nuvtx_closetodeadregion",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion);
   _tree1->Branch("nbeamfls",           &_nbeamfls,            "nbeamfls/I");
   _tree1->Branch("beamfls_time",       "std::vector<double>", &_beamfls_time);
   _tree1->Branch("beamfls_pe",         "std::vector<double>", &_beamfls_pe);
@@ -279,7 +284,34 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   _muon_is_reco = 0;
   _mc_muon_contained = 0;
 
-    // Loop over true particle and find the neutrino related ones
+
+  // Loop over true particle and find the cosmic related ones
+  for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
+      iter1 != iterEnd1; ++iter1) {
+
+    art::Ptr<simb::MCParticle>  mc_par = iter1->first;   // The MCParticle 
+    //art::Ptr<recob::PFParticle> pf_par = iter1->second;  // The matched PFParticle
+
+    const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
+
+    if (mc_truth->Origin() == COSMIC_ORIGIN) {
+
+      double end[3];
+      end[0] = mc_par->EndX();
+      end[1] = mc_par->EndY();
+      end[2] = mc_par->EndZ();
+      if ( (mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13) && MyPandoraHelper::InFV(end) ){
+        std::cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Is stopping muon" << std::endl;
+      }
+         
+    }
+  }
+
+
+
+
+
+  // Loop over true particle and find the neutrino related ones
   for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
              iter1 != iterEnd1; ++iter1) {
 
@@ -521,6 +553,8 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   _slc_flsmatch_cosmic_t0.resize(_nslices, -9999);
   _slc_longesttrack_length.resize(_nslices, -9999);
   _slc_acpt_outoftime.resize(_nslices, -9999);
+  _slc_crosses_top_boundary.resize(_nslices, -9999);
+  _slc_nuvtx_closetodeadregion.resize(_nslices, -9999);
     
   std::cout << "Preparing to save" << std::endl;
   for (unsigned int slice = 0; slice < pfp_v_v.size(); slice++){
@@ -580,12 +614,14 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
     _slc_nhits_v[slice] = nhits_v;
     _slc_nhits_w[slice] = nhits_w;
 
-    // Longest track
+    // Longest track and check boundary
     std::cout << "HHH before" << std::endl;
     recob::Track lt;
     if (MyPandoraHelper::GetLongestTrackFromTPCObj(track_v_v[slice], lt)){
       std::cout << "HHH after" << std::endl;
       _slc_longesttrack_length[slice] = lt.Length();
+      int vtx_ok;
+      _slc_crosses_top_boundary[slice] = (MyPandoraHelper::IsCrossingTopBoundary(lt, vtx_ok) ? 1 : 0);
     } else {
       _slc_longesttrack_length[slice] = -9999;
     }
@@ -604,7 +640,11 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
         if (flash_ptr->Time() < 3 || flash_ptr->Time() > 5)
         _slc_acpt_outoftime[slice] = 1;
       }
+      
     }
+
+    // Channel status
+    _slc_nuvtx_closetodeadregion[slice] = (MyPandoraHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 2) ? 1 : 0);
 
     /*
     std::cout << "NEW--------------------- pfpToFlashMatch_v.size() " << pfpToFlashMatch_v.size() << std::endl;

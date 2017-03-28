@@ -57,7 +57,12 @@ class MyPandoraHelper {
 
   static bool IsCrossingBoundary(recob::Track track, int & vtx_ok);
 
+  static bool IsCrossingTopBoundary(recob::Track track, int & vtx_ok);
+
   static bool GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v, recob::Track & out_track);
+
+  static bool PointIsCloseToDeadRegion(double *reco_nu_vtx, int plane_no);
+
 };
 
 #endif //  MY_PANDORA_HELPER_H

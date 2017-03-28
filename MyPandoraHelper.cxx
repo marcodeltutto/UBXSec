@@ -21,7 +21,10 @@
 #include "larcoreobj/SimpleTypesAndConstants/RawTypes.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 
-
+#include "larevt/CalibrationDBI/Interface/DetPedestalService.h"
+#include "larevt/CalibrationDBI/Interface/DetPedestalProvider.h"
+#include "larevt/CalibrationDBI/Interface/ChannelStatusService.h"
+#include "larevt/CalibrationDBI/Interface/ChannelStatusProvider.h"
 
 #include "lardataobj/RecoBase/PFParticle.h"
 //#include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
@@ -424,6 +427,33 @@ void MyPandoraHelper::GetNumberOfHitsPerPlane(art::Event const & e,
 }
 
 //_________________________________________________________________________________
+bool MyPandoraHelper::IsCrossingTopBoundary(recob::Track track, int & vtx_ok){
+
+  double vtx[3];
+  vtx[0] = track.Vertex().X();
+  vtx[1] = track.Vertex().Y();
+  vtx[2] = track.Vertex().Z();
+
+  double end[3];
+  end[0] = track.End().X();
+  end[1] = track.End().Y();
+  end[2] = track.End().Z();
+
+  if ( InFV(vtx) && !InFV(end) && (end[1] > 233-20)) {
+    vtx_ok = 0;
+    return true;
+  } else if (!InFV(vtx) && InFV(end) && (vtx[1] > 233-20))  {
+    vtx_ok = 1;
+    return true;
+  }
+  else {
+    vtx_ok = -1;
+    return false;
+  }
+
+}
+
+//_________________________________________________________________________________
 bool MyPandoraHelper::IsCrossingBoundary(recob::Track track, int & vtx_ok){
 
   double vtx[3];
@@ -449,6 +479,7 @@ bool MyPandoraHelper::IsCrossingBoundary(recob::Track track, int & vtx_ok){
   }
 
 }
+
 
 
 //_________________________________________________________________________________
@@ -480,6 +511,43 @@ bool MyPandoraHelper::GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v
 
 
 }
+
+
+
+
+//_________________________________________________________________________________
+bool MyPandoraHelper::PointIsCloseToDeadRegion(double *reco_nu_vtx, int plane_no){
+
+  ::art::ServiceHandle<geo::Geometry> geo;
+
+  // Get nearest channel
+  raw::ChannelID_t ch = geo->NearestChannel(reco_nu_vtx, plane_no);
+  //std::cout << "nearest channel is " << ch << std::endl;
+
+  // Get channel status
+  const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
+  //std::cout << "ch status " << chanFilt.Status(ch) << std::endl;
+  if( chanFilt.Status(ch) < 4) return true;
+
+  // Now check close wires
+  double new_point_in_tpc[3];
+  for (int z_off = -5; z_off < 5; z_off += 2.5) {
+    new_point_in_tpc[0] = reco_nu_vtx[0];
+    new_point_in_tpc[1] = reco_nu_vtx[1];
+    new_point_in_tpc[2] = reco_nu_vtx[2] + z_off;
+    //std::cout << "trying with point " << new_point_in_tpc[0] << " " << new_point_in_tpc[1] << " " << new_point_in_tpc[2] << std::endl;
+
+    raw::ChannelID_t ch = geo->NearestChannel(new_point_in_tpc, 2);
+    if( chanFilt.Status(ch) < 4) return true;
+  }
+
+  return false;
+
+}
+
+
+
+
 
 
 

@@ -28,7 +28,7 @@
 
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "lardataobj/RecoBase/Hit.h"
-#include "uboone/UBXSec/MyPandoraHelper.h"
+#include "uboone/UBXSec/UBXSecHelper.h"
 
 #include "larevt/CalibrationDBI/Interface/DetPedestalService.h"
 #include "larevt/CalibrationDBI/Interface/DetPedestalProvider.h"
@@ -159,7 +159,7 @@ void DeDxAna::analyze(art::Event const & e) {
     if (track.Length() < 20) continue;
 
     int vtx_ok;
-    if(!MyPandoraHelper::IsCrossingBoundary(track, vtx_ok)) continue;
+    if(!UBXSecHelper::IsCrossingBoundary(track, vtx_ok)) continue;
     std::cout << "vtx_ok " << vtx_ok << std::endl;
     // Understand dead region
     double point_in_tpc[3];

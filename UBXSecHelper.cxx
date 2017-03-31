@@ -29,12 +29,12 @@
 #include "lardataobj/RecoBase/PFParticle.h"
 //#include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 
-#include "uboone/UBXSec/MyPandoraHelper.h"
+#include "uboone/UBXSec/UBXSecHelper.h"
 
 
 
 //___________________________________________________________________________________________________
-void MyPandoraHelper::GetRecoToTrueMatches(art::Event const & e,
+void UBXSecHelper::GetRecoToTrueMatches(art::Event const & e,
                                            std::string _pfp_producer,
                                            std::string _spacepointLabel,
                                            std::string _geantModuleLabel,
@@ -91,7 +91,7 @@ void MyPandoraHelper::GetRecoToTrueMatches(art::Event const & e,
 
 
 //___________________________________________________________________________________________________
-void MyPandoraHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits,
+void UBXSecHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits,
                                            const lar_pandora::HitsToMCParticles &trueHitsToParticles,
                                            lar_pandora::MCParticlesToPFParticles &matchedParticles,
                                            lar_pandora::MCParticlesToHits &matchedHits) 
@@ -103,7 +103,7 @@ void MyPandoraHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits 
 }
 
 //___________________________________________________________________________________________________
-void MyPandoraHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits,
+void UBXSecHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits,
                                            const lar_pandora::HitsToMCParticles &trueHitsToParticles,
                                            lar_pandora::MCParticlesToPFParticles &matchedParticles,
                                            lar_pandora::MCParticlesToHits &matchedHits,
@@ -181,7 +181,7 @@ void MyPandoraHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits 
 
 
 //______________________________________________________________________________________
-void MyPandoraHelper::GetTPCObjects(art::Event const & e, 
+void UBXSecHelper::GetTPCObjects(art::Event const & e, 
                                     std::string _particleLabel, 
                                     std::vector<lar_pandora::PFParticleVector> & pfp_v_v, 
                                     std::vector<lar_pandora::TrackVector> & track_v_v){
@@ -207,7 +207,7 @@ void MyPandoraHelper::GetTPCObjects(art::Event const & e,
 
 
 //____________________________________________________________
-void MyPandoraHelper::GetNuVertexFromTPCObject(art::Event const & e, 
+void UBXSecHelper::GetNuVertexFromTPCObject(art::Event const & e, 
                                                std::string _particleLabel,
                                                lar_pandora::PFParticleVector pfp_v, 
                                                double *reco_nu_vtx){
@@ -241,7 +241,7 @@ void MyPandoraHelper::GetNuVertexFromTPCObject(art::Event const & e,
 
 
 //_________________________________________________________________
-art::Ptr<recob::PFParticle> MyPandoraHelper::GetNuPFP(lar_pandora::PFParticleVector pfp_v){
+art::Ptr<recob::PFParticle> UBXSecHelper::GetNuPFP(lar_pandora::PFParticleVector pfp_v){
 
   for (unsigned int pfp = 0; pfp < pfp_v.size(); pfp++) {
 
@@ -260,7 +260,7 @@ art::Ptr<recob::PFParticle> MyPandoraHelper::GetNuPFP(lar_pandora::PFParticleVec
 
 
 //______________________________________________________________________________________
-void MyPandoraHelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, 
+void UBXSecHelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, 
                                     lar_pandora::PFParticlesToTracks pfParticleToTrackMap, 
                                     lar_pandora::PFParticlesToVertices  pfParticleToVertexMap, 
                                     std::vector<lar_pandora::PFParticleVector> & pfp_v_v, 
@@ -306,7 +306,7 @@ void MyPandoraHelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList
 
 
 //______________________________________________________________________________________________________________________________________
-void MyPandoraHelper::CollectTracksAndPFP(lar_pandora::PFParticlesToTracks pfParticleToTrackMap,
+void UBXSecHelper::CollectTracksAndPFP(lar_pandora::PFParticlesToTracks pfParticleToTrackMap,
                                           lar_pandora::PFParticleVector pfParticleList,
                                           art::Ptr<recob::PFParticle> particle,
                                           lar_pandora::PFParticleVector &pfp_v,
@@ -338,7 +338,7 @@ void MyPandoraHelper::CollectTracksAndPFP(lar_pandora::PFParticlesToTracks pfPar
 
 
 //______________________________________________________________________________________________________________________________________
-bool MyPandoraHelper::InFV(double * nu_vertex_xyz){
+bool UBXSecHelper::InFV(double * nu_vertex_xyz){
 
   double x = nu_vertex_xyz[0];
   double y = nu_vertex_xyz[1];
@@ -362,7 +362,7 @@ bool MyPandoraHelper::InFV(double * nu_vertex_xyz){
 
 
 //__________________________________________________________________________
-int MyPandoraHelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP, lar_pandora::PFParticleVector pfp_v) {
+int UBXSecHelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP, lar_pandora::PFParticleVector pfp_v) {
 
   bool isFromNu = false;
   int nuOrigin = 0;
@@ -393,7 +393,7 @@ int MyPandoraHelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neu
 
 //______________________________________________________________________________
 
-void MyPandoraHelper::GetNumberOfHitsPerPlane(art::Event const & e,
+void UBXSecHelper::GetNumberOfHitsPerPlane(art::Event const & e,
                                               std::string _particleLabel,
                                               lar_pandora::TrackVector track_v,
                                               int & nhits_u, 
@@ -427,7 +427,7 @@ void MyPandoraHelper::GetNumberOfHitsPerPlane(art::Event const & e,
 }
 
 //_________________________________________________________________________________
-bool MyPandoraHelper::IsCrossingTopBoundary(recob::Track track, int & vtx_ok){
+bool UBXSecHelper::IsCrossingTopBoundary(recob::Track track, int & vtx_ok){
 
   double vtx[3];
   vtx[0] = track.Vertex().X();
@@ -454,7 +454,7 @@ bool MyPandoraHelper::IsCrossingTopBoundary(recob::Track track, int & vtx_ok){
 }
 
 //_________________________________________________________________________________
-bool MyPandoraHelper::IsCrossingBoundary(recob::Track track, int & vtx_ok){
+bool UBXSecHelper::IsCrossingBoundary(recob::Track track, int & vtx_ok){
 
   double vtx[3];
   vtx[0] = track.Vertex().X();
@@ -483,7 +483,7 @@ bool MyPandoraHelper::IsCrossingBoundary(recob::Track track, int & vtx_ok){
 
 
 //_________________________________________________________________________________
-bool MyPandoraHelper::GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v, recob::Track & out_track) {
+bool UBXSecHelper::GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v, recob::Track & out_track) {
 
   if (track_v.size() == 0) {
     return false;
@@ -516,20 +516,26 @@ bool MyPandoraHelper::GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v
 
 
 //_________________________________________________________________________________
-bool MyPandoraHelper::PointIsCloseToDeadRegion(double *reco_nu_vtx, int plane_no){
+bool UBXSecHelper::PointIsCloseToDeadRegion(double *reco_nu_vtx, int plane_no){
 
   ::art::ServiceHandle<geo::Geometry> geo;
 
   // Get nearest channel
   raw::ChannelID_t ch = geo->NearestChannel(reco_nu_vtx, plane_no);
-  //std::cout << "nearest channel is " << ch << std::endl;
+  std::cout << "nearest channel is " << ch << std::endl;
 
   // Get channel status
   const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
-  //std::cout << "ch status " << chanFilt.Status(ch) << std::endl;
+  std::cout << "ch status " << chanFilt.Status(ch) << std::endl;
   if( chanFilt.Status(ch) < 4) return true;
 
   // Now check close wires
+  for(unsigned int new_ch = ch - 5; new_ch < ch - 5 + 11; new_ch++){
+    std::cout << "now trying with channel " << new_ch << std::endl;
+    if( chanFilt.Status(new_ch) < 4 ) return true;
+  }
+
+/*
   double new_point_in_tpc[3];
   for (int z_off = -5; z_off < 5; z_off += 2.5) {
     new_point_in_tpc[0] = reco_nu_vtx[0];
@@ -540,6 +546,7 @@ bool MyPandoraHelper::PointIsCloseToDeadRegion(double *reco_nu_vtx, int plane_no
     raw::ChannelID_t ch = geo->NearestChannel(new_point_in_tpc, 2);
     if( chanFilt.Status(ch) < 4) return true;
   }
+*/
 
   return false;
 

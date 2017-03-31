@@ -44,7 +44,7 @@
 #include "uboone/LLSelectionTool/OpT0Finder/Algorithms/LightPath.h"
 #include "uboone/LLSelectionTool/OpT0Finder/Algorithms/PhotonLibHypothesis.h"
 
-#include "uboone/UBXSec/MyPandoraHelper.h"
+#include "uboone/UBXSec/UBXSecHelper.h"
 
 #include "TTree.h"
 
@@ -273,7 +273,7 @@ void CosmicFlashMatch::produce(art::Event & e)
   std::vector<lar_pandora::TrackVector     > track_v_v;
   std::vector<lar_pandora::PFParticleVector> pfp_v_v;
 
-  MyPandoraHelper::GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
+  UBXSecHelper::GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
 
   if(_debug) std::cout << " For this event we have " << track_v_v.size() << " pandora slices." << std::endl;
 

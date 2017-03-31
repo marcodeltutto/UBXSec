@@ -44,7 +44,7 @@
 #include "uboone/LLSelectionTool/OpT0Finder/Algorithms/LightPath.h"
 #include "uboone/LLSelectionTool/OpT0Finder/Algorithms/PhotonLibHypothesis.h"
 
-#include "uboone/UBXSec/MyPandoraHelper.h"
+#include "uboone/UBXSec/UBXSecHelper.h"
 
 #include "TTree.h"
 
@@ -266,7 +266,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
   std::vector<flashana::Flash_t> xfixed_hypo_v;
   std::vector<double> xfixed_chi2_v, xfixed_ll_v;
 
-  MyPandoraHelper::GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
+  UBXSecHelper::GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
 
   if(_debug) std::cout << " For this event we have " << track_v_v.size() << " pandora slices." << std::endl;
   xfixed_hypo_v.resize(track_v_v.size());
@@ -384,7 +384,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
  
   int iList = 0; // 1 nu int per spill
   double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),mclist[iList]->GetNeutrino().Nu().Vy(),mclist[iList]->GetNeutrino().Nu().Vz()}; 
-  if (MyPandoraHelper::InFV(truth_nu_vtx)) _fv = 1;
+  if (UBXSecHelper::InFV(truth_nu_vtx)) _fv = 1;
   else _fv = 0;
 
   _ccnc    = mclist[iList]->GetNeutrino().CCNC();

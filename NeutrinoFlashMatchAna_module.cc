@@ -33,7 +33,7 @@
 #include "lardataobj/AnalysisBase/T0.h"
 
 #include "lardataobj/RecoBase/PFParticle.h"
-#include "uboone/UBXSec/MyPandoraHelper.h"
+#include "uboone/UBXSec/UBXSecHelper.h"
 
 #include "TString.h"
 #include "TTree.h"
@@ -266,7 +266,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   lar_pandora::MCParticlesToHits        matchedParticleHits;
 
   // --- Do the matching
-  MyPandoraHelper::GetRecoToTrueMatches(recoParticlesToHits, 
+  UBXSecHelper::GetRecoToTrueMatches(recoParticlesToHits, 
                                         trueHitsToParticles, 
                                         matchedParticles, 
                                         matchedParticleHits);
@@ -300,7 +300,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
       end[0] = mc_par->EndX();
       end[1] = mc_par->EndY();
       end[2] = mc_par->EndZ();
-      if ( (mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13) && MyPandoraHelper::InFV(end) ){
+      if ( (mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13) && UBXSecHelper::InFV(end) ){
         std::cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Is stopping muon" << std::endl;
       }
          
@@ -392,7 +392,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
          double start[3] = {_mc_muon_start_x, _mc_muon_start_y, _mc_muon_start_z};
          double stop[3]  = {_mc_muon_end_x,   _mc_muon_end_y,   _mc_muon_end_z};
 
-         if (MyPandoraHelper::InFV(start) && MyPandoraHelper::InFV(stop))
+         if (UBXSecHelper::InFV(start) && UBXSecHelper::InFV(stop))
            _mc_muon_contained = 1;
        }  
      }
@@ -520,7 +520,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
 
   int iList = 0; // 1 nu int per spill
   double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),mclist[iList]->GetNeutrino().Nu().Vy(),mclist[iList]->GetNeutrino().Nu().Vz()};
-  if (MyPandoraHelper::InFV(truth_nu_vtx)) _fv = 1;
+  if (UBXSecHelper::InFV(truth_nu_vtx)) _fv = 1;
   else _fv = 0;
 
   _ccnc    = mclist[iList]->GetNeutrino().CCNC();
@@ -534,7 +534,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   std::vector<lar_pandora::TrackVector     > track_v_v;
   std::vector<lar_pandora::PFParticleVector> pfp_v_v;
 
-  MyPandoraHelper::GetTPCObjects(e, _pfp_producer, pfp_v_v, track_v_v);
+  UBXSecHelper::GetTPCObjects(e, _pfp_producer, pfp_v_v, track_v_v);
 
   _nslices = pfp_v_v.size();
   _slc_flsmatch_score.resize(_nslices, -9999);
@@ -556,29 +556,29 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
   _slc_crosses_top_boundary.resize(_nslices, -9999);
   _slc_nuvtx_closetodeadregion.resize(_nslices, -9999);
     
-  std::cout << "Preparing to save" << std::endl;
+  std::cout << "UBXSec - SAVING INFORMATION" << std::endl;
   for (unsigned int slice = 0; slice < pfp_v_v.size(); slice++){
-    std::cout << "Slice" << slice << std::endl;
+    std::cout << ">>> SLICE" << slice << std::endl;
 
     // Slice origin (0 is neutrino, 1 is cosmic)
-    _slc_origin[slice] = MyPandoraHelper::GetSliceOrigin(neutrinoOriginPFP, pfp_v_v[slice]);
+    _slc_origin[slice] = UBXSecHelper::GetSliceOrigin(neutrinoOriginPFP, pfp_v_v[slice]);
 
     // Reco vertex
     double reco_nu_vtx[3];
-    MyPandoraHelper::GetNuVertexFromTPCObject(e, _pfp_producer, pfp_v_v[slice], reco_nu_vtx);
+    UBXSecHelper::GetNuVertexFromTPCObject(e, _pfp_producer, pfp_v_v[slice], reco_nu_vtx);
     _slc_nuvtx_x[slice] = reco_nu_vtx[0];
     _slc_nuvtx_y[slice] = reco_nu_vtx[1];
     _slc_nuvtx_z[slice] = reco_nu_vtx[2];
-    _slc_nuvtx_fv[slice] = (MyPandoraHelper::InFV(reco_nu_vtx) ? 1 : 0);
-    std::cout << "Reco vertex saved" << std::endl;
+    _slc_nuvtx_fv[slice] = (UBXSecHelper::InFV(reco_nu_vtx) ? 1 : 0);
+    std::cout << "    Reco vertex saved" << std::endl;
 
     // Neutrino Flash match
     _slc_flsmatch_score[slice] = -9999;
-    art::Ptr<recob::PFParticle> NuPFP = MyPandoraHelper::GetNuPFP(pfp_v_v[slice]);
-    std::cout << "NuPFP has id " << NuPFP->Self() << std::endl;
+    art::Ptr<recob::PFParticle> NuPFP = UBXSecHelper::GetNuPFP(pfp_v_v[slice]);
+    //std::cout << "NuPFP has id " << NuPFP->Self() << std::endl;
     std::vector<art::Ptr<ubana::FlashMatch>> pfpToFlashMatch_v = pfpToNeutrinoFlashMatchAssns.at(NuPFP.key());
     if (pfpToFlashMatch_v.size() > 1) {
-      std::cout << "More than one flash match per nu pfp!" << std::endl;
+      std::cout << "    More than one flash match per nu pfp!" << std::endl;
       continue;
     } else if (pfpToFlashMatch_v.size() == 0){
     //  continue;
@@ -593,45 +593,42 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
     _slc_flsmatch_cosmic_score[slice] = -9999;
     std::vector<art::Ptr<ubana::FlashMatch>> pfpToCosmicFlashMatch_v = pfpToCosmicFlashMatchAssns.at(NuPFP.key());
     if (pfpToCosmicFlashMatch_v.size() > 1) {
-      std::cout << "More than one flash match per nu pfp!" << std::endl;
+      std::cout << "    More than one flash match per nu pfp!" << std::endl;
       continue;
     } else if (pfpToCosmicFlashMatch_v.size() == 0){
-      std::cout << "PFP to flash match ass for cosmic is zero." << std::endl;
+      std::cout << "    PFP to flash match ass for cosmic is zero." << std::endl;
       //continue;
     } else if (pfpToCosmicFlashMatch_v.size() == 1){
-      std::cout << "pfpToCosmicFlashMatch_v[0]->GetScore() is " << pfpToCosmicFlashMatch_v[0]->GetScore() << std::endl;
-      std::cout << "pfpToCosmicFlashMatch_v[0]->GetT0() is " << pfpToCosmicFlashMatch_v[0]->GetT0() << std::endl;
+      //std::cout << "pfpToCosmicFlashMatch_v[0]->GetScore() is " << pfpToCosmicFlashMatch_v[0]->GetScore() << std::endl;
+      //std::cout << "pfpToCosmicFlashMatch_v[0]->GetT0() is " << pfpToCosmicFlashMatch_v[0]->GetT0() << std::endl;
       _slc_flsmatch_cosmic_score[slice] = pfpToCosmicFlashMatch_v[0]->GetScore();
       _slc_flsmatch_cosmic_t0[slice]    = pfpToCosmicFlashMatch_v[0]->GetT0();
     } else {
-      std::cout << "I don't know what fucking case this is." << std::endl;
+      std::cout << "    I don't know what fucking case this is." << std::endl;
     }
 
     // Hits
     int nhits_u, nhits_v, nhits_w;
-    MyPandoraHelper::GetNumberOfHitsPerPlane(e, _pfp_producer, track_v_v[slice], nhits_u, nhits_v, nhits_w);
+    UBXSecHelper::GetNumberOfHitsPerPlane(e, _pfp_producer, track_v_v[slice], nhits_u, nhits_v, nhits_w);
     _slc_nhits_u[slice] = nhits_u;
     _slc_nhits_v[slice] = nhits_v;
     _slc_nhits_w[slice] = nhits_w;
 
     // Longest track and check boundary
-    std::cout << "HHH before" << std::endl;
     recob::Track lt;
-    if (MyPandoraHelper::GetLongestTrackFromTPCObj(track_v_v[slice], lt)){
-      std::cout << "HHH after" << std::endl;
+    if (UBXSecHelper::GetLongestTrackFromTPCObj(track_v_v[slice], lt)){
       _slc_longesttrack_length[slice] = lt.Length();
       int vtx_ok;
-      _slc_crosses_top_boundary[slice] = (MyPandoraHelper::IsCrossingTopBoundary(lt, vtx_ok) ? 1 : 0);
+      _slc_crosses_top_boundary[slice] = (UBXSecHelper::IsCrossingTopBoundary(lt, vtx_ok) ? 1 : 0);
     } else {
       _slc_longesttrack_length[slice] = -9999;
     }
-    std::cout << "HHH after after" << std::endl;
 
     // ACPT
     _slc_acpt_outoftime[slice] = 0;
     for (unsigned int t = 0; t < track_v_v[slice].size(); t++) {
       if(opfls_ptr_coll_v.at(track_v_v[slice][t].key()).size()>1) {
-        std::cout << "More than 1 association found (ACPT)!" << std::endl;
+        std::cout << "    More than 1 association found (ACPT)!" << std::endl;
         throw std::exception();
       } else if (opfls_ptr_coll_v.at(track_v_v[slice][t].key()).size()==0){
         continue;
@@ -644,7 +641,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
     }
 
     // Channel status
-    _slc_nuvtx_closetodeadregion[slice] = (MyPandoraHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 2) ? 1 : 0);
+    _slc_nuvtx_closetodeadregion[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 2) ? 1 : 0);
 
     /*
     std::cout << "NEW--------------------- pfpToFlashMatch_v.size() " << pfpToFlashMatch_v.size() << std::endl;
@@ -653,7 +650,7 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
       _slc_flsmatch_score[slice] = _fm_score;
     }
     */
-    std::cout << "Flash match saved" << std::endl;
+    std::cout << "UBXSec - INFORMATION SAVED" << std::endl;
   }
 
 

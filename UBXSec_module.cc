@@ -1,11 +1,32 @@
 ////////////////////////////////////////////////////////////////////////
-// Class:       NeutrinoFlashMatchAna
+// Class:       UBXSec
 // Plugin Type: analyzer (art v2_05_00)
-// File:        NeutrinoFlashMatchAna_module.cc
+// File:        UBXSec_module.cc
 //
 // Generated at Fri Jan  27 09:44:39 2017 by Marco Del Tutto using cetskelgen
 // from cetlib version v1_21_00.
 ////////////////////////////////////////////////////////////////////////
+
+/**
+ * \class UBXSec
+ *
+ * \ingroup UBXSec
+ *
+ * \brief Art analyzer module
+ * 
+ *
+ * \author $Author: Marco Del Tutto<marco.deltutto@physics.ox.ac.uk> $
+ *
+ * \version $Revision: 1.0 $
+ *
+ * \date $Date: 2017/03/10 $
+ *
+ * Contact: marco.deltutto@physics.ox.ac.uk
+ *
+ * Created on: Friday, March 10, 2017 at 12:32:31
+ *
+ */
+
 
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
@@ -38,20 +59,20 @@
 #include "TString.h"
 #include "TTree.h"
 
-class NeutrinoFlashMatchAna;
+class UBXSec;
 
 
-class NeutrinoFlashMatchAna : public art::EDAnalyzer {
+class UBXSec : public art::EDAnalyzer {
 public:
-  explicit NeutrinoFlashMatchAna(fhicl::ParameterSet const & p);
+  explicit UBXSec(fhicl::ParameterSet const & p);
   // The compiler-generated destructor is fine for non-base
   // classes without bare pointers or other resource use.
 
   // Plugins should not be copied or assigned.
-  NeutrinoFlashMatchAna(NeutrinoFlashMatchAna const &) = delete;
-  NeutrinoFlashMatchAna(NeutrinoFlashMatchAna &&) = delete;
-  NeutrinoFlashMatchAna & operator = (NeutrinoFlashMatchAna const &) = delete;
-  NeutrinoFlashMatchAna & operator = (NeutrinoFlashMatchAna &&) = delete;
+  UBXSec(UBXSec const &) = delete;
+  UBXSec(UBXSec &&) = delete;
+  UBXSec & operator = (UBXSec const &) = delete;
+  UBXSec & operator = (UBXSec &&) = delete;
 
   // Required functions.
   void analyze(art::Event const & e) override;
@@ -120,7 +141,7 @@ private:
 };
 
 
-NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
+UBXSec::UBXSec(fhicl::ParameterSet const & p)
   :
   EDAnalyzer(p) 
 {
@@ -203,10 +224,10 @@ NeutrinoFlashMatchAna::NeutrinoFlashMatchAna(fhicl::ParameterSet const & p)
 
 }
 
-void NeutrinoFlashMatchAna::analyze(art::Event const & e)
+void UBXSec::analyze(art::Event const & e)
 {
 
-  if(_debug) std::cout << "********** NeutrinoFlashMatchAna starts" << std::endl;
+  if(_debug) std::cout << "********** UBXSec starts" << std::endl;
   if(_debug) std::cout << "event: " << e.id().event() << std::endl;
 
   _run    = e.id().run();
@@ -710,9 +731,9 @@ void NeutrinoFlashMatchAna::analyze(art::Event const & e)
 
   _tree1->Fill();
 
-  if(_debug) std::cout << "********** NeutrinoFlashMatchAna ends" << std::endl;
+  if(_debug) std::cout << "********** UBXSec ends" << std::endl;
 }
 
 
 
-DEFINE_ART_MODULE(NeutrinoFlashMatchAna)
+DEFINE_ART_MODULE(UBXSec)

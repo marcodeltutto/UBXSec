@@ -5,7 +5,7 @@ BEGIN_PROLOG
 #
 
 NeutrinoFlashMatchAna: {
-module_type:                  "NeutrinoFlashMatchAna"
+module_type:                  "UBXSec"
 PFParticleProducer:           "pandoraNu"
 HitProducer:                  "pandoraCosmicHitRemoval"
 GeantModule:                  "largeant"

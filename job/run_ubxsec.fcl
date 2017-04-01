@@ -18,9 +18,9 @@
 #include "neutrinomcflash.fcl"
 #include "neutrinoflashmatch.fcl"
 #include "cosmicflashmatch.fcl"
-#include "neutrinoflashmatchana.fcl"
+#include "ubxsec.fcl"
 
-process_name : NeutrinoFlashMatch      #The process name must NOT contain any underscores
+process_name : UBXSec      #The process name must NOT contain any underscores
 
 services:
 {
@@ -82,7 +82,7 @@ physics:
 
  analyzers:
  {
-   NeutrinoFlashMatchAna: @local::NeutrinoFlashMatchAna
+   UBXSec: @local::UBXSec
  }
 
  #reco: [ saturation, ophitBeam, ophitCosmic, simpleFlashBeam, simpleFlashCosmic, NeutrinoMCFlash, NeutrinoFlashMatch ]
@@ -98,7 +98,7 @@ physics:
  trigger_paths: [reco]
  #trigger_paths: []
 
- ana: [ NeutrinoFlashMatchAna ]
+ ana: [ UBXSec ]
 
  #end_paths is a keyword and contains the paths that do not modify the art::Event, 
  #ie analyzers and output streams.  these all run simultaneously

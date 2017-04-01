@@ -1,9 +1,9 @@
 /**
  * \class ubana::FlashMatch
  *
- * \ingroup OpT0Finder
+ * \ingroup UBXSec
  *
- * \brief Data product to store a flash match result
+ * \brief Data product to store a flash matching results
  * 
  *
  * \author $Author: Marco Del Tutto<marco.deltutto@physics.ox.ac.uk> $

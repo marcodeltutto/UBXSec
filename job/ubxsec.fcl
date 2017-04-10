@@ -4,7 +4,7 @@ BEGIN_PROLOG
 # Module configuration
 #
 
-NeutrinoFlashMatchAna: {
+UBXSec: {
 module_type:                  "UBXSec"
 PFParticleProducer:           "pandoraNu"
 HitProducer:                  "pandoraCosmicHitRemoval"

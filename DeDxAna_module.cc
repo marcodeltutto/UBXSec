@@ -134,7 +134,7 @@ void DeDxAna::analyze(art::Event const & e) {
 
   ::art::ServiceHandle<geo::Geometry> geo;
 
-  // Wire check
+  /* Wire check
   double point_in_tpc[3];
   for (double zpos = 0; zpos < 1000; zpos += 0.3){
 
@@ -144,7 +144,7 @@ void DeDxAna::analyze(art::Event const & e) {
     raw::ChannelID_t ch = geo->NearestChannel(point_in_tpc, 2);
     const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
     std::cout << ">>> this is ch " << ch << "  with status status " << chanFilt.Status(ch) << std::endl;
-  }
+  }*/
 
 
 
@@ -156,7 +156,7 @@ void DeDxAna::analyze(art::Event const & e) {
 
     auto const& track = (*track_h)[trk];
 
-    if (track.Length() < 20) continue;
+    if (track.Length() < 100) continue;
 
     int vtx_ok;
     if(!UBXSecHelper::IsCrossingBoundary(track, vtx_ok)) continue;
@@ -179,11 +179,16 @@ void DeDxAna::analyze(art::Event const & e) {
     // Get channel status
     const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
     std::cout << "ch status " << chanFilt.Status(ch) << std::endl;
-    if( chanFilt.Status(ch) < 3) continue;
+    if( chanFilt.Status(ch) <= 3) continue;
 
     // Now check close wires
-    double new_point_in_tpc[3];
+    //double new_point_in_tpc[3];
     bool bad = false;
+    for(size_t new_ch = ch - 5; new_ch < ch - 5 + 11; new_ch++){
+      std::cout << "now trying with channel " << new_ch << std::endl;
+      if( chanFilt.Status(new_ch) < 4 ) bad = true;
+    }
+    /*
     for (int z_off = -5; z_off < 5; z_off += 2.5) {
       new_point_in_tpc[0] = point_in_tpc[0];
       new_point_in_tpc[1] = point_in_tpc[1];
@@ -193,8 +198,12 @@ void DeDxAna::analyze(art::Event const & e) {
       raw::ChannelID_t ch = geo->NearestChannel(new_point_in_tpc, 2);
       if( chanFilt.Status(ch) < 3) bad = true;
     }
+    */
 
     if (bad) continue;
+
+
+    // Look at dedx along the track
 
     std::vector<const anab::Calorimetry*> calos = calo_track_ass.at(trk);
 
@@ -203,9 +212,78 @@ void DeDxAna::analyze(art::Event const & e) {
       if (!calos[ical]->PlaneID().isValid) continue;
       int planenum = calos[ical]->PlaneID().Plane;
       if (planenum<0||planenum>2) continue;
-      std::cout << "plane " << planenum << std::endl;
-      std::cout << " ke " << calos[ical]->KineticEnergy() << std::endl;
-      std::cout << " range " << calos[ical]->Range() << std::endl;
+      if (planenum != 2) continue;
+
+      // Understand if the calo module flipped the track
+      double dqdx_start = (calos[ical]->dQdx())[0];
+      double dqdx_end   = (calos[ical]->dQdx())[calos[ical]->dQdx().size()-1];
+      bool caloFlippedTrack = dqdx_start < dqdx_end;
+
+      // We want two vectors: one with the residual range and the other with the dedx
+      std::vector<double> res_range, dedx;
+      res_range.resize(calos[ical]->dEdx().size(), -9999);
+      dedx.resize(calos[ical]->dEdx().size(), -9999);
+
+      for(size_t iTrkHit = 0; iTrkHit < calos[ical]->dEdx().size(); ++iTrkHit) {
+        res_range[iTrkHit] = (calos[ical]->ResidualRange())[iTrkHit];
+        dedx[iTrkHit]      = (calos[ical]->dEdx())[iTrkHit];
+      }
+
+      // Now apply the smoothing
+      std::vector<double> res_range_smooth, dedx_smooth;
+      std::vector<double> dedx_temp;
+      std::vector<double> res_range_temp;
+      for (unsigned int irange = 0; irange < res_range.size(); irange++){
+        dedx_temp.emplace_back(dedx[irange]);
+        res_range_temp.emplace_back(res_range[irange]);
+
+        if (irange % 40 == 0) {
+         // Median
+         double median;
+         size_t size = dedx_temp.size();
+         std::sort(dedx_temp.begin(), dedx_temp.end());
+         if (size % 2 == 0){
+          median = (dedx_temp[size/2 - 1] + dedx_temp[size/2]) / 2;
+         }
+         else{
+           median = dedx_temp[size/2];
+         }
+         dedx_smooth.emplace_back(median);
+      
+         double sum = std::accumulate(res_range_temp.begin(), res_range_temp.end(), 0.0);
+         double mean = sum / res_range_temp.size();
+         res_range_smooth.emplace_back(mean);
+      
+         dedx_temp.clear();
+         res_range_temp.clear(); 
+
+        }
+      }
+
+      int nhigher = 0;
+      if ( (vtx_ok == 0 && !caloFlippedTrack) || (vtx_ok == 1 && caloFlippedTrack) ) {
+        // The track start is in the FV, look around this point to see if there is a Bragg peak
+        // This means looking at the region where the residual range is bigger
+        for (size_t range_bin = 0; range_bin < 4; range_bin++) {
+          if (dedx_smooth[range_bin] > 1.9) nhigher ++;
+        }
+      } else {
+        // The end start is in the FV, look around this point to see if there is a Bragg peak
+        // This means looking at the region where the residual range is smaller
+        for (size_t range_bin = res_range_smooth.size()-1; range_bin > res_range_smooth.size()-1-4; range_bin--) {
+          if (dedx_smooth[range_bin] > 1.9) nhigher ++;
+        }
+      }
+
+      bool isStoppingMuon = false;
+      if (nhigher >= 3) isStoppingMuon = true; 
+      
+      if (isStoppingMuon) std::cout << "This is a cosmic stopping muon." << std::endl;
+      else std::cout << "This is NOT a cosmic stopping muon." << std::endl;
+
+      //std::cout << "plane " << planenum << std::endl;
+      //std::cout << " ke " << calos[ical]->KineticEnergy() << std::endl;
+      //std::cout << " range " << calos[ical]->Range() << std::endl;
 
       const size_t NHits = calos[ical] -> dEdx().size();
 
@@ -225,7 +303,7 @@ void DeDxAna::analyze(art::Event const & e) {
     for (unsigned int hit = 0; hit < hit_v.size(); hit++) {
 
       if (hit_v[hit]->View() == 2) {
-        std::cout << "this is hit " << hit << " with channel " << hit_v[hit]->Channel() << " adc is " << hit_v[hit]->Integral() << " Multiplicity " << hit_v[hit]->Multiplicity() << " LocalIndex " << hit_v[hit]->LocalIndex() << " GoodnessOfFit " << hit_v[hit]->GoodnessOfFit() << " SigmaPeakTime " << hit_v[hit]->SigmaPeakTime() << std::endl;
+        //std::cout << "this is hit " << hit << " with channel " << hit_v[hit]->Channel() << " adc is " << hit_v[hit]->Integral() << " Multiplicity " << hit_v[hit]->Multiplicity() << " LocalIndex " << hit_v[hit]->LocalIndex() << " GoodnessOfFit " << hit_v[hit]->GoodnessOfFit() << " SigmaPeakTime " << hit_v[hit]->SigmaPeakTime() << std::endl;
 
         if (trk == 0){
         _hit_ch.emplace_back(hit_v[hit]->Channel());

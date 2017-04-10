@@ -41,6 +41,7 @@
 #include "art/Framework/Services/Optional/TFileDirectory.h"
 #include "canvas/Persistency/Common/FindManyP.h"
 
+#include "lardataobj/MCBase/MCTrack.h"
 #include "lardataobj/RecoBase/OpFlash.h"
 #include "lardataobj/RecoBase/Track.h"
 #include "lardataobj/RecoBase/Cluster.h"
@@ -113,6 +114,7 @@ private:
   double _mc_muon_start_x, _mc_muon_start_y, _mc_muon_start_z;
   double _mc_muon_end_x, _mc_muon_end_y, _mc_muon_end_z;
   int _mc_muon_contained;
+  double _vtx_resolution;
 
   int _nslices;
   std::vector<double> _slc_flsmatch_score, _slc_flsmatch_xfixed_chi2, _slc_flsmatch_xfixed_ll;
@@ -124,14 +126,21 @@ private:
   std::vector<double> _slc_longesttrack_length;
   std::vector<int> _slc_acpt_outoftime;
   std::vector<int> _slc_crosses_top_boundary;
-  std::vector<int> _slc_nuvtx_closetodeadregion;
+  std::vector<int> _slc_nuvtx_closetodeadregion_u, _slc_nuvtx_closetodeadregion_v, _slc_nuvtx_closetodeadregion_w;
+  std::vector<double> _slc_kalman_chi2;
+  std::vector<int> _slc_kalman_ndof;
 
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe;
-  std::vector<std::vector<double>> _beamfls_spec, _slc_flshypo_xfixed_spec;
+  std::vector<std::vector<double>> _beamfls_spec, _slc_flshypo_spec, _slc_flshypo_xfixed_spec;
   std::vector<double> _numc_flash_spec;
   int _nsignal;
   int _is_swtriggered;
+
+  std::vector<double> _mctrk_start_x, _mctrk_start_y, _mctrk_start_z;
+  std::vector<double> _trk_start_x, _trk_start_y, _trk_start_z;
+  std::vector<double> _vtx_x, _vtx_y, _vtx_z;
+  std::vector<double> _tvtx_x, _tvtx_y, _tvtx_z;
 
   TTree* _tree2;
   int _total_matches, _nmatch;
@@ -181,6 +190,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p)
   _tree1->Branch("mc_muon_end_z",      &_mc_muon_end_z,      "mc_muon_end_z/D");
   _tree1->Branch("mc_muon_contained",  &_mc_muon_contained,  "mc_muon_contained/I");
   _tree1->Branch("is_swtriggered",     &_is_swtriggered,     "is_swtriggered/I");
+  _tree1->Branch("vtx_resolution",     &_vtx_resolution,     "vtx_resolution/D");
 
   _tree1->Branch("nslices",            &_nslices,            "nslices/I");
   _tree1->Branch("slc_flsmatch_score", "std::vector<double>", &_slc_flsmatch_score);
@@ -199,15 +209,33 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p)
   _tree1->Branch("slc_longesttrack_length",        "std::vector<double>",    &_slc_longesttrack_length);
   _tree1->Branch("slc_acpt_outoftime", "std::vector<int>",    &_slc_acpt_outoftime);
   _tree1->Branch("slc_crosses_top_boundary", "std::vector<int>",    &_slc_crosses_top_boundary);
-  _tree1->Branch("slc_nuvtx_closetodeadregion",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion);
+  _tree1->Branch("slc_nuvtx_closetodeadregion_u",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion_u);
+  _tree1->Branch("slc_nuvtx_closetodeadregion_v",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion_v);
+  _tree1->Branch("slc_nuvtx_closetodeadregion_w",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion_w);
+  _tree1->Branch("slc_kalman_chi2",  "std::vector<double>", &_slc_kalman_chi2);
+  _tree1->Branch("slc_kalman_ndof",  "std::vector<int>",    &_slc_kalman_ndof);
+
   _tree1->Branch("nbeamfls",           &_nbeamfls,            "nbeamfls/I");
   _tree1->Branch("beamfls_time",       "std::vector<double>", &_beamfls_time);
   _tree1->Branch("beamfls_pe",         "std::vector<double>", &_beamfls_pe);
   _tree1->Branch("beamfls_spec",       "std::vector<std::vector<double>>", &_beamfls_spec);
   _tree1->Branch("numc_flash_spec",    "std::vector<double>", &_numc_flash_spec);
   _tree1->Branch("slc_flshypo_xfixed_spec", "std::vector<std::vector<double>>", &_slc_flshypo_xfixed_spec);
+  _tree1->Branch("slc_flshypo_spec", "std::vector<std::vector<double>>", &_slc_flshypo_spec);
   _tree1->Branch("nsignal",            &_nsignal,             "nsignal/I");
 
+  _tree1->Branch("mctrk_start_x",        "std::vector<double>", &_mctrk_start_x);
+  _tree1->Branch("mctrk_start_y",        "std::vector<double>", &_mctrk_start_y);
+  _tree1->Branch("mctrk_start_z",        "std::vector<double>", &_mctrk_start_z);
+  _tree1->Branch("trk_start_x",        "std::vector<double>", &_trk_start_x);
+  _tree1->Branch("trk_start_y",        "std::vector<double>", &_trk_start_y);
+  _tree1->Branch("trk_start_z",        "std::vector<double>", &_trk_start_z);
+  _tree1->Branch("vtx_x",        "std::vector<double>", &_vtx_x);
+  _tree1->Branch("vtx_y",        "std::vector<double>", &_vtx_y);
+  _tree1->Branch("vtx_z",        "std::vector<double>", &_vtx_z);
+  _tree1->Branch("tvtx_x",        "std::vector<double>", &_tvtx_x);
+  _tree1->Branch("tvtx_y",        "std::vector<double>", &_tvtx_y);
+  _tree1->Branch("tvtx_z",        "std::vector<double>", &_tvtx_z);
 
   _tree2 = fs->make<TTree>("matchtree","");
   _tree2->Branch("run",                &_run,                "run/I");
@@ -530,7 +558,40 @@ void UBXSec::analyze(art::Event const & e)
 
 
 
+  // Kalman Track
+  art::Handle<std::vector<recob::PFParticle> > pfp_h;
+  e.getByLabel(_pfp_producer,pfp_h);
+  if(!pfp_h.isValid()){
+    std::cout << "Track product " << _pfp_producer << " not found..." << std::endl;
+    throw std::exception();
+  }
+  if(pfp_h->empty()) {
+    std::cout << "PFP " << _pfp_producer << " is empty." << std::endl;
+  }
 
+  art::FindManyP<recob::Track> trk_kalman_v(pfp_h, e, "pandoraNuKalmanTrack");
+
+  // Tracks for evd
+  art::Handle<std::vector<recob::Track> > trk_h;
+  e.getByLabel(_pfp_producer,trk_h);
+  if(trk_h.isValid()) {
+    for (size_t n = 0; n < trk_h->size(); n++) {
+      auto const& track = (*trk_h)[n];
+      _trk_start_x.emplace_back(track.Vertex().X());
+      _trk_start_y.emplace_back(track.Vertex().Y());
+      _trk_start_z.emplace_back(track.Vertex().Z());
+    }
+  }
+  art::Handle<std::vector<sim::MCTrack>> mctrk_h;
+  e.getByLabel("mcreco", mctrk_h);
+  if(mctrk_h.isValid()) {
+    for (size_t n = 0; n < mctrk_h->size(); n++) {
+      auto const& mctrack = (*mctrk_h)[n];
+      _mctrk_start_x.emplace_back(mctrack.Start().X());
+      _mctrk_start_y.emplace_back(mctrack.Start().Y());
+      _mctrk_start_z.emplace_back(mctrack.Start().Z()); 
+    }
+  }
 
   // Check if truth nu in is FV
   // Collecting GENIE particles
@@ -547,6 +608,13 @@ void UBXSec::analyze(art::Event const & e)
   _ccnc    = mclist[iList]->GetNeutrino().CCNC();
   _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
   _nu_e    = mclist[iList]->GetNeutrino().Nu().E();
+
+  _tvtx_x.clear(); _tvtx_y.clear(); _tvtx_z.clear();
+  for(size_t n = 0; n < mclist.size(); n++ ) {
+    _tvtx_x.emplace_back(mclist[n]->GetNeutrino().Nu().Vx());
+    _tvtx_y.emplace_back(mclist[n]->GetNeutrino().Nu().Vy());
+    _tvtx_z.emplace_back(mclist[n]->GetNeutrino().Nu().Vz());
+  }
 
   _nsignal = 0;
   if(_nupdg==14 && _ccnc==0 && _fv==1) _nsignal=1; 
@@ -567,6 +635,7 @@ void UBXSec::analyze(art::Event const & e)
   _slc_nuvtx_fv.resize(_nslices);
   _slc_origin.resize(_nslices);
   _slc_flshypo_xfixed_spec.resize(_nslices);
+  _slc_flshypo_spec.resize(_nslices);
   _slc_nhits_u.resize(_nslices, -9999);
   _slc_nhits_v.resize(_nslices, -9999);
   _slc_nhits_w.resize(_nslices, -9999);
@@ -575,9 +644,14 @@ void UBXSec::analyze(art::Event const & e)
   _slc_longesttrack_length.resize(_nslices, -9999);
   _slc_acpt_outoftime.resize(_nslices, -9999);
   _slc_crosses_top_boundary.resize(_nslices, -9999);
-  _slc_nuvtx_closetodeadregion.resize(_nslices, -9999);
-    
+  _slc_nuvtx_closetodeadregion_u.resize(_nslices, -9999);
+  _slc_nuvtx_closetodeadregion_v.resize(_nslices, -9999);
+  _slc_nuvtx_closetodeadregion_w.resize(_nslices, -9999);  
+  _slc_kalman_chi2.resize(_nslices, -9999);
+  _slc_kalman_ndof.resize(_nslices, -9999);  
+
   std::cout << "UBXSec - SAVING INFORMATION" << std::endl;
+  _vtx_resolution = -9999;
   for (unsigned int slice = 0; slice < pfp_v_v.size(); slice++){
     std::cout << ">>> SLICE" << slice << std::endl;
 
@@ -591,7 +665,20 @@ void UBXSec::analyze(art::Event const & e)
     _slc_nuvtx_y[slice] = reco_nu_vtx[1];
     _slc_nuvtx_z[slice] = reco_nu_vtx[2];
     _slc_nuvtx_fv[slice] = (UBXSecHelper::InFV(reco_nu_vtx) ? 1 : 0);
+    //_tvtx_x.emplace_back(reco_nu_vtx[0]);
+    //_tvtx_y.emplace_back(reco_nu_vtx[1]);
+    //_tvtx_z.emplace_back(reco_nu_vtx[2]);
     std::cout << "    Reco vertex saved" << std::endl;
+
+    // Vertex resolution
+    if (_slc_origin[slice] == 0) {
+      _vtx_resolution = sqrt( pow(_slc_nuvtx_y[slice]-_tvtx_y[0], 2) + pow(_slc_nuvtx_z[slice]-_tvtx_z[0], 2) );
+      std::cout << "vts res is " << _vtx_resolution << std::endl;
+      std::cout << "slc y " << _slc_nuvtx_y[slice] << std::endl;
+      std::cout << "slc z " << _slc_nuvtx_z[slice] << std::endl;
+      std::cout << "t y " << _tvtx_y[0] << std::endl;
+      std::cout << "t z " << _tvtx_z[0] << std::endl;
+    } 
 
     // Neutrino Flash match
     _slc_flsmatch_score[slice] = -9999;
@@ -608,6 +695,7 @@ void UBXSec::analyze(art::Event const & e)
       _slc_flsmatch_xfixed_chi2[slice] = pfpToFlashMatch_v[0]->GetXFixedChi2();
       _slc_flsmatch_xfixed_ll[slice]   = pfpToFlashMatch_v[0]->GetXFixedLl();
       _slc_flshypo_xfixed_spec[slice]  = pfpToFlashMatch_v[0]->GetXFixedHypoFlashSpec();
+      _slc_flshypo_spec[slice]         = pfpToFlashMatch_v[0]->GetHypoFlashSpec();
     }
 
     // Cosmic Flash Match
@@ -658,11 +746,29 @@ void UBXSec::analyze(art::Event const & e)
         if (flash_ptr->Time() < 3 || flash_ptr->Time() > 5)
         _slc_acpt_outoftime[slice] = 1;
       }
-      
+    }
+
+    // Track quality
+    _slc_kalman_chi2[slice] = -9999;
+    for (unsigned int t = 0; t < pfp_v_v[slice].size(); t++) {
+      if(trk_kalman_v.at(pfp_v_v[slice][t].key()).size()>1) {
+        std::cout << "TTTTTTTTTTTTTTTT more than one track per PFP, ntracks " << trk_kalman_v.at(pfp_v_v[slice][t].key()).size() << std::endl;
+      } else if (trk_kalman_v.at(pfp_v_v[slice][t].key()).size()==0){
+        continue;
+      } else {
+        art::Ptr<recob::Track> trk_ptr = trk_kalman_v.at(pfp_v_v[slice][t].key()).at(0);
+        std::cout << "TTTTTTTTTTTTTTTT trk_ptr->Chi2() " << trk_ptr->Chi2() << std::endl;
+        _slc_kalman_chi2[slice] = trk_ptr->Chi2();
+        _slc_kalman_ndof[slice] = trk_ptr->Ndof();
+      }
+
+
     }
 
     // Channel status
-    _slc_nuvtx_closetodeadregion[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 2) ? 1 : 0);
+    _slc_nuvtx_closetodeadregion_u[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 0) ? 1 : 0);
+    _slc_nuvtx_closetodeadregion_v[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 1) ? 1 : 0);
+    _slc_nuvtx_closetodeadregion_w[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 2) ? 1 : 0);
 
     /*
     std::cout << "NEW--------------------- pfpToFlashMatch_v.size() " << pfpToFlashMatch_v.size() << std::endl;

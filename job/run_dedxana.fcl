@@ -105,19 +105,19 @@ outputs:
    dataTier:    "reco"
    compressionLevel: 1
    outputCommands: [
-            "keep *_*_*_*",
-            "keep recob::Track_*_pandoraCosmic_*",
-            "drop raw::RawDigits_*_*_*",
-            "drop recob::Cluster_*_*_*",
-            "drop recob::EndPoint2D_*_*_*",
-            "drop recob::Hit_*_*_*",
-            "drop recob::Vertex_*_*_*",
-            "drop recob::Wires_*_*_*",
-            "drop recob::PFParticle_*_*_*",
-            "drop recob::Wire_*_*_*",
-            "drop raw::OpDetWaveform_*_*_*",
-            "drop *_*_*_McRecoAprStage1",
-            "drop *_*_*_DetSim"]
+            "keep *_*_*_*"]
+#            "keep recob::Track_*_pandoraCosmic_*",
+#            "drop raw::RawDigits_*_*_*",
+#            "drop recob::Cluster_*_*_*",
+#            "drop recob::EndPoint2D_*_*_*",
+#            "drop recob::Hit_*_*_*",
+#            "drop recob::Vertex_*_*_*",
+#            "drop recob::Wires_*_*_*",
+#            "drop recob::PFParticle_*_*_*",
+#            "drop recob::Wire_*_*_*",
+#            "drop raw::OpDetWaveform_*_*_*",
+#            "drop *_*_*_McRecoAprStage1",
+#            "drop *_*_*_DetSim"]
    }
 }
 

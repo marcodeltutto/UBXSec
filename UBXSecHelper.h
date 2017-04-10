@@ -1,3 +1,24 @@
+/**
+ * \class UBXSecHelper
+ *
+ * \ingroup UBXSec
+ *
+ * \brief An helper class for UBXSec
+ * 
+ *
+ * \author $Author: Marco Del Tutto<marco.deltutto@physics.ox.ac.uk> $
+ *
+ * \version $Revision: 1.0 $
+ *
+ * \date $Date: 2017/03/02 $
+ *
+ * Contact: marco.deltutto@physics.ox.ac.uk
+ *
+ * Created on: Friday, February 03, 2017 at 17:24:25
+ *
+ */
+
+
 #ifndef MY_PANDORA_HELPER_H
 #define MY_PANDORA_HELPER_H
 

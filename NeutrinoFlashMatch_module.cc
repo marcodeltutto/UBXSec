@@ -28,7 +28,6 @@
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/OpFlash.h"
 #include "lardataobj/AnalysisBase/FlashMatch.h"
-#include "uboone/UBXSec/FlashMatch.h" // new!
 #include "nusimdata/SimulationBase/MCTruth.h"
 
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
@@ -44,6 +43,7 @@
 #include "uboone/LLSelectionTool/OpT0Finder/Algorithms/LightPath.h"
 #include "uboone/LLSelectionTool/OpT0Finder/Algorithms/PhotonLibHypothesis.h"
 
+#include "uboone/UBXSec/FlashMatch.h"
 #include "uboone/UBXSec/UBXSecHelper.h"
 
 #include "TTree.h"
@@ -65,10 +65,21 @@ public:
   NeutrinoFlashMatch & operator = (NeutrinoFlashMatch const &) = delete;
   NeutrinoFlashMatch & operator = (NeutrinoFlashMatch &&) = delete;
 
-  void GetTPCObjects(lar_pandora::PFParticleVector, lar_pandora::PFParticlesToTracks, lar_pandora::PFParticlesToVertices, std::vector<lar_pandora::PFParticleVector> &, std::vector<lar_pandora::TrackVector> &);
+  //void GetTPCObjects(lar_pandora::PFParticleVector, lar_pandora::PFParticlesToTracks, lar_pandora::PFParticlesToVertices, std::vector<lar_pandora::PFParticleVector> &, std::vector<lar_pandora::TrackVector> &);
+
+  /**
+   *  @brief Takes a vector of recob::Tracks and returns a QCluster made out from all the tracks in the vector
+   *
+   */
   flashana::QCluster_t GetQCluster(std::vector<art::Ptr<recob::Track>>);
-  void CollectTracksAndPFP(lar_pandora::PFParticlesToTracks, lar_pandora::PFParticleVector, art::Ptr<recob::PFParticle>,  lar_pandora::PFParticleVector &, lar_pandora::TrackVector &);
-  int  GetTrajectory(std::vector<art::Ptr<recob::Track>>, ::geoalgo::Trajectory &);
+  //void CollectTracksAndPFP(lar_pandora::PFParticlesToTracks, lar_pandora::PFParticleVector, art::Ptr<recob::PFParticle>,  lar_pandora::PFParticleVector &, lar_pandora::TrackVector &);
+
+  //int  GetTrajectory(std::vector<art::Ptr<recob::Track>>, ::geoalgo::Trajectory &);
+
+  /**
+   *  @brief Test method to calculate the flash-TPCobject compatibilty at a fixed x position
+   *
+   */
   flashana::Flash_t Trial(std::vector<art::Ptr<recob::Track>> track_v, flashana::Flash_t flashBeam, double & _chi2, double & _ll); 
 
   // Required functions.
@@ -76,11 +87,11 @@ public:
 
 private:
   std::string _particleLabel;          ///<
-  std::string _opflash_producer_beam;
-  std::string _nuMcFlash_producer;
-  double _flash_trange_start;
-  double _flash_trange_end;
-  bool _debug;
+  std::string _opflash_producer_beam;  ///<
+  std::string _nuMcFlash_producer;     ///<
+  double _flash_trange_start;          ///<
+  double _flash_trange_end;            ///<
+  bool _debug;                         ///<
 
   std::vector<::flashana::Flash_t>    beam_flashes;
 
@@ -140,7 +151,7 @@ NeutrinoFlashMatch::NeutrinoFlashMatch(fhicl::ParameterSet const & p)
 void NeutrinoFlashMatch::produce(art::Event & e)
 {
 
-  std::cout << "NeutrinoFlashMatch starts." << std::endl;
+  if(_debug) std::cout << "NeutrinoFlashMatch starts." << std::endl;
 
   // Instantiate the output
   std::unique_ptr< std::vector<ubana::FlashMatch>>                   flashMatchTrackVector      (new std::vector<ubana::FlashMatch>);
@@ -218,17 +229,20 @@ void NeutrinoFlashMatch::produce(art::Event & e)
   }
 
 
-  //Emplace flash to Flash Matching Manager
+  // Emplace flash to Flash Matching Manager
   ::flashana::Flash_t f = beam_flashes[0];
   _mgr.Emplace(std::move(f));
 
 
-  //Vectors and maps we will use to store Pandora information
-  lar_pandora::PFParticleVector pfParticleList;              //vector of PFParticles
-  lar_pandora::PFParticlesToClusters pfParticleToClusterMap; //PFParticle-to-cluster map
+  // Vectors and maps we will use to store Pandora information
+  lar_pandora::PFParticleVector pfParticleList;              
+  lar_pandora::PFParticlesToClusters pfParticleToClusterMap; 
 
-  //Use LArPandoraHelper functions to collect Pandora information
-  lar_pandora::LArPandoraHelper::CollectPFParticles(e, _particleLabel, pfParticleList, pfParticleToClusterMap); //collect PFParticles and build map PFParticles to Clusters
+  // Collect PFParticles and build map PFParticles to Clusters
+  lar_pandora::LArPandoraHelper::CollectPFParticles(e, 
+                                                    _particleLabel, 
+                                                    pfParticleList, 
+                                                    pfParticleToClusterMap); 
 
   // Collect vertices and tracks
   lar_pandora::VertexVector           allPfParticleVertices;
@@ -239,7 +253,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
   lar_pandora::LArPandoraHelper::CollectTracks(e, _particleLabel, allPfParticleTracks, pfParticleToTrackMap);
 
 
-  if(!e.isRealData()){
+  if(_debug && !e.isRealData()){
     // Also save the neutrino MC flash
     ::art::Handle<std::vector<recob::OpFlash> > nuMcflash_h;
     e.getByLabel(_nuMcFlash_producer,nuMcflash_h);
@@ -257,18 +271,20 @@ void NeutrinoFlashMatch::produce(art::Event & e)
   }
 
 
+
   // ********************
   // Construct TPC Objects
   // ********************
 
-  std::vector<lar_pandora::TrackVector     > track_v_v;
-  std::vector<lar_pandora::PFParticleVector> pfp_v_v;
+  std::vector<lar_pandora::TrackVector     > track_v_v; // the TPC obj as vector of tracks
+  std::vector<lar_pandora::PFParticleVector> pfp_v_v;   // the TPC obj as vector of PFP
   std::vector<flashana::Flash_t> xfixed_hypo_v;
   std::vector<double> xfixed_chi2_v, xfixed_ll_v;
 
   UBXSecHelper::GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
 
-  if(_debug) std::cout << " For this event we have " << track_v_v.size() << " pandora slices." << std::endl;
+  if(_debug) std::cout << "For this event we have " << track_v_v.size() << " pandora slices." << std::endl;
+
   xfixed_hypo_v.resize(track_v_v.size());
   xfixed_chi2_v.resize(track_v_v.size());
   xfixed_ll_v.resize(track_v_v.size());
@@ -356,7 +372,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     fm.SetEstimatedX          ( _qll_xmin[_matchid] );
     fm.SetHypoFlashSpec       ( _hypo_flash_spec[_matchid] );
     fm.SetRecoFlashSpec       ( _beam_flash_spec );
-    fm.SetMCFlashSpec         ( _numc_flash_spec );
+    //fm.SetMCFlashSpec         ( _numc_flash_spec );
     fm.SetXFixedHypoFlashSpec ( _xfixed_hypo_spec );
     fm.SetXFixedChi2          ( _xfixed_chi2 );
     fm.SetXFixedLl            ( _xfixed_ll );
@@ -373,33 +389,33 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
 
 
-
-
-  // Check if truth nu in is FV
-  // Collecting GENIE particles
-  art::Handle< std::vector<simb::MCTruth> > mctruthListHandle;
-  std::vector<art::Ptr<simb::MCTruth> > mclist;
-  if (e.getByLabel("generator",mctruthListHandle))
-    art::fill_ptr_vector(mclist, mctruthListHandle);
+  if (_debug && !e.isRealData()) {
+    // Check if truth nu in is FV
+    // Collecting GENIE particles
+    art::Handle< std::vector<simb::MCTruth> > mctruthListHandle;
+    std::vector<art::Ptr<simb::MCTruth> > mclist;
+    if (e.getByLabel("generator",mctruthListHandle))
+      art::fill_ptr_vector(mclist, mctruthListHandle);
  
-  int iList = 0; // 1 nu int per spill
-  double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),mclist[iList]->GetNeutrino().Nu().Vy(),mclist[iList]->GetNeutrino().Nu().Vz()}; 
-  if (UBXSecHelper::InFV(truth_nu_vtx)) _fv = 1;
-  else _fv = 0;
+    int iList = 0; // 1 nu int per spill
+    double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),mclist[iList]->GetNeutrino().Nu().Vy(),mclist[iList]->GetNeutrino().Nu().Vz()}; 
+    if (UBXSecHelper::InFV(truth_nu_vtx)) _fv = 1;
+    else _fv = 0;
 
-  _ccnc    = mclist[iList]->GetNeutrino().CCNC();
-  _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
+    _ccnc    = mclist[iList]->GetNeutrino().CCNC();
+    _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
+  }
 
   if (_debug) _tree1->Fill();
 
-    std::cout << "NeutrinoFlashMatch ends." << std::endl;
+  if (_debug) std::cout << "NeutrinoFlashMatch ends." << std::endl;
 }
 
 
 
 
 //______________________________________________________________________________________________________________________________________
-void NeutrinoFlashMatch::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices  pfParticleToVertexMap, std::vector<lar_pandora::PFParticleVector> & pfp_v_v, std::vector<lar_pandora::TrackVector> & track_v_v) {
+/*void NeutrinoFlashMatch::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices  pfParticleToVertexMap, std::vector<lar_pandora::PFParticleVector> & pfp_v_v, std::vector<lar_pandora::TrackVector> & track_v_v) {
 
   track_v_v.clear();
   pfp_v_v.clear();
@@ -436,6 +452,7 @@ void NeutrinoFlashMatch::GetTPCObjects(lar_pandora::PFParticleVector pfParticleL
   } // end pfp loop
 
 }
+*/
 
 
 
@@ -443,8 +460,7 @@ void NeutrinoFlashMatch::GetTPCObjects(lar_pandora::PFParticleVector pfParticleL
 
 
 
-
-
+/*
 //______________________________________________________________________________________________________________________________________
 void NeutrinoFlashMatch::CollectTracksAndPFP(lar_pandora::PFParticlesToTracks pfParticleToTrackMap,
                                              lar_pandora::PFParticleVector pfParticleList,
@@ -474,7 +490,7 @@ void NeutrinoFlashMatch::CollectTracksAndPFP(lar_pandora::PFParticlesToTracks pf
   }
 
 }
-
+*/
 
 //______________________________________________________________________________________________________________________________________
 flashana::QCluster_t NeutrinoFlashMatch::GetQCluster(std::vector<art::Ptr<recob::Track>> track_v) {

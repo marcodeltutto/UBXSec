@@ -31,6 +31,8 @@ static void \hyperlink{classUBXSecHelper_ab441342f0c71741e353f323a26f27728}{\-Co
 \begin{DoxyCompactList}\small\item\em \-Gets all the tracks and \-P\-F\-P for a single \-Pandora slice. \end{DoxyCompactList}\item 
 static void \hyperlink{classUBXSecHelper_a0ffc9245fc9813c18a1880d7e6f0aefe}{\-Get\-Nu\-Vertex\-From\-T\-P\-C\-Object} (art\-::\-Event const \&e, std\-::string \-\_\-particle\-Label, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v, double $\ast$reco\-\_\-nu\-\_\-vtx)
 \begin{DoxyCompactList}\small\item\em \-Returns the nu recon vertex from a \-T\-P\-C object. \end{DoxyCompactList}\item 
+static void \hyperlink{classUBXSecHelper_a092b41510117ee216ea323ea46695e1b}{\-Get\-Nu\-Vertex\-From\-T\-P\-C\-Object} (art\-::\-Event const \&e, std\-::string \-\_\-particle\-Label, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v, recob\-::\-Vertex \&reco\-\_\-nu\-\_\-vtx)
+\begin{DoxyCompactList}\small\item\em \-Returns the nu recon vertex from a \-T\-P\-C object. \end{DoxyCompactList}\item 
 static art\-::\-Ptr\*
 $<$ recob\-::\-P\-F\-Particle $>$ \hyperlink{classUBXSecHelper_a1803584104e1b6f618fe86b28aec1927}{\-Get\-Nu\-P\-F\-P} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v)
 \begin{DoxyCompactList}\small\item\em \-Returns the nu \-P\-F\-P from a \-T\-P\-C object. \end{DoxyCompactList}\item 
@@ -198,7 +200,32 @@ static bool \hyperlink{classUBXSecHelper_a7df598dfbdfdb620737fd69297e67faf}{\-Po
 \hline
 {\em pfp\-\_\-v} & the \-T\-P\-C object (vector of \-P\-F\-P) \\
 \hline
-{\em reco\-\_\-nu} & output, the nu vertex \\
+{\em reco\-\_\-nu\-\_\-vtx} & output, the nu vertex (three dimensional array\-: x, y, z) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_a092b41510117ee216ea323ea46695e1b}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Get\-Nu\-Vertex\-From\-T\-P\-C\-Object@{\-Get\-Nu\-Vertex\-From\-T\-P\-C\-Object}}
+\index{\-Get\-Nu\-Vertex\-From\-T\-P\-C\-Object@{\-Get\-Nu\-Vertex\-From\-T\-P\-C\-Object}!UBXSecHelper@{\-U\-B\-X\-Sec\-Helper}}
+\subsubsection[{\-Get\-Nu\-Vertex\-From\-T\-P\-C\-Object}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-U\-B\-X\-Sec\-Helper\-::\-Get\-Nu\-Vertex\-From\-T\-P\-C\-Object} (
+\begin{DoxyParamCaption}
+\item[{art\-::\-Event const \&}]{e, }
+\item[{std\-::string}]{\-\_\-particle\-Label, }
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pfp\-\_\-v, }
+\item[{recob\-::\-Vertex \&}]{reco\-\_\-nu\-\_\-vtx}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}\label{classUBXSecHelper_a092b41510117ee216ea323ea46695e1b}
+
+
+\-Returns the nu recon vertex from a \-T\-P\-C object. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em e} & the \-A\-R\-T event \\
+\hline
+{\em \-\_\-particle\-Label} & the \-P\-F\-P procuder module \\
+\hline
+{\em pfp\-\_\-v} & the \-T\-P\-C object (vector of \-P\-F\-P) \\
+\hline
+{\em reco\-\_\-nu\-\_\-vtx} & output, the nu vertex (recob\-::\-Vertex) \\
 \hline
 \end{DoxyParams}
 \hypertarget{classUBXSecHelper_a0708dbe6fb5f3ea0f200362887473e36}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Get\-Reco\-To\-True\-Matches@{\-Get\-Reco\-To\-True\-Matches}}

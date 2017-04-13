@@ -47,6 +47,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -85,6 +86,7 @@ This is the complete list of members for <a class="el" href="classUBXSecHelper.h
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a5d811318d7fb66ab5e1816453c017e63">GetNumberOfHitsPerPlane</a>(art::Event const &amp;e, std::string _particleLabel, lar_pandora::TrackVector track_v, int &amp;nhits_u, int &amp;nhits_v, int &amp;nhits_w)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a1803584104e1b6f618fe86b28aec1927">GetNuPFP</a>(lar_pandora::PFParticleVector pfp_v)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a0ffc9245fc9813c18a1880d7e6f0aefe">GetNuVertexFromTPCObject</a>(art::Event const &amp;e, std::string _particleLabel, lar_pandora::PFParticleVector pfp_v, double *reco_nu_vtx)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a092b41510117ee216ea323ea46695e1b">GetNuVertexFromTPCObject</a>(art::Event const &amp;e, std::string _particleLabel, lar_pandora::PFParticleVector pfp_v, recob::Vertex &amp;reco_nu_vtx)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a0708dbe6fb5f3ea0f200362887473e36">GetRecoToTrueMatches</a>(const lar_pandora::PFParticlesToHits &amp;recoParticlesToHits, const lar_pandora::HitsToMCParticles &amp;trueHitsToParticles, lar_pandora::MCParticlesToPFParticles &amp;matchedParticles, lar_pandora::MCParticlesToHits &amp;matchedHits)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a111c32be3cab634ffacbfa03e7ea789b">GetRecoToTrueMatches</a>(const lar_pandora::PFParticlesToHits &amp;recoParticlesToHits, const lar_pandora::HitsToMCParticles &amp;trueHitsToParticles, lar_pandora::MCParticlesToPFParticles &amp;matchedParticles, lar_pandora::MCParticlesToHits &amp;matchedHits, PFParticleSet &amp;recoVeto, MCParticleSet &amp;trueVeto, bool _recursiveMatching)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>GetRecoToTrueMatches</b>(art::Event const &amp;e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &amp;matchedParticles, lar_pandora::MCParticlesToHits &amp;matchedHits) (defined in <a class="el" href="classUBXSecHelper.html">UBXSecHelper</a>)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td></td></tr>
@@ -101,7 +103,7 @@ This is the complete list of members for <a class="el" href="classUBXSecHelper.h
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

@@ -47,6 +47,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -79,7 +80,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a>  </div>
   <div class="headertitle">
-<div class="title">UBXSecHelper Class Reference</div>  </div>
+<div class="title">UBXSecHelper Class Reference<div class="ingroups"><a class="el" href="group__UBXSec.html">UBXSec</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 <!-- doxytag: class="UBXSecHelper" -->
@@ -108,6 +109,8 @@ Static Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets all the tracks and PFP for a single Pandora slice.  <a href="#ab441342f0c71741e353f323a26f27728"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a0ffc9245fc9813c18a1880d7e6f0aefe">GetNuVertexFromTPCObject</a> (art::Event const &amp;e, std::string _particleLabel, lar_pandora::PFParticleVector pfp_v, double *reco_nu_vtx)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the nu recon vertex from a TPC object.  <a href="#a0ffc9245fc9813c18a1880d7e6f0aefe"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a092b41510117ee216ea323ea46695e1b">GetNuVertexFromTPCObject</a> (art::Event const &amp;e, std::string _particleLabel, lar_pandora::PFParticleVector pfp_v, recob::Vertex &amp;reco_nu_vtx)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the nu recon vertex from a TPC object.  <a href="#a092b41510117ee216ea323ea46695e1b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static art::Ptr<br class="typebreak"/>
 &lt; recob::PFParticle &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a1803584104e1b6f618fe86b28aec1927">GetNuPFP</a> (lar_pandora::PFParticleVector pfp_v)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the nu PFP from a TPC object.  <a href="#a1803584104e1b6f618fe86b28aec1927"></a><br/></td></tr>
@@ -362,7 +365,57 @@ Static Public Member Functions</h2></td></tr>
     <tr><td class="paramname">e</td><td>the ART event </td></tr>
     <tr><td class="paramname">_particleLabel</td><td>the PFP procuder module </td></tr>
     <tr><td class="paramname">pfp_v</td><td>the TPC object (vector of PFP) </td></tr>
-    <tr><td class="paramname">reco_nu</td><td>output, the nu vertex </td></tr>
+    <tr><td class="paramname">reco_nu_vtx</td><td>output, the nu vertex (three dimensional array: x, y, z) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a092b41510117ee216ea323ea46695e1b"></a><!-- doxytag: member="UBXSecHelper::GetNuVertexFromTPCObject" ref="a092b41510117ee216ea323ea46695e1b" args="(art::Event const &amp;e, std::string _particleLabel, lar_pandora::PFParticleVector pfp_v, recob::Vertex &amp;reco_nu_vtx)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classUBXSecHelper.html#a0ffc9245fc9813c18a1880d7e6f0aefe">UBXSecHelper::GetNuVertexFromTPCObject</a> </td>
+          <td>(</td>
+          <td class="paramtype">art::Event const &amp;&#160;</td>
+          <td class="paramname"><em>e</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>_particleLabel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">lar_pandora::PFParticleVector&#160;</td>
+          <td class="paramname"><em>pfp_v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">recob::Vertex &amp;&#160;</td>
+          <td class="paramname"><em>reco_nu_vtx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the nu recon vertex from a TPC object. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">e</td><td>the ART event </td></tr>
+    <tr><td class="paramname">_particleLabel</td><td>the PFP procuder module </td></tr>
+    <tr><td class="paramname">pfp_v</td><td>the TPC object (vector of PFP) </td></tr>
+    <tr><td class="paramname">reco_nu_vtx</td><td>output, the nu vertex (recob::Vertex) </td></tr>
   </table>
   </dd>
 </dl>
@@ -776,7 +829,7 @@ Static Public Member Functions</h2></td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

@@ -47,6 +47,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -96,16 +97,12 @@ Public Member Functions</h2></td></tr>
 <a class="el" href="classNeutrinoFlashMatch.html">NeutrinoFlashMatch</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNeutrinoFlashMatch.html">NeutrinoFlashMatch</a> const &amp;)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab9c0c085e8f31926395d06088c02fafe"></a><!-- doxytag: member="NeutrinoFlashMatch::operator=" ref="ab9c0c085e8f31926395d06088c02fafe" args="(NeutrinoFlashMatch &amp;&amp;)" -->
 <a class="el" href="classNeutrinoFlashMatch.html">NeutrinoFlashMatch</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNeutrinoFlashMatch.html">NeutrinoFlashMatch</a> &amp;&amp;)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e24507dbf84fd2e60abee5c317d5c7b"></a><!-- doxytag: member="NeutrinoFlashMatch::GetTPCObjects" ref="a5e24507dbf84fd2e60abee5c317d5c7b" args="(lar_pandora::PFParticleVector, lar_pandora::PFParticlesToTracks, lar_pandora::PFParticlesToVertices, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;, std::vector&lt; lar_pandora::TrackVector &gt; &amp;)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>GetTPCObjects</b> (lar_pandora::PFParticleVector, lar_pandora::PFParticlesToTracks, lar_pandora::PFParticlesToVertices, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;, std::vector&lt; lar_pandora::TrackVector &gt; &amp;)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa511b92472bb70883c5a666293be1da3"></a><!-- doxytag: member="NeutrinoFlashMatch::GetQCluster" ref="aa511b92472bb70883c5a666293be1da3" args="(std::vector&lt; art::Ptr&lt; recob::Track &gt;&gt;)" -->
-flashana::QCluster_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetQCluster</b> (std::vector&lt; art::Ptr&lt; recob::Track &gt;&gt;)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb3a38a4888510ff5fe7bd761f145612"></a><!-- doxytag: member="NeutrinoFlashMatch::CollectTracksAndPFP" ref="acb3a38a4888510ff5fe7bd761f145612" args="(lar_pandora::PFParticlesToTracks, lar_pandora::PFParticleVector, art::Ptr&lt; recob::PFParticle &gt;, lar_pandora::PFParticleVector &amp;, lar_pandora::TrackVector &amp;)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>CollectTracksAndPFP</b> (lar_pandora::PFParticlesToTracks, lar_pandora::PFParticleVector, art::Ptr&lt; recob::PFParticle &gt;, lar_pandora::PFParticleVector &amp;, lar_pandora::TrackVector &amp;)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad1999c7064999308fa0eb8a33e0ab642"></a><!-- doxytag: member="NeutrinoFlashMatch::GetTrajectory" ref="ad1999c7064999308fa0eb8a33e0ab642" args="(std::vector&lt; art::Ptr&lt; recob::Track &gt;&gt;,::geoalgo::Trajectory &amp;)" -->
-int&#160;</td><td class="memItemRight" valign="bottom"><b>GetTrajectory</b> (std::vector&lt; art::Ptr&lt; recob::Track &gt;&gt;,::geoalgo::Trajectory &amp;)</td></tr>
+flashana::QCluster_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNeutrinoFlashMatch.html#aa511b92472bb70883c5a666293be1da3">GetQCluster</a> (std::vector&lt; art::Ptr&lt; recob::Track &gt;&gt;)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes a vector of recob::Tracks and returns a QCluster made out from all the tracks in the vector. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa957152a8c232e4b23cc7544aa6bfdd1"></a><!-- doxytag: member="NeutrinoFlashMatch::Trial" ref="aa957152a8c232e4b23cc7544aa6bfdd1" args="(std::vector&lt; art::Ptr&lt; recob::Track &gt;&gt; track_v, flashana::Flash_t flashBeam, double &amp;_chi2, double &amp;_ll)" -->
-flashana::Flash_t&#160;</td><td class="memItemRight" valign="bottom"><b>Trial</b> (std::vector&lt; art::Ptr&lt; recob::Track &gt;&gt; track_v, flashana::Flash_t flashBeam, double &amp;_chi2, double &amp;_ll)</td></tr>
+flashana::Flash_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNeutrinoFlashMatch.html#aa957152a8c232e4b23cc7544aa6bfdd1">Trial</a> (std::vector&lt; art::Ptr&lt; recob::Track &gt;&gt; track_v, flashana::Flash_t flashBeam, double &amp;_chi2, double &amp;_ll)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Test method to calculate the flash-TPCobject compatibilty at a fixed x position. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a00578af5672ff925f80c1b9482c8b4ff"></a><!-- doxytag: member="NeutrinoFlashMatch::produce" ref="a00578af5672ff925f80c1b9482c8b4ff" args="(art::Event &amp;e) override" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><b>produce</b> (art::Event &amp;e) override</td></tr>
 </table>
@@ -118,7 +115,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>produce</b> (art::Eve
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

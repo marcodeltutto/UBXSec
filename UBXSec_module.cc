@@ -56,6 +56,7 @@
 
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "uboone/UBXSec/UBXSecHelper.h"
+#include "uboone/UBXSec/VertexCheck.h"
 
 #include "TString.h"
 #include "TTree.h"
@@ -539,7 +540,7 @@ void UBXSec::analyze(art::Event const & e)
   e.getByLabel(Form("T0TrackTaggerCosmic%s",_pfp_producer.c_str()),t0_h);
   if(!t0_h.isValid()) {
     std::cout << "T0 product not found..." << std::endl;
-    throw std::exception();
+    //throw std::exception();
   }
   if(t0_h->empty()) {
     std::cout << "t0 is empty." << std::endl;
@@ -555,7 +556,7 @@ void UBXSec::analyze(art::Event const & e)
   }
 
   art::FindManyP<recob::OpFlash> opfls_ptr_coll_v(track_h, e, Form("T0TrackTaggerCosmic%s",_pfp_producer.c_str()));
-
+  
 
 
   // Kalman Track
@@ -570,6 +571,7 @@ void UBXSec::analyze(art::Event const & e)
   }
 
   art::FindManyP<recob::Track> trk_kalman_v(pfp_h, e, "pandoraNuKalmanTrack");
+
 
   // Tracks for evd
   art::Handle<std::vector<recob::Track> > trk_h;
@@ -761,14 +763,21 @@ void UBXSec::analyze(art::Event const & e)
         _slc_kalman_chi2[slice] = trk_ptr->Chi2();
         _slc_kalman_ndof[slice] = trk_ptr->Ndof();
       }
-
-
     }
 
     // Channel status
     _slc_nuvtx_closetodeadregion_u[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 0) ? 1 : 0);
     _slc_nuvtx_closetodeadregion_v[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 1) ? 1 : 0);
     _slc_nuvtx_closetodeadregion_w[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 2) ? 1 : 0);
+
+    // Vertex check
+    ubxsec::VertexCheck vtxCheck;
+    vtxCheck.SetTPCObj(track_v_v[slice]);
+    recob::Vertex slice_vtx;
+    UBXSecHelper::GetNuVertexFromTPCObject(e, _pfp_producer, pfp_v_v[slice], slice_vtx);
+    vtxCheck.SetVtx(slice_vtx);
+    std::cout << "PPPPPPPPPP the angle is: " << vtxCheck.AngleBetweenLongestTracks() << std::endl;
+
 
     /*
     std::cout << "NEW--------------------- pfpToFlashMatch_v.size() " << pfpToFlashMatch_v.size() << std::endl;

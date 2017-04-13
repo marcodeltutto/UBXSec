@@ -238,7 +238,36 @@ void UBXSecHelper::GetNuVertexFromTPCObject(art::Event const & e,
 
 }
 
+//____________________________________________________________
+void UBXSecHelper::GetNuVertexFromTPCObject(art::Event const & e,
+                                               std::string _particleLabel,
+                                               lar_pandora::PFParticleVector pfp_v,
+                                               recob::Vertex & reco_nu_vtx){
 
+
+  lar_pandora::VertexVector          vertexVector;
+  lar_pandora::PFParticlesToVertices particlesToVertices;
+  lar_pandora::LArPandoraHelper::CollectVertices(e, _particleLabel, vertexVector, particlesToVertices);
+
+  for(unsigned int pfp = 0; pfp < pfp_v.size(); pfp++){
+
+    if(lar_pandora::LArPandoraHelper::IsNeutrino(pfp_v.at(pfp))) {
+
+      lar_pandora::VertexVector vertex_v = particlesToVertices.find(pfp_v.at(pfp))->second;
+      if (vertex_v.size() > 1)
+        std::cout << "More than one vertex associated to neutrino PFP!" << std::endl;
+      else if (vertex_v.size() == 0)
+        std::cout << "Zero vertices associated to neutrino PFP!" << std::endl;
+      else {
+        reco_nu_vtx = *(vertex_v[0]);
+        double xyz[3];
+        reco_nu_vtx.XYZ(xyz);
+        std::cout << ">>>>> VERTEX FOUND: x="<<xyz[0]<<" y="<<xyz[1]<<" z="<<xyz[2] << std::endl;
+        break;
+      }
+    }
+  }
+}
 
 //_________________________________________________________________
 art::Ptr<recob::PFParticle> UBXSecHelper::GetNuPFP(lar_pandora::PFParticleVector pfp_v){

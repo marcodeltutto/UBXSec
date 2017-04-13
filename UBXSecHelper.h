@@ -19,8 +19,8 @@
  */
 
 
-#ifndef MY_PANDORA_HELPER_H
-#define MY_PANDORA_HELPER_H
+#ifndef UBXSECHELPER_H
+#define UBXSECHELPER_H
 
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
@@ -97,8 +97,17 @@ class UBXSecHelper {
    *  @param e the ART event
    *  @param _particleLabel the PFP procuder module
    *  @param pfp_v the TPC object (vector of PFP)
-   *  @param reco_nu output, the nu vertex  */
+   *  @param reco_nu_vtx output, the nu vertex (three dimensional array: x, y, z) */
   static void GetNuVertexFromTPCObject(art::Event const & e, std::string _particleLabel, lar_pandora::PFParticleVector pfp_v, double *reco_nu_vtx);
+
+  /**
+   *  @brief Returns the nu recon vertex from a TPC object
+   *
+   *  @param e the ART event
+   *  @param _particleLabel the PFP procuder module
+   *  @param pfp_v the TPC object (vector of PFP)
+   *  @param reco_nu_vtx output, the nu vertex (recob::Vertex)  */
+  static void GetNuVertexFromTPCObject(art::Event const & e, std::string _particleLabel, lar_pandora::PFParticleVector pfp_v, recob::Vertex & reco_nu_vtx);
 
   /**
    *  @brief Returns the nu PFP from a TPC object
@@ -160,4 +169,4 @@ class UBXSecHelper {
 
 };
 
-#endif //  MY_PANDORA_HELPER_H
+#endif //  UBXSECHELPER_H

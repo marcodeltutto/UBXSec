@@ -113,6 +113,9 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af6ef46e3fc198a067987f64ef863aa45"></a><!-- doxytag: member="ubxsec::VertexCheck::VertexCheck" ref="af6ef46e3fc198a067987f64ef863aa45" args="()" -->
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubxsec_1_1VertexCheck.html#af6ef46e3fc198a067987f64ef863aa45">VertexCheck</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1d0f2f6c434db12aee3c8ae4b810da8"></a><!-- doxytag: member="ubxsec::VertexCheck::VertexCheck" ref="af1d0f2f6c434db12aee3c8ae4b810da8" args="(lar_pandora::TrackVector, recob::Vertex)" -->
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubxsec_1_1VertexCheck.html#af1d0f2f6c434db12aee3c8ae4b810da8">VertexCheck</a> (lar_pandora::TrackVector, recob::Vertex)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct setting TPC object and Vertex. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a31f02bd272b70d96d3e20be2519c5b74"></a><!-- doxytag: member="ubxsec::VertexCheck::~VertexCheck" ref="a31f02bd272b70d96d3e20be2519c5b74" args="()" -->
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubxsec_1_1VertexCheck.html#a31f02bd272b70d96d3e20be2519c5b74">~VertexCheck</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Default destructor. <br/></td></tr>
@@ -128,9 +131,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7ba14f2c0dc87099769e11a78a7e156"></a><!-- doxytag: member="ubxsec::VertexCheck::SetVtx" ref="aa7ba14f2c0dc87099769e11a78a7e156" args="(recob::Vertex)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubxsec_1_1VertexCheck.html#aa7ba14f2c0dc87099769e11a78a7e156">SetVtx</a> (recob::Vertex)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the TPC object. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb5969f8c850d1191248bddd91ec49d1"></a><!-- doxytag: member="ubxsec::VertexCheck::Clear" ref="abb5969f8c850d1191248bddd91ec49d1" args="()" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubxsec_1_1VertexCheck.html#abb5969f8c850d1191248bddd91ec49d1">Clear</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Restores flags. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2cf14a77ddd16b2fd282e2748ed4a3d9"></a><!-- doxytag: member="ubxsec::VertexCheck::GetDistance" ref="a2cf14a77ddd16b2fd282e2748ed4a3d9" args="(double *, TVector3)" -->
 double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubxsec_1_1VertexCheck.html#a2cf14a77ddd16b2fd282e2748ed4a3d9">GetDistance</a> (double *, TVector3)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the distance between two points. <br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the distance between two points (the first a 3d array, the second a TVector3...I know...) <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0d955f14da9f774c114711321c77766"></a><!-- doxytag: member="ubxsec::VertexCheck::AngleBetweenLongestTracks" ref="ac0d955f14da9f774c114711321c77766" args="()" -->
 double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubxsec_1_1VertexCheck.html#ac0d955f14da9f774c114711321c77766">AngleBetweenLongestTracks</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the angle between the two longest tracks in the TPC obj. <br/></td></tr>
@@ -148,6 +154,23 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>_max_distance</b></
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>_tpcObjIsSet</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aca700a4e256861947c51bf2cded436c5"></a><!-- doxytag: member="ubxsec::VertexCheck::_vtxIsSet" ref="aca700a4e256861947c51bf2cded436c5" args="" -->
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>_vtxIsSet</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ada7f1e5ea244eb89e725226ed248f2d6"></a><!-- doxytag: member="ubxsec::VertexCheck::xyz" ref="ada7f1e5ea244eb89e725226ed248f2d6" args="[3]" -->
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubxsec_1_1VertexCheck.html#ada7f1e5ea244eb89e725226ed248f2d6">xyz</a> [3]</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">will store vertex location <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac7b98d0eb000912a1a905530c0dcc364"></a><!-- doxytag: member="ubxsec::VertexCheck::start" ref="ac7b98d0eb000912a1a905530c0dcc364" args="" -->
+TVector3&#160;</td><td class="memItemRight" valign="bottom"><b>start</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad416fe53ee649eb9a9e310e9abe32a0b"></a><!-- doxytag: member="ubxsec::VertexCheck::end" ref="ad416fe53ee649eb9a9e310e9abe32a0b" args="" -->
+TVector3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubxsec_1_1VertexCheck.html#ad416fe53ee649eb9a9e310e9abe32a0b">end</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">will store track start and end <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa817d271e0bb5e44d07ef5c21ad52cc"></a><!-- doxytag: member="ubxsec::VertexCheck::dist" ref="aaa817d271e0bb5e44d07ef5c21ad52cc" args="" -->
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubxsec_1_1VertexCheck.html#aaa817d271e0bb5e44d07ef5c21ad52cc">dist</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">will store track distance <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6046f472792f70321896604580b758e6"></a><!-- doxytag: member="ubxsec::VertexCheck::keep_track" ref="a6046f472792f70321896604580b758e6" args="" -->
+std::vector&lt; recob::Track &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubxsec_1_1VertexCheck.html#a6046f472792f70321896604580b758e6">keep_track</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">will store tracks to be kept for calculation <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a037d7571e3f32aee10ccf100e3a34931"></a><!-- doxytag: member="ubxsec::VertexCheck::track_dir" ref="a037d7571e3f32aee10ccf100e3a34931" args="" -->
+std::vector&lt; TVector3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubxsec_1_1VertexCheck.html#a037d7571e3f32aee10ccf100e3a34931">track_dir</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">will store the track direction (always away from the vertex) to calcuate the angle <br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>User defined class <a class="el" href="classubxsec_1_1VertexCheck.html">VertexCheck</a> ... these comments are used to generate doxygen documentation! </p>

@@ -113,6 +113,7 @@ void UBXSecHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &re
 {
     bool foundMatches(false);
 
+    // Loop over the reco particles
     for (lar_pandora::PFParticlesToHits::const_iterator iter1 = recoParticlesToHits.begin(), iterEnd1 = recoParticlesToHits.end();
         iter1 != iterEnd1; ++iter1)
     {
@@ -124,6 +125,7 @@ void UBXSecHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &re
 
         lar_pandora::MCParticlesToHits truthContributionMap;
 
+        // Loop over all the hits associated to this reco particle
         for (lar_pandora::HitVector::const_iterator iter2 = hitVector.begin(), iterEnd2 = hitVector.end(); iter2 != iterEnd2; ++iter2)
         {
             const art::Ptr<recob::Hit> hit = *iter2;
@@ -136,9 +138,11 @@ void UBXSecHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &re
             if (vetoTrue.count(trueParticle) > 0)
                 continue;
 
+            // This map will contain all the true particles that match some or all of the hits of the reco particle
             truthContributionMap[trueParticle].push_back(hit);
         }
 
+        // Now we want to find the true particle that has more hits in common with this reco particle than the others
         lar_pandora::MCParticlesToHits::const_iterator mIter = truthContributionMap.end();
 
         for (lar_pandora::MCParticlesToHits::const_iterator iter4 = truthContributionMap.begin(), iterEnd4 = truthContributionMap.end();
@@ -262,7 +266,6 @@ void UBXSecHelper::GetNuVertexFromTPCObject(art::Event const & e,
         reco_nu_vtx = *(vertex_v[0]);
         double xyz[3];
         reco_nu_vtx.XYZ(xyz);
-        std::cout << ">>>>> VERTEX FOUND: x="<<xyz[0]<<" y="<<xyz[1]<<" z="<<xyz[2] << std::endl;
         break;
       }
     }
@@ -302,7 +305,7 @@ void UBXSecHelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList,
     const art::Ptr<recob::PFParticle> particle = pfParticleList.at(n);
 
     if(lar_pandora::LArPandoraHelper::IsNeutrino(particle)) {
-      std::cout << "IS NEUTRINO, pfp id " << particle->Self() << std::endl;
+      //std::cout << "IS NEUTRINO, pfp id " << particle->Self() << std::endl;
       lar_pandora::VertexVector nu_vertex_v;
       auto search = pfParticleToVertexMap.find(particle);
       if(search != pfParticleToVertexMap.end()) {
@@ -316,17 +319,17 @@ void UBXSecHelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList,
       lar_pandora::TrackVector track_v;
       lar_pandora::PFParticleVector pfp_v;
 
-      std::cout << "Start track_v.size() " << track_v.size() << std::endl;
+      //std::cout << "Start track_v.size() " << track_v.size() << std::endl;
       CollectTracksAndPFP(pfParticleToTrackMap, pfParticleList, particle, pfp_v, track_v);
-      std::cout << "End   track_v.size() " << track_v.size() << std::endl;
+      //std::cout << "End   track_v.size() " << track_v.size() << std::endl;
 
       pfp_v_v.emplace_back(pfp_v);
       track_v_v.emplace_back(track_v);
 
-      std::cout << "Number of pfp for this slice: "    << pfp_v.size()   << std::endl;
+      //std::cout << "Number of pfp for this slice: "    << pfp_v.size()   << std::endl;
       std::cout << "Number of tracks for this slice: " << track_v.size() << std::endl;
 
-      for (unsigned int i = 0; i < pfp_v.size(); i++) std::cout << "   pfp with ID " << pfp_v[i]->Self() << std::endl;
+      //for (unsigned int i = 0; i < pfp_v.size(); i++) std::cout << "   pfp with ID " << pfp_v[i]->Self() << std::endl;
     } // end if neutrino
   } // end pfp loop
 
@@ -350,9 +353,9 @@ void UBXSecHelper::CollectTracksAndPFP(lar_pandora::PFParticlesToTracks pfPartic
       track_v.emplace_back(tracks[trk]);
     }
   }
-  std::cout << "Inter track_v.size() " << track_v.size() << std::endl;
+  //std::cout << "Inter track_v.size() " << track_v.size() << std::endl;
   const std::vector<size_t> &daughterIDs = particle->Daughters();
-  for (unsigned int d = 0; d < daughterIDs.size(); d++) std::cout << "daughter has id " << daughterIDs[d] << std::endl;
+  //for (unsigned int d = 0; d < daughterIDs.size(); d++) std::cout << "daughter has id " << daughterIDs[d] << std::endl;
   if(daughterIDs.size() == 0) return;
   else {
     for (unsigned int m = 0; m < daughterIDs.size(); ++m) {
@@ -555,16 +558,16 @@ bool UBXSecHelper::PointIsCloseToDeadRegion(double *reco_nu_vtx, int plane_no){
 
   // Get nearest channel
   raw::ChannelID_t ch = geo->NearestChannel(reco_nu_vtx, plane_no);
-  std::cout << "nearest channel is " << ch << std::endl;
+  //std::cout << "nearest channel is " << ch << std::endl;
 
   // Get channel status
   const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
-  std::cout << "ch status " << chanFilt.Status(ch) << std::endl;
+  //std::cout << "ch status " << chanFilt.Status(ch) << std::endl;
   if( chanFilt.Status(ch) < 4) return true;
 
   // Now check close wires
   for(unsigned int new_ch = ch - 5; new_ch < ch - 5 + 11; new_ch++){
-    std::cout << "now trying with channel " << new_ch << std::endl;
+    //std::cout << "now trying with channel " << new_ch << std::endl;
     if( chanFilt.Status(new_ch) < 4 ) return true;
   }
 

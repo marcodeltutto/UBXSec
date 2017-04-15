@@ -122,6 +122,7 @@ private:
   std::vector<double> _slc_flsmatch_cosmic_score, _slc_flsmatch_cosmic_t0;
   std::vector<double> _slc_nuvtx_x, _slc_nuvtx_y, _slc_nuvtx_z;
   std::vector<int> _slc_nuvtx_fv;
+  std::vector<double> _slc_vtxcheck_angle;
   std::vector<int> _slc_origin;
   std::vector<int> _slc_nhits_u, _slc_nhits_v, _slc_nhits_w;
   std::vector<double> _slc_longesttrack_length;
@@ -203,6 +204,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p)
   _tree1->Branch("slc_nuvtx_y",        "std::vector<double>", &_slc_nuvtx_y);
   _tree1->Branch("slc_nuvtx_z",        "std::vector<double>", &_slc_nuvtx_z);
   _tree1->Branch("slc_nuvtx_fv",       "std::vector<int>",    &_slc_nuvtx_fv);
+  _tree1->Branch("slc_vtxcheck_angle", "std::vector<double>", &_slc_vtxcheck_angle);
   _tree1->Branch("slc_origin",         "std::vector<int>",    &_slc_origin);
   _tree1->Branch("slc_nhits_u",        "std::vector<int>",    &_slc_nhits_u);
   _tree1->Branch("slc_nhits_v",        "std::vector<int>",    &_slc_nhits_v);
@@ -635,6 +637,7 @@ void UBXSec::analyze(art::Event const & e)
   _slc_nuvtx_y.resize(_nslices);
   _slc_nuvtx_z.resize(_nslices);
   _slc_nuvtx_fv.resize(_nslices);
+  _slc_vtxcheck_angle.resize(_nslices);
   _slc_origin.resize(_nslices);
   _slc_flshypo_xfixed_spec.resize(_nslices);
   _slc_flshypo_spec.resize(_nslices);
@@ -675,11 +678,6 @@ void UBXSec::analyze(art::Event const & e)
     // Vertex resolution
     if (_slc_origin[slice] == 0) {
       _vtx_resolution = sqrt( pow(_slc_nuvtx_y[slice]-_tvtx_y[0], 2) + pow(_slc_nuvtx_z[slice]-_tvtx_z[0], 2) );
-      std::cout << "vts res is " << _vtx_resolution << std::endl;
-      std::cout << "slc y " << _slc_nuvtx_y[slice] << std::endl;
-      std::cout << "slc z " << _slc_nuvtx_z[slice] << std::endl;
-      std::cout << "t y " << _tvtx_y[0] << std::endl;
-      std::cout << "t z " << _tvtx_z[0] << std::endl;
     } 
 
     // Neutrino Flash match
@@ -771,13 +769,14 @@ void UBXSec::analyze(art::Event const & e)
     _slc_nuvtx_closetodeadregion_w[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 2) ? 1 : 0);
 
     // Vertex check
-    ubxsec::VertexCheck vtxCheck;
-    vtxCheck.SetTPCObj(track_v_v[slice]);
     recob::Vertex slice_vtx;
     UBXSecHelper::GetNuVertexFromTPCObject(e, _pfp_producer, pfp_v_v[slice], slice_vtx);
-    vtxCheck.SetVtx(slice_vtx);
-    std::cout << "PPPPPPPPPP the angle is: " << vtxCheck.AngleBetweenLongestTracks() << std::endl;
+    ubxsec::VertexCheck vtxCheck(track_v_v[slice], slice_vtx);
+    //vtxCheck.Clear();
 
+    _slc_vtxcheck_angle[slice] = vtxCheck.AngleBetweenLongestTracks();
+    std::cout << "PPPPPPPPPP the angle is: " << _slc_vtxcheck_angle[slice] << std::endl;
+    
 
     /*
     std::cout << "NEW--------------------- pfpToFlashMatch_v.size() " << pfpToFlashMatch_v.size() << std::endl;

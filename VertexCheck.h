@@ -35,7 +35,10 @@ namespace ubxsec{
     
     /// Default constructor
     VertexCheck();
-    
+
+    /// Construct setting TPC object and Vertex
+    VertexCheck(lar_pandora::TrackVector, recob::Vertex);
+
     /// Default destructor
     ~VertexCheck(){}
 
@@ -51,7 +54,10 @@ namespace ubxsec{
     /// Sets the TPC object
     void SetVtx(recob::Vertex);
 
-    /// Returns the distance between two points
+    /// Restores flags
+    void Clear();
+
+    /// Returns the distance between two points (the first a 3d array, the second a TVector3...I know...)
     double GetDistance(double *, TVector3);
 
     /// Returns the angle between the two longest tracks in the TPC obj
@@ -63,6 +69,14 @@ namespace ubxsec{
     recob::Vertex            _vtx;     ///< the vertex
     double _max_distance;
     bool _tpcObjIsSet, _vtxIsSet;
+
+
+    double xyz[3]; ///< will store vertex location
+    TVector3 start, end; ///< will store track start and end
+    double dist; ///< will store track distance
+    std::vector<recob::Track> keep_track; ///< will store tracks to be kept for calculation
+    std::vector<TVector3> track_dir; ///< will store the track direction (always away from the vertex) to calcuate the angle
+
   };
 }
 

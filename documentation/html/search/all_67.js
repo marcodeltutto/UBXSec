@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['getdeadregionhisto2p',['GetDeadRegionHisto2P',['../classFindDeadRegions.html#a712767abce6132b0dd6638a335da87fa',1,'FindDeadRegions::GetDeadRegionHisto2P()'],['../classFindDeadRegions.html#a93fcf74bb534831495f50a79fede19f9',1,'FindDeadRegions::GetDeadRegionHisto2P(TH2F *)']]],
+  ['getdeadregionhisto3p',['GetDeadRegionHisto3P',['../classFindDeadRegions.html#abb378991861e7fdef4cd94a27d52ec07',1,'FindDeadRegions::GetDeadRegionHisto3P()'],['../classFindDeadRegions.html#a50de57c6d1792a6f2a93df8a44ba840a',1,'FindDeadRegions::GetDeadRegionHisto3P(TH2F *)']]],
   ['getdistance',['GetDistance',['../classubxsec_1_1VertexCheck.html#a2cf14a77ddd16b2fd282e2748ed4a3d9',1,'ubxsec::VertexCheck']]],
   ['getlongesttrackfromtpcobj',['GetLongestTrackFromTPCObj',['../classUBXSecHelper.html#a76b009afef0cc69f281ca3215a901f35',1,'UBXSecHelper']]],
   ['getnumberofhitsperplane',['GetNumberOfHitsPerPlane',['../classUBXSecHelper.html#a5d811318d7fb66ab5e1816453c017e63',1,'UBXSecHelper']]],

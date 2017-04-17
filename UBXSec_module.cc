@@ -58,8 +58,11 @@
 #include "uboone/UBXSec/UBXSecHelper.h"
 #include "uboone/UBXSec/VertexCheck.h"
 
+#include "uboone/UBXSec/FindDeadRegions.h"
+
 #include "TString.h"
 #include "TTree.h"
+#include "TH2F.h"
 
 class UBXSec;
 
@@ -149,6 +152,9 @@ private:
   std::vector<double> _hypo_spec, _beam_spec, _fixx_spec;
   double _score;
   int _is_muon;
+
+  TH2F * _deadRegion2P;
+  TH2F * _deadRegion3P;
 };
 
 
@@ -253,6 +259,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p)
   _tree2->Branch("is_muon",            &_is_muon,            "is_muon/I");
   _tree2->Branch("muon_is_reco",       &_muon_is_reco,       "muon_is_reco/I");
 
+  _deadRegion2P = fs->make<TH2F>("deadRegion2P","deadRegion2P", 10350,0.0,1035.0,2300,-115.0,115.0);
+  _deadRegion3P = fs->make<TH2F>("deadRegion3P","deadRegion3P", 10350,0.0,1035.0,2300,-115.0,115.0);
 }
 
 void UBXSec::analyze(art::Event const & e)
@@ -789,6 +797,12 @@ void UBXSec::analyze(art::Event const & e)
   }
 
 
+
+  // Dead regions
+  //art::ServiceHandle<FindDeadRegions> deadRegionsFinder;
+  FindDeadRegions deadRegionsFinder;
+  deadRegionsFinder.GetDeadRegionHisto2P(_deadRegion2P);
+  deadRegionsFinder.GetDeadRegionHisto3P(_deadRegion3P);
 
   // Flashes
   ::art::Handle<std::vector<recob::OpFlash>> beamflash_h;

@@ -54,6 +54,10 @@
 #include "uboone/RawData/utils/ubdaqSoftwareTriggerData.h"
 #include "lardataobj/AnalysisBase/T0.h"
 
+#include "lardataobj/MCBase/MCDataHolder.h"
+#include "lardataobj/MCBase/MCHitCollection.h"
+
+
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "uboone/UBXSec/UBXSecHelper.h"
 #include "uboone/UBXSec/VertexCheck.h"
@@ -340,7 +344,7 @@ void UBXSec::analyze(art::Event const & e)
   std::vector<double>                      taggedPFPscore;
   std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP;
   art::Ptr<recob::PFParticle>              muonPFP;
-
+  art::Ptr<simb::MCParticle>               muonMCParticle;
   _muon_is_reco = 0;
   _mc_muon_contained = 0;
 
@@ -350,7 +354,7 @@ void UBXSec::analyze(art::Event const & e)
       iter1 != iterEnd1; ++iter1) {
 
     art::Ptr<simb::MCParticle>  mc_par = iter1->first;   // The MCParticle 
-    //art::Ptr<recob::PFParticle> pf_par = iter1->second;  // The matched PFParticle
+    art::Ptr<recob::PFParticle> pf_par = iter1->second;  // The matched PFParticle
 
     const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
 
@@ -362,6 +366,16 @@ void UBXSec::analyze(art::Event const & e)
       end[2] = mc_par->EndZ();
       if ( (mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13) && UBXSecHelper::InFV(end) ){
         std::cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Is stopping muon" << std::endl;
+
+        lar_pandora::VertexVector          vertexVector;
+        lar_pandora::PFParticlesToVertices particlesToVertices;
+        lar_pandora::LArPandoraHelper::CollectVertices(e, _pfp_producer, vertexVector, particlesToVertices);
+
+        lar_pandora::VertexVector vertex_v = particlesToVertices.find(pf_par)->second;
+        double xyz[3];
+        vertex_v[0]->XYZ(xyz);
+
+        std::cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM The PFP has vtx x="<<xyz[0]<<" y="<<xyz[1]<<" z="<<xyz[2] << std::endl;
       }
          
     }
@@ -403,10 +417,54 @@ void UBXSec::analyze(art::Event const & e)
 
        // If we matched a muon
        if (mc_par->PdgCode() == 13) {
+         muonMCParticle = mc_par;
          muonPFP = pf_par;
          _muon_is_reco = 1;
 
          std::cout << "Here we are" << std::endl;
+
+
+
+         lar_pandora::HitVector recoHits;
+         auto iter = recoParticlesToHits.find(pf_par);
+         if (iter != recoParticlesToHits.end()) {
+           recoHits = (*iter).second;
+         }
+         double pur, eff;
+         UBXSecHelper::GetTrackPurityAndEfficiency(recoHits, pur, eff);
+         std::cout << "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY efficiency: " << eff << "  purity "  << pur << std::endl;
+
+         /*
+         // map from geant track id to true track deposited energy
+         std::map<int,double> trkidToIDE;
+
+         for(size_t h = 0; h < recoHits.size(); h++){
+
+           art::Ptr<recob::Hit> recoHit = recoHits[h];
+           std::vector<sim::TrackIDE> eveIDs = bt->HitToEveID(recoHit);
+
+           for(size_t e = 0; e < eveIDs.size(); ++e){
+             std::cout<<h<<" "<<e<<" "<<eveIDs[e].trackID<<" "<<eveIDs[e].energy<<" "<<eveIDs[e].energyFrac<<std::endl;
+             trkidToIDE[eveIDs[e].trackID] += eveIDs[e].energy;
+           }
+         }
+
+         double maxe = -1;
+         double tote = 0;
+         //int trackid;
+         for(auto const& ii : trkidToIDE){
+           tote += ii.second;
+           if ((ii.second)>maxe){
+             maxe = ii.second;
+             //trackid = ii.first;
+           }
+         }
+
+         if (tote>0){
+           std::cout << "Track purity is " << maxe/tote << std::endl;
+         }
+*/
+
 
          lar_pandora::PFParticlesToTracks::const_iterator it =  pfParticleToTrackMap.find(pf_par);
          if (it != pfParticleToTrackMap.end()) {
@@ -704,6 +762,7 @@ void UBXSec::analyze(art::Event const & e)
       _slc_flsmatch_xfixed_ll[slice]   = pfpToFlashMatch_v[0]->GetXFixedLl();
       _slc_flshypo_xfixed_spec[slice]  = pfpToFlashMatch_v[0]->GetXFixedHypoFlashSpec();
       _slc_flshypo_spec[slice]         = pfpToFlashMatch_v[0]->GetHypoFlashSpec();
+      std::cout << "    FM score: " << _slc_flsmatch_score[slice] << std::endl;
     }
 
     // Cosmic Flash Match
@@ -760,12 +819,12 @@ void UBXSec::analyze(art::Event const & e)
     _slc_kalman_chi2[slice] = -9999;
     for (unsigned int t = 0; t < pfp_v_v[slice].size(); t++) {
       if(trk_kalman_v.at(pfp_v_v[slice][t].key()).size()>1) {
-        std::cout << "TTTTTTTTTTTTTTTT more than one track per PFP, ntracks " << trk_kalman_v.at(pfp_v_v[slice][t].key()).size() << std::endl;
+        std::cout << "TQ more than one track per PFP, ntracks " << trk_kalman_v.at(pfp_v_v[slice][t].key()).size() << std::endl;
       } else if (trk_kalman_v.at(pfp_v_v[slice][t].key()).size()==0){
         continue;
       } else {
         art::Ptr<recob::Track> trk_ptr = trk_kalman_v.at(pfp_v_v[slice][t].key()).at(0);
-        std::cout << "TTTTTTTTTTTTTTTT trk_ptr->Chi2() " << trk_ptr->Chi2() << std::endl;
+        //std::cout << "TTTTTTTTTTTTTTTT trk_ptr->Chi2() " << trk_ptr->Chi2() << std::endl;
         _slc_kalman_chi2[slice] = trk_ptr->Chi2();
         _slc_kalman_ndof[slice] = trk_ptr->Ndof();
       }
@@ -780,10 +839,7 @@ void UBXSec::analyze(art::Event const & e)
     recob::Vertex slice_vtx;
     UBXSecHelper::GetNuVertexFromTPCObject(e, _pfp_producer, pfp_v_v[slice], slice_vtx);
     ubxsec::VertexCheck vtxCheck(track_v_v[slice], slice_vtx);
-    //vtxCheck.Clear();
-
     _slc_vtxcheck_angle[slice] = vtxCheck.AngleBetweenLongestTracks();
-    std::cout << "PPPPPPPPPP the angle is: " << _slc_vtxcheck_angle[slice] << std::endl;
     
 
     /*
@@ -798,11 +854,12 @@ void UBXSec::analyze(art::Event const & e)
 
 
 
-  // Dead regions
+  /* Dead regions
   //art::ServiceHandle<FindDeadRegions> deadRegionsFinder;
   FindDeadRegions deadRegionsFinder;
   deadRegionsFinder.GetDeadRegionHisto2P(_deadRegion2P);
   deadRegionsFinder.GetDeadRegionHisto3P(_deadRegion3P);
+  */
 
   // Flashes
   ::art::Handle<std::vector<recob::OpFlash>> beamflash_h;
@@ -856,6 +913,57 @@ void UBXSec::analyze(art::Event const & e)
     unsigned int opdet = geo->OpDetFromOpChannel(i);
     _numc_flash_spec[opdet] = flash.PE(i);
   }
+
+  /* MCHits
+  ::art::Handle< std::vector<sim::MCHitCollection> > mcHit_h;
+  e.getByLabel("mchitfinder",mcHit_h);
+  if( !mcHit_h.isValid() || mcHit_h->empty() ) {
+    std::cerr << "Don't have MCHits." << std::endl;
+    return;
+  }
+
+  std::map<int,int> geantTrackIDToNumberOfMCHit;
+
+  std::cout << "Number of MCHits: " << mcHit_h->size() << std::endl;
+  for (auto const & mchit_v : *mcHit_h){
+    std::cout << "CHANNEL " << mchit_v.Channel() << std::endl;
+    auto iter = geantTrackIDToNumberOfMCHit.find(1480857);
+    if (iter != geantTrackIDToNumberOfMCHit.end())
+      std::cout << "   For this channel the muon has # of MCHits = " << (*iter).second << std::endl;
+    for (auto const & mchit : mchit_v){
+      //std::cout << "Hit track id: " << mchit.PartTrackId() << std::endl;
+      auto iter = geantTrackIDToNumberOfMCHit.find(mchit.PartTrackId());
+      if (iter != geantTrackIDToNumberOfMCHit.end()) (*iter).second += 1;
+      else geantTrackIDToNumberOfMCHit[mchit.PartTrackId()] = 1;
+      if (mchit.PartTrackId() == 1480857)
+        std::cout << "From mchit I get that the muon has energy: " << mchit.PartEnergy() << " and the hit time is " << mchit.PeakTime() << std::endl;
+    }
+  }
+
+  //for(auto const& key_value : geantTrackIDToNumberOfMCHit){
+    //std::cout << "Track id: " << key_value.first << "  number of hits: " << key_value.second << std::endl;
+  //} 
+
+
+  std::cout << "The muon MC particle track id is: " << muonMCParticle->TrackId() << std::endl;
+  auto iter = geantTrackIDToNumberOfMCHit.find(muonMCParticle->TrackId());
+  if (iter != geantTrackIDToNumberOfMCHit.end()) {
+    const simb::MCParticle * mcpar_bt = bt->TrackIDToParticle((*iter).first);
+    std::cout << "Number of MCHits for the muon: " << (*iter).second << std::endl;
+    std::cout << "The backtracked particle has pdg: " << mcpar_bt->PdgCode() << std::endl;
+  }
+
+  auto titer = matchedParticleHits.find(muonMCParticle);
+  if (titer != matchedParticleHits.end()){
+    std::cout << "Number of muon recon hits: " << ((*titer).second).size() << std::endl;
+  }
+  */
+
+
+
+
+
+
 
   _tree1->Fill();
 

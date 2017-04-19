@@ -34,8 +34,16 @@ class UBXSecHelper {
 
   public:
 
+   /**
+   *  @brief Given a vector of hits associated to the PFP (or a track, indeed you are just passing the hits), returns the tracking eff and purity
+   *
+   *  @param recoHits the input vector of reconstructed hits
+   *  @param trackPurity the output track (PFP, whatever) purity 
+   *  @param trackEfficiency the output track (PFP, whatever) efficiency
+   */
+  static void GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, double & trackPurity, double & trackEfficiency );
 
-  /**
+    /**
    *  @brief Perform matching between true and reconstructed particles
    *
    *  @param recoParticlesToHits the mapping from reconstructed particles to hits

@@ -16,6 +16,10 @@ art_make( BASENAME_ONLY
 	  	   larcore_Geometry
 		   larcore_Geometry_Geometry_service
                    uboone_RawData
+                   SignalShapingServiceMicroBooNE_service
+                   larevt_CalibrationDBI_IOVData
+                   larevt_CalibrationDBI_Providers
+                   larsim_MCCheater_BackTracker_service
                    #Simulation
 		   #Utilities
 		   #TimeService_service
@@ -61,7 +65,9 @@ art_make( BASENAME_ONLY
 		   uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
          
                    uboone_RawData
-
+                   SignalShapingServiceMicroBooNE_service
+                   larevt_CalibrationDBI_IOVData
+                   larevt_CalibrationDBI_Providers
 	  	   larcore_Geometry
 		   larcore_Geometry_Geometry_service
 		   lardataobj_RecoBase

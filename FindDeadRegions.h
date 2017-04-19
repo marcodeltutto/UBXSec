@@ -42,10 +42,10 @@ public:
   /// Configure function parameters
   void Configure(fhicl::ParameterSet const& p);
 
-  /// Returns true is the passed point is close to a dead region given a tolerance considering two planes only
+  /// Returns true if the passed point is close to a dead region given a tolerance considering two planes only
   bool NearDeadReg2P(float yVal, float zVal, float tolerance);
 
-  /// Returns true is the passed point is close to a dead region given a tolerance considering all three planes
+  /// Returns true if the passed point is close to a dead region given a tolerance considering all three planes
   bool NearDeadReg3P(float yVal, float zVal, float tolerance);
 
   /// Returns a root 2D histogram (y v.s. z) containing the detector dead regions considering two planes only

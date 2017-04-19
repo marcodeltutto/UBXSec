@@ -4,6 +4,19 @@
 #include "canvas/Persistency/Common/FindManyP.h"
 #include "canvas/Persistency/Common/FindOneP.h"
 
+#include "art/Framework/Core/EDAnalyzer.h"
+#include "art/Framework/Core/ModuleMacros.h"
+#include "art/Framework/Principal/Event.h"
+#include "art/Framework/Principal/Handle.h"
+#include "art/Framework/Principal/Run.h"
+#include "art/Framework/Principal/SubRun.h"
+#include "canvas/Utilities/InputTag.h"
+#include "fhiclcpp/ParameterSet.h"
+#include "messagefacility/MessageLogger/MessageLogger.h"
+#include "art/Framework/Services/Optional/TFileService.h"
+#include "art/Framework/Services/Optional/TFileDirectory.h"
+#include "canvas/Persistency/Common/FindManyP.h"
+
 
 #include "lardataobj/AnalysisBase/CosmicTag.h"
 #include "larcore/Geometry/Geometry.h"
@@ -20,16 +33,66 @@
 #include "nusimdata/SimulationBase/MCTruth.h"
 #include "larcoreobj/SimpleTypesAndConstants/RawTypes.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
+#include "larsim/MCCheater/BackTracker.h"
 
 #include "larevt/CalibrationDBI/Interface/DetPedestalService.h"
 #include "larevt/CalibrationDBI/Interface/DetPedestalProvider.h"
 #include "larevt/CalibrationDBI/Interface/ChannelStatusService.h"
 #include "larevt/CalibrationDBI/Interface/ChannelStatusProvider.h"
 
+#include "lardataobj/Simulation/SimChannel.h"
+
 #include "lardataobj/RecoBase/PFParticle.h"
 //#include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 
 #include "uboone/UBXSec/UBXSecHelper.h"
+
+
+
+//___________________________________________________________________________________________________
+void UBXSecHelper::GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, double & trackPurity, double & trackEfficiency ) {
+
+  art::ServiceHandle<cheat::BackTracker> bt;
+
+  // map from geant track id to true track deposited energy
+  std::map<int,double> trkidToIDE;
+
+  for(size_t h = 0; h < recoHits.size(); h++){
+
+    art::Ptr<recob::Hit> recoHit = recoHits[h];
+    std::vector<sim::TrackIDE> eveIDs = bt->HitToEveID(recoHit);
+
+    for(size_t e = 0; e < eveIDs.size(); ++e){
+      //std::cout<<"[Hit "<< h<<"] hit plane: "<<recoHit->View()<<" "<<e<<" "<<eveIDs[e].trackID<<" "<<eveIDs[e].energy<<" "<<eveIDs[e].energyFrac<<"   pdg "<< (bt->TrackIDToParticle(eveIDs[e].trackID))->PdgCode()<<"   process "<<(bt->TrackIDToParticle(eveIDs[e].trackID))->Process()<<std::endl;
+      trkidToIDE[eveIDs[e].trackID] += eveIDs[e].energy;
+    }
+  }
+
+  double maxe = -1;
+  double tote = 0;
+  int trackid;
+  for(auto const& ii : trkidToIDE){
+    tote += ii.second;
+    if ((ii.second)>maxe){
+      maxe = ii.second;
+      trackid = ii.first;
+    }
+  }
+
+  if (tote>0){
+    trackPurity = maxe/tote;
+  }
+
+  std::vector<sim::IDE> vide(bt->TrackIDToSimIDE(trackid)); 
+  double totalEnergyFromMainTrack = 0;
+  for (const sim::IDE& ide: vide) {
+    totalEnergyFromMainTrack += ide.energy;
+  }
+
+  trackEfficiency = maxe/(totalEnergyFromMainTrack); //totalEnergyFromMainTrack includes both inductions and collection energies
+
+  return;
+}
 
 
 

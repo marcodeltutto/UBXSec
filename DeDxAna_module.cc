@@ -29,6 +29,7 @@
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "uboone/UBXSec/UBXSecHelper.h"
+#include "uboone/UBXSec/FindDeadRegions.h"
 
 #include "larevt/CalibrationDBI/Interface/DetPedestalService.h"
 #include "larevt/CalibrationDBI/Interface/DetPedestalProvider.h"
@@ -37,6 +38,7 @@
 
 #include "TString.h"
 #include "TTree.h"
+
 
 class DeDxAna;
 
@@ -103,6 +105,8 @@ DeDxAna::DeDxAna(fhicl::ParameterSet const & p)
 
 void DeDxAna::analyze(art::Event const & e) {
 
+  FindDeadRegions deadRegionsFinder;
+
   art::Handle<std::vector<recob::Track>> track_h;
   e.getByLabel("pandoraNu",track_h);
 
@@ -156,51 +160,38 @@ void DeDxAna::analyze(art::Event const & e) {
 
     auto const& track = (*track_h)[trk];
 
-    if (track.Length() < 100) continue;
+    double track_length = track.Length();
+    if (track_length < 50) {
+      std::cout << "Track length is less than a 50cm. Continue." << std::endl;       
+      continue;
+    }
 
+    // Get only tracks that cross the boundary
     int vtx_ok;
-    if(!UBXSecHelper::IsCrossingBoundary(track, vtx_ok)) continue;
+    if(!UBXSecHelper::IsCrossingBoundary(track, vtx_ok)) {
+      std::cout << "Track is not crossing boundaries. Continue." << std::endl;
+      continue;
+    }
     std::cout << "vtx_ok " << vtx_ok << std::endl;
+
     // Understand dead region
+    bool isCloseToDeadRegion = false;
     double point_in_tpc[3];
     if (vtx_ok == 0) {
       point_in_tpc[0] = track.Vertex().X();
       point_in_tpc[1] = track.Vertex().Y();
       point_in_tpc[2] = track.Vertex().Z();
-    } else if (vtx_ok == 1) {
+    } else {
       point_in_tpc[0] = track.End().X();
       point_in_tpc[1] = track.End().Y();
       point_in_tpc[2] = track.End().Z();
     }
-    // Get nearest channel
-    raw::ChannelID_t ch = geo->NearestChannel(point_in_tpc, 2);
-    std::cout << "nearest channel is " << ch << std::endl;
-    
-    // Get channel status
-    const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
-    std::cout << "ch status " << chanFilt.Status(ch) << std::endl;
-    if( chanFilt.Status(ch) <= 3) continue;
+    isCloseToDeadRegion = deadRegionsFinder.NearDeadReg2P(point_in_tpc[1], point_in_tpc[2], 0.6);
 
-    // Now check close wires
-    //double new_point_in_tpc[3];
-    bool bad = false;
-    for(size_t new_ch = ch - 5; new_ch < ch - 5 + 11; new_ch++){
-      std::cout << "now trying with channel " << new_ch << std::endl;
-      if( chanFilt.Status(new_ch) < 4 ) bad = true;
+    if (isCloseToDeadRegion) {
+      std::cout << "Point is close to a dead region. Continue." << std::endl;
+      continue;
     }
-    /*
-    for (int z_off = -5; z_off < 5; z_off += 2.5) {
-      new_point_in_tpc[0] = point_in_tpc[0];
-      new_point_in_tpc[1] = point_in_tpc[1];
-      new_point_in_tpc[2] = point_in_tpc[2] + z_off;
-      std::cout << "trying with point " << new_point_in_tpc[0] << " " << new_point_in_tpc[1] << " " << new_point_in_tpc[2] << std::endl;
-      
-      raw::ChannelID_t ch = geo->NearestChannel(new_point_in_tpc, 2);
-      if( chanFilt.Status(ch) < 3) bad = true;
-    }
-    */
-
-    if (bad) continue;
 
 
     // Look at dedx along the track
@@ -215,8 +206,8 @@ void DeDxAna::analyze(art::Event const & e) {
       if (planenum != 2) continue;
 
       // Understand if the calo module flipped the track
-      double dqdx_start = (calos[ical]->dQdx())[0];
-      double dqdx_end   = (calos[ical]->dQdx())[calos[ical]->dQdx().size()-1];
+      double dqdx_start = (calos[ical]->dQdx())[0] + (calos[ical]->dQdx())[1] + (calos[ical]->dQdx())[2];
+      double dqdx_end   = (calos[ical]->dQdx())[calos[ical]->dQdx().size()-1] + (calos[ical]->dQdx())[calos[ical]->dQdx().size()-2] + (calos[ical]->dQdx())[calos[ical]->dQdx().size()-3];
       bool caloFlippedTrack = dqdx_start < dqdx_end;
 
       // We want two vectors: one with the residual range and the other with the dedx
@@ -230,6 +221,9 @@ void DeDxAna::analyze(art::Event const & e) {
       }
 
       // Now apply the smoothing
+      std::cout << "Applying smoothing now." << std::endl;
+      int smoothing_steps = std::round(0.0733*track_length); //40;
+      std::cout << "Number of smoothing_steps: " << smoothing_steps << std::endl;
       std::vector<double> res_range_smooth, dedx_smooth;
       std::vector<double> dedx_temp;
       std::vector<double> res_range_temp;
@@ -237,7 +231,7 @@ void DeDxAna::analyze(art::Event const & e) {
         dedx_temp.emplace_back(dedx[irange]);
         res_range_temp.emplace_back(res_range[irange]);
 
-        if (irange % 40 == 0) {
+        if (irange % smoothing_steps == 0) {
          // Median
          double median;
          size_t size = dedx_temp.size();
@@ -259,19 +253,23 @@ void DeDxAna::analyze(art::Event const & e) {
 
         }
       }
+      // smoothing ended
 
+      int nBins = std::round(0.0133 * track_length);
+      double _dedx_threshold_bragg = 1.9;
+      std::cout << "nBins used is: " << nBins << std::endl;
       int nhigher = 0;
       if ( (vtx_ok == 0 && !caloFlippedTrack) || (vtx_ok == 1 && caloFlippedTrack) ) {
         // The track start is in the FV, look around this point to see if there is a Bragg peak
         // This means looking at the region where the residual range is bigger
         for (size_t range_bin = 0; range_bin < 4; range_bin++) {
-          if (dedx_smooth[range_bin] > 1.9) nhigher ++;
+          if (dedx_smooth[range_bin] > _dedx_threshold_bragg) nhigher ++;
         }
       } else {
         // The end start is in the FV, look around this point to see if there is a Bragg peak
         // This means looking at the region where the residual range is smaller
         for (size_t range_bin = res_range_smooth.size()-1; range_bin > res_range_smooth.size()-1-4; range_bin--) {
-          if (dedx_smooth[range_bin] > 1.9) nhigher ++;
+          if (dedx_smooth[range_bin] > _dedx_threshold_bragg) nhigher ++;
         }
       }
 

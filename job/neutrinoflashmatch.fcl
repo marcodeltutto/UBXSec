@@ -10,8 +10,8 @@ NeutrinoFlashMatch: {
   NeutrinoMCFlashModule:    "NeutrinoMCFlash"
   DebugMode:                true
   BeamOpFlashProducer:      "simpleFlashBeam"
-  FlashVetoTimeStart:       3
-  FlashVetoTimeEnd:         5
+  FlashVetoTimeStart:       3.2
+  FlashVetoTimeEnd:         4.8
 
   FlashMatchConfig: @local::flashmatch_config
 }

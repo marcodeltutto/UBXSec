@@ -137,7 +137,7 @@ class UBXSecHelper {
   static int GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP, lar_pandora::PFParticleVector pfp_v);
 
   /**
-   *  @brief Returns the origin of the TPC object (neutrino/cosmic)
+   *  @brief Returns number of hits on each plane for a TPC obj
    *
    *  @param e the ART event
    *  @param _particleLabel the PFP procuder module
@@ -146,6 +146,15 @@ class UBXSecHelper {
    *  @param nhits_v number of hits in the V plane
    *  @param nhits_w number of hits in the W plane  */
   static void GetNumberOfHitsPerPlane(art::Event const & e, std::string _particleLabel, lar_pandora::TrackVector track_v, int & nhits_u, int & nhits_v, int & nhits_w );
+
+  /**
+   *  @brief Returns true if the track passes a minimum hit requirment in at least one plane
+   *
+   *  @param e the ART event
+   *  @param _particleLabel the PFP procuder module
+   *  @param trk the recob::Track
+   *  @param nHitsReq the minimum number of hits */
+  static bool TrackPassesHitRequirment(art::Event const & e, std::string _particleLabel, art::Ptr<recob::Track> trk, int nHitsReq);
 
   /**
    *  @brief Returns true if the track is crossing the FV border

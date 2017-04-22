@@ -1,0 +1,14 @@
+
+BEGIN_PROLOG
+#
+# Module configuration
+#
+PhotonActivity: {
+  module_type:              "PhotonActivity"
+  MCTruthProduct:           "generator" 
+  DebugMode:                false
+  BeamWindowStart:          3.2
+  BeamWindowEnd:            4.8
+  BeforeSpillWindow:        2.0
+}
+END_PROLOG

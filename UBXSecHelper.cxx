@@ -484,7 +484,37 @@ int UBXSecHelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neutri
 
 }
 
+//______________________________________________________________________________
+bool UBXSecHelper::TrackPassesHitRequirment(art::Event const & e,
+                                            std::string _particleLabel,
+                                            art::Ptr<recob::Track> trk,
+                                            int nHitsReq) {
 
+  lar_pandora::TrackVector trackVector;
+  lar_pandora::TracksToHits tracksToHits;
+  lar_pandora::LArPandoraHelper::CollectTracks( e, _particleLabel, trackVector, tracksToHits );
+
+  lar_pandora::HitVector hit_v = tracksToHits.at(trk);
+
+  int nhits_u = 0;
+  int nhits_v = 0;
+  int nhits_w = 0;
+
+  // Check where the hit is coming from
+  for (unsigned int h = 0; h < hit_v.size(); h++){
+
+    if (hit_v[h]->View() == 0) nhits_u++;
+    if (hit_v[h]->View() == 1) nhits_v++;
+    if (hit_v[h]->View() == 2) nhits_w++;
+
+  }
+
+  if ( (nhits_u > nHitsReq) || (nhits_v > nHitsReq) || (nhits_w > nHitsReq) )
+    return true;
+  else
+    return false;
+
+}
 
 //______________________________________________________________________________
 

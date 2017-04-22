@@ -68,7 +68,7 @@ private:
   std::vector<BoundaryWire> BWires_V; ///< Contains list of wires marking the boundaries of dead regions (V plane)
   std::vector<BoundaryWire> BWires_Y; ///< Contains list of wires marking the boundaries of dead regions (Y plane)
 
-  bool _use_file = false;  ///< If true, uses input files instad of geometry and database
+  bool _use_file = true;  ///< If true, uses input files instad of geometry and database
   double _tolerance = 0.6; ///< Tolerance in cm to claim a point is in a dead region
   int _ch_thres = 4;       ///< Channels with status _less_ than threshold are considered as bad (only if using database)
 };

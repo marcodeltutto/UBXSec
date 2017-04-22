@@ -88,6 +88,8 @@ public:
 
 private:
 
+  FindDeadRegions deadRegionsFinder;
+
   std::string _hitfinderLabel;
   std::string _pfp_producer;
   std::string _geantModuleLabel;
@@ -98,6 +100,7 @@ private:
   std::string _opflash_producer_beam;
   bool _recursiveMatching = false;
   bool _debug = true;
+  int _minimumHitRequirement; ///< Minimum number of hits in at least a plane for a track
 
   const simb::Origin_t NEUTRINO_ORIGIN = simb::kBeamNeutrino;
   const simb::Origin_t COSMIC_ORIGIN   = simb::kCosmicRay;
@@ -112,6 +115,8 @@ private:
   TTree* _tree1;
   int _run, _subrun, _event;
   int _muon_is_reco;
+  double _muon_reco_pur = -9999;
+  double _muon_reco_eff = -9999;
   int _nPFPtagged, _muon_is_flash_tagged;
   double _muon_tag_score;
   double _fm_score;
@@ -138,9 +143,11 @@ private:
   std::vector<int> _slc_nuvtx_closetodeadregion_u, _slc_nuvtx_closetodeadregion_v, _slc_nuvtx_closetodeadregion_w;
   std::vector<double> _slc_kalman_chi2;
   std::vector<int> _slc_kalman_ndof;
+  std::vector<bool> _slc_passed_min_track_quality;
 
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe;
+  bool _no_mcflash_but_op_activity; ///< is true if we don't have a neutrino MCFlash in the event, but there is a recon flash in the beam spill
   std::vector<std::vector<double>> _beamfls_spec, _slc_flshypo_spec, _slc_flshypo_xfixed_spec;
   std::vector<double> _numc_flash_spec;
   int _nsignal;
@@ -174,12 +181,16 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p)
   _cosmic_flash_match_producer    = p.get<std::string>("CosmicFlashMatchProducer");
   _opflash_producer_beam          = p.get<std::string>("OpFlashBeamProducer");
 
+  _minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
+
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
   _tree1->Branch("run",                &_run,                "run/I");
   _tree1->Branch("subrun",             &_subrun,             "subrun/I");
   _tree1->Branch("event",              &_event,              "event/I");
   _tree1->Branch("muon_is_reco",       &_muon_is_reco,       "muon_is_reco/I");
+  _tree1->Branch("muon_reco_pur",      &_muon_reco_pur,      "muon_reco_pur/D");
+  _tree1->Branch("muon_reco_eff",      &_muon_reco_eff,      "muon_reco_eff/D");
   _tree1->Branch("nPFPtagged",         &_nPFPtagged,         "nPFPtagged/I");
   _tree1->Branch("muon_is_flash_tagged",      &_muon_is_flash_tagged,      "muon_is_flash_tagged/I");
   _tree1->Branch("muon_tag_score",     &_muon_tag_score,     "muon_tag_score/D");
@@ -227,10 +238,12 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p)
   _tree1->Branch("slc_nuvtx_closetodeadregion_w",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion_w);
   _tree1->Branch("slc_kalman_chi2",  "std::vector<double>", &_slc_kalman_chi2);
   _tree1->Branch("slc_kalman_ndof",  "std::vector<int>",    &_slc_kalman_ndof);
+  _tree1->Branch("slc_passed_min_track_quality",  "std::vector<bool>",    &_slc_passed_min_track_quality);
 
   _tree1->Branch("nbeamfls",           &_nbeamfls,            "nbeamfls/I");
   _tree1->Branch("beamfls_time",       "std::vector<double>", &_beamfls_time);
   _tree1->Branch("beamfls_pe",         "std::vector<double>", &_beamfls_pe);
+  _tree1->Branch("no_mcflash_but_op_activity",           &_no_mcflash_but_op_activity,            "no_mcflash_but_op_activity/O");
   _tree1->Branch("beamfls_spec",       "std::vector<std::vector<double>>", &_beamfls_spec);
   _tree1->Branch("numc_flash_spec",    "std::vector<double>", &_numc_flash_spec);
   _tree1->Branch("slc_flshypo_xfixed_spec", "std::vector<std::vector<double>>", &_slc_flshypo_xfixed_spec);
@@ -425,46 +438,13 @@ void UBXSec::analyze(art::Event const & e)
 
 
 
-         lar_pandora::HitVector recoHits;
+         // Muon track puritity and efficiency
+         _muon_reco_pur = _muon_reco_eff = -9999;
          auto iter = recoParticlesToHits.find(pf_par);
          if (iter != recoParticlesToHits.end()) {
-           recoHits = (*iter).second;
+           UBXSecHelper::GetTrackPurityAndEfficiency((*iter).second, _muon_reco_pur, _muon_reco_eff);
          }
-         double pur, eff;
-         UBXSecHelper::GetTrackPurityAndEfficiency(recoHits, pur, eff);
-         std::cout << "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY efficiency: " << eff << "  purity "  << pur << std::endl;
-
-         /*
-         // map from geant track id to true track deposited energy
-         std::map<int,double> trkidToIDE;
-
-         for(size_t h = 0; h < recoHits.size(); h++){
-
-           art::Ptr<recob::Hit> recoHit = recoHits[h];
-           std::vector<sim::TrackIDE> eveIDs = bt->HitToEveID(recoHit);
-
-           for(size_t e = 0; e < eveIDs.size(); ++e){
-             std::cout<<h<<" "<<e<<" "<<eveIDs[e].trackID<<" "<<eveIDs[e].energy<<" "<<eveIDs[e].energyFrac<<std::endl;
-             trkidToIDE[eveIDs[e].trackID] += eveIDs[e].energy;
-           }
-         }
-
-         double maxe = -1;
-         double tote = 0;
-         //int trackid;
-         for(auto const& ii : trkidToIDE){
-           tote += ii.second;
-           if ((ii.second)>maxe){
-             maxe = ii.second;
-             //trackid = ii.first;
-           }
-         }
-
-         if (tote>0){
-           std::cout << "Track purity is " << maxe/tote << std::endl;
-         }
-*/
-
+         //std::cout << "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY efficiency: " << eff << "  purity "  << pur << std::endl;
 
          lar_pandora::PFParticlesToTracks::const_iterator it =  pfParticleToTrackMap.find(pf_par);
          if (it != pfParticleToTrackMap.end()) {
@@ -663,7 +643,32 @@ void UBXSec::analyze(art::Event const & e)
     }
   }
 
-  // Check if truth nu in is FV
+  // Check if golden
+  bool is_golden = false;
+  for (auto const & mctrk : (*mctrk_h)) {
+    if (mctrk.Origin() == NEUTRINO_ORIGIN && mctrk.PdgCode() == 14) {
+      std::cout << "PPPPPPProcess is " << mctrk.Process() << std::endl;
+      for (size_t pt = 0; pt < mctrk.NumberTrajectoryPoints(); pt++){
+        float ptNearDeadRegion = 0;
+        if (NearDeadReg2P( mctrk.Vy(pt), mctrk.Vz(pt), 0.6) {
+          ptNearDeadRegion++;
+        }
+      } // loop over trj points
+      if (ptNearDeadRegion/(float)mctrk.NumberTrajectoryPoints() > 0.05) {
+        is_golden = false; 
+        break;
+      } 
+      double start[3] = {mctrk.Vx(),   mctrk.Vy(),   mctrk.Vz()};
+      double end[3]   = {mctrk.EndX(), mctrk.EndY(), mctrk.EndZ()};
+      if (UBXSecHelper::InFV(start) && UBXSecHelper::InFV(end)) {
+        is_golden = true;
+        break;
+      }
+    }
+  }
+  std::cout << "       is good track? " << is_golden << std::endl;
+
+  // Check if truth nu is in FV
   // Collecting GENIE particles
   art::Handle< std::vector<simb::MCTruth> > mctruthListHandle;
   std::vector<art::Ptr<simb::MCTruth> > mclist;
@@ -720,6 +725,7 @@ void UBXSec::analyze(art::Event const & e)
   _slc_nuvtx_closetodeadregion_w.resize(_nslices, -9999);  
   _slc_kalman_chi2.resize(_nslices, -9999);
   _slc_kalman_ndof.resize(_nslices, -9999);  
+  _slc_passed_min_track_quality.resize(_nslices, -9999);
 
   std::cout << "UBXSec - SAVING INFORMATION" << std::endl;
   _vtx_resolution = -9999;
@@ -829,6 +835,17 @@ void UBXSec::analyze(art::Event const & e)
         _slc_kalman_ndof[slice] = trk_ptr->Ndof();
       }
     }
+    bool goodTrack = false;
+    for (auto trk : track_v_v[slice]) {
+      if (!deadRegionsFinder.NearDeadReg2P( (trk->Vertex()).Y(), (trk->Vertex()).Z(), 0.6 )  &&
+          !deadRegionsFinder.NearDeadReg2P( (trk->End()).Y(),    (trk->End()).Z(),    0.6 )  &&
+          UBXSecHelper::TrackPassesHitRequirment(e, _pfp_producer, trk, _minimumHitRequirement) ) {
+        goodTrack = true;
+        continue;
+      }
+    }
+    if (goodTrack) _slc_passed_min_track_quality[slice] = true;
+    else _slc_passed_min_track_quality[slice] = false;
 
     // Channel status
     _slc_nuvtx_closetodeadregion_u[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 0) ? 1 : 0);
@@ -913,6 +930,29 @@ void UBXSec::analyze(art::Event const & e)
     unsigned int opdet = geo->OpDetFromOpChannel(i);
     _numc_flash_spec[opdet] = flash.PE(i);
   }
+
+
+
+
+  // MCFlash vs op activity
+  bool opActivityInBeamSpill = false;
+  // Check if there are recon beam flashed in the beam spill window
+  for (auto reco_fls_time : _beamfls_time) {
+    if (reco_fls_time > 3.2 && reco_fls_time < 4.8) {
+       opActivityInBeamSpill = true;
+     }
+  }
+  if (nuMcflash_h->size() > 0) {
+    std::cout << "We have a neutrino MCFlash, and its time is: " << flash.Time() << std::endl;    
+  } else if (nuMcflash_h->size() == 0) {
+    if(opActivityInBeamSpill) {
+      std::cout << "No MCFlash but optical activity in the beam spill." << std::endl;
+      _no_mcflash_but_op_activity = true;
+    }
+  }
+
+
+
 
   /* MCHits
   ::art::Handle< std::vector<sim::MCHitCollection> > mcHit_h;

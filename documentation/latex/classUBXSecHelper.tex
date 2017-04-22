@@ -43,7 +43,9 @@ static bool \hyperlink{classUBXSecHelper_a4ff7e0d6774d5628cc2a3d19bb2d3492}{\-In
 static int \hyperlink{classUBXSecHelper_ade125cef08f3f9ab1562556e7ae977d1}{\-Get\-Slice\-Origin} (std\-::vector$<$ art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$$>$ neutrino\-Origin\-P\-F\-P, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v)
 \begin{DoxyCompactList}\small\item\em \-Returns the origin of the \-T\-P\-C object (neutrino/cosmic) \end{DoxyCompactList}\item 
 static void \hyperlink{classUBXSecHelper_a5d811318d7fb66ab5e1816453c017e63}{\-Get\-Number\-Of\-Hits\-Per\-Plane} (art\-::\-Event const \&e, std\-::string \-\_\-particle\-Label, lar\-\_\-pandora\-::\-Track\-Vector track\-\_\-v, int \&nhits\-\_\-u, int \&nhits\-\_\-v, int \&nhits\-\_\-w)
-\begin{DoxyCompactList}\small\item\em \-Returns the origin of the \-T\-P\-C object (neutrino/cosmic) \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em \-Returns number of hits on each plane for a \-T\-P\-C obj. \end{DoxyCompactList}\item 
+static bool \hyperlink{classUBXSecHelper_accf62c400d9e984f1277843de78715a7}{\-Track\-Passes\-Hit\-Requirment} (art\-::\-Event const \&e, std\-::string \-\_\-particle\-Label, art\-::\-Ptr$<$ recob\-::\-Track $>$ trk, int n\-Hits\-Req)
+\begin{DoxyCompactList}\small\item\em \-Returns true if the track passes a minimum hit requirment in at least one plane. \end{DoxyCompactList}\item 
 static bool \hyperlink{classUBXSecHelper_aef82eb512853d8bd9a40fca00f254b7e}{\-Is\-Crossing\-Boundary} (recob\-::\-Track track, int \&vtx\-\_\-ok)
 \begin{DoxyCompactList}\small\item\em \-Returns true if the track is crossing the \-F\-V border. \end{DoxyCompactList}\item 
 static bool \hyperlink{classUBXSecHelper_af2924ae512f2c8cc5be6feb2bd21a112}{\-Is\-Crossing\-Top\-Boundary} (recob\-::\-Track track, int \&vtx\-\_\-ok)
@@ -147,7 +149,7 @@ static bool \hyperlink{classUBXSecHelper_a7df598dfbdfdb620737fd69297e67faf}{\-Po
 )\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}\label{classUBXSecHelper_a5d811318d7fb66ab5e1816453c017e63}
 
 
-\-Returns the origin of the \-T\-P\-C object (neutrino/cosmic) 
+\-Returns number of hits on each plane for a \-T\-P\-C obj. 
 
 
 \begin{DoxyParams}{\-Parameters}
@@ -454,6 +456,31 @@ static bool \hyperlink{classUBXSecHelper_a7df598dfbdfdb620737fd69297e67faf}{\-Po
 {\em reco\-\_\-nu\-\_\-vtx} & the point to check \\
 \hline
 {\em plane\-\_\-no} & the plane we want to check with \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_accf62c400d9e984f1277843de78715a7}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Track\-Passes\-Hit\-Requirment@{\-Track\-Passes\-Hit\-Requirment}}
+\index{\-Track\-Passes\-Hit\-Requirment@{\-Track\-Passes\-Hit\-Requirment}!UBXSecHelper@{\-U\-B\-X\-Sec\-Helper}}
+\subsubsection[{\-Track\-Passes\-Hit\-Requirment}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf \-U\-B\-X\-Sec\-Helper\-::\-Track\-Passes\-Hit\-Requirment} (
+\begin{DoxyParamCaption}
+\item[{art\-::\-Event const \&}]{e, }
+\item[{std\-::string}]{\-\_\-particle\-Label, }
+\item[{art\-::\-Ptr$<$ recob\-::\-Track $>$}]{trk, }
+\item[{int}]{n\-Hits\-Req}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}\label{classUBXSecHelper_accf62c400d9e984f1277843de78715a7}
+
+
+\-Returns true if the track passes a minimum hit requirment in at least one plane. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em e} & the \-A\-R\-T event \\
+\hline
+{\em \-\_\-particle\-Label} & the \-P\-F\-P procuder module \\
+\hline
+{\em trk} & the recob\-::\-Track \\
+\hline
+{\em n\-Hits\-Req} & the minimum number of hits \\
 \hline
 \end{DoxyParams}
 

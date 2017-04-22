@@ -121,7 +121,9 @@ Static Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#ade125cef08f3f9ab1562556e7ae977d1">GetSliceOrigin</a> (std::vector&lt; art::Ptr&lt; recob::PFParticle &gt;&gt; neutrinoOriginPFP, lar_pandora::PFParticleVector pfp_v)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the origin of the TPC object (neutrino/cosmic)  <a href="#ade125cef08f3f9ab1562556e7ae977d1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a5d811318d7fb66ab5e1816453c017e63">GetNumberOfHitsPerPlane</a> (art::Event const &amp;e, std::string _particleLabel, lar_pandora::TrackVector track_v, int &amp;nhits_u, int &amp;nhits_v, int &amp;nhits_w)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the origin of the TPC object (neutrino/cosmic)  <a href="#a5d811318d7fb66ab5e1816453c017e63"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns number of hits on each plane for a TPC obj.  <a href="#a5d811318d7fb66ab5e1816453c017e63"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#accf62c400d9e984f1277843de78715a7">TrackPassesHitRequirment</a> (art::Event const &amp;e, std::string _particleLabel, art::Ptr&lt; recob::Track &gt; trk, int nHitsReq)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the track passes a minimum hit requirment in at least one plane.  <a href="#accf62c400d9e984f1277843de78715a7"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#aef82eb512853d8bd9a40fca00f254b7e">IsCrossingBoundary</a> (recob::Track track, int &amp;vtx_ok)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the track is crossing the FV border.  <a href="#aef82eb512853d8bd9a40fca00f254b7e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#af2924ae512f2c8cc5be6feb2bd21a112">IsCrossingTopBoundary</a> (recob::Track track, int &amp;vtx_ok)</td></tr>
@@ -284,7 +286,7 @@ Static Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Returns the origin of the TPC object (neutrino/cosmic) </p>
+<p>Returns number of hits on each plane for a TPC obj. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">e</td><td>the ART event </td></tr>
@@ -858,6 +860,56 @@ Static Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">reco_nu_vtx</td><td>the point to check </td></tr>
     <tr><td class="paramname">plane_no</td><td>the plane we want to check with </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="accf62c400d9e984f1277843de78715a7"></a><!-- doxytag: member="UBXSecHelper::TrackPassesHitRequirment" ref="accf62c400d9e984f1277843de78715a7" args="(art::Event const &amp;e, std::string _particleLabel, art::Ptr&lt; recob::Track &gt; trk, int nHitsReq)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classUBXSecHelper.html#accf62c400d9e984f1277843de78715a7">UBXSecHelper::TrackPassesHitRequirment</a> </td>
+          <td>(</td>
+          <td class="paramtype">art::Event const &amp;&#160;</td>
+          <td class="paramname"><em>e</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>_particleLabel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">art::Ptr&lt; recob::Track &gt;&#160;</td>
+          <td class="paramname"><em>trk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nHitsReq</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns true if the track passes a minimum hit requirment in at least one plane. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">e</td><td>the ART event </td></tr>
+    <tr><td class="paramname">_particleLabel</td><td>the PFP procuder module </td></tr>
+    <tr><td class="paramname">trk</td><td>the recob::Track </td></tr>
+    <tr><td class="paramname">nHitsReq</td><td>the minimum number of hits </td></tr>
   </table>
   </dd>
 </dl>

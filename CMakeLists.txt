@@ -11,6 +11,7 @@ art_make( BASENAME_ONLY
           LIBRARY_NAME     uboonecode_uboone_UBXSec
           LIB_LIBRARIES
                    uboonecode_uboone_BasicTool_GeoAlgo
+                   uboone_UBFlashFinder
 		   uboonecode_uboone_SelectionTool_OpT0FinderBase
 		   uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
 	  	   larcore_Geometry
@@ -31,7 +32,7 @@ art_make( BASENAME_ONLY
                    larpandora_LArPandoraInterface
                    ${PANDORASDK}
                    ${PANDORAMONITORING}
-                   LArPandoraContent
+                   #larpandora_LArPandoraContent
                    ${UBOONECODE_LIB}
 		   ${LARDATA_LIB}
 		   ${ART_FRAMEWORK_CORE}
@@ -59,11 +60,13 @@ art_make( BASENAME_ONLY
                    uboonecode_uboone_UBXSec
                    larsim_MCCheater_BackTracker_service
 		   larpandora_LArPandoraInterface
+                   #                   larpandora_LArPandoraContent
 
 		   uboonecode_uboone_BasicTool_GeoAlgo
 		   uboonecode_uboone_SelectionTool_OpT0FinderBase
 		   uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
-         
+                   uboone_UBFlashFinder
+
                    uboone_RawData
                    SignalShapingServiceMicroBooNE_service
                    larevt_CalibrationDBI_IOVData

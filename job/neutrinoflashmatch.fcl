@@ -7,6 +7,7 @@ BEGIN_PROLOG
 NeutrinoFlashMatch: {
   module_type:              "NeutrinoFlashMatch"
   PFParticleModule:         "pandoraNu"
+  TrackModule:              "pandoraNu"
   NeutrinoMCFlashModule:    "NeutrinoMCFlash"
   DebugMode:                true
   BeamOpFlashProducer:      "simpleFlashBeam"

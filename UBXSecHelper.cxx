@@ -271,7 +271,71 @@ void UBXSecHelper::GetTPCObjects(art::Event const & e,
   GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
 }
 
+//______________________________________________________________________________________
+void UBXSecHelper::GetTPCObjects(art::Event const & e,
+                                    std::string _particleLabel,
+                                    std::string _trackLabel,
+                                    std::vector<lar_pandora::PFParticleVector> & pfp_v_v,
+                                    std::vector<lar_pandora::TrackVector> & track_v_v){
 
+  //Vectors and maps we will use to store Pandora information
+  lar_pandora::PFParticleVector pfParticleList;              //vector of PFParticles
+  lar_pandora::PFParticlesToClusters pfParticleToClusterMap; //PFParticle-to-cluster map
+
+  //Use LArPandoraHelper functions to collect Pandora information
+  lar_pandora::LArPandoraHelper::CollectPFParticles(e, _particleLabel, pfParticleList, pfParticleToClusterMap); //collect PFParticles and build map PFParticles to Clusters
+
+  // Collect vertices and tracks
+  lar_pandora::VertexVector           allPfParticleVertices;
+  lar_pandora::PFParticlesToVertices  pfParticleToVertexMap;
+  lar_pandora::LArPandoraHelper::CollectVertices(e, _particleLabel, allPfParticleVertices, pfParticleToVertexMap);
+  lar_pandora::TrackVector            allPfParticleTracks;
+  lar_pandora::PFParticlesToTracks    pfParticleToTrackMap;
+  lar_pandora::LArPandoraHelper::CollectTracks(e, _trackLabel, allPfParticleTracks, pfParticleToTrackMap);
+
+  GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
+}
+
+//______________________________________________________________________________________
+void UBXSecHelper::GetTPCObjects(art::Event const & e,
+                                    std::string _particleLabel,
+                                    std::string _trackLabel,
+                                    std::vector<lar_pandora::PFParticleVector> & pfp_v_v,
+                                    std::vector<lar_pandora::TrackVector> & track_v_v,
+                                    lar_pandora::PFParticlesToSpacePoints & pfp_to_spacept,
+                                    lar_pandora::SpacePointsToHits & spacept_to_hits){
+
+  //Vectors and maps we will use to store Pandora information
+  lar_pandora::PFParticleVector pfParticleList;              //vector of PFParticles
+  lar_pandora::PFParticlesToClusters pfParticleToClusterMap; //PFParticle-to-cluster map
+
+  //Use LArPandoraHelper functions to collect Pandora information
+  lar_pandora::LArPandoraHelper::CollectPFParticles(e, _particleLabel, pfParticleList, pfParticleToClusterMap); //collect PFParticles and build map PFParticles to Clusters
+
+  // Collect vertices and tracks
+  lar_pandora::VertexVector           allPfParticleVertices;
+  lar_pandora::PFParticlesToVertices  pfParticleToVertexMap;
+  lar_pandora::LArPandoraHelper::CollectVertices(e, _particleLabel, allPfParticleVertices, pfParticleToVertexMap);
+  lar_pandora::TrackVector            allPfParticleTracks;
+  lar_pandora::PFParticlesToTracks    pfParticleToTrackMap;
+  lar_pandora::LArPandoraHelper::CollectTracks(e, _trackLabel, allPfParticleTracks, pfParticleToTrackMap);
+
+  // Also collect spacepoints in this case
+  lar_pandora::PFParticleVector temp2;
+  lar_pandora::LArPandoraHelper::CollectPFParticles(e, _particleLabel, temp2, pfp_to_spacept);
+
+  std::cout << "[UBXSecHelper] Looping over pfp_to_spacept map:" << std::endl;
+  for (auto const& iter : pfp_to_spacept) {
+    std::cout << "[UBXSecHelper]   pfp id: " <<  (iter.first)->Self() << ", number of spacepoints: " << (iter.second).size() << std::endl;
+  }
+
+  lar_pandora::SpacePointVector temp3;
+  lar_pandora::LArPandoraHelper::CollectSpacePoints (e, _particleLabel, temp3, spacept_to_hits);
+   
+
+  GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
+
+}
 
 //____________________________________________________________
 void UBXSecHelper::GetNuVertexFromTPCObject(art::Event const & e, 
@@ -661,6 +725,7 @@ bool UBXSecHelper::PointIsCloseToDeadRegion(double *reco_nu_vtx, int plane_no){
   // Now check close wires
   for(unsigned int new_ch = ch - 5; new_ch < ch - 5 + 11; new_ch++){
     //std::cout << "now trying with channel " << new_ch << std::endl;
+    if( new_ch < 0 || new_ch >= 8256) continue;
     if( chanFilt.Status(new_ch) < 4 ) return true;
   }
 
@@ -682,7 +747,30 @@ bool UBXSecHelper::PointIsCloseToDeadRegion(double *reco_nu_vtx, int plane_no){
 }
 
 
+//______________________________________________________________________________
+int UBXSecHelper::GetClosestPMT(double *charge_center) {
 
+  int pmt_id= -1;
+
+  ::art::ServiceHandle<geo::Geometry> geo;
+  double xyz[3];
+  double dist;
+  double min_dist = 1.e9;
+
+  for (size_t opch = 0; opch < 32; opch++) {
+    geo->OpDetGeoFromOpChannel(opch).GetCenter(xyz); 
+    dist = std::sqrt( (charge_center[0] - xyz[0])*(charge_center[0] - xyz[0]) +
+                      (charge_center[1] - xyz[1])*(charge_center[1] - xyz[1]) +
+                      (charge_center[2] - xyz[2])*(charge_center[2] - xyz[2]) );
+
+    if (dist < min_dist) {
+      min_dist = dist;
+      pmt_id = opch;
+    }        
+  }
+
+  return pmt_id;
+}
 
 
 

@@ -1,3 +1,4 @@
+#include "ubflashcalib.fcl"
 
 BEGIN_PROLOG
 #
@@ -13,6 +14,11 @@ SpacePointProducer:           "pandoraNu"
 NeutrinoFlashMatchProducer:   "NeutrinoFlashMatch"
 CosmicFlashMatchProducer:     "CosmicFlashMatch"
 OpFlashBeamProducer:          "simpleFlashBeam"
+
+UseGENIEInfo:                 true
+MinimumHitRequirement:        3
+
+PECalib:                      @local::SPECalib
 }
 
 END_PROLOG

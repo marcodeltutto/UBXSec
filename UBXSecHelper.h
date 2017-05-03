@@ -66,7 +66,7 @@ class UBXSecHelper {
   static void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles,
        lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits, PFParticleSet &recoVeto, MCParticleSet &trueVeto, bool _recursiveMatching);
 
-  void GetRecoToTrueMatches(art::Event const & e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits);
+  static void GetRecoToTrueMatches(art::Event const & e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits);
 
   /**
    *  @brief Constructs TPC objects using Pandora PFP slices
@@ -77,6 +77,30 @@ class UBXSecHelper {
    *  @param track_v_v output, a vector of vector of tracks (a vector of TPC objects)
    */
   static void GetTPCObjects(art::Event const & e, std::string _particleLabel, std::vector<lar_pandora::PFParticleVector> & pfp_v_v, std::vector<lar_pandora::TrackVector> & track_v_v);
+
+  /**
+   *  @brief Constructs TPC objects using Pandora PFP slices
+   *
+   *  @param e the ART event
+   *  @param _particleLabel the PFP producer module
+   *  @param _trackLabel the track producer module
+   *  @param pfp_v_v output, a vector of vector of PFP (a vector of TPC objects)
+   *  @param track_v_v output, a vector of vector of tracks (a vector of TPC objects)
+   */
+  static void GetTPCObjects(art::Event const & e, std::string _particleLabel, std::string _trackLabel, std::vector<lar_pandora::PFParticleVector> & pfp_v_v, std::vector<lar_pandora::TrackVector> & track_v_v);
+
+  /**
+   *  @brief Constructs TPC objects using Pandora PFP slices
+   *
+   *  @param e the ART event
+   *  @param _particleLabel the PFP producer module
+   *  @param _trackLabel the track producer module
+   *  @param pfp_v_v output, a vector of vector of PFP (a vector of TPC objects)
+   *  @param track_v_v output, a vector of vector of tracks (a vector of TPC objects)
+   *  @param pfp_to_spacept ouput, a map from pfp to space points
+   *  @param spacept_to_hits ouput, a map from space points to recon hits
+   */
+  static void GetTPCObjects(art::Event const & e, std::string _particleLabel, std::string _trackLabel, std::vector<lar_pandora::PFParticleVector> & pfp_v_v, std::vector<lar_pandora::TrackVector> & track_v_v, lar_pandora::PFParticlesToSpacePoints & pfp_to_spacept, lar_pandora::SpacePointsToHits & spacept_to_hits);
 
   /**
    *  @brief Constructs TPC objects using Pandora PFP slices
@@ -184,6 +208,11 @@ class UBXSecHelper {
    *  @param plane_no the plane we want to check with  */
   static bool PointIsCloseToDeadRegion(double *reco_nu_vtx, int plane_no);
 
+  /**
+   *  @brief Returns the clostes opchannel to the 3D specified point
+   *
+   *  @param charge_center the 3D point (c array) */
+  static int GetClosestPMT(double *charge_center);
 };
 
 #endif //  UBXSECHELPER_H

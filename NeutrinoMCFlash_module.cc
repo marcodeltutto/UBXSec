@@ -117,7 +117,7 @@ void NeutrinoMCFlash::produce(art::Event & e)
   auto const trig_time = evt_trigger.TriggerTime();
   auto const * ts = lar::providerFrom<detinfo::DetectorClocksService>();
 
-  double nuTime = 0.;
+  double nuTime = -1.e9;
   if (_debug) std::cout << "We have " << evt_mctruth_h->size() << " mctruth events." << std::endl;
   for (size_t n = 0; n < evt_mctruth_h->size(); n++) {
 
@@ -137,11 +137,21 @@ void NeutrinoMCFlash::produce(art::Event & e)
         std::cout << "new    converted: " << ts->G4ToElecTime(par.T()) - trig_time << std::endl;
         std::cout << std::endl;
       }
-      if (par.PdgCode() == 14) nuTime = par.T();//ts->G4ToElecTime(par.T()) - trig_time;
+      if (   par.PdgCode() == 14 
+          || par.PdgCode() == -14
+          || par.PdgCode() == 12
+          || par.PdgCode() == -12) 
+        nuTime = par.T();//ts->G4ToElecTime(par.T()) - trig_time;
     }
   }
 
-  std::cout << "Neutrino G4 interaction time: "  << nuTime << std::endl; 
+  if (nuTime == -1.e9) {
+    std::cout << "[NeutrinoMCFlash] No neutrino found." << std::endl;
+    e.put(std::move(opflashes));
+    return; 
+  }
+
+  std::cout << "[NeutrinoMCFlash] Neutrino G4 interaction time: "  << nuTime << std::endl; 
 
   std::vector<std::vector<double> > pmt_v(1,std::vector<double>(geo->NOpDets(),0));
 
@@ -153,8 +163,8 @@ void NeutrinoMCFlash::produce(art::Event & e)
 
     for(auto const& oneph : simph) {
 
-      if (oneph.Time > nuTime + 1000 ) continue;
-      if (oneph.Time > nuTime - 1000){ 
+      if (oneph.Time > nuTime + 8000 ) continue;
+      if (oneph.Time > nuTime - 100){ 
         if (_debug) std::cout << " photon time " << oneph.Time << std::endl;
         pmt_v[0][opdet2opch[opdet]] += 1;
       }

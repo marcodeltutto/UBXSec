@@ -55,6 +55,7 @@ void FindDeadRegions::Configure(fhicl::ParameterSet const& pset) {
 
 void FindDeadRegions::LoadBWires() {
 
+  std::cout << "[FindDeadRegions] Loading wires from " << (_use_file ? " files." : "database.") << std::endl;
 
   ::art::ServiceHandle<geo::Geometry> geo;
 
@@ -79,6 +80,8 @@ void FindDeadRegions::LoadBWires() {
   std::vector<float> ezVec;
 
   double xyz[3];
+
+  std::cout << "[FindDeadRegions] Loading geometry." << std::endl;
 
   if (!_use_file) {
 
@@ -192,6 +195,8 @@ void FindDeadRegions::LoadBWires() {
   std::vector<unsigned int> CSchannelVec;
   std::vector<bool> CSstatusVec;
 
+  std::cout << "[FindDeadRegions] Loading channel statuses." << std::endl;
+
   if (!_use_file) {
 
     // **********
@@ -204,7 +209,7 @@ void FindDeadRegions::LoadBWires() {
 
       CSchannelVec.push_back(channel);
 
-      // Channel statues: 1=dead, 3=noisy, 4=good
+      // Channel statuses: 1=dead, 3=noisy, 4=good
       if (chanFilt.Status(channel) < _ch_thres) {
         CSstatusVec.push_back(false);
       } else {
@@ -241,6 +246,8 @@ void FindDeadRegions::LoadBWires() {
 
     chanstatfile.close();
   }
+
+  std::cout << "[FindDeadRegions] Loading ended." << std::endl;
 
   bool isGoodChannel;
 
@@ -367,6 +374,8 @@ void FindDeadRegions::LoadBWires() {
       BWires_Y.push_back(BWire);
     }
   }
+
+  std::cout << "[FindDeadRegions] LoadBwires ends." << std::endl;
 
   return;
 }

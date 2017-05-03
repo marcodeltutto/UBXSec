@@ -8,6 +8,7 @@ Notice: Output directory `./documentation' does not exist. I have created it for
 /home/travis/build/marcodeltutto/UBXSec/FindDeadRegions.h:25: warning: Compound BoundaryWire is not documented.
 /home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:40: warning: Compound PhotonActivity is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:46: warning: Compound DeDxAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:75: warning: Compound ubxsec::Hit3D_t is not documented.
 Searching for include files...
 Searching for example files...
 Searching for images...
@@ -122,7 +123,7 @@ Generating examp/home/travis/build/marcodeltutto/UBXSec/FindDeadRegions.h:26: wa
 /home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:64: warning: Member NeutrinoFlashMatch(NeutrinoFlashMatch &&) (function) of class NeutrinoFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:65: warning: Member operator=(NeutrinoFlashMatch const &) (function) of class NeutrinoFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:66: warning: Member operator=(NeutrinoFlashMatch &&) (function) of class NeutrinoFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:86: warning: Member produce(art::Event &e) override (function) of class NeutrinoFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:88: warning: Member produce(art::Event &e) override (function) of class NeutrinoFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:37: warning: Member NeutrinoMCFlash(fhicl::ParameterSet const &p) (function) of class NeutrinoMCFlash is not documented.
 /home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:42: warning: Member NeutrinoMCFlash(NeutrinoMCFlash const &) (function) of class NeutrinoMCFlash is not documented.
 /home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:43: warning: Member NeutrinoMCFlash(NeutrinoMCFlash &&) (function) of class NeutrinoMCFlash is not documented.
@@ -135,16 +136,16 @@ Generating examp/home/travis/build/marcodeltutto/UBXSec/FindDeadRegions.h:26: wa
 /home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:49: warning: Member operator=(PhotonActivity const &) (function) of class PhotonActivity is not documented.
 /home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:50: warning: Member operator=(PhotonActivity &&) (function) of class PhotonActivity is not documented.
 /home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:53: warning: Member produce(art::Event &e) override (function) of class PhotonActivity is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:76: warning: Member UBXSec(fhicl::ParameterSet const &p) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:81: warning: Member UBXSec(UBXSec const &) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:82: warning: Member UBXSec(UBXSec &&) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:83: warning: Member operator=(UBXSec const &) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:84: warning: Member operator=(UBXSec &&) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:87: warning: Member analyze(art::Event const &e) override (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:88: warning: Member UBXSec(fhicl::ParameterSet const &p) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:93: warning: Member UBXSec(UBXSec const &) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:94: warning: Member UBXSec(UBXSec &&) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:95: warning: Member operator=(UBXSec const &) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:96: warning: Member operator=(UBXSec &&) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:99: warning: Member analyze(art::Event const &e) override (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/UBXSecHelper.h:69: warning: Member GetRecoToTrueMatches(art::Event const &e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits) (function) of class UBXSecHelper is not documented.
 /home/travis/build/marcodeltutto/UBXSec/UBXSecHelper.h:56: warning: The following parameters of UBXSecHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits, PFParticleSet &recoVeto, MCParticleSet &trueVeto, bool _recursiveMatching) are not documented:
   parameter '_recursiveMatching'
-/home/travis/build/marcodeltutto/UBXSec/UBXSecHelper.h:81: warning: argument '_particleLabel' of command @param is not found in the argument list of UBXSecHelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v)
+/home/travis/build/marcodeltutto/UBXSec/UBXSecHelper.h:105: warning: argument '_particleLabel' of command @param is not found in the argument list of UBXSecHelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v)
 /home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:33: warning: Member FlashMatch(double score) (function) of class ubana::FlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:37: warning: Member SetScore(double) (function) of class ubana::FlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:38: warning: Member SetEstimatedX(double) (function) of class ubana::FlashMatch is not documented.
@@ -166,6 +167,10 @@ Generating examp/home/travis/build/marcodeltutto/UBXSec/FindDeadRegions.h:26: wa
 /home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:56: warning: Member GetXFixedHypoFlashSpec() const  (function) of class ubana::FlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:57: warning: Member GetXFixedChi2() const  (function) of class ubana::FlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:58: warning: Member GetXFixedLl() const  (function) of class ubana::FlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:76: warning: Member x (variable) of class ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:77: warning: Member y (variable) of class ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:78: warning: Member z (variable) of class ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:79: warning: Member q (variable) of class ubxsec::Hit3D_t is not documented.
 /home/travis/build/marcodeltutto/UBXSec/VertexCheck.h:70: warning: Member _max_distance (variable) of class ubxsec::VertexCheck is not documented.
 /home/travis/build/marcodeltutto/UBXSec/VertexCheck.h:71: warning: Member _tpcObjIsSet (variable) of class ubxsec::VertexCheck is not documented.
 /home/travis/build/marcodeltutto/UBXSec/VertexCheck.h:71: warning: Member _vtxIsSet (variable) of class ubxsec::VertexCheck is not documented.
@@ -194,6 +199,7 @@ Generating docs for compound UBXSec...
 Generating docs for compound UBXSecHelper...
 Generating namespace index...
 Generating docs for compound ubana::FlashMatch...
+Generating docs for compound ubxsec::Hit3D_t...
 Generating docs for compound ubxsec::VertexCheck...
 Generating graph info page...
 Generating index page...
@@ -209,6 +215,6 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-symbol cache used 337/65536 hits=6828 misses=337
-lookup cache used 100/65536 hits=422 misses=101
+symbol cache used 354/65536 hits=7275 misses=354
+lookup cache used 101/65536 hits=448 misses=102
 finished...

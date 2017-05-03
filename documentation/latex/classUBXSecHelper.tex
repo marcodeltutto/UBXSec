@@ -10,12 +10,6 @@
 
 {\ttfamily \#include $<$\-U\-B\-X\-Sec\-Helper.\-h$>$}
 
-\subsection*{\-Public \-Member \-Functions}
-\begin{DoxyCompactItemize}
-\item 
-\hypertarget{classUBXSecHelper_a0bc1ff387b79732ea8d365ad296a22fb}{void {\bfseries \-Get\-Reco\-To\-True\-Matches} (art\-::\-Event const \&e, std\-::string \-\_\-pfp\-\_\-producer, std\-::string \-\_\-spacepoint\-Label, std\-::string \-\_\-hitfinder\-Label, std\-::string \-\_\-geant\-Module\-Label, lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-P\-F\-Particles \&matched\-Particles, lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-Hits \&matched\-Hits)}\label{classUBXSecHelper_a0bc1ff387b79732ea8d365ad296a22fb}
-
-\end{DoxyCompactItemize}
 \subsection*{\-Static \-Public \-Member \-Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -25,7 +19,14 @@ static void \hyperlink{classUBXSecHelper_a0708dbe6fb5f3ea0f200362887473e36}{\-Ge
 \begin{DoxyCompactList}\small\item\em \-Perform matching between true and reconstructed particles. \end{DoxyCompactList}\item 
 static void \hyperlink{classUBXSecHelper_a111c32be3cab634ffacbfa03e7ea789b}{\-Get\-Reco\-To\-True\-Matches} (const lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Hits \&reco\-Particles\-To\-Hits, const lar\-\_\-pandora\-::\-Hits\-To\-M\-C\-Particles \&true\-Hits\-To\-Particles, lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-P\-F\-Particles \&matched\-Particles, lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-Hits \&matched\-Hits, \-P\-F\-Particle\-Set \&reco\-Veto, \-M\-C\-Particle\-Set \&true\-Veto, bool \-\_\-recursive\-Matching)
 \begin{DoxyCompactList}\small\item\em \-Perform matching between true and reconstructed particles. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecHelper_a0bc1ff387b79732ea8d365ad296a22fb}{static void {\bfseries \-Get\-Reco\-To\-True\-Matches} (art\-::\-Event const \&e, std\-::string \-\_\-pfp\-\_\-producer, std\-::string \-\_\-spacepoint\-Label, std\-::string \-\_\-hitfinder\-Label, std\-::string \-\_\-geant\-Module\-Label, lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-P\-F\-Particles \&matched\-Particles, lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-Hits \&matched\-Hits)}\label{classUBXSecHelper_a0bc1ff387b79732ea8d365ad296a22fb}
+
+\item 
 static void \hyperlink{classUBXSecHelper_a36ef4a258300c98061cd01782157433b}{\-Get\-T\-P\-C\-Objects} (art\-::\-Event const \&e, std\-::string \-\_\-particle\-Label, std\-::vector$<$ lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector $>$ \&pfp\-\_\-v\-\_\-v, std\-::vector$<$ lar\-\_\-pandora\-::\-Track\-Vector $>$ \&track\-\_\-v\-\_\-v)
+\begin{DoxyCompactList}\small\item\em \-Constructs \-T\-P\-C objects using \-Pandora \-P\-F\-P slices. \end{DoxyCompactList}\item 
+static void \hyperlink{classUBXSecHelper_a3cab5312a1b756505fe0fe1df779fdc4}{\-Get\-T\-P\-C\-Objects} (art\-::\-Event const \&e, std\-::string \-\_\-particle\-Label, std\-::string \-\_\-track\-Label, std\-::vector$<$ lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector $>$ \&pfp\-\_\-v\-\_\-v, std\-::vector$<$ lar\-\_\-pandora\-::\-Track\-Vector $>$ \&track\-\_\-v\-\_\-v)
+\begin{DoxyCompactList}\small\item\em \-Constructs \-T\-P\-C objects using \-Pandora \-P\-F\-P slices. \end{DoxyCompactList}\item 
+static void \hyperlink{classUBXSecHelper_a2f4cbe3be1b4e4721d844c83258d6962}{\-Get\-T\-P\-C\-Objects} (art\-::\-Event const \&e, std\-::string \-\_\-particle\-Label, std\-::string \-\_\-track\-Label, std\-::vector$<$ lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector $>$ \&pfp\-\_\-v\-\_\-v, std\-::vector$<$ lar\-\_\-pandora\-::\-Track\-Vector $>$ \&track\-\_\-v\-\_\-v, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Space\-Points \&pfp\-\_\-to\-\_\-spacept, lar\-\_\-pandora\-::\-Space\-Points\-To\-Hits \&spacept\-\_\-to\-\_\-hits)
 \begin{DoxyCompactList}\small\item\em \-Constructs \-T\-P\-C objects using \-Pandora \-P\-F\-P slices. \end{DoxyCompactList}\item 
 static void \hyperlink{classUBXSecHelper_a900fbd13023a46b8d3c0a38aae84a10b}{\-Get\-T\-P\-C\-Objects} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pf\-Particle\-List, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks pf\-Particle\-To\-Track\-Map, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Vertices pf\-Particle\-To\-Vertex\-Map, std\-::vector$<$ lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector $>$ \&pfp\-\_\-v\-\_\-v, std\-::vector$<$ lar\-\_\-pandora\-::\-Track\-Vector $>$ \&track\-\_\-v\-\_\-v)
 \begin{DoxyCompactList}\small\item\em \-Constructs \-T\-P\-C objects using \-Pandora \-P\-F\-P slices. \end{DoxyCompactList}\item 
@@ -53,7 +54,9 @@ static bool \hyperlink{classUBXSecHelper_af2924ae512f2c8cc5be6feb2bd21a112}{\-Is
 static bool \hyperlink{classUBXSecHelper_a76b009afef0cc69f281ca3215a901f35}{\-Get\-Longest\-Track\-From\-T\-P\-C\-Obj} (lar\-\_\-pandora\-::\-Track\-Vector track\-\_\-v, recob\-::\-Track \&out\-\_\-track)
 \begin{DoxyCompactList}\small\item\em \-Gets the longest track from a \-T\-P\-C object, returns false if there are no tracks in the \-T\-P\-C object. \end{DoxyCompactList}\item 
 static bool \hyperlink{classUBXSecHelper_a7df598dfbdfdb620737fd69297e67faf}{\-Point\-Is\-Close\-To\-Dead\-Region} (double $\ast$reco\-\_\-nu\-\_\-vtx, int plane\-\_\-no)
-\begin{DoxyCompactList}\small\item\em \-Returns true if the point passed is close to a dead region. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \-Returns true if the point passed is close to a dead region. \end{DoxyCompactList}\item 
+static int \hyperlink{classUBXSecHelper_a88533a5a59d61351437a1fe2e54aff25}{\-Get\-Closest\-P\-M\-T} (double $\ast$charge\-\_\-center)
+\begin{DoxyCompactList}\small\item\em \-Returns the clostes opchannel to the 3\-D specified point. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{\-Detailed \-Description}
@@ -114,6 +117,22 @@ static bool \hyperlink{classUBXSecHelper_a7df598dfbdfdb620737fd69297e67faf}{\-Po
 {\em pfp\-\_\-v} & output, a vector of \-P\-F\-P (the \-T\-P\-C object) \\
 \hline
 {\em track\-\_\-v} & output, a of tracks (the \-T\-P\-C object) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_a88533a5a59d61351437a1fe2e54aff25}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Get\-Closest\-P\-M\-T@{\-Get\-Closest\-P\-M\-T}}
+\index{\-Get\-Closest\-P\-M\-T@{\-Get\-Closest\-P\-M\-T}!UBXSecHelper@{\-U\-B\-X\-Sec\-Helper}}
+\subsubsection[{\-Get\-Closest\-P\-M\-T}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf \-U\-B\-X\-Sec\-Helper\-::\-Get\-Closest\-P\-M\-T} (
+\begin{DoxyParamCaption}
+\item[{double $\ast$}]{charge\-\_\-center}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}\label{classUBXSecHelper_a88533a5a59d61351437a1fe2e54aff25}
+
+
+\-Returns the clostes opchannel to the 3\-D specified point. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em charge\-\_\-center} & the 3\-D point (c array) \\
 \hline
 \end{DoxyParams}
 \hypertarget{classUBXSecHelper_a76b009afef0cc69f281ca3215a901f35}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Get\-Longest\-Track\-From\-T\-P\-C\-Obj@{\-Get\-Longest\-Track\-From\-T\-P\-C\-Obj}}
@@ -331,6 +350,68 @@ static bool \hyperlink{classUBXSecHelper_a7df598dfbdfdb620737fd69297e67faf}{\-Po
 {\em pfp\-\_\-v\-\_\-v} & output, a vector of vector of \-P\-F\-P (a vector of \-T\-P\-C objects) \\
 \hline
 {\em track\-\_\-v\-\_\-v} & output, a vector of vector of tracks (a vector of \-T\-P\-C objects) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_a3cab5312a1b756505fe0fe1df779fdc4}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Get\-T\-P\-C\-Objects@{\-Get\-T\-P\-C\-Objects}}
+\index{\-Get\-T\-P\-C\-Objects@{\-Get\-T\-P\-C\-Objects}!UBXSecHelper@{\-U\-B\-X\-Sec\-Helper}}
+\subsubsection[{\-Get\-T\-P\-C\-Objects}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-U\-B\-X\-Sec\-Helper\-::\-Get\-T\-P\-C\-Objects} (
+\begin{DoxyParamCaption}
+\item[{art\-::\-Event const \&}]{e, }
+\item[{std\-::string}]{\-\_\-particle\-Label, }
+\item[{std\-::string}]{\-\_\-track\-Label, }
+\item[{std\-::vector$<$ lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector $>$ \&}]{pfp\-\_\-v\-\_\-v, }
+\item[{std\-::vector$<$ lar\-\_\-pandora\-::\-Track\-Vector $>$ \&}]{track\-\_\-v\-\_\-v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}\label{classUBXSecHelper_a3cab5312a1b756505fe0fe1df779fdc4}
+
+
+\-Constructs \-T\-P\-C objects using \-Pandora \-P\-F\-P slices. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em e} & the \-A\-R\-T event \\
+\hline
+{\em \-\_\-particle\-Label} & the \-P\-F\-P producer module \\
+\hline
+{\em \-\_\-track\-Label} & the track producer module \\
+\hline
+{\em pfp\-\_\-v\-\_\-v} & output, a vector of vector of \-P\-F\-P (a vector of \-T\-P\-C objects) \\
+\hline
+{\em track\-\_\-v\-\_\-v} & output, a vector of vector of tracks (a vector of \-T\-P\-C objects) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_a2f4cbe3be1b4e4721d844c83258d6962}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Get\-T\-P\-C\-Objects@{\-Get\-T\-P\-C\-Objects}}
+\index{\-Get\-T\-P\-C\-Objects@{\-Get\-T\-P\-C\-Objects}!UBXSecHelper@{\-U\-B\-X\-Sec\-Helper}}
+\subsubsection[{\-Get\-T\-P\-C\-Objects}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-U\-B\-X\-Sec\-Helper\-::\-Get\-T\-P\-C\-Objects} (
+\begin{DoxyParamCaption}
+\item[{art\-::\-Event const \&}]{e, }
+\item[{std\-::string}]{\-\_\-particle\-Label, }
+\item[{std\-::string}]{\-\_\-track\-Label, }
+\item[{std\-::vector$<$ lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector $>$ \&}]{pfp\-\_\-v\-\_\-v, }
+\item[{std\-::vector$<$ lar\-\_\-pandora\-::\-Track\-Vector $>$ \&}]{track\-\_\-v\-\_\-v, }
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Space\-Points \&}]{pfp\-\_\-to\-\_\-spacept, }
+\item[{lar\-\_\-pandora\-::\-Space\-Points\-To\-Hits \&}]{spacept\-\_\-to\-\_\-hits}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}\label{classUBXSecHelper_a2f4cbe3be1b4e4721d844c83258d6962}
+
+
+\-Constructs \-T\-P\-C objects using \-Pandora \-P\-F\-P slices. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em e} & the \-A\-R\-T event \\
+\hline
+{\em \-\_\-particle\-Label} & the \-P\-F\-P producer module \\
+\hline
+{\em \-\_\-track\-Label} & the track producer module \\
+\hline
+{\em pfp\-\_\-v\-\_\-v} & output, a vector of vector of \-P\-F\-P (a vector of \-T\-P\-C objects) \\
+\hline
+{\em track\-\_\-v\-\_\-v} & output, a vector of vector of tracks (a vector of \-T\-P\-C objects) \\
+\hline
+{\em pfp\-\_\-to\-\_\-spacept} & ouput, a map from pfp to space points \\
+\hline
+{\em spacept\-\_\-to\-\_\-hits} & ouput, a map from space points to recon hits \\
 \hline
 \end{DoxyParams}
 \hypertarget{classUBXSecHelper_a900fbd13023a46b8d3c0a38aae84a10b}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Get\-T\-P\-C\-Objects@{\-Get\-T\-P\-C\-Objects}}

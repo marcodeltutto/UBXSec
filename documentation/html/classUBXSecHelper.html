@@ -77,7 +77,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">UBXSecHelper Class Reference<div class="ingroups"><a class="el" href="group__UBXSec.html">UBXSec</a></div></div>  </div>
@@ -91,10 +90,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <p><a href="classUBXSecHelper-members.html">List of all members.</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0bc1ff387b79732ea8d365ad296a22fb"></a><!-- doxytag: member="UBXSecHelper::GetRecoToTrueMatches" ref="a0bc1ff387b79732ea8d365ad296a22fb" args="(art::Event const &amp;e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &amp;matchedParticles, lar_pandora::MCParticlesToHits &amp;matchedHits)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueMatches</b> (art::Event const &amp;e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &amp;matchedParticles, lar_pandora::MCParticlesToHits &amp;matchedHits)</td></tr>
 <tr><td colspan="2"><h2><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a43250b48882308e09d5099186dbb1b01">GetTrackPurityAndEfficiency</a> (lar_pandora::HitVector recoHits, double &amp;trackPurity, double &amp;trackEfficiency)</td></tr>
@@ -103,8 +98,14 @@ Static Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform matching between true and reconstructed particles.  <a href="#a0708dbe6fb5f3ea0f200362887473e36"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a111c32be3cab634ffacbfa03e7ea789b">GetRecoToTrueMatches</a> (const lar_pandora::PFParticlesToHits &amp;recoParticlesToHits, const lar_pandora::HitsToMCParticles &amp;trueHitsToParticles, lar_pandora::MCParticlesToPFParticles &amp;matchedParticles, lar_pandora::MCParticlesToHits &amp;matchedHits, PFParticleSet &amp;recoVeto, MCParticleSet &amp;trueVeto, bool _recursiveMatching)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform matching between true and reconstructed particles.  <a href="#a111c32be3cab634ffacbfa03e7ea789b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0bc1ff387b79732ea8d365ad296a22fb"></a><!-- doxytag: member="UBXSecHelper::GetRecoToTrueMatches" ref="a0bc1ff387b79732ea8d365ad296a22fb" args="(art::Event const &amp;e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &amp;matchedParticles, lar_pandora::MCParticlesToHits &amp;matchedHits)" -->
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueMatches</b> (art::Event const &amp;e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &amp;matchedParticles, lar_pandora::MCParticlesToHits &amp;matchedHits)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a36ef4a258300c98061cd01782157433b">GetTPCObjects</a> (art::Event const &amp;e, std::string _particleLabel, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;pfp_v_v, std::vector&lt; lar_pandora::TrackVector &gt; &amp;track_v_v)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs TPC objects using Pandora PFP slices.  <a href="#a36ef4a258300c98061cd01782157433b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a3cab5312a1b756505fe0fe1df779fdc4">GetTPCObjects</a> (art::Event const &amp;e, std::string _particleLabel, std::string _trackLabel, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;pfp_v_v, std::vector&lt; lar_pandora::TrackVector &gt; &amp;track_v_v)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs TPC objects using Pandora PFP slices.  <a href="#a3cab5312a1b756505fe0fe1df779fdc4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a2f4cbe3be1b4e4721d844c83258d6962">GetTPCObjects</a> (art::Event const &amp;e, std::string _particleLabel, std::string _trackLabel, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;pfp_v_v, std::vector&lt; lar_pandora::TrackVector &gt; &amp;track_v_v, lar_pandora::PFParticlesToSpacePoints &amp;pfp_to_spacept, lar_pandora::SpacePointsToHits &amp;spacept_to_hits)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs TPC objects using Pandora PFP slices.  <a href="#a2f4cbe3be1b4e4721d844c83258d6962"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a900fbd13023a46b8d3c0a38aae84a10b">GetTPCObjects</a> (lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;pfp_v_v, std::vector&lt; lar_pandora::TrackVector &gt; &amp;track_v_v)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs TPC objects using Pandora PFP slices.  <a href="#a900fbd13023a46b8d3c0a38aae84a10b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#ab441342f0c71741e353f323a26f27728">CollectTracksAndPFP</a> (lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticleVector pfParticleList, art::Ptr&lt; recob::PFParticle &gt; particle, lar_pandora::PFParticleVector &amp;pfp_v, lar_pandora::TrackVector &amp;track_v)</td></tr>
@@ -132,6 +133,8 @@ Static Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the longest track from a TPC object, returns false if there are no tracks in the TPC object.  <a href="#a76b009afef0cc69f281ca3215a901f35"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a7df598dfbdfdb620737fd69297e67faf">PointIsCloseToDeadRegion</a> (double *reco_nu_vtx, int plane_no)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the point passed is close to a dead region.  <a href="#a7df598dfbdfdb620737fd69297e67faf"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a88533a5a59d61351437a1fe2e54aff25">GetClosestPMT</a> (double *charge_center)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the clostes opchannel to the 3D specified point.  <a href="#a88533a5a59d61351437a1fe2e54aff25"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>An helper class for <a class="el" href="classUBXSec.html" title="Art analyzer module.">UBXSec</a>. </p>
@@ -195,6 +198,31 @@ Static Public Member Functions</h2></td></tr>
     <tr><td class="paramname">particle</td><td>the PFP </td></tr>
     <tr><td class="paramname">pfp_v</td><td>output, a vector of PFP (the TPC object) </td></tr>
     <tr><td class="paramname">track_v</td><td>output, a of tracks (the TPC object) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a88533a5a59d61351437a1fe2e54aff25"></a><!-- doxytag: member="UBXSecHelper::GetClosestPMT" ref="a88533a5a59d61351437a1fe2e54aff25" args="(double *charge_center)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classUBXSecHelper.html#a88533a5a59d61351437a1fe2e54aff25">UBXSecHelper::GetClosestPMT</a> </td>
+          <td>(</td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>charge_center</em></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the clostes opchannel to the 3D specified point. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">charge_center</td><td>the 3D point (c array) </td></tr>
   </table>
   </dd>
 </dl>
@@ -626,6 +654,134 @@ Static Public Member Functions</h2></td></tr>
     <tr><td class="paramname">_particleLabel</td><td>the PFP producer module </td></tr>
     <tr><td class="paramname">pfp_v_v</td><td>output, a vector of vector of PFP (a vector of TPC objects) </td></tr>
     <tr><td class="paramname">track_v_v</td><td>output, a vector of vector of tracks (a vector of TPC objects) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a3cab5312a1b756505fe0fe1df779fdc4"></a><!-- doxytag: member="UBXSecHelper::GetTPCObjects" ref="a3cab5312a1b756505fe0fe1df779fdc4" args="(art::Event const &amp;e, std::string _particleLabel, std::string _trackLabel, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;pfp_v_v, std::vector&lt; lar_pandora::TrackVector &gt; &amp;track_v_v)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classUBXSecHelper.html#a36ef4a258300c98061cd01782157433b">UBXSecHelper::GetTPCObjects</a> </td>
+          <td>(</td>
+          <td class="paramtype">art::Event const &amp;&#160;</td>
+          <td class="paramname"><em>e</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>_particleLabel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>_trackLabel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pfp_v_v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; lar_pandora::TrackVector &gt; &amp;&#160;</td>
+          <td class="paramname"><em>track_v_v</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Constructs TPC objects using Pandora PFP slices. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">e</td><td>the ART event </td></tr>
+    <tr><td class="paramname">_particleLabel</td><td>the PFP producer module </td></tr>
+    <tr><td class="paramname">_trackLabel</td><td>the track producer module </td></tr>
+    <tr><td class="paramname">pfp_v_v</td><td>output, a vector of vector of PFP (a vector of TPC objects) </td></tr>
+    <tr><td class="paramname">track_v_v</td><td>output, a vector of vector of tracks (a vector of TPC objects) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a2f4cbe3be1b4e4721d844c83258d6962"></a><!-- doxytag: member="UBXSecHelper::GetTPCObjects" ref="a2f4cbe3be1b4e4721d844c83258d6962" args="(art::Event const &amp;e, std::string _particleLabel, std::string _trackLabel, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;pfp_v_v, std::vector&lt; lar_pandora::TrackVector &gt; &amp;track_v_v, lar_pandora::PFParticlesToSpacePoints &amp;pfp_to_spacept, lar_pandora::SpacePointsToHits &amp;spacept_to_hits)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classUBXSecHelper.html#a36ef4a258300c98061cd01782157433b">UBXSecHelper::GetTPCObjects</a> </td>
+          <td>(</td>
+          <td class="paramtype">art::Event const &amp;&#160;</td>
+          <td class="paramname"><em>e</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>_particleLabel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>_trackLabel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pfp_v_v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; lar_pandora::TrackVector &gt; &amp;&#160;</td>
+          <td class="paramname"><em>track_v_v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">lar_pandora::PFParticlesToSpacePoints &amp;&#160;</td>
+          <td class="paramname"><em>pfp_to_spacept</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">lar_pandora::SpacePointsToHits &amp;&#160;</td>
+          <td class="paramname"><em>spacept_to_hits</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Constructs TPC objects using Pandora PFP slices. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">e</td><td>the ART event </td></tr>
+    <tr><td class="paramname">_particleLabel</td><td>the PFP producer module </td></tr>
+    <tr><td class="paramname">_trackLabel</td><td>the track producer module </td></tr>
+    <tr><td class="paramname">pfp_v_v</td><td>output, a vector of vector of PFP (a vector of TPC objects) </td></tr>
+    <tr><td class="paramname">track_v_v</td><td>output, a vector of vector of tracks (a vector of TPC objects) </td></tr>
+    <tr><td class="paramname">pfp_to_spacept</td><td>ouput, a map from pfp to space points </td></tr>
+    <tr><td class="paramname">spacept_to_hits</td><td>ouput, a map from space points to recon hits </td></tr>
   </table>
   </dd>
 </dl>

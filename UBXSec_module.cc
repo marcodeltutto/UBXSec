@@ -127,6 +127,8 @@ private:
   const simb::Origin_t NEUTRINO_ORIGIN = simb::kBeamNeutrino;
   const simb::Origin_t COSMIC_ORIGIN   = simb::kCosmicRay;
 
+  bool _is_data, _is_mc;
+
   /// Maps used for PFParticle truth matching
   typedef std::map< art::Ptr<recob::PFParticle>, unsigned int > RecoParticleToNMatchedHits;
   typedef std::map< art::Ptr<simb::MCParticle>,  RecoParticleToNMatchedHits > ParticleMatchingMap;
@@ -330,7 +332,19 @@ void UBXSec::analyze(art::Event const & e)
   _subrun = e.id().subRun();
   _event  = e.id().event();
 
-  mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+  _is_data = e.isRealData();
+  _is_mc   = !_is_data;
+
+  if (_use_genie_info && _is_data) {
+    std::cout << "[UBXSec] You have asked to use GENIE info but you are running on a data file.";
+    std::cout << " _use_genie_info will be switched to false." << std::endl;
+    _use_genie_info = false;
+  }
+
+  if (_is_mc) {
+    std::cout << "[UBXSec] Running on a real data file. No MC-PFP will be attempted." << std::endl;
+    mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+  }
 
   art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
@@ -342,21 +356,25 @@ void UBXSec::analyze(art::Event const & e)
 
   // Collect PFParticles and match Reco Particles to Hits
   lar_pandora::PFParticleVector  recoParticleVector;
-  //lar_pandora::PFParticleVector  recoNeutrinoVector;
+  lar_pandora::PFParticleVector  recoNeutrinoVector;
   lar_pandora::PFParticlesToHits recoParticlesToHits;
   lar_pandora::HitsToPFParticles recoHitsToParticles;
 
   lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
-  //lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
+  lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
   lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, _spacepointLabel, recoParticlesToHits, recoHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
 
   // Do the MCParticle to PFParticle matching
   lar_pandora::MCParticlesToPFParticles matchedParticles;    // This is a map: MCParticle to matched PFParticle
   lar_pandora::MCParticlesToHits        matchedParticleHits;
-  mcpfpMatcher.GetRecoToTrueMatches(matchedParticles, matchedParticleHits);
+
+  if (_is_mc) {
+    mcpfpMatcher.GetRecoToTrueMatches(matchedParticles, matchedParticleHits);
+  }
+
 
   // *******************
-  // Analysis
+  // MC-PFP Match Study
   // *******************
 
   std::vector<art::Ptr<recob::PFParticle>> taggedPFP;
@@ -367,6 +385,7 @@ void UBXSec::analyze(art::Event const & e)
   _muon_is_reco = 0;
   _mc_muon_contained = 0;
 
+  if (_is_mc) goto doanalysis;
 
   // Loop over true particle and find the cosmic related ones
   for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
@@ -403,10 +422,6 @@ void UBXSec::analyze(art::Event const & e)
          
     }
   }
-
-
-
-
 
   // Loop over true particle and find the neutrino related ones
   for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
@@ -515,91 +530,16 @@ void UBXSec::analyze(art::Event const & e)
 
 
 
+
+  // *******************
+  // Analysis
+  // *******************
+
+  doanalysis:
+
   art::Handle<std::vector<recob::PFParticle>> pfpHandle;
   e.getByLabel(_pfp_producer, pfpHandle);
-  art::FindManyP<ubana::FlashMatch> pfpToNeutrinoFlashMatchAssns(pfpHandle, e, _neutrino_flash_match_producer);
-  
-  //art::FindManyP<ubana::FlashMatch> pfpToCosmicFlashMatchAssns(pfpHandle, e, _cosmic_flash_match_producer);
-
-  /* Get the FlashMatch tag from the ART event
-  art::Handle<std::vector<ubana::FlashMatch>> flashMatchHandle;
-  e.getByLabel(_cosmic_flash_match_producer, flashMatchHandle);
-
-  if (!flashMatchHandle.isValid() || flashMatchHandle->empty()){
-    std::cerr << "Cosmic tag is not valid or empty." << std::endl;
-    //return;
-  }
-
-  // Look up the associations to pfparticle
-  art::FindManyP<recob::PFParticle> flashMatchToPFPAssns(flashMatchHandle, e, _cosmic_flash_match_producer);
-
-  if (_debug) std::cout << "Number of FlashMatch products in this event: " << flashMatchToPFPAssns.size() << std::endl;
-
-  if (flashMatchToPFPAssns.size() == 0){
-    std::cerr << "No flash match tags in this event." << std::endl;
-    //return;
-  }
-  
-
-  _total_matches = flashMatchToPFPAssns.size();
-
-  // Loop over the flash match tags
-  _nmatch = 0;
-  for (unsigned int ct = 0; ct < flashMatchToPFPAssns.size(); ct++) {
-
-    _nmatch++;
-
-    // Get the flash match tag 
-    art::Ptr<ubana::FlashMatch> flashMatch(flashMatchHandle, ct);
-    if(_debug) std::cout << "This flash match product (" << ct << ") has score: " << flashMatch->GetScore() << std::endl;
-
-    _fm_score = flashMatch->GetScore();
-    _score = flashMatch->GetScore();
-    _hypo_spec = flashMatch->GetHypoFlashSpec();
-    _beam_spec = flashMatch->GetRecoFlashSpec();
-    _fixx_spec = flashMatch->GetXFixedHypoFlashSpec();
-
-    // Get the PFPs associated with this FM
-    std::vector<art::Ptr<recob::PFParticle>> flashMatchToPFP_v = flashMatchToPFPAssns.at(flashMatch.key());
-    if(_debug) std::cout << "Number of PFP associated with this Flash Match: " << flashMatchToPFP_v.size() << std::endl;
-
-    _is_muon = 0;
-    for (unsigned int pfp = 0; pfp < flashMatchToPFP_v.size(); pfp++){
-      taggedPFP.emplace_back(flashMatchToPFP_v.at(pfp));
-      taggedPFPscore.emplace_back(_fm_score);
-
-      if(flashMatchToPFP_v.at(pfp) == muonPFP) {
-        _is_muon = 1;
-      }
-    }
-
-    _tree2->Fill();
-
-  }
-
-  if (_debug) std::cout << "Flash matched PFPs in this event: " << taggedPFP.size() << std::endl;
-  _nPFPtagged = -1;
-  _nPFPtagged = taggedPFP.size();
-
-  
-  // Loop through the taggedPFP and see if there is we flash matched the muon
-  _muon_is_flash_tagged = 0;
-  _muon_tag_score = -999;
-  for (unsigned int i = 0; i < taggedPFP.size(); i++) {
-    std::cout << "taggedPFP[" << i << "] has ID " << taggedPFP[i]->Self() << std::endl;
-    for (unsigned int j = 0; j < neutrinoOriginPFP.size(); j++) {
-      if(taggedPFP[i] == neutrinoOriginPFP[j]) {
-        std::cout << ">>>>>>>>>>>>>>>>> A neutrino related PFP (with ID " << neutrinoOriginPFP[j]->Self() << ") was flash matched with score " << taggedPFPscore[i] << std::endl;
-        if(taggedPFP[i] == muonPFP){
-          std::cout << ">>>>>>>>>>>>>>>>> The muon recon PFP (with ID " << neutrinoOriginPFP[j]->Self() << ") was flash matched with score " << taggedPFPscore[i] << std::endl;
-          _muon_is_flash_tagged = 1;
-          _muon_tag_score = taggedPFPscore[i];
-        }
-      }
-    }
-  }
-  */
-
+  art::FindManyP<ubana::FlashMatch> pfpToNeutrinoFlashMatchAssns(pfpHandle, e, _neutrino_flash_match_producer);  
 
   // ACPT
   art::Handle<std::vector<anab::T0> > t0_h;
@@ -637,28 +577,6 @@ void UBXSec::analyze(art::Event const & e)
 
   art::FindManyP<recob::Track> trk_kalman_v(pfp_h, e, "pandoraNuKalmanTrack");
 
-
-  // Tracks for evd
-  art::Handle<std::vector<recob::Track> > trk_h;
-  e.getByLabel(_pfp_producer,trk_h);
-  if(trk_h.isValid()) {
-    for (size_t n = 0; n < trk_h->size(); n++) {
-      auto const& track = (*trk_h)[n];
-      _trk_start_x.emplace_back(track.Vertex().X());
-      _trk_start_y.emplace_back(track.Vertex().Y());
-      _trk_start_z.emplace_back(track.Vertex().Z());
-    }
-  }
-  art::Handle<std::vector<sim::MCTrack>> mctrk_h;
-  e.getByLabel("mcreco", mctrk_h);
-  if(mctrk_h.isValid()) {
-    for (size_t n = 0; n < mctrk_h->size(); n++) {
-      auto const& mctrack = (*mctrk_h)[n];
-      _mctrk_start_x.emplace_back(mctrack.Start().X());
-      _mctrk_start_y.emplace_back(mctrack.Start().Y());
-      _mctrk_start_z.emplace_back(mctrack.Start().Z()); 
-    }
-  }
 
   // Check if golden
   /*
@@ -740,7 +658,7 @@ void UBXSec::analyze(art::Event const & e)
 
   art::Handle<std::vector<recob::OpHit>> ophit_h;
   e.getByLabel("ophitBeam", ophit_h);
-  if(ophit_h.isValid()) {
+  if(!ophit_h.isValid()) {
     std::cout << "[UBXSec] Cannot locate OpHits." << std::endl;
   }
   // Save the number of slices in this event
@@ -795,9 +713,6 @@ void UBXSec::analyze(art::Event const & e)
     _slc_nuvtx_y[slice] = reco_nu_vtx[1];
     _slc_nuvtx_z[slice] = reco_nu_vtx[2];
     _slc_nuvtx_fv[slice] = (UBXSecHelper::InFV(reco_nu_vtx) ? 1 : 0);
-    //_tvtx_x.emplace_back(reco_nu_vtx[0]);
-    //_tvtx_y.emplace_back(reco_nu_vtx[1]);
-    //_tvtx_z.emplace_back(reco_nu_vtx[2]);
     std::cout << "    Reco vertex saved" << std::endl;
 
     // Vertex resolution
@@ -808,13 +723,12 @@ void UBXSec::analyze(art::Event const & e)
     // Neutrino Flash match
     _slc_flsmatch_score[slice] = -9999;
     art::Ptr<recob::PFParticle> NuPFP = UBXSecHelper::GetNuPFP(pfp_v_v[slice]);
-    //std::cout << "NuPFP has id " << NuPFP->Self() << std::endl;
     std::vector<art::Ptr<ubana::FlashMatch>> pfpToFlashMatch_v = pfpToNeutrinoFlashMatchAssns.at(NuPFP.key());
     if (pfpToFlashMatch_v.size() > 1) {
-      std::cout << "    More than one flash match per nu pfp!" << std::endl;
+      std::cout << "    More than one flash match per nu pfp ?!" << std::endl;
       continue;
     } else if (pfpToFlashMatch_v.size() == 0){
-    //  continue;
+      // do nothing
     } else {
       _slc_flsmatch_score[slice]       = pfpToFlashMatch_v[0]->GetScore(); 
       _slc_flsmatch_qllx[slice]        = pfpToFlashMatch_v[0]->GetEstimatedX();
@@ -885,12 +799,11 @@ void UBXSec::analyze(art::Event const & e)
     _slc_kalman_chi2[slice] = -9999;
     for (unsigned int t = 0; t < pfp_v_v[slice].size(); t++) {
       if(trk_kalman_v.at(pfp_v_v[slice][t].key()).size()>1) {
-        std::cout << "TQ more than one track per PFP, ntracks " << trk_kalman_v.at(pfp_v_v[slice][t].key()).size() << std::endl;
+        std::cout << "[UBXSec] TQ more than one track per PFP, ntracks " << trk_kalman_v.at(pfp_v_v[slice][t].key()).size() << std::endl;
       } else if (trk_kalman_v.at(pfp_v_v[slice][t].key()).size()==0){
         continue;
       } else {
         art::Ptr<recob::Track> trk_ptr = trk_kalman_v.at(pfp_v_v[slice][t].key()).at(0);
-        //std::cout << "TTTTTTTTTTTTTTTT trk_ptr->Chi2() " << trk_ptr->Chi2() << std::endl;
         _slc_kalman_chi2[slice] = trk_ptr->Chi2();
         _slc_kalman_ndof[slice] = trk_ptr->Ndof();
       }
@@ -918,15 +831,6 @@ void UBXSec::analyze(art::Event const & e)
     ubxsec::VertexCheck vtxCheck(track_v_v[slice], slice_vtx);
     _slc_vtxcheck_angle[slice] = vtxCheck.AngleBetweenLongestTracks();
     
-
-    /*
-    std::cout << "NEW--------------------- pfpToFlashMatch_v.size() " << pfpToFlashMatch_v.size() << std::endl;
-    if ( std::find(taggedPFP.begin(), taggedPFP.end(), NuPFP) != taggedPFP.end() ){
-      std::cout << "Slice " << slice << " was flash tagged" << std::endl;
-      _slc_flsmatch_score[slice] = _fm_score;
-    }
-    */
-
     // OpHits
     std::vector<ubxsec::Hit3D_t> hit3d_v;
     hit3d_v.clear();
@@ -1027,54 +931,56 @@ void UBXSec::analyze(art::Event const & e)
   }
   
 
-  // SW Trigger
-  art::Handle<raw::ubdaqSoftwareTriggerData> softwareTriggerHandle;
-  e.getByLabel("swtrigger", softwareTriggerHandle);
-
-  if (softwareTriggerHandle->getNumberOfAlgorithms() == 1) {
-    std::vector<std::string> algoNames = softwareTriggerHandle->getListOfAlgorithms();
-    std::cout << "SW trigger name: " << algoNames[0] << std::endl;
-    _is_swtriggered = (softwareTriggerHandle->passedAlgo(algoNames[0]) ? 1 : 0);
-  }
 
 
-  // MC Flash
-  ::art::Handle<std::vector<recob::OpFlash> > nuMcflash_h;
-  e.getByLabel("NeutrinoMCFlash",nuMcflash_h);
-  if( !nuMcflash_h.isValid() || nuMcflash_h->empty() ) {
-    std::cerr << "Don't have neutrino MC flashes." << std::endl;
-    //return;
-  } else {
+  if (_is_mc) {
 
-    auto const& flash = (*nuMcflash_h)[0];
-    _numc_flash_spec.resize(geo->NOpDets());
-    for (unsigned int i = 0; i < geo->NOpDets(); i++) {
-      unsigned int opdet = geo->OpDetFromOpChannel(i);
-      _numc_flash_spec[opdet] = flash.PE(i);
+    // SW Trigger
+    art::Handle<raw::ubdaqSoftwareTriggerData> softwareTriggerHandle;
+    e.getByLabel("swtrigger", softwareTriggerHandle);
+
+    if (softwareTriggerHandle.isValid()){ 
+      if (softwareTriggerHandle->getNumberOfAlgorithms() == 1) {
+        std::vector<std::string> algoNames = softwareTriggerHandle->getListOfAlgorithms();
+        std::cout << "SW trigger name: " << algoNames[0] << std::endl;
+        _is_swtriggered = (softwareTriggerHandle->passedAlgo(algoNames[0]) ? 1 : 0);
+      }
     }
-  }
 
+    // MC Flash
+    ::art::Handle<std::vector<recob::OpFlash> > nuMcflash_h;
+    e.getByLabel("NeutrinoMCFlash",nuMcflash_h);
+    if( !nuMcflash_h.isValid() || nuMcflash_h->empty() ) {
+      std::cerr << "Don't have neutrino MC flashes." << std::endl;
+      //return;
+    } else {
 
-
-
-  // MCFlash vs op activity
-  bool opActivityInBeamSpill = false;
-  // Check if there are recon beam flashed in the beam spill window
-  for (auto reco_fls_time : _beamfls_time) {
-    if (reco_fls_time > _beam_spill_start && reco_fls_time < _beam_spill_end) {
-       opActivityInBeamSpill = true;
-     }
-  }
-  if (nuMcflash_h->size() > 0) {
-    std::cout << "We have a neutrino MCFlash, and its time is: " << (*nuMcflash_h)[0].Time() << std::endl;    
-  } else if (nuMcflash_h->size() == 0) {
-    if(opActivityInBeamSpill) {
-      std::cout << "No MCFlash but optical activity in the beam spill." << std::endl;
-      _no_mcflash_but_op_activity = true;
+      auto const& flash = (*nuMcflash_h)[0];
+      _numc_flash_spec.resize(geo->NOpDets());
+      for (unsigned int i = 0; i < geo->NOpDets(); i++) {
+        unsigned int opdet = geo->OpDetFromOpChannel(i);
+        _numc_flash_spec[opdet] = flash.PE(i);
+      }
     }
+
+    // MCFlash vs op activity
+    bool opActivityInBeamSpill = false;
+    // Check if there are recon beam flashed in the beam spill window
+    for (auto reco_fls_time : _beamfls_time) {
+      if (reco_fls_time > _beam_spill_start && reco_fls_time < _beam_spill_end) {
+         opActivityInBeamSpill = true;
+       }
+    }
+    if (nuMcflash_h->size() > 0) {
+      std::cout << "We have a neutrino MCFlash, and its time is: " << (*nuMcflash_h)[0].Time() << std::endl;    
+    } else if (nuMcflash_h->size() == 0) {
+      if(opActivityInBeamSpill) {
+        std::cout << "No MCFlash but optical activity in the beam spill." << std::endl;
+        _no_mcflash_but_op_activity = true;
+      }
+    }
+
   }
-
-
 
 
   /* MCHits
@@ -1124,7 +1030,7 @@ void UBXSec::analyze(art::Event const & e)
 
 
 
-
+ 
 
 
   if(_debug) std::cout << "[UBXSec] Filling tree now." << std::endl;

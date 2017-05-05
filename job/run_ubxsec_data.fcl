@@ -72,7 +72,7 @@ physics:
    simpleFlashBeam    : @local::UBFlashBeamMC
    simpleFlashCosmic  : @local::UBFlashCosmicMC
 
-   NeutrinoMCFlash    : @local::NeutrinoMCFlash
+   #NeutrinoMCFlash    : @local::NeutrinoMCFlash
    NeutrinoFlashMatch : @local::NeutrinoFlashMatch
    CosmicFlashMatch   : @local::CosmicFlashMatch
 
@@ -87,7 +87,7 @@ physics:
 
  #reco: [ saturation, ophitBeam, ophitCosmic, simpleFlashBeam, simpleFlashCosmic, NeutrinoMCFlash, NeutrinoFlashMatch ]
 
- reco: [ NeutrinoMCFlash, 
+ reco: [ #NeutrinoMCFlash, 
          NeutrinoFlashMatch, 
          #CosmicFlashMatch,
          T0TrackTaggerCosmicpandoraNu, T0TrackTaggerBeampandoraNu ]

@@ -44,7 +44,7 @@
 #include "uboone/LLSelectionTool/OpT0Finder/Algorithms/PhotonLibHypothesis.h"
 
 #include "uboone/UBXSec/FlashMatch.h"
-#include "uboone/UBXSec/UBXSecHelper.h"
+#include "Algorithms/UBXSecHelper.h"
 
 #include "TTree.h"
 

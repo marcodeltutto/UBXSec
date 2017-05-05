@@ -28,8 +28,9 @@
 
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "lardataobj/RecoBase/Hit.h"
-#include "uboone/UBXSec/UBXSecHelper.h"
-#include "uboone/UBXSec/FindDeadRegions.h"
+
+#include "Algorithms/UBXSecHelper.h"
+#include "Algorithms/FindDeadRegions.h"
 
 #include "larevt/CalibrationDBI/Interface/DetPedestalService.h"
 #include "larevt/CalibrationDBI/Interface/DetPedestalProvider.h"

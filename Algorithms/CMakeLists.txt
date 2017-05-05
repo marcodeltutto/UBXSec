@@ -8,9 +8,8 @@ set( ROOTLIB -L$ENV{ROOTSYS}/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpa
 link_libraries( ${LIB_NAME} -L$ENV{BOOST_LIB} -lboost_system ${ROOTLIB} )
 
 art_make( BASENAME_ONLY
-          LIBRARY_NAME     uboonecode_uboone_UBXSec
+          LIBRARY_NAME     uboonecode_uboone_UBXSec_Algorithms
           LIB_LIBRARIES
-                   uboonecode_uboone_UBXSec_Algorithms
                    uboonecode_uboone_BasicTool_GeoAlgo
                    uboone_UBFlashFinder
 		   uboonecode_uboone_SelectionTool_OpT0FinderBase
@@ -57,9 +56,8 @@ art_make( BASENAME_ONLY
 		   ${ROOT_GDML}
 		   ${ROOT_BASIC_LIB_LIST}
 
-          MODULE_LIBRARIES
-                   uboonecode_uboone_UBXSec_Algorithms 
-                   uboonecode_uboone_UBXSec
+          MODULE_LIBRARIES 
+                   uboonecode_uboone_UBXSec_Algorithms
                    larsim_MCCheater_BackTracker_service
 		   larpandora_LArPandoraInterface
                    #                   larpandora_LArPandoraContent
@@ -102,8 +100,5 @@ art_make( BASENAME_ONLY
 		)
 
 install_headers()
-install_fhicl()
 install_source()
 
-add_subdirectory(Algorithms)
-add_subdirectory(job)

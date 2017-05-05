@@ -34,7 +34,7 @@
 #include <sstream>
 #include <string>
 
-#include "uboone/UBXSec/FindDeadRegions.h"
+#include "FindDeadRegions.h"
 
 FindDeadRegions::FindDeadRegions()//fhicl::ParameterSet const & p, art::ActivityRegistry & areg)
 // :

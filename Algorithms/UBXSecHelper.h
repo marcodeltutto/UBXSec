@@ -213,6 +213,14 @@ class UBXSecHelper {
    *
    *  @param charge_center the 3D point (c array) */
   static int GetClosestPMT(double *charge_center);
+
+
+  /**
+   *  @brief Returns Z position of a flash
+   *
+   *  @param pe a vector of PEs per OpDet */
+  static double GetFlashZCenter(std::vector<double> pe); 
+
 };
 
 #endif //  UBXSECHELPER_H

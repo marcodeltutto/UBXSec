@@ -44,7 +44,7 @@
 #include "uboone/LLSelectionTool/OpT0Finder/Algorithms/LightPath.h"
 #include "uboone/LLSelectionTool/OpT0Finder/Algorithms/PhotonLibHypothesis.h"
 
-#include "uboone/UBXSec/UBXSecHelper.h"
+#include "uboone/UBXSec/Algorithms/UBXSecHelper.h"
 
 #include "TTree.h"
 

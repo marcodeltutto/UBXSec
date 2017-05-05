@@ -27,7 +27,7 @@
  *
  */
 
-
+// Art include
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
@@ -41,35 +41,39 @@
 #include "art/Framework/Services/Optional/TFileDirectory.h"
 #include "canvas/Persistency/Common/FindManyP.h"
 
+// Data products include
 #include "lardataobj/MCBase/MCTrack.h"
+#include "lardataobj/RecoBase/PFParticle.h"
 #include "lardataobj/RecoBase/OpHit.h"
 #include "lardataobj/RecoBase/OpFlash.h"
-#include "uboone/UBFlashFinder/PECalib.h"
 #include "lardataobj/RecoBase/Track.h"
 #include "lardataobj/RecoBase/Cluster.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/SpacePoint.h"
+#include "uboone/UBXSec/FlashMatch.h"
+#include "lardataobj/AnalysisBase/T0.h"
+
+// LArSoft include
+#include "uboone/UBFlashFinder/PECalib.h"
 #include "larsim/MCCheater/BackTracker.h"
-#include "lardataobj/AnalysisBase/FlashMatch.h"
-#include "uboone/UBXSec/FlashMatch.h" // new!
 #include "lardata/Utilities/AssociationUtil.h"
 #include "larcore/Geometry/Geometry.h"
 #include "uboone/RawData/utils/ubdaqSoftwareTriggerData.h"
 #include "lardataobj/AnalysisBase/T0.h"
-
 #include "lardataobj/MCBase/MCDataHolder.h"
 #include "lardataobj/MCBase/MCHitCollection.h"
 
+// Algorithms include
+#include "uboone/UBXSec/Algorithms/UBXSecHelper.h"
+#include "uboone/UBXSec/Algorithms/VertexCheck.h"
+#include "uboone/UBXSec/Algorithms/McPfpMatch.h"
+#include "uboone/UBXSec/Algorithms/FindDeadRegions.h"
 
-#include "lardataobj/RecoBase/PFParticle.h"
-#include "uboone/UBXSec/UBXSecHelper.h"
-#include "uboone/UBXSec/VertexCheck.h"
-
-#include "uboone/UBXSec/FindDeadRegions.h"
-
+// Root include
 #include "TString.h"
 #include "TTree.h"
 #include "TH2F.h"
+
 
 namespace ubxsec {
   struct Hit3D_t {
@@ -79,6 +83,7 @@ namespace ubxsec {
     double q;
   };
 }
+
 
 class UBXSec;
 
@@ -101,6 +106,7 @@ public:
 private:
 
   FindDeadRegions deadRegionsFinder;
+  ubxsec::McPfpMatch mcpfpMatcher;
   ::pmtana::PECalib _pecalib;
 
   std::string _hitfinderLabel;
@@ -148,7 +154,8 @@ private:
   double _vtx_resolution;
 
   int _nslices;
-  std::vector<double> _slc_flsmatch_score, _slc_flsmatch_xfixed_chi2, _slc_flsmatch_xfixed_ll;
+  std::vector<double> _slc_flsmatch_score, _slc_flsmatch_qllx, _slc_flsmatch_tpcx, _slc_flsmatch_t0, _slc_flsmatch_hypoz;
+  std::vector<double> _slc_flsmatch_xfixed_chi2, _slc_flsmatch_xfixed_ll;
   std::vector<double> _slc_flsmatch_cosmic_score, _slc_flsmatch_cosmic_t0;
   std::vector<double> _slc_nuvtx_x, _slc_nuvtx_y, _slc_nuvtx_z;
   std::vector<int> _slc_nuvtx_fv;
@@ -165,7 +172,7 @@ private:
   std::vector<double> _slc_n_intime_pe_closestpmt;
 
   int _nbeamfls;
-  std::vector<double> _beamfls_time, _beamfls_pe;
+  std::vector<double> _beamfls_time, _beamfls_pe, _beamfls_z;
   bool _no_mcflash_but_op_activity; ///< is true if we don't have a neutrino MCFlash in the event, but there is a recon flash in the beam spill
   std::vector<std::vector<double>> _beamfls_spec, _slc_flshypo_spec, _slc_flshypo_xfixed_spec;
   std::vector<double> _numc_flash_spec;
@@ -210,86 +217,91 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p)
 
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
-  _tree1->Branch("run",                &_run,                "run/I");
-  _tree1->Branch("subrun",             &_subrun,             "subrun/I");
-  _tree1->Branch("event",              &_event,              "event/I");
-  _tree1->Branch("muon_is_reco",       &_muon_is_reco,       "muon_is_reco/I");
-  _tree1->Branch("muon_reco_pur",      &_muon_reco_pur,      "muon_reco_pur/D");
-  _tree1->Branch("muon_reco_eff",      &_muon_reco_eff,      "muon_reco_eff/D");
-  _tree1->Branch("true_muon_mom",      &_true_muon_mom,      "true_muon_mom/D");
-  _tree1->Branch("true_muon_mom",      &_true_muon_mom_matched,      "true_muon_mom/D");
-  _tree1->Branch("nPFPtagged",         &_nPFPtagged,         "nPFPtagged/I");
-  _tree1->Branch("muon_is_flash_tagged",      &_muon_is_flash_tagged,      "muon_is_flash_tagged/I");
-  _tree1->Branch("muon_tag_score",     &_muon_tag_score,     "muon_tag_score/D");
-  _tree1->Branch("fm_score",           &_fm_score,           "fm_score/D");
-  _tree1->Branch("fv",                 &_fv,                 "fv/I");
-  _tree1->Branch("ccnc",               &_ccnc,               "ccnc/I");
-  _tree1->Branch("nupdg",              &_nupdg,              "nupdg/I");
-  _tree1->Branch("nu_e",               &_nu_e,               "nu_e/D");
-  _tree1->Branch("recon_muon_start_x", &_recon_muon_start_x, "recon_muon_start_x/D");
-  _tree1->Branch("recon_muon_start_y", &_recon_muon_start_y, "recon_muon_start_y/D");
-  _tree1->Branch("recon_muon_start_z", &_recon_muon_start_z, "recon_muon_start_z/D");
-  _tree1->Branch("recon_muon_end_x",   &_recon_muon_end_x,   "recon_muon_end_x/D");
-  _tree1->Branch("recon_muon_end_y",   &_recon_muon_end_y,   "recon_muon_end_y/D");
-  _tree1->Branch("recon_muon_end_z",   &_recon_muon_end_z,   "recon_muon_end_z/D");
-  _tree1->Branch("mc_muon_start_x",    &_mc_muon_start_x,    "mc_muon_start_x/D");
-  _tree1->Branch("mc_muon_start_y",    &_mc_muon_start_y,    "mc_muon_start_y/D");
-  _tree1->Branch("mc_muon_start_z",    &_mc_muon_start_z,    "mc_muon_start_z/D");
-  _tree1->Branch("mc_muon_end_x",      &_mc_muon_end_x,      "mc_muon_end_x/D");
-  _tree1->Branch("mc_muon_end_y",      &_mc_muon_end_y,      "mc_muon_end_y/D");
-  _tree1->Branch("mc_muon_end_z",      &_mc_muon_end_z,      "mc_muon_end_z/D");
-  _tree1->Branch("mc_muon_contained",  &_mc_muon_contained,  "mc_muon_contained/I");
-  _tree1->Branch("is_swtriggered",     &_is_swtriggered,     "is_swtriggered/I");
-  _tree1->Branch("vtx_resolution",     &_vtx_resolution,     "vtx_resolution/D");
+  _tree1->Branch("run",                  &_run,                   "run/I");
+  _tree1->Branch("subrun",               &_subrun,                "subrun/I");
+  _tree1->Branch("event",                &_event,                 "event/I");
+  _tree1->Branch("muon_is_reco",         &_muon_is_reco,          "muon_is_reco/I");
+  _tree1->Branch("muon_reco_pur",        &_muon_reco_pur,         "muon_reco_pur/D");
+  _tree1->Branch("muon_reco_eff",        &_muon_reco_eff,         "muon_reco_eff/D");
+  _tree1->Branch("true_muon_mom",        &_true_muon_mom,         "true_muon_mom/D");
+  _tree1->Branch("true_muon_mom",        &_true_muon_mom_matched, "true_muon_mom/D");
+  _tree1->Branch("nPFPtagged",           &_nPFPtagged,            "nPFPtagged/I");
+  _tree1->Branch("muon_is_flash_tagged", &_muon_is_flash_tagged,  "muon_is_flash_tagged/I");
+  _tree1->Branch("muon_tag_score",       &_muon_tag_score,        "muon_tag_score/D");
+  _tree1->Branch("fm_score",             &_fm_score,              "fm_score/D");
+  _tree1->Branch("fv",                   &_fv,                    "fv/I");
+  _tree1->Branch("ccnc",                 &_ccnc,                  "ccnc/I");
+  _tree1->Branch("nupdg",                &_nupdg,                 "nupdg/I");
+  _tree1->Branch("nu_e",                 &_nu_e,                  "nu_e/D");
+  _tree1->Branch("recon_muon_start_x",   &_recon_muon_start_x,    "recon_muon_start_x/D");
+  _tree1->Branch("recon_muon_start_y",   &_recon_muon_start_y,    "recon_muon_start_y/D");
+  _tree1->Branch("recon_muon_start_z",   &_recon_muon_start_z,    "recon_muon_start_z/D");
+  _tree1->Branch("recon_muon_end_x",     &_recon_muon_end_x,      "recon_muon_end_x/D");
+  _tree1->Branch("recon_muon_end_y",     &_recon_muon_end_y,      "recon_muon_end_y/D");
+  _tree1->Branch("recon_muon_end_z",     &_recon_muon_end_z,      "recon_muon_end_z/D");
+  _tree1->Branch("mc_muon_start_x",      &_mc_muon_start_x,       "mc_muon_start_x/D");
+  _tree1->Branch("mc_muon_start_y",      &_mc_muon_start_y,       "mc_muon_start_y/D");
+  _tree1->Branch("mc_muon_start_z",      &_mc_muon_start_z,       "mc_muon_start_z/D");
+  _tree1->Branch("mc_muon_end_x",        &_mc_muon_end_x,         "mc_muon_end_x/D");
+  _tree1->Branch("mc_muon_end_y",        &_mc_muon_end_y,         "mc_muon_end_y/D");
+  _tree1->Branch("mc_muon_end_z",        &_mc_muon_end_z,         "mc_muon_end_z/D");
+  _tree1->Branch("mc_muon_contained",    &_mc_muon_contained,     "mc_muon_contained/I");
+  _tree1->Branch("is_swtriggered",       &_is_swtriggered,        "is_swtriggered/I");
+  _tree1->Branch("vtx_resolution",       &_vtx_resolution,        "vtx_resolution/D");
 
-  _tree1->Branch("nslices",            &_nslices,            "nslices/I");
-  _tree1->Branch("slc_flsmatch_score", "std::vector<double>", &_slc_flsmatch_score);
-  _tree1->Branch("slc_flsmatch_xfixed_chi2", "std::vector<double>", &_slc_flsmatch_xfixed_chi2);
-  _tree1->Branch("slc_flsmatch_xfixed_ll", "std::vector<double>", &_slc_flsmatch_xfixed_ll);
-  _tree1->Branch("slc_flsmatch_cosmic_score", "std::vector<double>", &_slc_flsmatch_cosmic_score);
-  _tree1->Branch("slc_flsmatch_cosmic_t0", "std::vector<double>", &_slc_flsmatch_cosmic_t0);
-  _tree1->Branch("slc_nuvtx_x",        "std::vector<double>", &_slc_nuvtx_x);
-  _tree1->Branch("slc_nuvtx_y",        "std::vector<double>", &_slc_nuvtx_y);
-  _tree1->Branch("slc_nuvtx_z",        "std::vector<double>", &_slc_nuvtx_z);
-  _tree1->Branch("slc_nuvtx_fv",       "std::vector<int>",    &_slc_nuvtx_fv);
-  _tree1->Branch("slc_vtxcheck_angle", "std::vector<double>", &_slc_vtxcheck_angle);
-  _tree1->Branch("slc_origin",         "std::vector<int>",    &_slc_origin);
-  _tree1->Branch("slc_nhits_u",        "std::vector<int>",    &_slc_nhits_u);
-  _tree1->Branch("slc_nhits_v",        "std::vector<int>",    &_slc_nhits_v);
-  _tree1->Branch("slc_nhits_w",        "std::vector<int>",    &_slc_nhits_w);
-  _tree1->Branch("slc_longesttrack_length",        "std::vector<double>",    &_slc_longesttrack_length);
-  _tree1->Branch("slc_acpt_outoftime", "std::vector<int>",    &_slc_acpt_outoftime);
-  _tree1->Branch("slc_crosses_top_boundary", "std::vector<int>",    &_slc_crosses_top_boundary);
+  _tree1->Branch("nslices",                        &_nslices,            "nslices/I");
+  _tree1->Branch("slc_flsmatch_score",             "std::vector<double>", &_slc_flsmatch_score);
+  _tree1->Branch("slc_flsmatch_qllx",              "std::vector<double>", &_slc_flsmatch_qllx);
+  _tree1->Branch("slc_flsmatch_tpcx",              "std::vector<double>", &_slc_flsmatch_tpcx);
+  _tree1->Branch("slc_flsmatch_t0",                "std::vector<double>", &_slc_flsmatch_t0);
+  _tree1->Branch("slc_flsmatch_hypoz",             "std::vector<double>", &_slc_flsmatch_hypoz);
+  _tree1->Branch("slc_flsmatch_xfixed_chi2",       "std::vector<double>", &_slc_flsmatch_xfixed_chi2);
+  _tree1->Branch("slc_flsmatch_xfixed_ll",         "std::vector<double>", &_slc_flsmatch_xfixed_ll);
+  _tree1->Branch("slc_flsmatch_cosmic_score",      "std::vector<double>", &_slc_flsmatch_cosmic_score);
+  _tree1->Branch("slc_flsmatch_cosmic_t0",         "std::vector<double>", &_slc_flsmatch_cosmic_t0);
+  _tree1->Branch("slc_nuvtx_x",                    "std::vector<double>", &_slc_nuvtx_x);
+  _tree1->Branch("slc_nuvtx_y",                    "std::vector<double>", &_slc_nuvtx_y);
+  _tree1->Branch("slc_nuvtx_z",                    "std::vector<double>", &_slc_nuvtx_z);
+  _tree1->Branch("slc_nuvtx_fv",                   "std::vector<int>",    &_slc_nuvtx_fv);
+  _tree1->Branch("slc_vtxcheck_angle",             "std::vector<double>", &_slc_vtxcheck_angle);
+  _tree1->Branch("slc_origin",                     "std::vector<int>",    &_slc_origin);
+  _tree1->Branch("slc_nhits_u",                    "std::vector<int>",    &_slc_nhits_u);
+  _tree1->Branch("slc_nhits_v",                    "std::vector<int>",    &_slc_nhits_v);
+  _tree1->Branch("slc_nhits_w",                    "std::vector<int>",    &_slc_nhits_w);
+  _tree1->Branch("slc_longesttrack_length",        "std::vector<double>", &_slc_longesttrack_length);
+  _tree1->Branch("slc_acpt_outoftime",             "std::vector<int>",    &_slc_acpt_outoftime);
+  _tree1->Branch("slc_crosses_top_boundary",       "std::vector<int>",    &_slc_crosses_top_boundary);
   _tree1->Branch("slc_nuvtx_closetodeadregion_u",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion_u);
   _tree1->Branch("slc_nuvtx_closetodeadregion_v",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion_v);
   _tree1->Branch("slc_nuvtx_closetodeadregion_w",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion_w);
-  _tree1->Branch("slc_kalman_chi2",  "std::vector<double>", &_slc_kalman_chi2);
-  _tree1->Branch("slc_kalman_ndof",  "std::vector<int>",    &_slc_kalman_ndof);
-  _tree1->Branch("slc_passed_min_track_quality",  "std::vector<bool>",    &_slc_passed_min_track_quality);
-  _tree1->Branch("slc_n_intime_pe_closestpmt",  "std::vector<double>",    &_slc_n_intime_pe_closestpmt);
+  _tree1->Branch("slc_kalman_chi2",                "std::vector<double>", &_slc_kalman_chi2);
+  _tree1->Branch("slc_kalman_ndof",                "std::vector<int>",    &_slc_kalman_ndof);
+  _tree1->Branch("slc_passed_min_track_quality",   "std::vector<bool>",   &_slc_passed_min_track_quality);
+  _tree1->Branch("slc_n_intime_pe_closestpmt",     "std::vector<double>", &_slc_n_intime_pe_closestpmt);
 
-  _tree1->Branch("nbeamfls",           &_nbeamfls,            "nbeamfls/I");
-  _tree1->Branch("beamfls_time",       "std::vector<double>", &_beamfls_time);
-  _tree1->Branch("beamfls_pe",         "std::vector<double>", &_beamfls_pe);
-  _tree1->Branch("no_mcflash_but_op_activity",           &_no_mcflash_but_op_activity,            "no_mcflash_but_op_activity/O");
-  _tree1->Branch("beamfls_spec",       "std::vector<std::vector<double>>", &_beamfls_spec);
-  _tree1->Branch("numc_flash_spec",    "std::vector<double>", &_numc_flash_spec);
-  _tree1->Branch("slc_flshypo_xfixed_spec", "std::vector<std::vector<double>>", &_slc_flshypo_xfixed_spec);
-  _tree1->Branch("slc_flshypo_spec", "std::vector<std::vector<double>>", &_slc_flshypo_spec);
-  _tree1->Branch("nsignal",            &_nsignal,             "nsignal/I");
+  _tree1->Branch("nbeamfls",                   &_nbeamfls,                         "nbeamfls/I");
+  _tree1->Branch("beamfls_time",               "std::vector<double>",              &_beamfls_time);
+  _tree1->Branch("beamfls_pe",                 "std::vector<double>",              &_beamfls_pe);
+  _tree1->Branch("beamfls_z",                  "std::vector<double>",              &_beamfls_z);
+  _tree1->Branch("no_mcflash_but_op_activity", &_no_mcflash_but_op_activity,       "no_mcflash_but_op_activity/O");
+  _tree1->Branch("beamfls_spec",               "std::vector<std::vector<double>>", &_beamfls_spec);
+  _tree1->Branch("numc_flash_spec",            "std::vector<double>",              &_numc_flash_spec);
+  _tree1->Branch("slc_flshypo_xfixed_spec",    "std::vector<std::vector<double>>", &_slc_flshypo_xfixed_spec);
+  _tree1->Branch("slc_flshypo_spec",           "std::vector<std::vector<double>>", &_slc_flshypo_spec);
+  _tree1->Branch("nsignal",                    &_nsignal,                          "nsignal/I");
 
   _tree1->Branch("mctrk_start_x",        "std::vector<double>", &_mctrk_start_x);
   _tree1->Branch("mctrk_start_y",        "std::vector<double>", &_mctrk_start_y);
   _tree1->Branch("mctrk_start_z",        "std::vector<double>", &_mctrk_start_z);
-  _tree1->Branch("trk_start_x",        "std::vector<double>", &_trk_start_x);
-  _tree1->Branch("trk_start_y",        "std::vector<double>", &_trk_start_y);
-  _tree1->Branch("trk_start_z",        "std::vector<double>", &_trk_start_z);
-  _tree1->Branch("vtx_x",        "std::vector<double>", &_vtx_x);
-  _tree1->Branch("vtx_y",        "std::vector<double>", &_vtx_y);
-  _tree1->Branch("vtx_z",        "std::vector<double>", &_vtx_z);
-  _tree1->Branch("tvtx_x",        "std::vector<double>", &_tvtx_x);
-  _tree1->Branch("tvtx_y",        "std::vector<double>", &_tvtx_y);
-  _tree1->Branch("tvtx_z",        "std::vector<double>", &_tvtx_z);
+  _tree1->Branch("trk_start_x",          "std::vector<double>", &_trk_start_x);
+  _tree1->Branch("trk_start_y",          "std::vector<double>", &_trk_start_y);
+  _tree1->Branch("trk_start_z",          "std::vector<double>", &_trk_start_z);
+  _tree1->Branch("vtx_x",                "std::vector<double>", &_vtx_x);
+  _tree1->Branch("vtx_y",                "std::vector<double>", &_vtx_y);
+  _tree1->Branch("vtx_z",                "std::vector<double>", &_vtx_z);
+  _tree1->Branch("tvtx_x",               "std::vector<double>", &_tvtx_x);
+  _tree1->Branch("tvtx_y",               "std::vector<double>", &_tvtx_y);
+  _tree1->Branch("tvtx_z",               "std::vector<double>", &_tvtx_z);
 
   _tree2 = fs->make<TTree>("matchtree","");
   _tree2->Branch("run",                &_run,                "run/I");
@@ -318,20 +330,17 @@ void UBXSec::analyze(art::Event const & e)
   _subrun = e.id().subRun();
   _event  = e.id().event();
 
+  mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
 
   art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
 
-  // *******************
-  // Pandora MCParticle to PFParticle matching
-  // *******************
-
-  // --- Collect tracks
+  // Collect tracks
   lar_pandora::TrackVector            allPfParticleTracks;
   lar_pandora::PFParticlesToTracks    pfParticleToTrackMap;
   lar_pandora::LArPandoraHelper::CollectTracks(e, _pfp_producer, allPfParticleTracks, pfParticleToTrackMap);
 
-  // --- Collect PFParticles and match Reco Particles to Hits
+  // Collect PFParticles and match Reco Particles to Hits
   lar_pandora::PFParticleVector  recoParticleVector;
   //lar_pandora::PFParticleVector  recoNeutrinoVector;
   lar_pandora::PFParticlesToHits recoParticlesToHits;
@@ -341,18 +350,10 @@ void UBXSec::analyze(art::Event const & e)
   //lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
   lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, _spacepointLabel, recoParticlesToHits, recoHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
 
+  // Do the MCParticle to PFParticle matching
   lar_pandora::MCParticlesToPFParticles matchedParticles;    // This is a map: MCParticle to matched PFParticle
   lar_pandora::MCParticlesToHits        matchedParticleHits;
-
-
-  // Do the matching
-  UBXSecHelper::GetRecoToTrueMatches(e,
-                                     _pfp_producer,
-                                     _spacepointLabel,
-                                     _geantModuleLabel,
-                                     _hitfinderLabel,
-                                     matchedParticles,
-                                     matchedParticleHits);
+  mcpfpMatcher.GetRecoToTrueMatches(matchedParticles, matchedParticleHits);
 
   // *******************
   // Analysis
@@ -435,6 +436,8 @@ void UBXSec::analyze(art::Event const & e)
          std::cout << "T    " << mc_par->T()       << std::endl;
          double timeCorrection = 343.75;
          std::cout << "Remeber a time correction of " << timeCorrection << std::endl;
+         auto iter =  matchedParticleHits.find(mc_par);
+         std::cout << "Related hits: " << (iter->second).size() << std::endl;
        }    
        if (_debug) {
          std::cout << "  The related PFP: " << std::endl;
@@ -448,9 +451,6 @@ void UBXSec::analyze(art::Event const & e)
          muonMCParticle = mc_par;
          muonPFP = pf_par;
          _muon_is_reco = 1;
-
-         std::cout << "Here we are" << std::endl;
-
 
 
          // Muon track puritity and efficiency
@@ -514,13 +514,11 @@ void UBXSec::analyze(art::Event const & e)
   if (_debug) std::cout << "Neutrino related PFPs in this event: " << neutrinoOriginPFP.size() << std::endl;
 
 
-  std::cout << "Here 1" << std::endl;
 
   art::Handle<std::vector<recob::PFParticle>> pfpHandle;
   e.getByLabel(_pfp_producer, pfpHandle);
   art::FindManyP<ubana::FlashMatch> pfpToNeutrinoFlashMatchAssns(pfpHandle, e, _neutrino_flash_match_producer);
   
-   std::cout << "Here 2" << std::endl;
   //art::FindManyP<ubana::FlashMatch> pfpToCosmicFlashMatchAssns(pfpHandle, e, _cosmic_flash_match_producer);
 
   /* Get the FlashMatch tag from the ART event
@@ -752,6 +750,10 @@ void UBXSec::analyze(art::Event const & e)
 
   _nslices = pfp_v_v.size();
   _slc_flsmatch_score.resize(_nslices, -9999);
+  _slc_flsmatch_qllx.resize(_nslices, -9999);
+  _slc_flsmatch_tpcx.resize(_nslices, -9999);
+  _slc_flsmatch_t0.resize(_nslices, -9999);
+  _slc_flsmatch_hypoz.resize(_nslices, -9999);
   _slc_flsmatch_xfixed_chi2.resize(_nslices, -9999);
   _slc_flsmatch_xfixed_ll.resize(_nslices, -9999);
   _slc_nuvtx_x.resize(_nslices);
@@ -815,6 +817,10 @@ void UBXSec::analyze(art::Event const & e)
     //  continue;
     } else {
       _slc_flsmatch_score[slice]       = pfpToFlashMatch_v[0]->GetScore(); 
+      _slc_flsmatch_qllx[slice]        = pfpToFlashMatch_v[0]->GetEstimatedX();
+      _slc_flsmatch_tpcx[slice]        = pfpToFlashMatch_v[0]->GetTPCX();
+      _slc_flsmatch_t0[slice]          = pfpToFlashMatch_v[0]->GetT0();
+      _slc_flsmatch_hypoz[slice]       = UBXSecHelper::GetFlashZCenter(pfpToFlashMatch_v[0]->GetHypoFlashSpec());
       _slc_flsmatch_xfixed_chi2[slice] = pfpToFlashMatch_v[0]->GetXFixedChi2();
       _slc_flsmatch_xfixed_ll[slice]   = pfpToFlashMatch_v[0]->GetXFixedLl();
       _slc_flshypo_xfixed_spec[slice]  = pfpToFlashMatch_v[0]->GetXFixedHypoFlashSpec();
@@ -1004,12 +1010,14 @@ void UBXSec::analyze(art::Event const & e)
   _nbeamfls = beamflash_h->size();
   _beamfls_pe.resize(_nbeamfls);
   _beamfls_time.resize(_nbeamfls);
+  _beamfls_z.resize(_nbeamfls);
   _beamfls_spec.resize(_nbeamfls);
 
   for (size_t n = 0; n < beamflash_h->size(); n++) {
     auto const& flash = (*beamflash_h)[n];
     _beamfls_pe[n]   = flash.TotalPE();
     _beamfls_time[n] = flash.Time();
+    _beamfls_z[n]    = flash.ZCenter();
 
     _beamfls_spec[n].resize(32);
     for (unsigned int i = 0; i < 32; i++) {
@@ -1053,7 +1061,7 @@ void UBXSec::analyze(art::Event const & e)
   bool opActivityInBeamSpill = false;
   // Check if there are recon beam flashed in the beam spill window
   for (auto reco_fls_time : _beamfls_time) {
-    if (reco_fls_time > 3.2 && reco_fls_time < 4.8) {
+    if (reco_fls_time > _beam_spill_start && reco_fls_time < _beam_spill_end) {
        opActivityInBeamSpill = true;
      }
   }

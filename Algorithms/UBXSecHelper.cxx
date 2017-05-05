@@ -45,7 +45,7 @@
 #include "lardataobj/RecoBase/PFParticle.h"
 //#include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 
-#include "uboone/UBXSec/UBXSecHelper.h"
+#include "UBXSecHelper.h"
 
 
 
@@ -420,18 +420,21 @@ art::Ptr<recob::PFParticle> UBXSecHelper::GetNuPFP(lar_pandora::PFParticleVector
 
 //______________________________________________________________________________________
 void UBXSecHelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, 
-                                    lar_pandora::PFParticlesToTracks pfParticleToTrackMap, 
-                                    lar_pandora::PFParticlesToVertices  pfParticleToVertexMap, 
-                                    std::vector<lar_pandora::PFParticleVector> & pfp_v_v, 
-                                    std::vector<lar_pandora::TrackVector> & track_v_v) {
+                                 lar_pandora::PFParticlesToTracks pfParticleToTrackMap, 
+                                 lar_pandora::PFParticlesToVertices  pfParticleToVertexMap, 
+                                 std::vector<lar_pandora::PFParticleVector> & pfp_v_v, 
+                                 std::vector<lar_pandora::TrackVector> & track_v_v) {
 
   track_v_v.clear();
   pfp_v_v.clear();
+
+  std::cout << "[UBXSecHelper] Getting TPC Objects..." << std::endl;
 
   for (unsigned int n = 0; n < pfParticleList.size(); ++n) {
     const art::Ptr<recob::PFParticle> particle = pfParticleList.at(n);
 
     if(lar_pandora::LArPandoraHelper::IsNeutrino(particle)) {
+      std::cout << "[UBXSecHelper] \t Creating TPC Object " << track_v_v.size() << std::endl;
       //std::cout << "IS NEUTRINO, pfp id " << particle->Self() << std::endl;
       lar_pandora::VertexVector nu_vertex_v;
       auto search = pfParticleToVertexMap.find(particle);
@@ -446,15 +449,25 @@ void UBXSecHelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList,
       lar_pandora::TrackVector track_v;
       lar_pandora::PFParticleVector pfp_v;
 
-      //std::cout << "Start track_v.size() " << track_v.size() << std::endl;
       CollectTracksAndPFP(pfParticleToTrackMap, pfParticleList, particle, pfp_v, track_v);
-      //std::cout << "End   track_v.size() " << track_v.size() << std::endl;
 
       pfp_v_v.emplace_back(pfp_v);
       track_v_v.emplace_back(track_v);
 
-      //std::cout << "Number of pfp for this slice: "    << pfp_v.size()   << std::endl;
-      std::cout << "Number of tracks for this slice: " << track_v.size() << std::endl;
+      std::cout << "[UBXSecHelper] \t Number of pfp for this TPC object: "    << pfp_v.size()   << std::endl;
+      for (auto pfp : pfp_v) {
+        std::cout << "[UBXSecHelper] \t \t PFP " << pfp->Self() << " with pdg " << pfp->PdgCode();
+        auto it = pfParticleToVertexMap.find(pfp);
+        if (it == pfParticleToVertexMap.end()) {
+           std::cout << " and vertex [vertex not available for this PFP]" << std::endl;
+        } else {
+          double xyz[3];
+          (it->second)[0]->XYZ(xyz);
+          std::cout << " and vertex " << xyz[0] << " " << xyz[1] << " " << xyz[2] << std::endl;   
+        }
+      }
+      std::cout << std::endl; 
+      std::cout << "[UBXSecHelper] \t Number of tracks for this TPC object: " << track_v.size() << std::endl;
 
       //for (unsigned int i = 0; i < pfp_v.size(); i++) std::cout << "   pfp with ID " << pfp_v[i]->Self() << std::endl;
     } // end if neutrino
@@ -480,14 +493,11 @@ void UBXSecHelper::CollectTracksAndPFP(lar_pandora::PFParticlesToTracks pfPartic
       track_v.emplace_back(tracks[trk]);
     }
   }
-  //std::cout << "Inter track_v.size() " << track_v.size() << std::endl;
   const std::vector<size_t> &daughterIDs = particle->Daughters();
-  //for (unsigned int d = 0; d < daughterIDs.size(); d++) std::cout << "daughter has id " << daughterIDs[d] << std::endl;
   if(daughterIDs.size() == 0) return;
   else {
     for (unsigned int m = 0; m < daughterIDs.size(); ++m) {
       const art::Ptr<recob::PFParticle> daughter = pfParticleList.at(daughterIDs.at(m));
-      //pfp_v.emplace_back(daughter);
       CollectTracksAndPFP(pfParticleToTrackMap, pfParticleList, daughter, pfp_v, track_v);
     }
   }
@@ -773,7 +783,40 @@ int UBXSecHelper::GetClosestPMT(double *charge_center) {
 }
 
 
+//_______________________________________________________________________________
+double UBXSecHelper::GetFlashZCenter(std::vector<double> hypo_pe) {
 
+  double Zcenter = 0.;
+  double totalPE = 0.;
+  double sumz = 0.;
+
+  ::art::ServiceHandle<geo::Geometry> geo;
+
+  // opdet=>opchannel mapping
+  std::vector<size_t> opdet2opch(geo->NOpDets(),0);
+  for(size_t opch=0; opch<opdet2opch.size(); ++opch){
+    opdet2opch[geo->OpDetFromOpChannel(opch)] = opch;
+  }
+
+  for (unsigned int opdet = 0; opdet < hypo_pe.size(); opdet++) {
+
+    size_t opch = opdet2opch[opdet];
+
+    // Get physical detector location for this opChannel
+    double PMTxyz[3];
+    geo->OpDetGeoFromOpChannel(opch).GetCenter(PMTxyz);
+
+    // Add up the position, weighting with PEs
+    sumz    += hypo_pe[opdet]*PMTxyz[2];
+
+    totalPE += hypo_pe[opdet];
+  }
+
+  Zcenter = sumz/totalPE;
+
+  return Zcenter;
+
+}
 
 
 

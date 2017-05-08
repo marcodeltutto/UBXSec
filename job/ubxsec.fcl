@@ -1,4 +1,12 @@
+#include "ubflashfinder.fcl"
 #include "ubflashcalib.fcl"
+#include "T0RecoAnodeCathodePiercing.fcl"
+
+#include "neutrinomcflash.fcl"
+#include "neutrinoflashmatch.fcl"
+#include "cosmicflashmatch.fcl"
+
+
 
 BEGIN_PROLOG
 #
@@ -14,11 +22,75 @@ SpacePointProducer:           "pandoraNu"
 NeutrinoFlashMatchProducer:   "NeutrinoFlashMatch"
 CosmicFlashMatchProducer:     "CosmicFlashMatch"
 OpFlashBeamProducer:          "simpleFlashBeam"
+ACPTProducer:                 "T0TrackTaggerCosmicpandoraNu"
 
 UseGENIEInfo:                 true
 MinimumHitRequirement:        3
 
 PECalib:                      @local::SPECalib
 }
+
+
+ubxsec_flashmatch:
+{
+   NeutrinoMCFlash        : @local::NeutrinoMCFlash
+   NeutrinoFlashMatch     : @local::NeutrinoFlashMatch
+   NeutrinoFlashMatchData : @local::NeutrinoFlashMatch
+   #CosmicFlashMatch   : @local::CosmicFlashMatch
+}
+
+ubxsec_acpt:
+{
+   T0TrackTaggerCosmicpandoraNu     : @local::T0RecoAnodeCathodePiercing_mc_loose
+   T0TrackTaggerBeampandoraNu       : @local::T0RecoAnodeCathodePiercing_mc
+   T0TrackTaggerCosmicpandoraNuData : @local::T0RecoAnodeCathodePiercing_data_loose
+   T0TrackTaggerBeampandoraNuData   : @local::T0RecoAnodeCathodePiercing_data
+}
+
+
+ubxsec_ana:
+{
+   UBXSecMC   : @local::UBXSec
+   UBXSecData : @local::UBXSec
+}
+
+
+ubxsec_producers_mc: [ NeutrinoMCFlash, 
+                       NeutrinoFlashMatch, 
+                       T0TrackTaggerCosmicpandoraNu, 
+                       T0TrackTaggerBeampandoraNu ]
+
+ubxsec_producers_data: [ NeutrinoFlashMatchData,
+                         T0TrackTaggerCosmicpandoraNuData,
+                         T0TrackTaggerBeampandoraNuData ]
+
+ubxsec_analyzers_mc: [ UBXSecMC ]
+
+ubxsec_analyzers_data: [ UBXSecData ]
+
+
+# Set ACPT properties
+ubxsec_acpt.T0TrackTaggerCosmicpandoraNu.TrackProducer:      "pandoraNu"
+ubxsec_acpt.T0TrackTaggerCosmicpandoraNu.FlashProducer:      "simpleFlashCosmic"
+ubxsec_acpt.T0TrackTaggerBeampandoraNu.TrackProducer:        "pandoraNu"
+ubxsec_acpt.T0TrackTaggerBeampandoraNu.FlashProducer:        "simpleFlashBeam"
+ubxsec_acpt.T0TrackTaggerCosmicpandoraNu.debug:              true
+ubxsec_acpt.T0TrackTaggerBeampandoraNu.debug:                true
+ubxsec_acpt.T0TrackTaggerCosmicpandoraNuData.TrackProducer:  "pandoraNu"
+ubxsec_acpt.T0TrackTaggerCosmicpandoraNuData.FlashProducer:  "simpleFlashCosmic"
+ubxsec_acpt.T0TrackTaggerBeampandoraNuData.TrackProducer:    "pandoraNu"
+ubxsec_acpt.T0TrackTaggerBeampandoraNuData.FlashProducer:    "simpleFlashBeam"
+ubxsec_acpt.T0TrackTaggerCosmicpandoraNuData.debug:          true
+ubxsec_acpt.T0TrackTaggerBeampandoraNuData.debug:            true
+
+# Set FlashMatching properties
+ubxsec_flashmatch.NeutrinoFlashMatch.TrackModule:            "pandoraNuPMA"
+ubxsec_flashmatch.NeutrinoFlashMatchData.TrackModule:        "pandoraNuPMA"
+
+# Set UBXSec properties
+ubxsec_ana.UBXSecData.UseGENIEInfo:                          false
+ubxsec_ana.UBXSecData.ACPTProducer:                          "T0TrackTaggerCosmicpandoraNuData"
+ubxsec_ana.UBXSecData.NeutrinoFlashMatchProducer:            "NeutrinoFlashMatchData"
+
 
 END_PROLOG

@@ -76,11 +76,18 @@ void NeutrinoMCFlash::produce(art::Event & e)
   // produce OpFlash data-product to be filled within module
   std::unique_ptr< std::vector<recob::OpFlash> > opflashes(new std::vector<recob::OpFlash>);
 
+  if (e.isRealData()) {
+    std::cout << "[NeutrinoMCFlash] Running on real data. No Neutrino MC Flash will be created." << std::endl;
+    e.put(std::move(opflashes));
+    return; 
+  }
+
   art::Handle<std::vector<raw::Trigger> > evt_trigger_h;
   e.getByLabel(_trigger_label,evt_trigger_h);
 
   if( !evt_trigger_h.isValid() || evt_trigger_h->empty() ) {
     std::cerr << "Trigger product is not valid or empty." << std::endl;
+    e.put(std::move(opflashes));
     return;
   }
 
@@ -89,6 +96,7 @@ void NeutrinoMCFlash::produce(art::Event & e)
 
   if( !evt_mctruth_h.isValid() || evt_mctruth_h->empty() ) {
     std::cerr << "MCTruth product is not valid or empty." << std::endl;
+    e.put(std::move(opflashes));
     return;
   }
 
@@ -97,6 +105,7 @@ void NeutrinoMCFlash::produce(art::Event & e)
 
   if( !evt_simphot_h.isValid() || evt_simphot_h->empty() ) {
     std::cerr << "SimPhotons product is not valid or empty." << std::endl;
+    e.put(std::move(opflashes));
     return;
   }
 
@@ -104,6 +113,7 @@ void NeutrinoMCFlash::produce(art::Event & e)
 
   if(evt_simphot_h->size() != geo->NOpDets()) {
     std::cerr << "Unexpected # of channels in simphotons!" << std::endl;
+    e.put(std::move(opflashes));
     return;
   }
 

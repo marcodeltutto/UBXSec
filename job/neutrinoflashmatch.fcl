@@ -17,8 +17,9 @@ NeutrinoFlashMatch: {
   FlashMatchConfig: @local::flashmatch_config
 }
 
-# Re-use flash
 NeutrinoFlashMatch.FlashMatchConfig.FlashMatchManager.AllowReuseFlash: true
-NeutrinoFlashMatch.FlashMatchConfig.FlashMatchManager.Verbosity: 1
+NeutrinoFlashMatch.FlashMatchConfig.FlashMatchManager.Verbosity:       1
+NeutrinoFlashMatch.FlashMatchConfig.QLLMatch.ZPenaltyThreshold:        1000
+NeutrinoFlashMatch.FlashMatchConfig.QLLMatch.XPenaltyThreshold:        1000
 
 END_PROLOG

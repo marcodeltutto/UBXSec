@@ -117,6 +117,7 @@ private:
   std::string _neutrino_flash_match_producer;
   std::string _cosmic_flash_match_producer;
   std::string _opflash_producer_beam;
+  std::string _acpt_producer;
   bool _recursiveMatching = false;
   bool _debug = true;
   int _minimumHitRequirement; ///< Minimum number of hits in at least a plane for a track
@@ -208,7 +209,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p)
   _neutrino_flash_match_producer  = p.get<std::string>("NeutrinoFlashMatchProducer");
   _cosmic_flash_match_producer    = p.get<std::string>("CosmicFlashMatchProducer");
   _opflash_producer_beam          = p.get<std::string>("OpFlashBeamProducer");
-
+  _acpt_producer                  = p.get<std::string>("ACPTProducer");
+    
   _use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
   _minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
 
@@ -226,7 +228,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p)
   _tree1->Branch("muon_reco_pur",        &_muon_reco_pur,         "muon_reco_pur/D");
   _tree1->Branch("muon_reco_eff",        &_muon_reco_eff,         "muon_reco_eff/D");
   _tree1->Branch("true_muon_mom",        &_true_muon_mom,         "true_muon_mom/D");
-  _tree1->Branch("true_muon_mom",        &_true_muon_mom_matched, "true_muon_mom/D");
+  _tree1->Branch("true_muon_mom_matched",&_true_muon_mom_matched, "true_muon_mom_matched/D");
   _tree1->Branch("nPFPtagged",           &_nPFPtagged,            "nPFPtagged/I");
   _tree1->Branch("muon_is_flash_tagged", &_muon_is_flash_tagged,  "muon_is_flash_tagged/I");
   _tree1->Branch("muon_tag_score",       &_muon_tag_score,        "muon_tag_score/D");
@@ -341,8 +343,9 @@ void UBXSec::analyze(art::Event const & e)
     _use_genie_info = false;
   }
 
-  if (_is_mc) {
-    std::cout << "[UBXSec] Running on a real data file. No MC-PFP will be attempted." << std::endl;
+  if (_is_data) {
+    std::cout << "[UBXSec] Running on a real data file. No MC-PFP matching will be attempted." << std::endl;
+  } else {
     mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
   }
 
@@ -385,7 +388,7 @@ void UBXSec::analyze(art::Event const & e)
   _muon_is_reco = 0;
   _mc_muon_contained = 0;
 
-  if (_is_mc) goto doanalysis;
+  if (_is_data) goto doanalysis;
 
   // Loop over true particle and find the cosmic related ones
   for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
@@ -543,7 +546,7 @@ void UBXSec::analyze(art::Event const & e)
 
   // ACPT
   art::Handle<std::vector<anab::T0> > t0_h;
-  e.getByLabel(Form("T0TrackTaggerCosmic%s",_pfp_producer.c_str()),t0_h);
+  e.getByLabel(_acpt_producer,t0_h);
   if(!t0_h.isValid()) {
     std::cout << "[UBXSec] T0 product not found..." << std::endl;
     //throw std::exception();
@@ -552,7 +555,7 @@ void UBXSec::analyze(art::Event const & e)
     std::cout << "[UBXSec] t0 is empty." << std::endl;
   }
    
-  art::FindManyP<recob::Track> track_ptr_coll_v(t0_h, e, Form("T0TrackTaggerCosmic%s",_pfp_producer.c_str())); 
+  art::FindManyP<recob::Track> track_ptr_coll_v(t0_h, e, _acpt_producer); 
 
   art::Handle<std::vector<recob::Track>> track_h;
   e.getByLabel(_pfp_producer,track_h);
@@ -561,7 +564,7 @@ void UBXSec::analyze(art::Event const & e)
     //throw std::exception();
   }
 
-  art::FindManyP<recob::OpFlash> opfls_ptr_coll_v(track_h, e, Form("T0TrackTaggerCosmic%s",_pfp_producer.c_str()));
+  art::FindManyP<recob::OpFlash> opfls_ptr_coll_v(track_h, e, _acpt_producer);
   
 
   // Kalman Track

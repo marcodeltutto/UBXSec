@@ -489,6 +489,7 @@ void UBXSecHelper::CollectTracksAndPFP(lar_pandora::PFParticlesToTracks pfPartic
   lar_pandora::PFParticlesToTracks::const_iterator trackMapIter = pfParticleToTrackMap.find(particle);
   if (trackMapIter != pfParticleToTrackMap.end()) {
     lar_pandora::TrackVector tracks = trackMapIter->second;
+    std::cout << "[UBXSecHelper] \t PFP " << particle->Self() << " has " << tracks.size() << " tracks ass." << std::endl;
     for (unsigned int trk = 0; trk < tracks.size(); trk++) {
       track_v.emplace_back(tracks[trk]);
     }

@@ -1,0 +1,14 @@
+
+BEGIN_PROLOG
+#
+# Module configuration
+#
+TPCObjectCreator: {
+  module_type:                "TPCObjectCreator"
+  PFParticleProducer:         "pandoraNu"
+  TrackProducer:              "pandoraNu"
+  VertexProducer:             "pandoraNu"
+}
+
+
+END_PROLOG

@@ -25,7 +25,9 @@
 void \hyperlink{classubana_1_1TPCObjectCreator_a6a22be3e596e4bbbc93fc0f10f024d53}{\-Collect\-Tracks\-And\-P\-F\-P} (lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks pf\-Particle\-To\-Track\-Map, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pf\-Particle\-List, art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ particle, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector \&pfp\-\_\-v, lar\-\_\-pandora\-::\-Track\-Vector \&track\-\_\-v)
 \begin{DoxyCompactList}\small\item\em \-Gets all the tracks and \-P\-F\-P for a single \-Pandora slice. \end{DoxyCompactList}\item 
 void \hyperlink{classubana_1_1TPCObjectCreator_ad1291ff6d9af161e7e56bc3cb9fd9135}{\-Get\-T\-P\-C\-Objects} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pf\-Particle\-List, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks pf\-Particle\-To\-Track\-Map, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Vertices pf\-Particle\-To\-Vertex\-Map, std\-::vector$<$ lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector $>$ \&pfp\-\_\-v\-\_\-v, std\-::vector$<$ lar\-\_\-pandora\-::\-Track\-Vector $>$ \&track\-\_\-v\-\_\-v)
-\begin{DoxyCompactList}\small\item\em \-Constructs \-T\-P\-C objects using \-Pandora \-P\-F\-P slices. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \-Constructs \-T\-P\-C objects using \-Pandora \-P\-F\-P slices. \end{DoxyCompactList}\item 
+art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ \hyperlink{classubana_1_1TPCObjectCreator_a097bb375d90202d7ff90ddd6b64c007b}{\-Get\-Nu\-P\-F\-P} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v)
+\begin{DoxyCompactList}\small\item\em \-Returns the nu \-P\-F\-P from a \-T\-P\-C object. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{\-Member \-Function \-Documentation}
@@ -55,6 +57,22 @@ void \hyperlink{classubana_1_1TPCObjectCreator_ad1291ff6d9af161e7e56bc3cb9fd9135
 {\em pfp\-\_\-v} & output, a vector of \-P\-F\-P (the \-T\-P\-C object) \\
 \hline
 {\em track\-\_\-v} & output, a of tracks (the \-T\-P\-C object) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classubana_1_1TPCObjectCreator_a097bb375d90202d7ff90ddd6b64c007b}{\index{ubana\-::\-T\-P\-C\-Object\-Creator@{ubana\-::\-T\-P\-C\-Object\-Creator}!\-Get\-Nu\-P\-F\-P@{\-Get\-Nu\-P\-F\-P}}
+\index{\-Get\-Nu\-P\-F\-P@{\-Get\-Nu\-P\-F\-P}!ubana::TPCObjectCreator@{ubana\-::\-T\-P\-C\-Object\-Creator}}
+\subsubsection[{\-Get\-Nu\-P\-F\-P}]{\setlength{\rightskip}{0pt plus 5cm}art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ {\bf ubana\-::\-T\-P\-C\-Object\-Creator\-::\-Get\-Nu\-P\-F\-P} (
+\begin{DoxyParamCaption}
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pfp\-\_\-v}
+\end{DoxyParamCaption}
+)}}\label{classubana_1_1TPCObjectCreator_a097bb375d90202d7ff90ddd6b64c007b}
+
+
+\-Returns the nu \-P\-F\-P from a \-T\-P\-C object. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em pfp\-\_\-v} & the \-T\-P\-C object (vector of \-P\-F\-P) \\
 \hline
 \end{DoxyParams}
 \hypertarget{classubana_1_1TPCObjectCreator_ad1291ff6d9af161e7e56bc3cb9fd9135}{\index{ubana\-::\-T\-P\-C\-Object\-Creator@{ubana\-::\-T\-P\-C\-Object\-Creator}!\-Get\-T\-P\-C\-Objects@{\-Get\-T\-P\-C\-Objects}}

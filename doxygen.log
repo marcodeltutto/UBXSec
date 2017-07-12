@@ -2,10 +2,62 @@ Notice: Output directory `./documentation' does not exist. I have created it for
 /home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:35: warning: Compound NeutrinoMCFlash is not documented.
 /home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:56: warning: Compound NeutrinoFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:56: warning: Compound CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:35: warning: Compound ubana::TPCObjectCreator is not documented.
+/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:37: warning: Compound ubana::TPCObjectCreator is not documented.
 /home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:40: warning: Compound PhotonActivity is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:47: warning: Compound DeDxAna is not documented.
 /home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:79: warning: Compound ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:58: warning: Member CosmicFlashMatch(fhicl::ParameterSet const &p) (function) of class CosmicFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:63: warning: Member CosmicFlashMatch(CosmicFlashMatch const &) (function) of class CosmicFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:64: warning: Member CosmicFlashMatch(CosmicFlashMatch &&) (function) of class CosmicFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:65: warning: Member operator=(CosmicFlashMatch const &) (function) of class CosmicFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:66: warning: Member operator=(CosmicFlashMatch &&) (function) of class CosmicFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:68: warning: Member GetTPCObjects(lar_pandora::PFParticleVector, lar_pandora::PFParticlesToTracks, lar_pandora::PFParticlesToVertices, std::vector< lar_pandora::PFParticleVector > &, std::vector< lar_pandora::TrackVector > &) (function) of class CosmicFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:69: warning: Member GetQCluster(std::vector< art::Ptr< recob::Track >>) (function) of class CosmicFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:70: warning: Member CollectTracksAndPFP(lar_pandora::PFParticlesToTracks, lar_pandora::PFParticleVector, art::Ptr< recob::PFParticle >, lar_pandora::PFParticleVector &, lar_pandora::TrackVector &) (function) of class CosmicFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:71: warning: Member GetTrajectory(std::vector< art::Ptr< recob::Track >>,::geoalgo::Trajectory &) (function) of class CosmicFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:72: warning: Member Trial(std::vector< art::Ptr< recob::Track >> track_v, flashana::Flash_t flashBeam, double &_chi2, double &_ll) (function) of class CosmicFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:75: warning: Member produce(art::Event &e) override (function) of class CosmicFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:49: warning: Member DeDxAna(fhicl::ParameterSet const &p) (function) of class DeDxAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:54: warning: Member DeDxAna(DeDxAna const &) (function) of class DeDxAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:55: warning: Member DeDxAna(DeDxAna &&) (function) of class DeDxAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:56: warning: Member operator=(DeDxAna const &) (function) of class DeDxAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:57: warning: Member operator=(DeDxAna &&) (function) of class DeDxAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:60: warning: Member analyze(art::Event const &e) override (function) of class DeDxAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:58: warning: Member NeutrinoFlashMatch(fhicl::ParameterSet const &p) (function) of class NeutrinoFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:63: warning: Member NeutrinoFlashMatch(NeutrinoFlashMatch const &) (function) of class NeutrinoFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:64: warning: Member NeutrinoFlashMatch(NeutrinoFlashMatch &&) (function) of class NeutrinoFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:65: warning: Member operator=(NeutrinoFlashMatch const &) (function) of class NeutrinoFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:66: warning: Member operator=(NeutrinoFlashMatch &&) (function) of class NeutrinoFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:88: warning: Member produce(art::Event &e) override (function) of class NeutrinoFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:37: warning: Member NeutrinoMCFlash(fhicl::ParameterSet const &p) (function) of class NeutrinoMCFlash is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:42: warning: Member NeutrinoMCFlash(NeutrinoMCFlash const &) (function) of class NeutrinoMCFlash is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:43: warning: Member NeutrinoMCFlash(NeutrinoMCFlash &&) (function) of class NeutrinoMCFlash is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:44: warning: Member operator=(NeutrinoMCFlash const &) (function) of class NeutrinoMCFlash is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:45: warning: Member operator=(NeutrinoMCFlash &&) (function) of class NeutrinoMCFlash is not documented.
+/home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:48: warning: Member produce(art::Event &e) override (function) of class NeutrinoMCFlash is not documented.
+/home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:42: warning: Member PhotonActivity(fhicl::ParameterSet const &p) (function) of class PhotonActivity is not documented.
+/home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:47: warning: Member PhotonActivity(PhotonActivity const &) (function) of class PhotonActivity is not documented.
+/home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:48: warning: Member PhotonActivity(PhotonActivity &&) (function) of class PhotonActivity is not documented.
+/home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:49: warning: Member operator=(PhotonActivity const &) (function) of class PhotonActivity is not documented.
+/home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:50: warning: Member operator=(PhotonActivity &&) (function) of class PhotonActivity is not documented.
+/home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:53: warning: Member produce(art::Event &e) override (function) of class PhotonActivity is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:93: warning: Member UBXSec(fhicl::ParameterSet const &p) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:98: warning: Member UBXSec(UBXSec const &) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:99: warning: Member UBXSec(UBXSec &&) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:100: warning: Member operator=(UBXSec const &) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:101: warning: Member operator=(UBXSec &&) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:104: warning: Member analyze(art::Event const &e) override (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:39: warning: Member TPCObjectCreator(fhicl::ParameterSet const &p) (function) of class ubana::TPCObjectCreator is not documented.
+/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:44: warning: Member TPCObjectCreator(TPCObjectCreator const &) (function) of class ubana::TPCObjectCreator is not documented.
+/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:45: warning: Member TPCObjectCreator(TPCObjectCreator &&) (function) of class ubana::TPCObjectCreator is not documented.
+/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:46: warning: Member operator=(TPCObjectCreator const &) (function) of class ubana::TPCObjectCreator is not documented.
+/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:47: warning: Member operator=(TPCObjectCreator &&) (function) of class ubana::TPCObjectCreator is not documented.
+/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:50: warning: Member produce(art::Event &e) override (function) of class ubana::TPCObjectCreator is not documented.
+/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:62: warning: argument '_particleLabel' of command @param is not found in the argument list of ubana::TPCObjectCreator::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v)
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:80: warning: Member x (variable) of class ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:81: warning: Member y (variable) of class ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:82: warning: Member z (variable) of class ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:83: warning: Member q (variable) of class ubxsec::Hit3D_t is not documented.
 Searching for include files...
 Searching for example files...
 Searching for images...
@@ -15,26 +67,16 @@ Searching for files to exclude
 Searching for files to process...
 Searching for files in directory /home/travis/build/marcodeltutto/UBXSec
 Reading and parsing tag files
-Preprocessing /home/travis/build/marcodeltutto/UBXSec/classes.h...
-Parsing file /home/travis/build/marcodeltutto/UBXSec/classes.h...
 Preprocessing /home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc...
 Parsing file /home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc...
 Preprocessing /home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc...
 Parsing file /home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc...
-Preprocessing /home/travis/build/marcodeltutto/UBXSec/FlashMatch.cxx...
-Parsing file /home/travis/build/marcodeltutto/UBXSec/FlashMatch.cxx...
-Preprocessing /home/travis/build/marcodeltutto/UBXSec/FlashMatch.h...
-Parsing file /home/travis/build/marcodeltutto/UBXSec/FlashMatch.h...
 Preprocessing /home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc...
 Parsing file /home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc...
 Preprocessing /home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc...
 Parsing file /home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc...
 Preprocessing /home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc...
 Parsing file /home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc...
-Preprocessing /home/travis/build/marcodeltutto/UBXSec/TPCObject.cxx...
-Parsing file /home/travis/build/marcodeltutto/UBXSec/TPCObject.cxx...
-Preprocessing /home/travis/build/marcodeltutto/UBXSec/TPCObject.h...
-Parsing file /home/travis/build/marcodeltutto/UBXSec/TPCObject.h...
 Preprocessing /home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc...
 Parsing file /home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc...
 Preprocessing /home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc...
@@ -88,101 +130,17 @@ Generating style sheet...
 Generating search indices...
 Generating example documentation...
 Generating file sources...
-Generating code for file /home/travis/build/marcodeltutto/UBXSec/classes.h...
-Generating code for file /home/travis/build/marcodeltutto/UBXSec/FlashMatch.h...
-Generating code for file /home/travis/build/marcodeltutto/UBXSec/TPCObject.h...
 Generating file documentation...
 Generating page documentation...
 Generating group documentation...
 Generating class documentation...
-Generating do/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:58: warning: Member CosmicFlashMatch(fhicl::ParameterSet const &p) (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:63: warning: Member CosmicFlashMatch(CosmicFlashMatch const &) (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:64: warning: Member CosmicFlashMatch(CosmicFlashMatch &&) (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:65: warning: Member operator=(CosmicFlashMatch const &) (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:66: warning: Member operator=(CosmicFlashMatch &&) (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:68: warning: Member GetTPCObjects(lar_pandora::PFParticleVector, lar_pandora::PFParticlesToTracks, lar_pandora::PFParticlesToVertices, std::vector< lar_pandora::PFParticleVector > &, std::vector< lar_pandora::TrackVector > &) (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:69: warning: Member GetQCluster(std::vector< art::Ptr< recob::Track >>) (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:70: warning: Member CollectTracksAndPFP(lar_pandora::PFParticlesToTracks, lar_pandora::PFParticleVector, art::Ptr< recob::PFParticle >, lar_pandora::PFParticleVector &, lar_pandora::TrackVector &) (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:71: warning: Member GetTrajectory(std::vector< art::Ptr< recob::Track >>,::geoalgo::Trajectory &) (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:72: warning: Member Trial(std::vector< art::Ptr< recob::Track >> track_v, flashana::Flash_t flashBeam, double &_chi2, double &_ll) (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/CosmicFlashMatch_module.cc:75: warning: Member produce(art::Event &e) override (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:49: warning: Member DeDxAna(fhicl::ParameterSet const &p) (function) of class DeDxAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:54: warning: Member DeDxAna(DeDxAna const &) (function) of class DeDxAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:55: warning: Member DeDxAna(DeDxAna &&) (function) of class DeDxAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:56: warning: Member operator=(DeDxAna const &) (function) of class DeDxAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:57: warning: Member operator=(DeDxAna &&) (function) of class DeDxAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DeDxAna_module.cc:60: warning: Member analyze(art::Event const &e) override (function) of class DeDxAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:58: warning: Member NeutrinoFlashMatch(fhicl::ParameterSet const &p) (function) of class NeutrinoFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:63: warning: Member NeutrinoFlashMatch(NeutrinoFlashMatch const &) (function) of class NeutrinoFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:64: warning: Member NeutrinoFlashMatch(NeutrinoFlashMatch &&) (function) of class NeutrinoFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:65: warning: Member operator=(NeutrinoFlashMatch const &) (function) of class NeutrinoFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:66: warning: Member operator=(NeutrinoFlashMatch &&) (function) of class NeutrinoFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoFlashMatch_module.cc:88: warning: Member produce(art::Event &e) override (function) of class NeutrinoFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:37: warning: Member NeutrinoMCFlash(fhicl::ParameterSet const &p) (function) of class NeutrinoMCFlash is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:42: warning: Member NeutrinoMCFlash(NeutrinoMCFlash const &) (function) of class NeutrinoMCFlash is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:43: warning: Member NeutrinoMCFlash(NeutrinoMCFlash &&) (function) of class NeutrinoMCFlash is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:44: warning: Member operator=(NeutrinoMCFlash const &) (function) of class NeutrinoMCFlash is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:45: warning: Member operator=(NeutrinoMCFlash &&) (function) of class NeutrinoMCFlash is not documented.
-/home/travis/build/marcodeltutto/UBXSec/NeutrinoMCFlash_module.cc:48: warning: Member produce(art::Event &e) override (function) of class NeutrinoMCFlash is not documented.
-/home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:42: warning: Member PhotonActivity(fhicl::ParameterSet const &p) (function) of class PhotonActivity is not documented.
-/home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:47: warning: Member PhotonActivity(PhotonActivity const &) (function) of class PhotonActivity is not documented.
-/home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:48: warning: Member PhotonActivity(PhotonActivity &&) (function) of class PhotonActivity is not documented.
-/home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:49: warning: Member operator=(PhotonActivity const &) (function) of class PhotonActivity is not documented.
-/home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:50: warning: Member operator=(PhotonActivity &&) (function) of class PhotonActivity is not documented.
-/home/travis/build/marcodeltutto/UBXSec/PhotonActivity_module.cc:53: warning: Member produce(art::Event &e) override (function) of class PhotonActivity is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:93: warning: Member UBXSec(fhicl::ParameterSet const &p) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:98: warning: Member UBXSec(UBXSec const &) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:99: warning: Member UBXSec(UBXSec &&) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:100: warning: Member operator=(UBXSec const &) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:101: warning: Member operator=(UBXSec &&) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:104: warning: Member analyze(art::Event const &e) override (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:33: warning: Member FlashMatch(double score) (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:37: warning: Member SetScore(double) (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:38: warning: Member SetEstimatedX(double) (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:39: warning: Member SetTPCX(double) (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:40: warning: Member SetT0(double) (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:41: warning: Member SetHypoFlashSpec(std::vector< double >) (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:42: warning: Member SetRecoFlashSpec(std::vector< double >) (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:43: warning: Member SetMCFlashSpec(std::vector< double >) (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:44: warning: Member SetXFixedHypoFlashSpec(std::vector< double >) (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:45: warning: Member SetXFixedChi2(double) (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:46: warning: Member SetXFixedLl(double) (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:49: warning: Member GetScore() const  (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:50: warning: Member GetEstimatedX() const  (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:51: warning: Member GetTPCX() const  (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:52: warning: Member GetT0() const  (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:53: warning: Member GetHypoFlashSpec() const  (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:54: warning: Member GetRecoFlashSpec() const  (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:55: warning: Member GetMCFlashSpec() const  (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:56: warning: Member GetXFixedHypoFlashSpec() const  (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:57: warning: Member GetXFixedChi2() const  (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/FlashMatch.h:58: warning: Member GetXFixedLl() const  (function) of class ubana::FlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObject.h:47: warning: Member SetTracks(std::vector< recob::Track >) (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObject.h:48: warning: Member SetVertex(recob::Vertex) (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObject.h:49: warning: Member SetOrigin(ubana::TPCObjectOrigin) (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObject.h:52: warning: Member GetTracks() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObject.h:53: warning: Member GetVertex() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObject.h:54: warning: Member GetOrigin() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:37: warning: Member TPCObjectCreator(fhicl::ParameterSet const &p) (function) of class ubana::TPCObjectCreator is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:42: warning: Member TPCObjectCreator(TPCObjectCreator const &) (function) of class ubana::TPCObjectCreator is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:43: warning: Member TPCObjectCreator(TPCObjectCreator &&) (function) of class ubana::TPCObjectCreator is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:44: warning: Member operator=(TPCObjectCreator const &) (function) of class ubana::TPCObjectCreator is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:45: warning: Member operator=(TPCObjectCreator &&) (function) of class ubana::TPCObjectCreator is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:48: warning: Member produce(art::Event &e) override (function) of class ubana::TPCObjectCreator is not documented.
-/home/travis/build/marcodeltutto/UBXSec/TPCObjectCreator_module.cc:60: warning: argument '_particleLabel' of command @param is not found in the argument list of ubana::TPCObjectCreator::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v)
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:80: warning: Member x (variable) of class ubxsec::Hit3D_t is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:81: warning: Member y (variable) of class ubxsec::Hit3D_t is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:82: warning: Member z (variable) of class ubxsec::Hit3D_t is not documented.
-/home/travis/build/marcodeltutto/UBXSec/UBXSec_module.cc:83: warning: Member q (variable) of class ubxsec::Hit3D_t is not documented.
-cs for compound CosmicFlashMatch...
+Generating docs for compound CosmicFlashMatch...
 Generating docs for compound DeDxAna...
 Generating docs for compound NeutrinoFlashMatch...
 Generating docs for compound NeutrinoMCFlash...
 Generating docs for compound PhotonActivity...
 Generating docs for compound UBXSec...
 Generating namespace index...
-Generating docs for compound ubana::FlashMatch...
-Generating docs for compound ubana::TPCObject...
 Generating docs for compound ubana::TPCObjectCreator...
 Generating docs for compound ubxsec::Hit3D_t...
 Generating graph info page...
@@ -199,6 +157,6 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-symbol cache used 321/65536 hits=5844 misses=321
-lookup cache used 69/65536 hits=277 misses=70
+symbol cache used 275/65536 hits=4877 misses=275
+lookup cache used 18/65536 hits=89 misses=18
 finished...

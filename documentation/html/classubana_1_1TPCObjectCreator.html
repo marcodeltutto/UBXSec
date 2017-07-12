@@ -48,7 +48,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
-      <li><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -122,6 +121,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>produce</b> (art::Eve
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets all the tracks and PFP for a single Pandora slice.  <a href="#a6a22be3e596e4bbbc93fc0f10f024d53"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1TPCObjectCreator.html#ad1291ff6d9af161e7e56bc3cb9fd9135">GetTPCObjects</a> (lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;pfp_v_v, std::vector&lt; lar_pandora::TrackVector &gt; &amp;track_v_v)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs TPC objects using Pandora PFP slices.  <a href="#ad1291ff6d9af161e7e56bc3cb9fd9135"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">art::Ptr&lt; recob::PFParticle &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1TPCObjectCreator.html#a097bb375d90202d7ff90ddd6b64c007b">GetNuPFP</a> (lar_pandora::PFParticleVector pfp_v)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the nu PFP from a TPC object.  <a href="#a097bb375d90202d7ff90ddd6b64c007b"></a><br/></td></tr>
 </table>
 <hr/><h2>Member Function Documentation</h2>
 <a class="anchor" id="a6a22be3e596e4bbbc93fc0f10f024d53"></a><!-- doxytag: member="ubana::TPCObjectCreator::CollectTracksAndPFP" ref="a6a22be3e596e4bbbc93fc0f10f024d53" args="(lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticleVector pfParticleList, art::Ptr&lt; recob::PFParticle &gt; particle, lar_pandora::PFParticleVector &amp;pfp_v, lar_pandora::TrackVector &amp;track_v)" -->
@@ -175,6 +176,31 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>produce</b> (art::Eve
     <tr><td class="paramname">particle</td><td>the PFP </td></tr>
     <tr><td class="paramname">pfp_v</td><td>output, a vector of PFP (the TPC object) </td></tr>
     <tr><td class="paramname">track_v</td><td>output, a of tracks (the TPC object) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a097bb375d90202d7ff90ddd6b64c007b"></a><!-- doxytag: member="ubana::TPCObjectCreator::GetNuPFP" ref="a097bb375d90202d7ff90ddd6b64c007b" args="(lar_pandora::PFParticleVector pfp_v)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">art::Ptr&lt; recob::PFParticle &gt; <a class="el" href="classubana_1_1TPCObjectCreator.html#a097bb375d90202d7ff90ddd6b64c007b">ubana::TPCObjectCreator::GetNuPFP</a> </td>
+          <td>(</td>
+          <td class="paramtype">lar_pandora::PFParticleVector&#160;</td>
+          <td class="paramname"><em>pfp_v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the nu PFP from a TPC object. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pfp_v</td><td>the TPC object (vector of PFP) </td></tr>
   </table>
   </dd>
 </dl>

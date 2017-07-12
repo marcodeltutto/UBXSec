@@ -8,6 +8,7 @@ TPCObjectCreator: {
   PFParticleProducer:         "pandoraNu"
   TrackProducer:              "pandoraNu"
   VertexProducer:             "pandoraNu"
+  Debug:                      true
 }
 
 

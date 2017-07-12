@@ -8,21 +8,20 @@ set( ROOTLIB -L$ENV{ROOTSYS}/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpa
 link_libraries( ${LIB_NAME} -L$ENV{BOOST_LIB} -lboost_system ${ROOTLIB} )
 
 art_make( BASENAME_ONLY
-          LIBRARY_NAME     uboonecode_uboone_UBXSec
+          LIBRARY_NAME     uboonecode_uboone_UBXSec_DataTypes
           LIB_LIBRARIES
-                   uboonecode_uboone_UBXSec_Algorithms
-                   uboonecode_uboone_UBXSec_DataTypes
+                   #uboonecode_uboone_UBXSec_Algorithms
                    uboonecode_uboone_BasicTool_GeoAlgo
-                   uboone_UBFlashFinder
-		   uboonecode_uboone_SelectionTool_OpT0FinderBase
-		   uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
+                   #uboone_UBFlashFinder
+                   #uboonecode_uboone_SelectionTool_OpT0FinderBase
+                   #uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
 	  	   larcore_Geometry
 		   larcore_Geometry_Geometry_service
                    uboone_RawData
-                   SignalShapingServiceMicroBooNE_service
-                   larevt_CalibrationDBI_IOVData
-                   larevt_CalibrationDBI_Providers
-                   larsim_MCCheater_BackTracker_service
+                   #SignalShapingServiceMicroBooNE_service
+                   #larevt_CalibrationDBI_IOVData
+                   #larevt_CalibrationDBI_Providers
+                   #larsim_MCCheater_BackTracker_service
                    #Simulation
 		   #Utilities
 		   #TimeService_service
@@ -59,22 +58,21 @@ art_make( BASENAME_ONLY
 		   ${ROOT_BASIC_LIB_LIST}
 
           MODULE_LIBRARIES
-                   uboonecode_uboone_UBXSec_Algorithms 
-                   uboonecode_uboone_UBXSec_DataTypes
+                   #uboonecode_uboone_UBXSec_Algorithms 
                    #uboonecode_uboone_UBXSec
-                   larsim_MCCheater_BackTracker_service
+                   #larsim_MCCheater_BackTracker_service
 		   larpandora_LArPandoraInterface
                    #                   larpandora_LArPandoraContent
 
-		   uboonecode_uboone_BasicTool_GeoAlgo
-		   uboonecode_uboone_SelectionTool_OpT0FinderBase
-		   uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
-                   uboone_UBFlashFinder
+                   #uboonecode_uboone_BasicTool_GeoAlgo
+                   #uboonecode_uboone_SelectionTool_OpT0FinderBase
+                   #uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
+                   #uboone_UBFlashFinder
 
                    uboone_RawData
-                   SignalShapingServiceMicroBooNE_service
-                   larevt_CalibrationDBI_IOVData
-                   larevt_CalibrationDBI_Providers
+                   #SignalShapingServiceMicroBooNE_service
+                   #larevt_CalibrationDBI_IOVData
+                   #larevt_CalibrationDBI_Providers
 	  	   larcore_Geometry
 		   larcore_Geometry_Geometry_service
 		   lardataobj_RecoBase
@@ -107,6 +105,3 @@ install_headers()
 install_fhicl()
 install_source()
 
-add_subdirectory(Algorithms)
-add_subdirectory(DataTypes)
-add_subdirectory(job)

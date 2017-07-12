@@ -50,7 +50,7 @@
 #include "lardataobj/RecoBase/Cluster.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/SpacePoint.h"
-#include "uboone/UBXSec/FlashMatch.h"
+#include "uboone/UBXSec/DataTypes/FlashMatch.h"
 #include "lardataobj/AnalysisBase/T0.h"
 
 // LArSoft include
@@ -173,6 +173,7 @@ private:
   std::vector<int> _slc_kalman_ndof;
   std::vector<bool> _slc_passed_min_track_quality;
   std::vector<double> _slc_n_intime_pe_closestpmt;
+  std::vector<double> _slc_maxdistance_vtxtrack;
 
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe, _beamfls_z;
@@ -282,6 +283,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p)
   _tree1->Branch("slc_kalman_ndof",                "std::vector<int>",    &_slc_kalman_ndof);
   _tree1->Branch("slc_passed_min_track_quality",   "std::vector<bool>",   &_slc_passed_min_track_quality);
   _tree1->Branch("slc_n_intime_pe_closestpmt",     "std::vector<double>", &_slc_n_intime_pe_closestpmt);
+  _tree1->Branch("slc_maxdistance_vtxtrack",       "std::vector<double>", &_slc_maxdistance_vtxtrack);
 
   _tree1->Branch("nbeamfls",                   &_nbeamfls,                         "nbeamfls/I");
   _tree1->Branch("beamfls_time",               "std::vector<double>",              &_beamfls_time);
@@ -383,12 +385,16 @@ void UBXSec::analyze(art::Event const & e)
   std::vector<art::Ptr<recob::PFParticle>> taggedPFP;
   std::vector<double>                      taggedPFPscore;
   std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP;
+  std::vector<art::Ptr<recob::PFParticle>> cosmicOriginPFP;
   art::Ptr<recob::PFParticle>              muonPFP;
   art::Ptr<simb::MCParticle>               muonMCParticle;
   _muon_is_reco = 0;
   _mc_muon_contained = 0;
 
   if (_is_data) goto doanalysis;
+
+  neutrinoOriginPFP.clear(); 
+  cosmicOriginPFP.clear();
 
   // Loop over true particle and find the cosmic related ones
   for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
@@ -405,6 +411,9 @@ void UBXSec::analyze(art::Event const & e)
     }
 
     if (mc_truth->Origin() == COSMIC_ORIGIN) {
+
+      cosmicOriginPFP.emplace_back(pf_par);
+
       double end[3];
       end[0] = mc_par->EndX();
       end[1] = mc_par->EndY();
@@ -700,6 +709,7 @@ void UBXSec::analyze(art::Event const & e)
   _slc_kalman_ndof.resize(_nslices, -9999);  
   _slc_passed_min_track_quality.resize(_nslices, -9999);
   _slc_n_intime_pe_closestpmt.resize(_nslices, -9999);
+  _slc_maxdistance_vtxtrack.resize(_nslices, -9999);
 
   std::cout << "UBXSec - SAVING INFORMATION" << std::endl;
   _vtx_resolution = -9999;
@@ -707,7 +717,7 @@ void UBXSec::analyze(art::Event const & e)
     std::cout << ">>> SLICE" << slice << std::endl;
 
     // Slice origin (0 is neutrino, 1 is cosmic)
-    _slc_origin[slice] = UBXSecHelper::GetSliceOrigin(neutrinoOriginPFP, pfp_v_v[slice]);
+    _slc_origin[slice] = UBXSecHelper::GetSliceOrigin(neutrinoOriginPFP, cosmicOriginPFP, pfp_v_v[slice]);
 
     // Reco vertex
     double reco_nu_vtx[3];
@@ -742,6 +752,8 @@ void UBXSec::analyze(art::Event const & e)
       _slc_flsmatch_xfixed_ll[slice]   = pfpToFlashMatch_v[0]->GetXFixedLl();
       _slc_flshypo_xfixed_spec[slice]  = pfpToFlashMatch_v[0]->GetXFixedHypoFlashSpec();
       _slc_flshypo_spec[slice]         = pfpToFlashMatch_v[0]->GetHypoFlashSpec();
+      for (auto v : _slc_flshypo_spec[slice]) std::cout << "PE: " << v << std::endl;
+
       std::cout << "    FM score: " << _slc_flsmatch_score[slice] << std::endl;
     }
 
@@ -894,6 +906,11 @@ void UBXSec::analyze(art::Event const & e)
     } // end loop ophit
 
     _slc_n_intime_pe_closestpmt[slice] = n_intime_pe;
+
+
+    // Distance from recon nu vertex to thefar away track in TPCObject
+    //_slc_maxdistance_vtxtrack = UBXSecHelper::GetMaxTrackVertexDistance();
+
 
     std::cout << "UBXSec - INFORMATION SAVED" << std::endl;
   } // slice loop

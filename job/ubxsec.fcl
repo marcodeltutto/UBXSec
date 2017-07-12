@@ -2,6 +2,7 @@
 #include "ubflashcalib.fcl"
 #include "T0RecoAnodeCathodePiercing.fcl"
 
+#include "tpcobjectcreator.fcl"
 #include "neutrinomcflash.fcl"
 #include "neutrinoflashmatch.fcl"
 #include "cosmicflashmatch.fcl"
@@ -33,6 +34,9 @@ PECalib:                      @local::SPECalib
 
 ubxsec_flashmatch:
 {
+   TPCObjectCreator       : @local::TPCObjectCreator
+   TPCObjectCreatorData   : @local::TPCObjectCreator
+
    NeutrinoMCFlash        : @local::NeutrinoMCFlash
    NeutrinoFlashMatch     : @local::NeutrinoFlashMatch
    NeutrinoFlashMatchData : @local::NeutrinoFlashMatch
@@ -55,12 +59,14 @@ ubxsec_ana:
 }
 
 
-ubxsec_producers_mc: [ NeutrinoMCFlash, 
+ubxsec_producers_mc: [ TPCObjectCreator,
+                       NeutrinoMCFlash, 
                        NeutrinoFlashMatch, 
                        T0TrackTaggerCosmicpandoraNu, 
                        T0TrackTaggerBeampandoraNu ]
 
-ubxsec_producers_data: [ NeutrinoFlashMatchData,
+ubxsec_producers_data: [ TPCObjectCreatorData,
+                         NeutrinoFlashMatchData,
                          T0TrackTaggerCosmicpandoraNuData,
                          T0TrackTaggerBeampandoraNuData ]
 
@@ -84,8 +90,8 @@ ubxsec_acpt.T0TrackTaggerCosmicpandoraNuData.debug:          true
 ubxsec_acpt.T0TrackTaggerBeampandoraNuData.debug:            true
 
 # Set FlashMatching properties
-ubxsec_flashmatch.NeutrinoFlashMatch.TrackModule:            "pandoraNuPMA"
-ubxsec_flashmatch.NeutrinoFlashMatchData.TrackModule:        "pandoraNuPMA"
+ubxsec_flashmatch.NeutrinoFlashMatch.TrackModule:            "pandoraNu"
+ubxsec_flashmatch.NeutrinoFlashMatchData.TrackModule:        "pandoraNu"
 
 # Set UBXSec properties
 ubxsec_ana.UBXSecData.UseGENIEInfo:                          false

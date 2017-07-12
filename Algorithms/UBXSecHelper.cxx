@@ -532,30 +532,38 @@ bool UBXSecHelper::InFV(double * nu_vertex_xyz){
 
 
 //__________________________________________________________________________
-int UBXSecHelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP, lar_pandora::PFParticleVector pfp_v) {
+ubana::TPCObjectOrigin UBXSecHelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP, std::vector<art::Ptr<recob::PFParticle>> cosmicOriginPFP, lar_pandora::PFParticleVector pfp_v) {
 
-  bool isFromNu = false;
-  int nuOrigin = 0;
+  ::ubana::TPCObjectOrigin origin = ubana::kUnknown;
+
+  int nuOrigin     = 0;
   int cosmicOrigin = 0;
 
+  // Loop over pfp in the slice
   for ( unsigned int i = 0; i < pfp_v.size(); i++) {
 
+    // Loop over pfp from nu origin
     for ( unsigned int j = 0; j < neutrinoOriginPFP.size(); j++) {
 
       if (neutrinoOriginPFP[j] == pfp_v[i]) {
-        isFromNu = true;
         nuOrigin ++;
-        break;
       }
     }
 
-    if (!isFromNu) cosmicOrigin++;
-    isFromNu = false;
+    // Loop over pfp from cosmic origin
+    for ( unsigned int j = 0; j < cosmicOriginPFP.size(); j++) {
 
+      if (cosmicOriginPFP[j] == pfp_v[i]) {
+        cosmicOrigin ++;
+      }
+    }
   }
 
-  if (nuOrigin > 0) return 0;
-  else return 1;
+  if (nuOrigin > 0  && cosmicOrigin == 0) origin = ubana::kBeamNeutrino;
+  if (nuOrigin == 0 && cosmicOrigin > 0 ) origin = ubana::kCosmicRay;
+  if (nuOrigin > 0  && cosmicOrigin > 0 ) origin = ubana::kMixed;
+  
+  return origin;
 
 }
 

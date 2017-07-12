@@ -30,7 +30,7 @@ services:
   BackTracker:             @local::microboone_backtracker
 }
 
-services.PmtGainService.PmtGainProvider.UseDB:               false
+services.PmtGainService.PmtGainProvider.UseDB:               true
 services.ChannelStatusService.ChannelStatusProvider.UseDB:   false
 services.DetPedestalService.DetPedestalRetrievalAlg.UseDB:   false
 

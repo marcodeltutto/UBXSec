@@ -28,7 +28,7 @@
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/OpFlash.h"
 #include "lardataobj/AnalysisBase/FlashMatch.h"
-#include "uboone/UBXSec/FlashMatch.h" // new!
+#include "uboone/UBXSec/DataTypes/FlashMatch.h" // new!
 #include "nusimdata/SimulationBase/MCTruth.h"
 
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"

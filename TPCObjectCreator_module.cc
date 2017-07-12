@@ -25,6 +25,8 @@
 #include "nusimdata/SimulationBase/MCTruth.h"
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 
+#include "uboone/UBXSec/DataTypes/TPCObject.h"
+
 #include <memory>
 
 namespace ubana {
@@ -68,11 +70,19 @@ public:
    *  @param track_v_v output, a vector of vector of tracks (a vector of TPC objects)   */
   void GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices  pfParticleToVertexMap, std::vector<lar_pandora::PFParticleVector> & pfp_v_v, std::vector<lar_pandora::TrackVector> & track_v_v);
 
+
+  /**
+   *  @brief Returns the nu PFP from a TPC object
+   *
+   *  @param pfp_v the TPC object (vector of PFP) */
+  art::Ptr<recob::PFParticle> GetNuPFP(lar_pandora::PFParticleVector pfp_v);
+
 private:
 
   std::string _particleLabel;
   std::string _vertexLabel;
   std::string _trackLabel;
+  bool _debug;
 };
 
 
@@ -83,10 +93,17 @@ ubana::TPCObjectCreator::TPCObjectCreator(fhicl::ParameterSet const & p)
   _particleLabel = p.get<std::string>("PFParticleProducer"); 
   _vertexLabel   = p.get<std::string>("VertexProducer");
   _trackLabel    = p.get<std::string>("TrackProducer");
-  // Call appropriate produces<>() functions here.
+  _debug         = p.get<bool>       ("Debug", false);
+
+  produces< std::vector<ubana::TPCObject>>();
 }
 
 void ubana::TPCObjectCreator::produce(art::Event & e){
+
+  if (_debug) std::cout << "[TPCObjectCreator] Starts" << std::endl;
+ 
+  // Instantiate the output
+  std::unique_ptr< std::vector< ubana::TPCObject > >                  tpcObjectVector      (new std::vector<ubana::TPCObject>);
 
   //Vectors and maps we will use to store Pandora information
   lar_pandora::PFParticleVector pfParticleList;              //vector of PFParticles
@@ -109,8 +126,49 @@ void ubana::TPCObjectCreator::produce(art::Event & e){
   this->GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
 
 
+  for (size_t i = 0; i < pfp_v_v.size(); i++){
+    std::vector<recob::Track> trk_v;
+    trk_v.clear();
+    for (auto t : track_v_v[i]) trk_v.emplace_back((*t));
+
+    ::ubana::TPCObject obj;
+    obj.SetTracks(trk_v);
+
+    art::Ptr<recob::PFParticle> pfp = this->GetNuPFP(pfp_v_v[i]);   
+    auto iter = pfParticleToVertexMap.find(pfp);
+    if (iter != pfParticleToVertexMap.end()) {
+      obj.SetVertex(*(iter->second[0]));
+    }   
+    tpcObjectVector->emplace_back(obj);    
+  }
+
+  e.put(std::move(tpcObjectVector)); 
+
+
+  if (_debug) std::cout << "[TPCObjectCreator] Ends" << std::endl;
 }
 
+
+
+//_____________________________________________________________________________________
+art::Ptr<recob::PFParticle> ubana::TPCObjectCreator::GetNuPFP(lar_pandora::PFParticleVector pfp_v){
+
+  for (unsigned int pfp = 0; pfp < pfp_v.size(); pfp++) {
+
+    if(lar_pandora::LArPandoraHelper::IsNeutrino(pfp_v.at(pfp))) {
+      return pfp_v.at(pfp);
+    }
+  }
+  std::cout << "[TPCObjectCreator] No neutrino PFP found." << std::endl;
+
+  art::Ptr<recob::PFParticle> temp;
+  return temp;
+
+}
+
+
+
+//___________________________________________________________________________________________________
 void ubana::TPCObjectCreator::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList,
                                             lar_pandora::PFParticlesToTracks pfParticleToTrackMap,
                                             lar_pandora::PFParticlesToVertices  pfParticleToVertexMap,
@@ -120,13 +178,13 @@ void ubana::TPCObjectCreator::GetTPCObjects(lar_pandora::PFParticleVector pfPart
   track_v_v.clear();
   pfp_v_v.clear();
 
-  std::cout << "[UBXSecHelper] Getting TPC Objects..." << std::endl;
+  if (_debug) std::cout << "[TPCObjectCreator] Getting TPC Objects..." << std::endl;
 
   for (unsigned int n = 0; n < pfParticleList.size(); ++n) {
     const art::Ptr<recob::PFParticle> particle = pfParticleList.at(n);
 
     if(lar_pandora::LArPandoraHelper::IsNeutrino(particle)) {
-      std::cout << "[UBXSecHelper] \t Creating TPC Object " << track_v_v.size() << std::endl;
+      if (_debug) std::cout << "[TPCObjectCreator] \t Creating TPC Object " << track_v_v.size() << std::endl;
       //std::cout << "IS NEUTRINO, pfp id " << particle->Self() << std::endl;
       lar_pandora::VertexVector nu_vertex_v;
       auto search = pfParticleToVertexMap.find(particle);
@@ -146,20 +204,20 @@ void ubana::TPCObjectCreator::GetTPCObjects(lar_pandora::PFParticleVector pfPart
       pfp_v_v.emplace_back(pfp_v);
       track_v_v.emplace_back(track_v);
 
-      std::cout << "[UBXSecHelper] \t Number of pfp for this TPC object: "    << pfp_v.size()   << std::endl;
+      if (_debug) std::cout << "[TPCObjectCreator] \t Number of pfp for this TPC object: "    << pfp_v.size()   << std::endl;
       for (auto pfp : pfp_v) {
-        std::cout << "[UBXSecHelper] \t \t PFP " << pfp->Self() << " with pdg " << pfp->PdgCode();
+        if (_debug) std::cout << "[TPCObjectCreator] \t \t PFP " << pfp->Self() << " with pdg " << pfp->PdgCode();
         auto it = pfParticleToVertexMap.find(pfp);
         if (it == pfParticleToVertexMap.end()) {
-           std::cout << " and vertex [vertex not available for this PFP]" << std::endl;
+           if (_debug) std::cout << " and vertex [vertex not available for this PFP]" << std::endl;
         } else {
           double xyz[3];
           (it->second)[0]->XYZ(xyz);
-          std::cout << " and vertex " << xyz[0] << " " << xyz[1] << " " << xyz[2] << std::endl;
+          if (_debug) std::cout << " and vertex " << xyz[0] << " " << xyz[1] << " " << xyz[2] << std::endl;
         }
       }
       std::cout << std::endl;
-      std::cout << "[UBXSecHelper] \t Number of tracks for this TPC object: " << track_v.size() << std::endl;
+      if (_debug) std::cout << "[TPCObjectCreator] \t Number of tracks for this TPC object: " << track_v.size() << std::endl;
 
       //for (unsigned int i = 0; i < pfp_v.size(); i++) std::cout << "   pfp with ID " << pfp_v[i]->Self() << std::endl;
     } // end if neutrino
@@ -178,7 +236,7 @@ void ubana::TPCObjectCreator::CollectTracksAndPFP(lar_pandora::PFParticlesToTrac
   lar_pandora::PFParticlesToTracks::const_iterator trackMapIter = pfParticleToTrackMap.find(particle);
   if (trackMapIter != pfParticleToTrackMap.end()) {
     lar_pandora::TrackVector tracks = trackMapIter->second;
-    std::cout << "[UBXSecHelper] \t PFP " << particle->Self() << " has " << tracks.size() << " tracks ass." << std::endl;
+    if (_debug) std::cout << "[TPCObjectCreator] \t PFP " << particle->Self() << " has " << tracks.size() << " tracks ass." << std::endl;
     for (unsigned int trk = 0; trk < tracks.size(); trk++) {
       track_v.emplace_back(tracks[trk]);
     }
@@ -193,5 +251,6 @@ void ubana::TPCObjectCreator::CollectTracksAndPFP(lar_pandora::PFParticlesToTrac
   }
 
 }
+
 
 DEFINE_ART_MODULE(ubana::TPCObjectCreator)

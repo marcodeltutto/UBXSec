@@ -30,6 +30,15 @@ typedef std::map< art::Ptr<simb::MCParticle>,  RecoParticleToNMatchedHits > Part
 typedef std::set< art::Ptr<recob::PFParticle> > PFParticleSet;
 typedef std::set< art::Ptr<simb::MCParticle> >  MCParticleSet;
 
+namespace ubana {
+  enum TPCObjectOrigin{
+    kUnknown = -1,          // -1           
+    kBeamNeutrino = 0,      // 0
+    kCosmicRay,             // 1
+    kMixed,                 // 2
+  };            
+}
+
 class UBXSecHelper {
 
   public:
@@ -154,11 +163,12 @@ class UBXSecHelper {
   static bool InFV(double * nu_vertex_xyz);
 
   /**
-   *  @brief Returns the origin of the TPC object (neutrino/cosmic)
+   *  @brief Returns the origin of the TPC object (neutrino/cosmic/mixed)
    *
    *  @param neutrinoOriginPFP list of PFP with neutrino origin
+   *  @param cosmicOriginPFP list of PFP with cosmic origin
    *  @param pfp_v the TPC object (vector of PFP)  */
-  static int GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP, lar_pandora::PFParticleVector pfp_v);
+  static ubana::TPCObjectOrigin GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP, std::vector<art::Ptr<recob::PFParticle>> cosmicOriginPFP, lar_pandora::PFParticleVector pfp_v);
 
   /**
    *  @brief Returns number of hits on each plane for a TPC obj

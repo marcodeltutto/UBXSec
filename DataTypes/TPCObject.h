@@ -3,7 +3,7 @@
  *
  * \ingroup UBXSec
  *
- * \brief Data product to store a flash matching results
+ * \brief Data product to store a TPC Object
  * 
  *
  * \author $Author: Marco Del Tutto<marco.deltutto@physics.ox.ac.uk> $

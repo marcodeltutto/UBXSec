@@ -1,0 +1,118 @@
+\hypertarget{classubxsec_1_1McPfpMatch}{\section{ubxsec\-:\-:\-Mc\-Pfp\-Match \-Class \-Reference}
+\label{classubxsec_1_1McPfpMatch}\index{ubxsec\-::\-Mc\-Pfp\-Match@{ubxsec\-::\-Mc\-Pfp\-Match}}
+}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classubxsec_1_1McPfpMatch_aea3e9923fdf8855d5798015b36f2d516}{\hyperlink{classubxsec_1_1McPfpMatch_aea3e9923fdf8855d5798015b36f2d516}{\-Mc\-Pfp\-Match} ()}\label{classubxsec_1_1McPfpMatch_aea3e9923fdf8855d5798015b36f2d516}
+
+\begin{DoxyCompactList}\small\item\em \-Default constructor. \end{DoxyCompactList}\item 
+\hypertarget{classubxsec_1_1McPfpMatch_a3fa822d7321aca21a0ad42e692a29bf2}{\hyperlink{classubxsec_1_1McPfpMatch_a3fa822d7321aca21a0ad42e692a29bf2}{$\sim$\-Mc\-Pfp\-Match} ()}\label{classubxsec_1_1McPfpMatch_a3fa822d7321aca21a0ad42e692a29bf2}
+
+\begin{DoxyCompactList}\small\item\em \-Default destructor. \end{DoxyCompactList}\item 
+\hypertarget{classubxsec_1_1McPfpMatch_a15cea806e5a1b12bf2e187d5d26c528d}{void \hyperlink{classubxsec_1_1McPfpMatch_a15cea806e5a1b12bf2e187d5d26c528d}{\-Configure} (art\-::\-Event const \&e, std\-::string \-\_\-pfp\-\_\-producer, std\-::string \-\_\-spacepoint\-Label, std\-::string \-\_\-hitfinder\-Label, std\-::string \-\_\-geant\-Module\-Label)}\label{classubxsec_1_1McPfpMatch_a15cea806e5a1b12bf2e187d5d26c528d}
+
+\begin{DoxyCompactList}\small\item\em \-Configure function parameters. \end{DoxyCompactList}\item 
+void \hyperlink{classubxsec_1_1McPfpMatch_a1b66ef44f3a1772a4e72de2e5066768c}{\-Get\-Reco\-To\-True\-Matches} (lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-P\-F\-Particles \&matched\-Particles, lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-Hits \&matched\-Hits)
+\begin{DoxyCompactList}\small\item\em \-Returns matching between true and reconstructed particles. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Protected \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classubxsec_1_1McPfpMatch_adb5138d94990f679643372e0be273940}{\-Get\-Reco\-To\-True\-Matches} (const lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Hits \&reco\-Particles\-To\-Hits, const lar\-\_\-pandora\-::\-Hits\-To\-M\-C\-Particles \&true\-Hits\-To\-Particles, lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-P\-F\-Particles \&matched\-Particles, lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-Hits \&matched\-Hits)
+\begin{DoxyCompactList}\small\item\em \-Perform matching between true and reconstructed particles. \end{DoxyCompactList}\item 
+void \hyperlink{classubxsec_1_1McPfpMatch_a0d41e3e0c60f2777cc26ca8b8520e9d2}{\-Get\-Reco\-To\-True\-Matches} (const lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Hits \&reco\-Particles\-To\-Hits, const lar\-\_\-pandora\-::\-Hits\-To\-M\-C\-Particles \&true\-Hits\-To\-Particles, lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-P\-F\-Particles \&matched\-Particles, lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-Hits \&matched\-Hits, \-P\-F\-Particle\-Set \&reco\-Veto, \-M\-C\-Particle\-Set \&true\-Veto, bool \-\_\-recursive\-Matching)
+\begin{DoxyCompactList}\small\item\em \-Perform matching between true and reconstructed particles. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Protected \-Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classubxsec_1_1McPfpMatch_a8e623037c8526c53c0682ba8e42ff62b}{lar\-\_\-pandora\-::\-Hits\-To\-M\-C\-Particles \hyperlink{classubxsec_1_1McPfpMatch_a8e623037c8526c53c0682ba8e42ff62b}{\-\_\-true\-Hits\-To\-Particles}}\label{classubxsec_1_1McPfpMatch_a8e623037c8526c53c0682ba8e42ff62b}
+
+\begin{DoxyCompactList}\small\item\em \-A map from recon hits to \-M\-C\-Particles. \end{DoxyCompactList}\item 
+\hypertarget{classubxsec_1_1McPfpMatch_a3073567df4d7dca42c95d648ef31cb89}{lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Hits \hyperlink{classubxsec_1_1McPfpMatch_a3073567df4d7dca42c95d648ef31cb89}{\-\_\-reco\-Particles\-To\-Hits}}\label{classubxsec_1_1McPfpMatch_a3073567df4d7dca42c95d648ef31cb89}
+
+\begin{DoxyCompactList}\small\item\em \-A map from \-P\-F\-Particles to recon hits. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classubxsec_1_1McPfpMatch_a1b66ef44f3a1772a4e72de2e5066768c}{\index{ubxsec\-::\-Mc\-Pfp\-Match@{ubxsec\-::\-Mc\-Pfp\-Match}!\-Get\-Reco\-To\-True\-Matches@{\-Get\-Reco\-To\-True\-Matches}}
+\index{\-Get\-Reco\-To\-True\-Matches@{\-Get\-Reco\-To\-True\-Matches}!ubxsec::McPfpMatch@{ubxsec\-::\-Mc\-Pfp\-Match}}
+\subsubsection[{\-Get\-Reco\-To\-True\-Matches}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-Mc\-Pfp\-Match\-::\-Get\-Reco\-To\-True\-Matches} (
+\begin{DoxyParamCaption}
+\item[{lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-P\-F\-Particles \&}]{matched\-Particles, }
+\item[{lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-Hits \&}]{matched\-Hits}
+\end{DoxyParamCaption}
+)}}\label{classubxsec_1_1McPfpMatch_a1b66ef44f3a1772a4e72de2e5066768c}
+
+
+\-Returns matching between true and reconstructed particles. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em matched\-Particles} & the output matches between reconstructed and true particles \\
+\hline
+{\em matched\-Hits} & the output matches between reconstructed particles and hits \\
+\hline
+\end{DoxyParams}
+\hypertarget{classubxsec_1_1McPfpMatch_adb5138d94990f679643372e0be273940}{\index{ubxsec\-::\-Mc\-Pfp\-Match@{ubxsec\-::\-Mc\-Pfp\-Match}!\-Get\-Reco\-To\-True\-Matches@{\-Get\-Reco\-To\-True\-Matches}}
+\index{\-Get\-Reco\-To\-True\-Matches@{\-Get\-Reco\-To\-True\-Matches}!ubxsec::McPfpMatch@{ubxsec\-::\-Mc\-Pfp\-Match}}
+\subsubsection[{\-Get\-Reco\-To\-True\-Matches}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-Mc\-Pfp\-Match\-::\-Get\-Reco\-To\-True\-Matches} (
+\begin{DoxyParamCaption}
+\item[{const lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Hits \&}]{reco\-Particles\-To\-Hits, }
+\item[{const lar\-\_\-pandora\-::\-Hits\-To\-M\-C\-Particles \&}]{true\-Hits\-To\-Particles, }
+\item[{lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-P\-F\-Particles \&}]{matched\-Particles, }
+\item[{lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-Hits \&}]{matched\-Hits}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}\label{classubxsec_1_1McPfpMatch_adb5138d94990f679643372e0be273940}
+
+
+\-Perform matching between true and reconstructed particles. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em reco\-Particles\-To\-Hits} & the mapping from reconstructed particles to hits \\
+\hline
+{\em true\-Hits\-To\-Particles} & the mapping from hits to true particles \\
+\hline
+{\em matched\-Particles} & the output matches between reconstructed and true particles \\
+\hline
+{\em matched\-Hits} & the output matches between reconstructed particles and hits \\
+\hline
+\end{DoxyParams}
+\hypertarget{classubxsec_1_1McPfpMatch_a0d41e3e0c60f2777cc26ca8b8520e9d2}{\index{ubxsec\-::\-Mc\-Pfp\-Match@{ubxsec\-::\-Mc\-Pfp\-Match}!\-Get\-Reco\-To\-True\-Matches@{\-Get\-Reco\-To\-True\-Matches}}
+\index{\-Get\-Reco\-To\-True\-Matches@{\-Get\-Reco\-To\-True\-Matches}!ubxsec::McPfpMatch@{ubxsec\-::\-Mc\-Pfp\-Match}}
+\subsubsection[{\-Get\-Reco\-To\-True\-Matches}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-Mc\-Pfp\-Match\-::\-Get\-Reco\-To\-True\-Matches} (
+\begin{DoxyParamCaption}
+\item[{const lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Hits \&}]{reco\-Particles\-To\-Hits, }
+\item[{const lar\-\_\-pandora\-::\-Hits\-To\-M\-C\-Particles \&}]{true\-Hits\-To\-Particles, }
+\item[{lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-P\-F\-Particles \&}]{matched\-Particles, }
+\item[{lar\-\_\-pandora\-::\-M\-C\-Particles\-To\-Hits \&}]{matched\-Hits, }
+\item[{\-P\-F\-Particle\-Set \&}]{reco\-Veto, }
+\item[{\-M\-C\-Particle\-Set \&}]{true\-Veto, }
+\item[{bool}]{\-\_\-recursive\-Matching}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}\label{classubxsec_1_1McPfpMatch_a0d41e3e0c60f2777cc26ca8b8520e9d2}
+
+
+\-Perform matching between true and reconstructed particles. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em reco\-Particles\-To\-Hits} & the mapping from reconstructed particles to hits \\
+\hline
+{\em true\-Hits\-To\-Particles} & the mapping from hits to true particles \\
+\hline
+{\em matched\-Particles} & the output matches between reconstructed and true particles \\
+\hline
+{\em matched\-Hits} & the output matches between reconstructed particles and hits \\
+\hline
+{\em reco\-Veto} & the veto list for reconstructed particles \\
+\hline
+{\em true\-Veto} & the veto list for true particles \\
+\hline
+\end{DoxyParams}
+
+
+\-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/travis/build/marcodeltutto/\-U\-B\-X\-Sec/\-Algorithms/\-Mc\-Pfp\-Match.\-h\item 
+/home/travis/build/marcodeltutto/\-U\-B\-X\-Sec/\-Algorithms/\-Mc\-Pfp\-Match.\-cxx\end{DoxyCompactItemize}

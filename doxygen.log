@@ -62,9 +62,12 @@ Preprocessing /home/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFla
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FindDeadRegions.h:36: warning: Compound FindDeadRegions is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FindDeadRegions.h:25: warning: Compound BoundaryWire is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/PhotonActivity_module.cc:40: warning: Compound PhotonActivity is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:37: warning: Compound ubana::TPCObjectMaker is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:50: warning: Compound ubana::TPCObjectMaker is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/DeDxAna_module.cc:47: warning: Compound DeDxAna is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:79: warning: Compound ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:52: warning: Member TPCObjectMaker(fhicl::ParameterSet const &p) (function) of class ubana::TPCObjectMaker is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:63: warning: Member produce(art::Event &e) override (function) of class ubana::TPCObjectMaker is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:75: warning: argument '_particleLabel' of command @param is not found in the argument list of ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v)
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FindDeadRegions.h:26: warning: Member wire_num (variable) of class BoundaryWire is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FindDeadRegions.h:27: warning: Member y_start (variable) of class BoundaryWire is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FindDeadRegions.h:28: warning: Member z_start (variable) of class BoundaryWire is not documented.
@@ -116,13 +119,12 @@ Preprocessing /home/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFla
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:65: warning: The following parameters of UBXSecHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits, PFParticleSet &recoVeto, MCParticleSet &trueVeto, bool _recursiveMatching) are not documented:
   parameter '_recursiveMatching'
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:114: warning: argument '_particleLabel' of command @param is not found in the argument list of UBXSecHelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v)
-/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:39: warning: Member TPCObjectMaker(fhicl::ParameterSet const &p) (function) of class ubana::TPCObjectMaker is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:44: warning: Member TPCObjectMaker(TPCObjectMaker const &) (function) of class ubana::TPCObjectMaker is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:45: warning: Member TPCObjectMaker(TPCObjectMaker &&) (function) of class ubana::TPCObjectMaker is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:46: warning: Member operator=(TPCObjectMaker const &) (function) of class ubana::TPCObjectMaker is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:47: warning: Member operator=(TPCObjectMaker &&) (function) of class ubana::TPCObjectMaker is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:50: warning: Member produce(art::Event &e) override (function) of class ubana::TPCObjectMaker is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:62: warning: argument '_particleLabel' of command @param is not found in the argument list of ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v)
+/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:52: warning: Member TPCObjectMaker(fhicl::ParameterSet const &p) (function) of class ubana::TPCObjectMaker is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:57: warning: Member TPCObjectMaker(TPCObjectMaker const &) (function) of class ubana::TPCObjectMaker is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:58: warning: Member TPCObjectMaker(TPCObjectMaker &&) (function) of class ubana::TPCObjectMaker is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:59: warning: Member operator=(TPCObjectMaker const &) (function) of class ubana::TPCObjectMaker is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:60: warning: Member operator=(TPCObjectMaker &&) (function) of class ubana::TPCObjectMaker is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:63: warning: Member produce(art::Event &e) override (function) of class ubana::TPCObjectMaker is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/FlashMatch.h:33: warning: Member FlashMatch(double score) (function) of class ubana::FlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/FlashMatch.h:37: warning: Member SetScore(double) (function) of class ubana::FlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/FlashMatch.h:38: warning: Member SetEstimatedX(double) (function) of class ubana::FlashMatch is not documented.
@@ -262,6 +264,6 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-symbol cache used 430/65536 hits=9753 misses=430
+symbol cache used 430/65536 hits=9786 misses=430
 lookup cache used 157/65536 hits=707 misses=159
 finished...

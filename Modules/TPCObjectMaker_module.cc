@@ -7,6 +7,19 @@
 // from cetlib version v1_21_00.
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ * \file VertexCheck.h
+ *
+ * \ingroup UBXSec
+ * 
+ * \brief Class def header for a class VertexCheck
+ *
+ * @author Marco Del Tutto
+ */
+
+/** \addtogroup UBXSec
+
+   @{*/
 #include "art/Framework/Core/EDProducer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
@@ -254,3 +267,5 @@ void ubana::TPCObjectMaker::CollectTracksAndPFP(lar_pandora::PFParticlesToTracks
 
 
 DEFINE_ART_MODULE(ubana::TPCObjectMaker)
+
+  /** @} */ // end of doxygen group

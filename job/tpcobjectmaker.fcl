@@ -3,8 +3,8 @@ BEGIN_PROLOG
 #
 # Module configuration
 #
-TPCObjectCreator: {
-  module_type:                "TPCObjectCreator"
+TPCObjectMaker: {
+  module_type:                "TPCObjectMaker"
   PFParticleProducer:         "pandoraNu"
   TrackProducer:              "pandoraNu"
   VertexProducer:             "pandoraNu"

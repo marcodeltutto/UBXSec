@@ -2,7 +2,7 @@
 #include "ubflashcalib.fcl"
 #include "T0RecoAnodeCathodePiercing.fcl"
 
-#include "tpcobjectcreator.fcl"
+#include "tpcobjectmaker.fcl"
 #include "neutrinomcflash.fcl"
 #include "neutrinoflashmatch.fcl"
 #include "cosmicflashmatch.fcl"
@@ -34,8 +34,8 @@ PECalib:                      @local::SPECalib
 
 ubxsec_flashmatch:
 {
-   TPCObjectCreator       : @local::TPCObjectCreator
-   TPCObjectCreatorData   : @local::TPCObjectCreator
+   TPCObjectMaker       : @local::TPCObjectMaker
+   TPCObjectMakerData   : @local::TPCObjectMaker
 
    NeutrinoMCFlash        : @local::NeutrinoMCFlash
    NeutrinoFlashMatch     : @local::NeutrinoFlashMatch
@@ -59,13 +59,13 @@ ubxsec_ana:
 }
 
 
-ubxsec_producers_mc: [ TPCObjectCreator,
+ubxsec_producers_mc: [ TPCObjectMaker,
                        NeutrinoMCFlash, 
                        NeutrinoFlashMatch, 
                        T0TrackTaggerCosmicpandoraNu, 
                        T0TrackTaggerBeampandoraNu ]
 
-ubxsec_producers_data: [ TPCObjectCreatorData,
+ubxsec_producers_data: [ TPCObjectMakerData,
                          NeutrinoFlashMatchData,
                          T0TrackTaggerCosmicpandoraNuData,
                          T0TrackTaggerBeampandoraNuData ]

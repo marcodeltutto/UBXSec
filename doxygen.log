@@ -1,4 +1,10 @@
+warning: tag INPUT: input source `./Modules/' does not exist
+warning: tag INPUT: input source `./DataTypes/' does not exist
+warning: tag INPUT: input source `./Algorithms/' does not exist
 Notice: Output directory `./documentation' does not exist. I have created it for you.
+warning: source ./Modules is not a readable file or directory... skipping.
+warning: source ./DataTypes is not a readable file or directory... skipping.
+warning: source ./Algorithms is not a readable file or directory... skipping.
 Searching for include files...
 Searching for example files...
 Searching for images...

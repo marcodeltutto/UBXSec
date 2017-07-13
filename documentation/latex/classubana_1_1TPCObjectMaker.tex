@@ -1,0 +1,112 @@
+\hypertarget{classubana_1_1TPCObjectMaker}{\section{ubana\-:\-:\-T\-P\-C\-Object\-Maker \-Class \-Reference}
+\label{classubana_1_1TPCObjectMaker}\index{ubana\-::\-T\-P\-C\-Object\-Maker@{ubana\-::\-T\-P\-C\-Object\-Maker}}
+}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classubana_1_1TPCObjectMaker_ae030804e6aa4085bef6be52e9618fee9}{{\bfseries \-T\-P\-C\-Object\-Maker} (fhicl\-::\-Parameter\-Set const \&p)}\label{classubana_1_1TPCObjectMaker_ae030804e6aa4085bef6be52e9618fee9}
+
+\item 
+\hypertarget{classubana_1_1TPCObjectMaker_a80b650974869e7c488654573955c7d9f}{{\bfseries \-T\-P\-C\-Object\-Maker} (\hyperlink{classubana_1_1TPCObjectMaker}{\-T\-P\-C\-Object\-Maker} const \&)}\label{classubana_1_1TPCObjectMaker_a80b650974869e7c488654573955c7d9f}
+
+\item 
+\hypertarget{classubana_1_1TPCObjectMaker_a94412d90dd82b0c1974ce2d5ff746aec}{{\bfseries \-T\-P\-C\-Object\-Maker} (\hyperlink{classubana_1_1TPCObjectMaker}{\-T\-P\-C\-Object\-Maker} \&\&)}\label{classubana_1_1TPCObjectMaker_a94412d90dd82b0c1974ce2d5ff746aec}
+
+\item 
+\hypertarget{classubana_1_1TPCObjectMaker_af87f91bc15450c410f21b2fef5c87c7b}{\hyperlink{classubana_1_1TPCObjectMaker}{\-T\-P\-C\-Object\-Maker} \& {\bfseries operator=} (\hyperlink{classubana_1_1TPCObjectMaker}{\-T\-P\-C\-Object\-Maker} const \&)}\label{classubana_1_1TPCObjectMaker_af87f91bc15450c410f21b2fef5c87c7b}
+
+\item 
+\hypertarget{classubana_1_1TPCObjectMaker_a949a6f5fe1f6ee0519ad0e550aa47dc8}{\hyperlink{classubana_1_1TPCObjectMaker}{\-T\-P\-C\-Object\-Maker} \& {\bfseries operator=} (\hyperlink{classubana_1_1TPCObjectMaker}{\-T\-P\-C\-Object\-Maker} \&\&)}\label{classubana_1_1TPCObjectMaker_a949a6f5fe1f6ee0519ad0e550aa47dc8}
+
+\item 
+\hypertarget{classubana_1_1TPCObjectMaker_a07c03a811bbaccdbeb20b2b7714034c9}{void {\bfseries produce} (art\-::\-Event \&e) override}\label{classubana_1_1TPCObjectMaker_a07c03a811bbaccdbeb20b2b7714034c9}
+
+\item 
+void \hyperlink{classubana_1_1TPCObjectMaker_a39991fa551ce05bcb4fb10db4f80ab49}{\-Collect\-Tracks\-And\-P\-F\-P} (lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks pf\-Particle\-To\-Track\-Map, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pf\-Particle\-List, art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ particle, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector \&pfp\-\_\-v, lar\-\_\-pandora\-::\-Track\-Vector \&track\-\_\-v)
+\begin{DoxyCompactList}\small\item\em \-Gets all the tracks and \-P\-F\-P for a single \-Pandora slice. \end{DoxyCompactList}\item 
+void \hyperlink{classubana_1_1TPCObjectMaker_af90fb2bf60601767e1db3bd1ca635433}{\-Get\-T\-P\-C\-Objects} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pf\-Particle\-List, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks pf\-Particle\-To\-Track\-Map, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Vertices pf\-Particle\-To\-Vertex\-Map, std\-::vector$<$ lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector $>$ \&pfp\-\_\-v\-\_\-v, std\-::vector$<$ lar\-\_\-pandora\-::\-Track\-Vector $>$ \&track\-\_\-v\-\_\-v)
+\begin{DoxyCompactList}\small\item\em \-Constructs \-T\-P\-C objects using \-Pandora \-P\-F\-P slices. \end{DoxyCompactList}\item 
+art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ \hyperlink{classubana_1_1TPCObjectMaker_a6a47470b5f5690a3626e14bc9f6f360c}{\-Get\-Nu\-P\-F\-P} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v)
+\begin{DoxyCompactList}\small\item\em \-Returns the nu \-P\-F\-P from a \-T\-P\-C object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classubana_1_1TPCObjectMaker_a39991fa551ce05bcb4fb10db4f80ab49}{\index{ubana\-::\-T\-P\-C\-Object\-Maker@{ubana\-::\-T\-P\-C\-Object\-Maker}!\-Collect\-Tracks\-And\-P\-F\-P@{\-Collect\-Tracks\-And\-P\-F\-P}}
+\index{\-Collect\-Tracks\-And\-P\-F\-P@{\-Collect\-Tracks\-And\-P\-F\-P}!ubana::TPCObjectMaker@{ubana\-::\-T\-P\-C\-Object\-Maker}}
+\subsubsection[{\-Collect\-Tracks\-And\-P\-F\-P}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Collect\-Tracks\-And\-P\-F\-P} (
+\begin{DoxyParamCaption}
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks}]{pf\-Particle\-To\-Track\-Map, }
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pf\-Particle\-List, }
+\item[{art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$}]{particle, }
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector \&}]{pfp\-\_\-v, }
+\item[{lar\-\_\-pandora\-::\-Track\-Vector \&}]{track\-\_\-v}
+\end{DoxyParamCaption}
+)}}\label{classubana_1_1TPCObjectMaker_a39991fa551ce05bcb4fb10db4f80ab49}
+
+
+\-Gets all the tracks and \-P\-F\-P for a single \-Pandora slice. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em pf\-Particle\-List} & the list of \-P\-F\-P \\
+\hline
+{\em pf\-Particle\-To\-Track\-Map} & map from \-P\-F\-P to tracks \\
+\hline
+{\em particle} & the \-P\-F\-P \\
+\hline
+{\em pfp\-\_\-v} & output, a vector of \-P\-F\-P (the \-T\-P\-C object) \\
+\hline
+{\em track\-\_\-v} & output, a of tracks (the \-T\-P\-C object) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classubana_1_1TPCObjectMaker_a6a47470b5f5690a3626e14bc9f6f360c}{\index{ubana\-::\-T\-P\-C\-Object\-Maker@{ubana\-::\-T\-P\-C\-Object\-Maker}!\-Get\-Nu\-P\-F\-P@{\-Get\-Nu\-P\-F\-P}}
+\index{\-Get\-Nu\-P\-F\-P@{\-Get\-Nu\-P\-F\-P}!ubana::TPCObjectMaker@{ubana\-::\-T\-P\-C\-Object\-Maker}}
+\subsubsection[{\-Get\-Nu\-P\-F\-P}]{\setlength{\rightskip}{0pt plus 5cm}art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ {\bf ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Get\-Nu\-P\-F\-P} (
+\begin{DoxyParamCaption}
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pfp\-\_\-v}
+\end{DoxyParamCaption}
+)}}\label{classubana_1_1TPCObjectMaker_a6a47470b5f5690a3626e14bc9f6f360c}
+
+
+\-Returns the nu \-P\-F\-P from a \-T\-P\-C object. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em pfp\-\_\-v} & the \-T\-P\-C object (vector of \-P\-F\-P) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classubana_1_1TPCObjectMaker_af90fb2bf60601767e1db3bd1ca635433}{\index{ubana\-::\-T\-P\-C\-Object\-Maker@{ubana\-::\-T\-P\-C\-Object\-Maker}!\-Get\-T\-P\-C\-Objects@{\-Get\-T\-P\-C\-Objects}}
+\index{\-Get\-T\-P\-C\-Objects@{\-Get\-T\-P\-C\-Objects}!ubana::TPCObjectMaker@{ubana\-::\-T\-P\-C\-Object\-Maker}}
+\subsubsection[{\-Get\-T\-P\-C\-Objects}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Get\-T\-P\-C\-Objects} (
+\begin{DoxyParamCaption}
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pf\-Particle\-List, }
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks}]{pf\-Particle\-To\-Track\-Map, }
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Vertices}]{pf\-Particle\-To\-Vertex\-Map, }
+\item[{std\-::vector$<$ lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector $>$ \&}]{pfp\-\_\-v\-\_\-v, }
+\item[{std\-::vector$<$ lar\-\_\-pandora\-::\-Track\-Vector $>$ \&}]{track\-\_\-v\-\_\-v}
+\end{DoxyParamCaption}
+)}}\label{classubana_1_1TPCObjectMaker_af90fb2bf60601767e1db3bd1ca635433}
+
+
+\-Constructs \-T\-P\-C objects using \-Pandora \-P\-F\-P slices. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em pf\-Particle\-List} & the list of \-P\-F\-P \\
+\hline
+{\em pf\-Particle\-To\-Track\-Map} & map from \-P\-F\-P to tracks \\
+\hline
+{\em pf\-Particle\-To\-Vertex\-Map} & map from \-P\-F\-P to vertices \\
+\hline
+{\em \-\_\-particle\-Label} & the \-P\-F\-P producer module \\
+\hline
+{\em pfp\-\_\-v\-\_\-v} & output, a vector of vector of \-P\-F\-P (a vector of \-T\-P\-C objects) \\
+\hline
+{\em track\-\_\-v\-\_\-v} & output, a vector of vector of tracks (a vector of \-T\-P\-C objects) \\
+\hline
+\end{DoxyParams}
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+/home/travis/build/marcodeltutto/\-U\-B\-X\-Sec/\-Modules/\-T\-P\-C\-Object\-Maker\-\_\-module.\-cc\end{DoxyCompactItemize}

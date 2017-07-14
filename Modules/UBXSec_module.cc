@@ -131,10 +131,10 @@ private:
   bool _is_data, _is_mc;
 
   /// Maps used for PFParticle truth matching
-  typedef std::map< art::Ptr<recob::PFParticle>, unsigned int > RecoParticleToNMatchedHits;
-  typedef std::map< art::Ptr<simb::MCParticle>,  RecoParticleToNMatchedHits > ParticleMatchingMap;
-  typedef std::set< art::Ptr<recob::PFParticle> > PFParticleSet;
-  typedef std::set< art::Ptr<simb::MCParticle> >  MCParticleSet;
+  //typedef std::map< art::Ptr<recob::PFParticle>, unsigned int > RecoParticleToNMatchedHits;
+  //typedef std::map< art::Ptr<simb::MCParticle>,  RecoParticleToNMatchedHits > ParticleMatchingMap;
+  //typedef std::set< art::Ptr<recob::PFParticle> > PFParticleSet;
+  //typedef std::set< art::Ptr<simb::MCParticle> >  MCParticleSet;
 
 
   TTree* _tree1;
@@ -342,7 +342,7 @@ void UBXSec::analyze(art::Event const & e)
   if (_use_genie_info && _is_data) {
     std::cout << "[UBXSec] You have asked to use GENIE info but you are running on a data file.";
     std::cout << " _use_genie_info will be switched to false." << std::endl;
-    _use_genie_info = false;
+    _use_genie_info =false;
   }
 
   if (_is_data) {
@@ -360,19 +360,20 @@ void UBXSec::analyze(art::Event const & e)
   lar_pandora::LArPandoraHelper::CollectTracks(e, _pfp_producer, allPfParticleTracks, pfParticleToTrackMap);
 
   // Collect PFParticles and match Reco Particles to Hits
-  lar_pandora::PFParticleVector  recoParticleVector;
-  lar_pandora::PFParticleVector  recoNeutrinoVector;
+  //lar_pandora::PFParticleVector  recoParticleVector;
+  //lar_pandora::PFParticleVector  recoNeutrinoVector;
   lar_pandora::PFParticlesToHits recoParticlesToHits;
   lar_pandora::HitsToPFParticles recoHitsToParticles;
 
-  lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
-  lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
+  //lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
+  //lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
   lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, _spacepointLabel, recoParticlesToHits, recoHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
+ 
+
 
   // Do the MCParticle to PFParticle matching
   lar_pandora::MCParticlesToPFParticles matchedParticles;    // This is a map: MCParticle to matched PFParticle
   lar_pandora::MCParticlesToHits        matchedParticleHits;
-
   if (_is_mc) {
     mcpfpMatcher.GetRecoToTrueMatches(matchedParticles, matchedParticleHits);
   }
@@ -576,17 +577,16 @@ void UBXSec::analyze(art::Event const & e)
   art::FindManyP<recob::OpFlash> opfls_ptr_coll_v(track_h, e, _acpt_producer);
   
 
-  // Kalman Track
+  // Get Giuseppe's Kalman Tracks
   art::Handle<std::vector<recob::PFParticle> > pfp_h;
   e.getByLabel(_pfp_producer,pfp_h);
   if(!pfp_h.isValid()){
-    std::cout << "Track product " << _pfp_producer << " not found..." << std::endl;
-    throw std::exception();
+    std::cout << "[UBXSec] Track product " << _pfp_producer << " not found..." << std::endl;
+    //throw std::exception();
   }
   if(pfp_h->empty()) {
-    std::cout << "PFP " << _pfp_producer << " is empty." << std::endl;
+    std::cout << "[UBXSec] PFP " << _pfp_producer << " is empty." << std::endl;
   }
-
   art::FindManyP<recob::Track> trk_kalman_v(pfp_h, e, "pandoraNuKalmanTrack");
 
 
@@ -799,7 +799,7 @@ void UBXSec::analyze(art::Event const & e)
     for (unsigned int t = 0; t < track_v_v[slice].size(); t++) {
       if(opfls_ptr_coll_v.at(track_v_v[slice][t].key()).size()>1) {
         std::cout << "[UBXSec] More than 1 association found (ACPT)!" << std::endl;
-        throw std::exception();
+        //throw std::exception();
       } else if (opfls_ptr_coll_v.at(track_v_v[slice][t].key()).size()==0){
         continue;
       } else {
@@ -1057,6 +1057,8 @@ void UBXSec::analyze(art::Event const & e)
   _tree1->Fill();
 
   if(_debug) std::cout << "********** UBXSec ends" << std::endl;
+
+  return;
 }
 
 

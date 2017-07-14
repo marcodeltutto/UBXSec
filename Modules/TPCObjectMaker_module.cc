@@ -8,11 +8,11 @@
 ////////////////////////////////////////////////////////////////////////
 
 /**
- * \file VertexCheck.h
+ * \file TPCObjectMaker_module.cc
  *
  * \ingroup UBXSec
  * 
- * \brief Class def header for a class VertexCheck
+ * \brief LArSoft plugin to generate TPC Objects
  *
  * @author Marco Del Tutto
  */

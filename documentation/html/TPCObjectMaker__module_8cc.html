@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>UBXSec: File List</title>
+<title>UBXSec: /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc File Reference</title>
 
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
@@ -70,27 +70,47 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
-      <li class="current"><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="files.html"><span>File&#160;List</span></a></li>
     </ul>
   </div>
 </div>
 <div class="header">
+  <div class="summary">
+<a href="#nested-classes">Classes</a>  </div>
   <div class="headertitle">
-<div class="title">File List</div>  </div>
+<div class="title">/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc File Reference<div class="ingroups"><a class="el" href="group__UBXSec.html">UBXSec</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all documented files with brief descriptions:</div><table>
-  <tr><td class="indexkey">/home/travis/build/marcodeltutto/UBXSec/Algorithms/<a class="el" href="ACPTAlgo_8h.html">ACPTAlgo.h</a> <a href="ACPTAlgo_8h_source.html">[code]</a></td><td class="indexvalue">Class def header for a class ACPTAlgo </td></tr>
-  <tr><td class="indexkey">/home/travis/build/marcodeltutto/UBXSec/Algorithms/<a class="el" href="FindDeadRegions_8h.html">FindDeadRegions.h</a> <a href="FindDeadRegions_8h_source.html">[code]</a></td><td class="indexvalue">Class def header for a class <a class="el" href="classFindDeadRegions.html">FindDeadRegions</a> </td></tr>
-  <tr><td class="indexkey">/home/travis/build/marcodeltutto/UBXSec/Algorithms/<b>McPfpMatch.h</b> <a href="McPfpMatch_8h_source.html">[code]</a></td><td class="indexvalue"></td></tr>
-  <tr><td class="indexkey">/home/travis/build/marcodeltutto/UBXSec/Algorithms/<b>UBXSecHelper.h</b> <a href="UBXSecHelper_8h_source.html">[code]</a></td><td class="indexvalue"></td></tr>
-  <tr><td class="indexkey">/home/travis/build/marcodeltutto/UBXSec/Algorithms/<a class="el" href="VertexCheck_8h.html">VertexCheck.h</a> <a href="VertexCheck_8h_source.html">[code]</a></td><td class="indexvalue">Class def header for a class VertexCheck </td></tr>
-  <tr><td class="indexkey">/home/travis/build/marcodeltutto/UBXSec/DataTypes/<b>classes.h</b> <a href="classes_8h_source.html">[code]</a></td><td class="indexvalue"></td></tr>
-  <tr><td class="indexkey">/home/travis/build/marcodeltutto/UBXSec/DataTypes/<b>FlashMatch.h</b> <a href="FlashMatch_8h_source.html">[code]</a></td><td class="indexvalue"></td></tr>
-  <tr><td class="indexkey">/home/travis/build/marcodeltutto/UBXSec/DataTypes/<b>TPCObject.h</b> <a href="TPCObject_8h_source.html">[code]</a></td><td class="indexvalue"></td></tr>
-  <tr><td class="indexkey">/home/travis/build/marcodeltutto/UBXSec/Modules/<a class="el" href="TPCObjectMaker__module_8cc.html">TPCObjectMaker_module.cc</a></td><td class="indexvalue">LArSoft plugin to generate TPC Objects </td></tr>
+
+<p>LArSoft plugin to generate TPC Objects.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;art/Framework/Core/EDProducer.h&quot;</code><br/>
+<code>#include &quot;art/Framework/Core/ModuleMacros.h&quot;</code><br/>
+<code>#include &quot;art/Framework/Principal/Event.h&quot;</code><br/>
+<code>#include &quot;art/Framework/Principal/Handle.h&quot;</code><br/>
+<code>#include &quot;art/Framework/Principal/Run.h&quot;</code><br/>
+<code>#include &quot;art/Framework/Principal/SubRun.h&quot;</code><br/>
+<code>#include &quot;canvas/Utilities/InputTag.h&quot;</code><br/>
+<code>#include &quot;fhiclcpp/ParameterSet.h&quot;</code><br/>
+<code>#include &quot;messagefacility/MessageLogger/MessageLogger.h&quot;</code><br/>
+<code>#include &quot;lardataobj/RecoBase/PFParticle.h&quot;</code><br/>
+<code>#include &quot;lardataobj/RecoBase/Shower.h&quot;</code><br/>
+<code>#include &quot;lardataobj/RecoBase/Track.h&quot;</code><br/>
+<code>#include &quot;lardataobj/RecoBase/Vertex.h&quot;</code><br/>
+<code>#include &quot;nusimdata/SimulationBase/MCParticle.h&quot;</code><br/>
+<code>#include &quot;nusimdata/SimulationBase/MCTruth.h&quot;</code><br/>
+<code>#include &quot;larpandora/LArPandoraInterface/LArPandoraHelper.h&quot;</code><br/>
+<code>#include &quot;uboone/UBXSec/DataTypes/TPCObject.h&quot;</code><br/>
+<code>#include &lt;memory&gt;</code><br/>
+</div><table class="memberdecls">
+<tr><td colspan="2"><h2><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1TPCObjectMaker.html">ubana::TPCObjectMaker</a></td></tr>
 </table>
-</div><!-- contents -->
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>LArSoft plugin to generate TPC Objects. </p>
+<dl class="author"><dt><b>Author:</b></dt><dd>Marco Del Tutto </dd></dl>
+</div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"

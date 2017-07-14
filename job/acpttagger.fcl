@@ -1,0 +1,26 @@
+
+BEGIN_PROLOG
+#
+# Module configuration
+#
+ACPTTagger: {
+  module_type:           "ACPTTagger"
+  FlashProducer:         "simpleFlashCosmic"
+  PFPartProducer:        "pandoraCosmic"
+  TrackProducer:         "pandoraCosmic"
+  SWTriggerProducer:     "swtrigger"
+
+  AnodeTime:             0.53
+  CathodeTime:           2291
+  DtResolutionAnode:     5
+  DzResolutionAnode:     80
+  DtResolutionCathode:   5
+  DzResolutionCathode:   80
+ 
+  PEMin:                 0
+  Debug:                 true
+}
+
+microboone_acpttagger: @local::ACPTTagger
+
+END_PROLOG

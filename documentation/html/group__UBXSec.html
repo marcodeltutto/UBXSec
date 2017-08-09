@@ -73,7 +73,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#files">Files</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">UBXSec</div>  </div>
 </div><!--header-->
@@ -115,6 +116,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>ubana::TPCObjectMaker
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs TPC objects using Pandora PFP slices.  <a href="#gaf90fb2bf60601767e1db3bd1ca635433"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__UBXSec.html#ga39991fa551ce05bcb4fb10db4f80ab49">ubana::TPCObjectMaker::CollectTracksAndPFP</a> (lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticleVector pfParticleList, art::Ptr&lt; recob::PFParticle &gt; particle, lar_pandora::PFParticleVector &amp;pfp_v, lar_pandora::TrackVector &amp;track_v)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets all the tracks and PFP for a single Pandora slice.  <a href="#ga39991fa551ce05bcb4fb10db4f80ab49"></a><br/></td></tr>
+<tr><td colspan="2"><h2><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga8c1cb2271faf4557586c53e3f096f35a"></a><!-- doxytag: member="UBXSec::NEUTRINO_ORIGIN" ref="ga8c1cb2271faf4557586c53e3f096f35a" args="" -->
+const simb::Origin_t&#160;</td><td class="memItemRight" valign="bottom"><b>NEUTRINO_ORIGIN</b> = simb::kBeamNeutrino</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gad9e94c0c3656e123f9ff20869847b357"></a><!-- doxytag: member="UBXSec::COSMIC_ORIGIN" ref="gad9e94c0c3656e123f9ff20869847b357" args="" -->
+const simb::Origin_t&#160;</td><td class="memItemRight" valign="bottom"><b>COSMIC_ORIGIN</b> = simb::kCosmicRay</td></tr>
 </table>
 <hr/><h2>Function Documentation</h2>
 <a class="anchor" id="ga39991fa551ce05bcb4fb10db4f80ab49"></a><!-- doxytag: member="ubana::TPCObjectMaker::CollectTracksAndPFP" ref="ga39991fa551ce05bcb4fb10db4f80ab49" args="(lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticleVector pfParticleList, art::Ptr&lt; recob::PFParticle &gt; particle, lar_pandora::PFParticleVector &amp;pfp_v, lar_pandora::TrackVector &amp;track_v)" -->
@@ -248,7 +255,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>ubana::TPCObjectMaker
     <tr><td class="paramname">pfParticleList</td><td>the list of PFP </td></tr>
     <tr><td class="paramname">pfParticleToTrackMap</td><td>map from PFP to tracks </td></tr>
     <tr><td class="paramname">pfParticleToVertexMap</td><td>map from PFP to vertices </td></tr>
-    <tr><td class="paramname">_particleLabel</td><td>the PFP producer module </td></tr>
+    <tr><td class="paramname">_pfp_producer</td><td>the PFP producer module </td></tr>
     <tr><td class="paramname">pfp_v_v</td><td>output, a vector of vector of PFP (a vector of TPC objects) </td></tr>
     <tr><td class="paramname">track_v_v</td><td>output, a vector of vector of tracks (a vector of TPC objects) </td></tr>
   </table>

@@ -58,6 +58,8 @@ public:
 private:
 
   bool GetClosestDtDz(TVector3 _end, double _value, double trk_z_center, std::vector<double> &_dt, std::vector<double> &_dz);
+  /// Returns true if sign is positive, negative otherwise
+  bool GetSign(std::vector<TVector3> sorted_trk);
   void SortTrackPoints(const recob::Track& track, std::vector<TVector3>& sorted_trk);
 
   std::string _flash_producer;
@@ -95,8 +97,6 @@ private:
 
 
 ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p)
-// :
-// Initialize member data here.
 {
 
   _flash_producer     = p.get<std::string>("FlashProducer", "simpleFlashCosmic");
@@ -104,43 +104,46 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p)
   _track_producer     = p.get<std::string>("TrackProducer", "pandoraCosmic");
   _swtrigger_producer = p.get<std::string>("SWTriggerProducer", "swtrigger");
 
-  _anodeTime   = p.get<double>("AnodeTime",   0.53);
-  _cathodeTime = p.get<double>("CathodeTime", 2291);
+  _anodeTime          = p.get<double>("AnodeTime",   0.53);
+  _cathodeTime        = p.get<double>("CathodeTime", 2291);
 
-  _dt_resolution_a = p.get<double>("DtResolutionAnode", 5); 
-  _dz_resolution_a = p.get<double>("DzResolutionAnode", 80);
-  _dt_resolution_c = p.get<double>("DtResolutionCathode", 5);
-  _dz_resolution_c = p.get<double>("DzResolutionCathode", 80);
+  _dt_resolution_a    = p.get<double>("DtResolutionAnode", 5); 
+  _dz_resolution_a    = p.get<double>("DzResolutionAnode", 80);
+  _dt_resolution_c    = p.get<double>("DtResolutionCathode", 5);
+  _dz_resolution_c    = p.get<double>("DzResolutionCathode", 80);
 
-  _pe_min          = p.get<double> ("PEMin", 0);
-  _debug           = p.get<bool> ("Debug", true);
+  _pe_min             = p.get<double> ("PEMin", 0);
+  _debug              = p.get<bool> ("Debug", true);
 
   //_csvfile.open ("acpt.csv", std::ofstream::out | std::ofstream::trunc);
   //_csvfile << "trk_x_up,trk_x_down,fls_time" << std::endl;
 
   art::ServiceHandle<art::TFileService> fs;
-  _tree1 = fs->make<TTree>("tree","");
-  _tree1->Branch("run",           &_run,                 "run/I");
-  _tree1->Branch("subrun",        &_subrun,              "subrun/I");
-  _tree1->Branch("event",         &_event,               "event/I");
-  _tree1->Branch("sw_trigger",    &_sw_trigger,          "sw_trigger/O");
-  _tree1->Branch("drift_vel",     &_drift_vel,           "drift_vel/D");
-  _tree1->Branch("trk_x_up",      "std::vector<double>", &_trk_x_up);
-  _tree1->Branch("trk_x_down",    "std::vector<double>", &_trk_x_down);
-  _tree1->Branch("trk_len",       "std::vector<double>", &_trk_len);
-  _tree1->Branch("trk_z_center",  "std::vector<double>", &_trk_z_center);
-  _tree1->Branch("flash_times",   "std::vector<double>", &_flash_times);
-  _tree1->Branch("flash_zcenter", "std::vector<double>", &_flash_zcenter);
-  _tree1->Branch("flash_zwidth",  "std::vector<double>", &_flash_zwidth);
 
-  _tree1->Branch("dt_u_anode",    "std::vector<double>", &_dt_u_anode);
-  _tree1->Branch("dz_u_anode",    "std::vector<double>", &_dz_u_anode);
-  _tree1->Branch("dt_d_anode",    "std::vector<double>", &_dt_d_anode);
-  _tree1->Branch("dz_d_anode",    "std::vector<double>", &_dz_d_anode);
-  _tree1->Branch("dt_u_cathode",  "std::vector<double>", &_dt_u_cathode);
-  _tree1->Branch("dz_u_cathode",  "std::vector<double>", &_dz_u_cathode);
-  _tree1->Branch("dt_d_cathode",  "std::vector<double>", &_dt_d_cathode);
-  _tree1->Branch("dz_d_cathode",  "std::vector<double>", &_dz_d_cathode);
+  if (_debug) {
+    _tree1 = fs->make<TTree>("tree","");
+    _tree1->Branch("run",           &_run,                 "run/I");
+    _tree1->Branch("subrun",        &_subrun,              "subrun/I");
+    _tree1->Branch("event",         &_event,               "event/I");
+    _tree1->Branch("sw_trigger",    &_sw_trigger,          "sw_trigger/O");
+    _tree1->Branch("drift_vel",     &_drift_vel,           "drift_vel/D");
+    _tree1->Branch("trk_x_up",      "std::vector<double>", &_trk_x_up);
+    _tree1->Branch("trk_x_down",    "std::vector<double>", &_trk_x_down);
+    _tree1->Branch("trk_len",       "std::vector<double>", &_trk_len);
+    _tree1->Branch("trk_z_center",  "std::vector<double>", &_trk_z_center);
+    _tree1->Branch("flash_times",   "std::vector<double>", &_flash_times);
+    _tree1->Branch("flash_zcenter", "std::vector<double>", &_flash_zcenter);
+    _tree1->Branch("flash_zwidth",  "std::vector<double>", &_flash_zwidth);
+  
+    _tree1->Branch("dt_u_anode",    "std::vector<double>", &_dt_u_anode);
+    _tree1->Branch("dz_u_anode",    "std::vector<double>", &_dz_u_anode);
+    _tree1->Branch("dt_d_anode",    "std::vector<double>", &_dt_d_anode);
+    _tree1->Branch("dz_d_anode",    "std::vector<double>", &_dz_d_anode);
+    _tree1->Branch("dt_u_cathode",  "std::vector<double>", &_dt_u_cathode);
+    _tree1->Branch("dz_u_cathode",  "std::vector<double>", &_dz_u_cathode);
+    _tree1->Branch("dt_d_cathode",  "std::vector<double>", &_dt_d_cathode);
+    _tree1->Branch("dz_d_cathode",  "std::vector<double>", &_dz_d_cathode);
+  }
 
   produces< std::vector<anab::CosmicTag>>();
   produces< art::Assns<anab::CosmicTag,   recob::Track>>();
@@ -150,9 +153,14 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p)
 void ACPTTagger::produce(art::Event & e)
 {
 
-  _run    = e.id().run();
-  _subrun = e.id().subRun();
-  _event  = e.id().event();
+  if (_debug) {
+    _run    = e.id().run();
+    _subrun = e.id().subRun();
+    _event  = e.id().event();
+   
+    std::cout << "AnodeTime set to " << _anodeTime << std::endl;
+    std::cout << "CathodeTime set to " << _cathodeTime << std::endl;
+  }
 
   // Instantiate the output
   std::unique_ptr< std::vector< anab::CosmicTag>>                  cosmicTagTrackVector      (new std::vector<anab::CosmicTag>);
@@ -180,7 +188,10 @@ void ACPTTagger::produce(art::Event & e)
   // make sure flash look good
   if(!flash_h.isValid()) {
     std::cerr<<"\033[93m[ERROR]\033[00m ... could not locate Flash!"<<std::endl;
-    throw std::exception();
+    e.put(std::move(cosmicTagTrackVector));
+    e.put(std::move(assnOutCosmicTagTrack));
+    e.put(std::move(assnOutCosmicTagPFParticle));
+    return; //throw std::exception();
   }
 
   // load PFParticles for which T0 reconstruction should occur
@@ -191,13 +202,17 @@ void ACPTTagger::produce(art::Event & e)
   // make sure pfparticles look good
   if(!pfp_h.isValid()) {
     std::cerr<<"\033[93m[ERROR]\033[00m ... could not locate PFParticles!"<<std::endl;
-    throw std::exception();
+    e.put(std::move(cosmicTagTrackVector));
+    e.put(std::move(assnOutCosmicTagTrack));
+    e.put(std::move(assnOutCosmicTagPFParticle));
+    return; //throw std::exception();
   }
 
   // grab tracks associated with PFParticles
   art::FindManyP<recob::Track> pfp_track_assn_v(pfp_h, e, _track_producer);
-  if (_debug)
+  if (_debug) {
     std::cout << "There are " << pfp_track_assn_v.size() << " pfpart -> track associations" << std::endl;
+  }
 
   std::vector<art::Ptr<recob::PFParticle> > PFPVec;
   art::fill_ptr_vector(PFPVec, pfp_h);
@@ -217,10 +232,12 @@ void ACPTTagger::produce(art::Event & e)
       _flash_idx_v.push_back(flash_ctr);
       _flash_zcenter.push_back(flash.ZCenter());
       _flash_zwidth.push_back(flash.ZWidth());
-      if (_debug) { std::cout << "\t flash time : " << flash.Time() << ", PE : " << flash.TotalPE() << ", ZCenter : " << flash.ZCenter() << " +- " << flash.ZWidth() << std::endl; }
+      if (_debug) { 
+        std::cout << "\t flash time : " << flash.Time() << ", PE : " << flash.TotalPE() << ", ZCenter : " << flash.ZCenter() << " +- " << flash.ZWidth() << std::endl; 
+      }
     }
     flash_ctr += 1;
-  }// for all flashes
+  } // for all flashes
 
   if (_debug) { 
     std::cout << __PRETTY_FUNCTION__ << "Selected a total of " << _flash_times.size() << " OpFlashes" << std::endl; 
@@ -244,7 +261,7 @@ void ACPTTagger::produce(art::Event & e)
   _dt_d_cathode.clear();
   _dz_d_cathode.clear();
 
-  for (size_t i=0; i < PFPVec.size(); i++) {
+  for (size_t i = 0; i < PFPVec.size(); i++) {
 
     bool isCosmic = false;
     auto pfp = PFPVec.at(i);
@@ -272,23 +289,50 @@ void ACPTTagger::produce(art::Event & e)
       z_center /= 2.;
       _trk_z_center.emplace_back(z_center);
 
+      std::cout << "u a" << std::endl;
       this->GetClosestDtDz(sorted_trk[0],                   _anodeTime,   z_center, _dt_u_anode,   _dz_u_anode);
+      std::cout << "d a" << std::endl;
       this->GetClosestDtDz(sorted_trk[sorted_trk.size()-1], _anodeTime,   z_center, _dt_d_anode,   _dz_d_anode);
+      std::cout << "u c" << std::endl;
       this->GetClosestDtDz(sorted_trk[0],                   _cathodeTime, z_center, _dt_u_cathode, _dz_u_cathode);
+      std::cout << "d c" << std::endl;
       this->GetClosestDtDz(sorted_trk[sorted_trk.size()-1], _cathodeTime, z_center, _dt_d_cathode, _dz_d_cathode);
 
+      bool sign = this->GetSign(sorted_trk);
+      std::cout << "sign is " << (sign == true ? "positive" : "negative") << std::endl;
+
+      // A
       if (_dt_u_anode.back() > _anodeTime - _dt_resolution_a && _dt_u_anode.back() < _anodeTime + _dt_resolution_a 
-       && _dz_u_anode.back() > -_dz_resolution_a && _dz_u_anode.back() < _dz_resolution_a) isCosmic = true;
+       && _dz_u_anode.back() > -_dz_resolution_a && _dz_u_anode.back() < _dz_resolution_a
+       && sign) isCosmic = true;
 
+      // B
       if (_dt_d_anode.back() > _anodeTime - _dt_resolution_a && _dt_d_anode.back() < _anodeTime + _dt_resolution_a 
-       && _dz_d_anode.back() > -_dz_resolution_a && _dz_d_anode.back() < _dz_resolution_a) isCosmic = true;
+       && _dz_d_anode.back() > -_dz_resolution_a && _dz_d_anode.back() < _dz_resolution_a
+       && !sign) isCosmic = true;
 
+      // C
       if (_dt_u_cathode.back() > _cathodeTime - _dt_resolution_c  && _dt_u_cathode.back() < _cathodeTime + _dt_resolution_c 
-       && _dz_u_cathode.back() > -_dz_resolution_a && _dz_u_cathode.back() < _dz_resolution_a) isCosmic = true;
+       && _dz_u_cathode.back() > -_dz_resolution_a && _dz_u_cathode.back() < _dz_resolution_a
+       && !sign) isCosmic = true;
 
+      // D
       if (_dt_d_cathode.back() > _cathodeTime - _dt_resolution_c && _dt_d_cathode.back() < _cathodeTime + _dt_resolution_c 
-       && _dz_d_cathode.back() > -_dz_resolution_a && _dz_d_cathode.back() < _dz_resolution_a) isCosmic = true;
+       && _dz_d_cathode.back() > -_dz_resolution_a && _dz_d_cathode.back() < _dz_resolution_a
+       && sign) isCosmic = true;
 
+      if (track->Length() > 10.) {
+
+        std::cout << "_dt_u_anode " << _dt_u_anode.back() << std::endl;
+        std::cout << "_dt_d_anode " << _dt_d_anode.back() << std::endl;
+        std::cout << "_dt_u_cathode " << _dt_u_cathode.back() << std::endl;
+        std::cout << "_dt_d_cathode " << _dt_d_cathode.back() << std::endl;
+        std::cout << "_dz_u_anode " << _dz_u_anode.back() << std::endl;
+        std::cout << "_dz_d_anode " << _dz_d_anode.back() << std::endl;
+        std::cout << "_dz_u_cathode " << _dz_u_cathode.back() << std::endl;
+        std::cout << "_dz_d_cathode " << _dz_d_cathode.back() << std::endl << std::endl;
+        if (isCosmic) std::cout << "Tagged!" << std::endl;
+      }
     } // Track loop
 
     if (isCosmic) {
@@ -304,7 +348,7 @@ void ACPTTagger::produce(art::Event & e)
   e.put(std::move(assnOutCosmicTagTrack));
   e.put(std::move(assnOutCosmicTagPFParticle));
 
-   _tree1->Fill();
+  if (_debug) _tree1->Fill();
 }
 
 
@@ -315,9 +359,12 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_cente
   double min_dist = 1e9;
   double min_diff = 1e9;
   double theflash = -1;
+
   for (size_t f = 0; f < _flash_times.size(); f++) {
+
     double diff = _end.X() / _drift_vel - _flash_times[f];
-    
+    std::cout << "diff is " << diff << std::endl;
+
     dist = abs(diff - _value);
 
     if (dist < min_dist) {
@@ -325,7 +372,7 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_cente
       min_diff = diff;
       theflash = f;
     }
-  }
+  } // flash loop
 
   if (theflash == -1) return false;
 
@@ -365,6 +412,19 @@ void ACPTTagger::SortTrackPoints(const recob::Track& track, std::vector<TVector3
       sorted_trk.push_back( track.LocationAtPoint( N - i - 1) );
   }
 }
+
+bool ACPTTagger::GetSign(std::vector<TVector3> sorted_trk)
+{
+
+  double t_down = sorted_trk[sorted_trk.size()-1].X();
+  double t_up = sorted_trk[0].X();
+
+  bool is_positive = (t_down - t_up) > 0.;
+
+  return is_positive;
+
+}
+
 
 
 DEFINE_ART_MODULE(ACPTTagger)

@@ -5,9 +5,12 @@ BEGIN_PROLOG
 #
 TPCObjectMaker: {
   module_type:                "TPCObjectMaker"
-  PFParticleProducer:         "pandoraNu"
-  TrackProducer:              "pandoraNu"
-  VertexProducer:             "pandoraNu"
+  PFParticleProducer:         "pandoraNu::UBXSec"
+  TrackProducer:              "pandoraNu::UBXSec"
+  VertexProducer:             "pandoraNu::UBXSec"
+  HitProducer:                "pandoraCosmicHitRemoval::UBXSec"
+  GeantModule:                "largeant"
+  SpacePointProducer:         "pandoraNu::UBXSec"
   Debug:                      true
 }
 

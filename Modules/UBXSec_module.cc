@@ -118,6 +118,7 @@ private:
   std::string _cosmic_flash_match_producer;
   std::string _opflash_producer_beam;
   std::string _acpt_producer;
+  std::string _tpcobject_producer;
   bool _recursiveMatching = false;
   bool _debug = true;
   int _minimumHitRequirement; ///< Minimum number of hits in at least a plane for a track
@@ -211,7 +212,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p)
   _cosmic_flash_match_producer    = p.get<std::string>("CosmicFlashMatchProducer");
   _opflash_producer_beam          = p.get<std::string>("OpFlashBeamProducer");
   _acpt_producer                  = p.get<std::string>("ACPTProducer");
-    
+  _tpcobject_producer             = p.get<std::string>("TPCObjectProducer");
+
   _use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
   _minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
 
@@ -342,7 +344,7 @@ void UBXSec::analyze(art::Event const & e)
   if (_use_genie_info && _is_data) {
     std::cout << "[UBXSec] You have asked to use GENIE info but you are running on a data file.";
     std::cout << " _use_genie_info will be switched to false." << std::endl;
-    _use_genie_info =false;
+    _use_genie_info = false;
   }
 
   if (_is_data) {
@@ -550,9 +552,19 @@ void UBXSec::analyze(art::Event const & e)
 
   doanalysis:
 
-  art::Handle<std::vector<recob::PFParticle>> pfpHandle;
-  e.getByLabel(_pfp_producer, pfpHandle);
-  art::FindManyP<ubana::FlashMatch> pfpToNeutrinoFlashMatchAssns(pfpHandle, e, _neutrino_flash_match_producer);  
+  //art::Handle<std::vector<recob::PFParticle>> pfpHandle;
+  //e.getByLabel(_pfp_producer, pfpHandle);
+  //art::FindManyP<ubana::FlashMatch> pfpToNeutrinoFlashMatchAssns(pfpHandle, e, _neutrino_flash_match_producer);  
+
+  // Get TPCObjects from the Event
+  art::Handle<std::vector<ubana::TPCObject>> tpcobj_h;
+  e.getByLabel(_tpcobject_producer, tpcobj_h);
+  if (!tpcobj_h.isValid()) {
+    std::cout << "[UBXSec] Cannote locate ubana::TPCObject." << std::endl;
+  }
+  art::FindManyP<ubana::FlashMatch> tpcobjToFlashMatchAssns(tpcobj_h, e, _neutrino_flash_match_producer);
+  art::FindManyP<recob::Track>      tpcobjToTrackAssns(tpcobj_h, e, _tpcobject_producer);
+  art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
 
   // ACPT
   art::Handle<std::vector<anab::T0> > t0_h;
@@ -658,7 +670,6 @@ void UBXSec::analyze(art::Event const & e)
     }
   }
 
-  // OpHits related 
   lar_pandora::PFParticlesToSpacePoints pfp_to_spacept;
   lar_pandora::SpacePointsToHits spacept_to_hits;
 
@@ -673,12 +684,17 @@ void UBXSec::analyze(art::Event const & e)
   if(!ophit_h.isValid()) {
     std::cout << "[UBXSec] Cannot locate OpHits." << std::endl;
   }
-  // Save the number of slices in this event
+
+ 
   std::vector<lar_pandora::TrackVector     > track_v_v;
   std::vector<lar_pandora::PFParticleVector> pfp_v_v;
-  UBXSecHelper::GetTPCObjects(e, _pfp_producer, pfp_v_v, track_v_v);
+  for (size_t slice = 0; slice < tpcobj_h->size(); slice++) {
+    track_v_v.push_back(tpcobjToTrackAssns.at(slice));
+    pfp_v_v.push_back(tpcobjToPFPAssns.at(slice));
+  }
 
-  _nslices = pfp_v_v.size();
+
+  _nslices = tpcobj_h->size();
   _slc_flsmatch_score.resize(_nslices, -9999);
   _slc_flsmatch_qllx.resize(_nslices, -9999);
   _slc_flsmatch_tpcx.resize(_nslices, -9999);
@@ -713,15 +729,19 @@ void UBXSec::analyze(art::Event const & e)
 
   std::cout << "UBXSec - SAVING INFORMATION" << std::endl;
   _vtx_resolution = -9999;
-  for (unsigned int slice = 0; slice < pfp_v_v.size(); slice++){
+  for (unsigned int slice = 0; slice < tpcobj_h->size(); slice++){
     std::cout << ">>> SLICE" << slice << std::endl;
 
-    // Slice origin (0 is neutrino, 1 is cosmic)
-    _slc_origin[slice] = UBXSecHelper::GetSliceOrigin(neutrinoOriginPFP, cosmicOriginPFP, pfp_v_v[slice]);
+    ubana::TPCObject tpcobj = (*tpcobj_h)[slice];
+
+    // Slice origin 
+    _slc_origin[slice] = tpcobj.GetOrigin();
+    std::cout << "    Origin is " << _slc_origin[slice] << std::endl;
 
     // Reco vertex
     double reco_nu_vtx[3];
-    UBXSecHelper::GetNuVertexFromTPCObject(e, _pfp_producer, pfp_v_v[slice], reco_nu_vtx);
+    recob::Vertex temp = tpcobj.GetVertex();
+    temp.XYZ(reco_nu_vtx);
     _slc_nuvtx_x[slice] = reco_nu_vtx[0];
     _slc_nuvtx_y[slice] = reco_nu_vtx[1];
     _slc_nuvtx_z[slice] = reco_nu_vtx[2];
@@ -729,14 +749,13 @@ void UBXSec::analyze(art::Event const & e)
     std::cout << "    Reco vertex saved" << std::endl;
 
     // Vertex resolution
-    if (_slc_origin[slice] == 0) {
+    if (_slc_origin[slice] == ubana::kBeamNeutrino) {
       _vtx_resolution = sqrt( pow(_slc_nuvtx_y[slice]-_tvtx_y[0], 2) + pow(_slc_nuvtx_z[slice]-_tvtx_z[0], 2) );
     } 
 
     // Neutrino Flash match
     _slc_flsmatch_score[slice] = -9999;
-    art::Ptr<recob::PFParticle> NuPFP = UBXSecHelper::GetNuPFP(pfp_v_v[slice]);
-    std::vector<art::Ptr<ubana::FlashMatch>> pfpToFlashMatch_v = pfpToNeutrinoFlashMatchAssns.at(NuPFP.key());
+    std::vector<art::Ptr<ubana::FlashMatch>> pfpToFlashMatch_v = tpcobjToFlashMatchAssns.at(slice);
     if (pfpToFlashMatch_v.size() > 1) {
       std::cout << "    More than one flash match per nu pfp ?!" << std::endl;
       continue;
@@ -752,9 +771,9 @@ void UBXSec::analyze(art::Event const & e)
       _slc_flsmatch_xfixed_ll[slice]   = pfpToFlashMatch_v[0]->GetXFixedLl();
       _slc_flshypo_xfixed_spec[slice]  = pfpToFlashMatch_v[0]->GetXFixedHypoFlashSpec();
       _slc_flshypo_spec[slice]         = pfpToFlashMatch_v[0]->GetHypoFlashSpec();
-      for (auto v : _slc_flshypo_spec[slice]) std::cout << "PE: " << v << std::endl;
+      //for (auto v : _slc_flshypo_spec[slice]) std::cout << "PE: " << v << std::endl;
 
-      std::cout << "    FM score: " << _slc_flsmatch_score[slice] << std::endl;
+      std::cout << "FM score: " << _slc_flsmatch_score[slice] << std::endl;
     }
 
     // Cosmic Flash Match
@@ -841,8 +860,7 @@ void UBXSec::analyze(art::Event const & e)
     _slc_nuvtx_closetodeadregion_w[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 2) ? 1 : 0);
 
     // Vertex check
-    recob::Vertex slice_vtx;
-    UBXSecHelper::GetNuVertexFromTPCObject(e, _pfp_producer, pfp_v_v[slice], slice_vtx);
+    recob::Vertex slice_vtx = tpcobj.GetVertex();
     ubxsec::VertexCheck vtxCheck(track_v_v[slice], slice_vtx);
     _slc_vtxcheck_angle[slice] = vtxCheck.AngleBetweenLongestTracks();
     

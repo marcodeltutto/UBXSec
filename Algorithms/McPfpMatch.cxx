@@ -47,9 +47,19 @@ namespace ubxsec {
 
   }
 
-  void McPfpMatch::Configure(art::Event const & e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel) {
+  void McPfpMatch::_Configure_(const Config_t &pset){
 
-    bool _debug = true;
+    _debug             = pset.get<bool>("Debug", false);
+    _verbose           = pset.get<bool>("Verbose", false);
+    _recursiveMatching = pset.get<bool>("RecursiveMatching", false);
+
+  }
+
+  void McPfpMatch::Configure(art::Event const & e, 
+                             std::string _pfp_producer, 
+                             std::string _spacepointLabel, 
+                             std::string _hitfinderLabel, 
+                             std::string _geantModuleLabel) {
 
     // Collect hits
     lar_pandora::HitVector hitVector;
@@ -65,7 +75,7 @@ namespace ubxsec {
     lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
     lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, _spacepointLabel, recoParticlesToHits, recoHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
 
-    if (_debug) {
+    if (_verbose) {
       std::cout << "[McPfpMatch] RecoNeutrinos: " << recoNeutrinoVector.size() << std::endl;
       std::cout << "[McPfpMatch] RecoParticles: " << recoParticleVector.size() << std::endl;
     }
@@ -83,7 +93,7 @@ namespace ubxsec {
       lar_pandora::LArPandoraHelper::BuildMCParticleHitMaps(e, _geantModuleLabel, hitVector, trueParticlesToHits, trueHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
     }
 
-    if (_debug) {
+    if (_verbose) {
       std::cout << "[McPfpMatch] TrueParticles: " << particlesToTruth.size() << std::endl;
       std::cout << "[McPfpMatch] TrueEvents: " << truthToParticles.size() << std::endl;
     }  
@@ -92,7 +102,7 @@ namespace ubxsec {
     _trueHitsToParticles = trueHitsToParticles;
     _recoParticlesToHits = recoParticlesToHits;
 
-    if (false) { // yes, don't do it
+    if (_debug) { // yes, don't do it
       std::cout << "[McPfpMatch] This is event " << e.id().run() << std::endl;
       art::ServiceHandle<cheat::BackTracker> bt;
       std::cout << "[McPfpMatch] Number of MCParticles matched to hits: " << trueParticlesToHits.size() << std::endl;
@@ -132,7 +142,6 @@ namespace ubxsec {
                                         lar_pandora::MCParticlesToHits &matchedHits) {
 
       PFParticleSet recoVeto; MCParticleSet trueVeto;
-      bool _recursiveMatching = false;
   
       GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedHits, recoVeto, trueVeto, _recursiveMatching);
   }

@@ -29,6 +29,7 @@
 #include "canvas/Utilities/InputTag.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
+#include "lardata/Utilities/AssociationUtil.h"
 
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "lardataobj/RecoBase/Shower.h"
@@ -37,10 +38,16 @@
 #include "nusimdata/SimulationBase/MCParticle.h"
 #include "nusimdata/SimulationBase/MCTruth.h"
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
+#include "larsim/MCCheater/BackTracker.h"
 
 #include "uboone/UBXSec/DataTypes/TPCObject.h"
+#include "uboone/UBXSec/Algorithms/McPfpMatch.h"
+#include "uboone/UBXSec/Algorithms/UBXSecHelper.h"
 
 #include <memory>
+
+const simb::Origin_t NEUTRINO_ORIGIN = simb::kBeamNeutrino;
+const simb::Origin_t COSMIC_ORIGIN   = simb::kCosmicRay;
 
 namespace ubana {
   class TPCObjectMaker;
@@ -78,7 +85,7 @@ public:
    *  @param pfParticleList the list of PFP
    *  @param pfParticleToTrackMap map from PFP to tracks
    *  @param pfParticleToVertexMap map from PFP to vertices
-   *  @param _particleLabel the PFP producer module
+   *  @param _pfp_producer the PFP producer module
    *  @param pfp_v_v output, a vector of vector of PFP (a vector of TPC objects)
    *  @param track_v_v output, a vector of vector of tracks (a vector of TPC objects)   */
   void GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices  pfParticleToVertexMap, std::vector<lar_pandora::PFParticleVector> & pfp_v_v, std::vector<lar_pandora::TrackVector> & track_v_v);
@@ -92,38 +99,55 @@ public:
 
 private:
 
-  std::string _particleLabel;
+  ubxsec::McPfpMatch mcpfpMatcher;
+  bool _is_mc;
+
+  std::string _pfp_producer;
   std::string _vertexLabel;
   std::string _trackLabel;
+  std::string _hitfinderLabel;
+  std::string _geantModuleLabel;
+  std::string _spacepointLabel;
   bool _debug;
 };
 
 
 ubana::TPCObjectMaker::TPCObjectMaker(fhicl::ParameterSet const & p)
-// :
-// Initialize member data here.
 {
-  _particleLabel = p.get<std::string>("PFParticleProducer"); 
-  _vertexLabel   = p.get<std::string>("VertexProducer");
-  _trackLabel    = p.get<std::string>("TrackProducer");
-  _debug         = p.get<bool>       ("Debug", false);
+  _pfp_producer       = p.get<std::string>("PFParticleProducer"); 
+  _vertexLabel        = p.get<std::string>("VertexProducer");
+  _trackLabel         = p.get<std::string>("TrackProducer");
+  _hitfinderLabel     = p.get<std::string>("HitProducer");
+  _geantModuleLabel   = p.get<std::string>("GeantModule");
+  _spacepointLabel    = p.get<std::string>("SpacePointProducer");
+  _debug              = p.get<bool>       ("Debug", false);
 
   produces< std::vector<ubana::TPCObject>>();
+  produces< art::Assns<ubana::TPCObject,   recob::Track>>();
+  produces< art::Assns<ubana::TPCObject,   recob::PFParticle>>();
 }
 
 void ubana::TPCObjectMaker::produce(art::Event & e){
 
   if (_debug) std::cout << "[TPCObjectMaker] Starts" << std::endl;
  
-  // Instantiate the output
-  std::unique_ptr< std::vector< ubana::TPCObject > >                  tpcObjectVector      (new std::vector<ubana::TPCObject>);
+  _is_mc = !e.isRealData();
 
-  //Vectors and maps we will use to store Pandora information
+  if (_is_mc) mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+
+  // Instantiate the output
+  std::unique_ptr< std::vector< ubana::TPCObject > >                tpcObjectVector        (new std::vector<ubana::TPCObject>);
+  std::unique_ptr< art::Assns<ubana::TPCObject, recob::Track>>      assnOutTPCObjectTrack  (new art::Assns<ubana::TPCObject, recob::Track>      );
+  std::unique_ptr< art::Assns<ubana::TPCObject, recob::PFParticle>> assnOutTPCObjectPFP    (new art::Assns<ubana::TPCObject, recob::PFParticle> );
+
+  art::ServiceHandle<cheat::BackTracker> bt;
+
+  // Vectors and maps we will use to store Pandora information
   lar_pandora::PFParticleVector pfParticleList;              //vector of PFParticles
   lar_pandora::PFParticlesToClusters pfParticleToClusterMap; //PFParticle-to-cluster map
 
-  //Use LArPandoraHelper functions to collect Pandora information
-  lar_pandora::LArPandoraHelper::CollectPFParticles(e, _particleLabel, pfParticleList, pfParticleToClusterMap); //collect PFParticles and build map PFParticles to Clusters
+  // Use LArPandoraHelper functions to collect Pandora information
+  lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, pfParticleList, pfParticleToClusterMap); //collect PFParticles and build map PFParticles to Clusters
 
   // Collect vertices and tracks
   lar_pandora::VertexVector           allPfParticleVertices;
@@ -139,23 +163,89 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
   this->GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
 
 
+  // Do the MCParticle to PFParticle matching
+
+  lar_pandora::MCParticlesToPFParticles matchedParticles;    // This is a map: MCParticle to matched PFParticle
+  lar_pandora::MCParticlesToHits        matchedParticleHits;
+  if (_is_mc) {
+    mcpfpMatcher.GetRecoToTrueMatches(matchedParticles, matchedParticleHits);
+  }
+
+
+
+  // Loop over true particle and find the pfp with cosmic and neutrino origin 
+
+  std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP;
+  std::vector<art::Ptr<recob::PFParticle>> cosmicOriginPFP;
+  neutrinoOriginPFP.clear();
+  cosmicOriginPFP.clear();
+
+  for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
+      iter1 != iterEnd1; ++iter1) {
+
+    art::Ptr<simb::MCParticle>  mc_par = iter1->first;   // The MCParticle 
+    art::Ptr<recob::PFParticle> pf_par = iter1->second;  // The matched PFParticle
+
+    const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
+
+    if (!mc_truth) {
+      std::cerr << "[TPCObjectMaker] Problem with MCTruth pointer." << std::endl;
+      continue;
+    }
+
+    if (mc_truth->Origin() == COSMIC_ORIGIN) {
+      cosmicOriginPFP.emplace_back(pf_par);
+    }
+
+    if (mc_truth->Origin() == NEUTRINO_ORIGIN) {
+      neutrinoOriginPFP.emplace_back(pf_par);
+    }
+  }
+
+
+  // Construct TPCObjects
+
   for (size_t i = 0; i < pfp_v_v.size(); i++){
+
+    ::ubana::TPCObject obj;
+
+    // Set tracks
     std::vector<recob::Track> trk_v;
     trk_v.clear();
     for (auto t : track_v_v[i]) trk_v.emplace_back((*t));
-
-    ::ubana::TPCObject obj;
     obj.SetTracks(trk_v);
 
-    art::Ptr<recob::PFParticle> pfp = this->GetNuPFP(pfp_v_v[i]);   
+    // Set PFPs
+    std::vector<recob::PFParticle> pfp_v;
+    pfp_v.clear();
+    for (auto p : pfp_v_v[i]) pfp_v.emplace_back((*p));
+    obj.SetPFPs(pfp_v);
+
+    // Set vertex
+    art::Ptr<recob::PFParticle> pfp = this->GetNuPFP(pfp_v_v[i]);
     auto iter = pfParticleToVertexMap.find(pfp);
     if (iter != pfParticleToVertexMap.end()) {
       obj.SetVertex(*(iter->second[0]));
-    }   
-    tpcObjectVector->emplace_back(obj);    
+    }
+
+    // Set origin
+    ::ubana::TPCObjectOrigin origin = ubana::kUnknown;
+    if (_is_mc)
+      origin = UBXSecHelper::GetSliceOrigin(neutrinoOriginPFP, cosmicOriginPFP, pfp_v_v[i]); 
+    obj.SetOrigin(origin);
+
+    tpcObjectVector->emplace_back(obj);
+    util::CreateAssn(*this, e, *tpcObjectVector, track_v_v[i],  *assnOutTPCObjectTrack);
+    util::CreateAssn(*this, e, *tpcObjectVector, pfp_v_v[i],    *assnOutTPCObjectPFP);
   }
 
+
+
+  // Put TPCObjects into the Event
+
   e.put(std::move(tpcObjectVector)); 
+  e.put(std::move(assnOutTPCObjectTrack));
+  e.put(std::move(assnOutTPCObjectPFP));
 
 
   if (_debug) std::cout << "[TPCObjectMaker] Ends" << std::endl;

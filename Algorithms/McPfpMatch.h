@@ -25,6 +25,7 @@
 #include <iostream>
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
+#include "uboone/UBXSec/DataTypes/UBXSecFMWKInterface.h"
 
 typedef std::map< art::Ptr<recob::PFParticle>, unsigned int > RecoParticleToNMatchedHits;
 typedef std::map< art::Ptr<simb::MCParticle>,  RecoParticleToNMatchedHits > ParticleMatchingMap;
@@ -42,7 +43,10 @@ namespace ubxsec {
   
     /// Default destructor
     ~McPfpMatch(){}
-  
+
+    /// Configure
+    void _Configure_(const Config_t &pset);
+     
     /// Configure function parameters
     void Configure(art::Event const & e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel);
   
@@ -82,8 +86,13 @@ namespace ubxsec {
     lar_pandora::HitsToMCParticles _trueHitsToParticles; ///< A map from recon hits to MCParticles
     lar_pandora::PFParticlesToHits _recoParticlesToHits; ///< A map from PFParticles to recon hits
 
-  };
+  private:
 
+    bool _debug             = false;
+    bool _verbose           = false;
+    bool _recursiveMatching = false;
+
+  };
 }
 
 #endif //  MCPFPMATCH_H

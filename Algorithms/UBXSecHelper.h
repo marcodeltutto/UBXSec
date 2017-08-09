@@ -24,20 +24,13 @@
 
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
+#include "uboone/UBXSec/DataTypes/TPCObject.h"
 
 typedef std::map< art::Ptr<recob::PFParticle>, unsigned int > RecoParticleToNMatchedHits;
 typedef std::map< art::Ptr<simb::MCParticle>,  RecoParticleToNMatchedHits > ParticleMatchingMap;
 typedef std::set< art::Ptr<recob::PFParticle> > PFParticleSet;
 typedef std::set< art::Ptr<simb::MCParticle> >  MCParticleSet;
 
-namespace ubana {
-  enum TPCObjectOrigin{
-    kUnknown = -1,          // -1           
-    kBeamNeutrino = 0,      // 0
-    kCosmicRay,             // 1
-    kMixed,                 // 2
-  };            
-}
 
 class UBXSecHelper {
 

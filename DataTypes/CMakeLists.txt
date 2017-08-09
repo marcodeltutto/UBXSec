@@ -10,22 +10,10 @@ link_libraries( ${LIB_NAME} -L$ENV{BOOST_LIB} -lboost_system ${ROOTLIB} )
 art_make( BASENAME_ONLY
           LIBRARY_NAME     uboonecode_uboone_UBXSec_DataTypes
           LIB_LIBRARIES
-                   #uboonecode_uboone_UBXSec_Algorithms
                    uboonecode_uboone_BasicTool_GeoAlgo
-                   #uboone_UBFlashFinder
-                   #uboonecode_uboone_SelectionTool_OpT0FinderBase
-                   #uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
 	  	   larcore_Geometry
 		   larcore_Geometry_Geometry_service
                    uboone_RawData
-                   #SignalShapingServiceMicroBooNE_service
-                   #larevt_CalibrationDBI_IOVData
-                   #larevt_CalibrationDBI_Providers
-                   #larsim_MCCheater_BackTracker_service
-                   #Simulation
-		   #Utilities
-		   #TimeService_service
-		   #MCBase
                    lardataobj_RawData
 		   lardataobj_RecoBase
                    lardataobj_AnalysisBase
@@ -33,7 +21,6 @@ art_make( BASENAME_ONLY
                    larpandora_LArPandoraInterface
                    ${PANDORASDK}
                    ${PANDORAMONITORING}
-                   #larpandora_LArPandoraContent
                    ${UBOONECODE_LIB}
 		   ${LARDATA_LIB}
 		   ${ART_FRAMEWORK_CORE}
@@ -58,21 +45,9 @@ art_make( BASENAME_ONLY
 		   ${ROOT_BASIC_LIB_LIST}
 
           MODULE_LIBRARIES
-                   #uboonecode_uboone_UBXSec_Algorithms 
-                   #uboonecode_uboone_UBXSec
-                   #larsim_MCCheater_BackTracker_service
 		   larpandora_LArPandoraInterface
-                   #                   larpandora_LArPandoraContent
-
-                   #uboonecode_uboone_BasicTool_GeoAlgo
-                   #uboonecode_uboone_SelectionTool_OpT0FinderBase
-                   #uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms
-                   #uboone_UBFlashFinder
 
                    uboone_RawData
-                   #SignalShapingServiceMicroBooNE_service
-                   #larevt_CalibrationDBI_IOVData
-                   #larevt_CalibrationDBI_Providers
 	  	   larcore_Geometry
 		   larcore_Geometry_Geometry_service
 		   lardataobj_RecoBase

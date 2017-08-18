@@ -114,10 +114,10 @@ Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>ubana::TPCObjectMaker::produce</b> (art::Event &amp;e) override</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">art::Ptr&lt; recob::PFParticle &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__UBXSec.html#ga6a47470b5f5690a3626e14bc9f6f360c">ubana::TPCObjectMaker::GetNuPFP</a> (lar_pandora::PFParticleVector pfp_v)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the nu PFP from a TPC object.  <a href="#ga6a47470b5f5690a3626e14bc9f6f360c"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__UBXSec.html#gaf90fb2bf60601767e1db3bd1ca635433">ubana::TPCObjectMaker::GetTPCObjects</a> (lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;pfp_v_v, std::vector&lt; lar_pandora::TrackVector &gt; &amp;track_v_v)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs TPC objects using Pandora PFP slices.  <a href="#gaf90fb2bf60601767e1db3bd1ca635433"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__UBXSec.html#ga39991fa551ce05bcb4fb10db4f80ab49">ubana::TPCObjectMaker::CollectTracksAndPFP</a> (lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticleVector pfParticleList, art::Ptr&lt; recob::PFParticle &gt; particle, lar_pandora::PFParticleVector &amp;pfp_v, lar_pandora::TrackVector &amp;track_v)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets all the tracks and PFP for a single Pandora slice.  <a href="#ga39991fa551ce05bcb4fb10db4f80ab49"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__UBXSec.html#ga3a6d9a4eca7f0c83bb118e01f5a00505">ubana::TPCObjectMaker::GetTPCObjects</a> (lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;pfp_v_v, std::vector&lt; lar_pandora::TrackVector &gt; &amp;track_v_v, std::vector&lt; lar_pandora::ShowerVector &gt; &amp;shower_v_V)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs TPC objects using Pandora PFP slices.  <a href="#ga3a6d9a4eca7f0c83bb118e01f5a00505"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__UBXSec.html#ga0550ab0459c2d42ff81eb349d4b4151a">ubana::TPCObjectMaker::CollectTracksAndPFP</a> (lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticleVector pfParticleList, art::Ptr&lt; recob::PFParticle &gt; particle, lar_pandora::PFParticleVector &amp;pfp_v, lar_pandora::TrackVector &amp;track_v, lar_pandora::ShowerVector &amp;shower_v)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets all the tracks and PFP for a single Pandora slice.  <a href="#ga0550ab0459c2d42ff81eb349d4b4151a"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga8c1cb2271faf4557586c53e3f096f35a"></a><!-- doxytag: member="UBXSec::NEUTRINO_ORIGIN" ref="ga8c1cb2271faf4557586c53e3f096f35a" args="" -->
@@ -126,12 +126,12 @@ const simb::Origin_t&#160;</td><td class="memItemRight" valign="bottom"><b>NEUTR
 const simb::Origin_t&#160;</td><td class="memItemRight" valign="bottom"><b>COSMIC_ORIGIN</b> = simb::kCosmicRay</td></tr>
 </table>
 <hr/><h2>Function Documentation</h2>
-<a class="anchor" id="ga39991fa551ce05bcb4fb10db4f80ab49"></a><!-- doxytag: member="ubana::TPCObjectMaker::CollectTracksAndPFP" ref="ga39991fa551ce05bcb4fb10db4f80ab49" args="(lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticleVector pfParticleList, art::Ptr&lt; recob::PFParticle &gt; particle, lar_pandora::PFParticleVector &amp;pfp_v, lar_pandora::TrackVector &amp;track_v)" -->
+<a class="anchor" id="ga0550ab0459c2d42ff81eb349d4b4151a"></a><!-- doxytag: member="ubana::TPCObjectMaker::CollectTracksAndPFP" ref="ga0550ab0459c2d42ff81eb349d4b4151a" args="(lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticleVector pfParticleList, art::Ptr&lt; recob::PFParticle &gt; particle, lar_pandora::PFParticleVector &amp;pfp_v, lar_pandora::TrackVector &amp;track_v, lar_pandora::ShowerVector &amp;shower_v)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="group__UBXSec.html#ga39991fa551ce05bcb4fb10db4f80ab49">ubana::TPCObjectMaker::CollectTracksAndPFP</a> </td>
+          <td class="memname">void <a class="el" href="group__UBXSec.html#ga0550ab0459c2d42ff81eb349d4b4151a">ubana::TPCObjectMaker::CollectTracksAndPFP</a> </td>
           <td>(</td>
           <td class="paramtype">lar_pandora::PFParticlesToTracks&#160;</td>
           <td class="paramname"><em>pfParticleToTrackMap</em>, </td>
@@ -158,7 +158,13 @@ const simb::Origin_t&#160;</td><td class="memItemRight" valign="bottom"><b>COSMI
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">lar_pandora::TrackVector &amp;&#160;</td>
-          <td class="paramname"><em>track_v</em>&#160;</td>
+          <td class="paramname"><em>track_v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">lar_pandora::ShowerVector &amp;&#160;</td>
+          <td class="paramname"><em>shower_v</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -208,12 +214,12 @@ const simb::Origin_t&#160;</td><td class="memItemRight" valign="bottom"><b>COSMI
 
 </div>
 </div>
-<a class="anchor" id="gaf90fb2bf60601767e1db3bd1ca635433"></a><!-- doxytag: member="ubana::TPCObjectMaker::GetTPCObjects" ref="gaf90fb2bf60601767e1db3bd1ca635433" args="(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;pfp_v_v, std::vector&lt; lar_pandora::TrackVector &gt; &amp;track_v_v)" -->
+<a class="anchor" id="ga3a6d9a4eca7f0c83bb118e01f5a00505"></a><!-- doxytag: member="ubana::TPCObjectMaker::GetTPCObjects" ref="ga3a6d9a4eca7f0c83bb118e01f5a00505" args="(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector&lt; lar_pandora::PFParticleVector &gt; &amp;pfp_v_v, std::vector&lt; lar_pandora::TrackVector &gt; &amp;track_v_v, std::vector&lt; lar_pandora::ShowerVector &gt; &amp;shower_v_V)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="group__UBXSec.html#gaf90fb2bf60601767e1db3bd1ca635433">ubana::TPCObjectMaker::GetTPCObjects</a> </td>
+          <td class="memname">void <a class="el" href="group__UBXSec.html#ga3a6d9a4eca7f0c83bb118e01f5a00505">ubana::TPCObjectMaker::GetTPCObjects</a> </td>
           <td>(</td>
           <td class="paramtype">lar_pandora::PFParticleVector&#160;</td>
           <td class="paramname"><em>pfParticleList</em>, </td>
@@ -240,7 +246,13 @@ const simb::Origin_t&#160;</td><td class="memItemRight" valign="bottom"><b>COSMI
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::vector&lt; lar_pandora::TrackVector &gt; &amp;&#160;</td>
-          <td class="paramname"><em>track_v_v</em>&#160;</td>
+          <td class="paramname"><em>track_v_v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; lar_pandora::ShowerVector &gt; &amp;&#160;</td>
+          <td class="paramname"><em>shower_v_V</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -260,6 +272,7 @@ const simb::Origin_t&#160;</td><td class="memItemRight" valign="bottom"><b>COSMI
     <tr><td class="paramname">_pfp_producer</td><td>the PFP producer module </td></tr>
     <tr><td class="paramname">pfp_v_v</td><td>output, a vector of vector of PFP (a vector of TPC objects) </td></tr>
     <tr><td class="paramname">track_v_v</td><td>output, a vector of vector of tracks (a vector of TPC objects) </td></tr>
+    <tr><td class="paramname">shower_v_v</td><td>output, a vector of vector of showers (a vector of TPC objects) </td></tr>
   </table>
   </dd>
 </dl>

@@ -136,16 +136,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00199"></a>00199 
 <a name="l00205"></a>00205   <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="classUBXSecHelper.html#a76b009afef0cc69f281ca3215a901f35" title="Gets the longest track from a TPC object, returns false if there are no tracks in the TPC object...">GetLongestTrackFromTPCObj</a>(lar_pandora::TrackVector track_v, recob::Track &amp; out_track);
 <a name="l00206"></a>00206 
-<a name="l00212"></a>00212   <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="classUBXSecHelper.html#a7df598dfbdfdb620737fd69297e67faf" title="Returns true if the point passed is close to a dead region.">PointIsCloseToDeadRegion</a>(<span class="keywordtype">double</span> *reco_nu_vtx, <span class="keywordtype">int</span> plane_no);
-<a name="l00213"></a>00213 
-<a name="l00218"></a>00218   <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="classUBXSecHelper.html#a88533a5a59d61351437a1fe2e54aff25" title="Returns the clostes opchannel to the 3D specified point.">GetClosestPMT</a>(<span class="keywordtype">double</span> *charge_center);
-<a name="l00219"></a>00219 
-<a name="l00220"></a>00220 
-<a name="l00225"></a>00225   <span class="keyword">static</span> <span class="keywordtype">double</span> <a class="code" href="classUBXSecHelper.html#a3fd25ef568b54aded55d6c1b6a8593fa" title="Returns Z position of a flash.">GetFlashZCenter</a>(std::vector&lt;double&gt; pe); 
-<a name="l00226"></a>00226 
-<a name="l00227"></a>00227 };
-<a name="l00228"></a>00228 
-<a name="l00229"></a>00229 <span class="preprocessor">#endif //  UBXSECHELPER_H</span>
+<a name="l00211"></a>00211   <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="classUBXSecHelper.html#a44c8ae9d98197e81da26aeae26c70f0a" title="Returns true if all the tracks passed are fully contained.">TracksAreContained</a>(std::vector&lt;recob::Track&gt; tracks);
+<a name="l00212"></a>00212 
+<a name="l00217"></a>00217   <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="classUBXSecHelper.html#aa0349c7d405ec64cd1b0c7ed3d54a56e" title="Returns true if the track passed is fully contained.">TrackIsContained</a>(recob::Track track);
+<a name="l00223"></a>00223   <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="classUBXSecHelper.html#a7df598dfbdfdb620737fd69297e67faf" title="Returns true if the point passed is close to a dead region.">PointIsCloseToDeadRegion</a>(<span class="keywordtype">double</span> *reco_nu_vtx, <span class="keywordtype">int</span> plane_no);
+<a name="l00224"></a>00224 
+<a name="l00229"></a>00229   <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="classUBXSecHelper.html#a88533a5a59d61351437a1fe2e54aff25" title="Returns the clostes opchannel to the 3D specified point.">GetClosestPMT</a>(<span class="keywordtype">double</span> *charge_center);
+<a name="l00230"></a>00230 
+<a name="l00231"></a>00231 
+<a name="l00236"></a>00236   <span class="keyword">static</span> <span class="keywordtype">double</span> <a class="code" href="classUBXSecHelper.html#a3fd25ef568b54aded55d6c1b6a8593fa" title="Returns Z position of a flash.">GetFlashZCenter</a>(std::vector&lt;double&gt; pe); 
+<a name="l00237"></a>00237 
+<a name="l00238"></a>00238 };
+<a name="l00239"></a>00239 
+<a name="l00240"></a>00240 <span class="preprocessor">#endif //  UBXSECHELPER_H</span>
 </pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"

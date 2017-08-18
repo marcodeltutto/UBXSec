@@ -53,6 +53,10 @@ static bool \hyperlink{classUBXSecHelper_af2924ae512f2c8cc5be6feb2bd21a112}{\-Is
 \begin{DoxyCompactList}\small\item\em \-Returns true if the track is crossing the \-F\-V border from the \-T\-O\-P. \end{DoxyCompactList}\item 
 static bool \hyperlink{classUBXSecHelper_a76b009afef0cc69f281ca3215a901f35}{\-Get\-Longest\-Track\-From\-T\-P\-C\-Obj} (lar\-\_\-pandora\-::\-Track\-Vector track\-\_\-v, recob\-::\-Track \&out\-\_\-track)
 \begin{DoxyCompactList}\small\item\em \-Gets the longest track from a \-T\-P\-C object, returns false if there are no tracks in the \-T\-P\-C object. \end{DoxyCompactList}\item 
+static bool \hyperlink{classUBXSecHelper_a44c8ae9d98197e81da26aeae26c70f0a}{\-Tracks\-Are\-Contained} (std\-::vector$<$ recob\-::\-Track $>$ tracks)
+\begin{DoxyCompactList}\small\item\em \-Returns true if all the tracks passed are fully contained. \end{DoxyCompactList}\item 
+static bool \hyperlink{classUBXSecHelper_aa0349c7d405ec64cd1b0c7ed3d54a56e}{\-Track\-Is\-Contained} (recob\-::\-Track track)
+\begin{DoxyCompactList}\small\item\em \-Returns true if the track passed is fully contained. \end{DoxyCompactList}\item 
 static bool \hyperlink{classUBXSecHelper_a7df598dfbdfdb620737fd69297e67faf}{\-Point\-Is\-Close\-To\-Dead\-Region} (double $\ast$reco\-\_\-nu\-\_\-vtx, int plane\-\_\-no)
 \begin{DoxyCompactList}\small\item\em \-Returns true if the point passed is close to a dead region. \end{DoxyCompactList}\item 
 static int \hyperlink{classUBXSecHelper_a88533a5a59d61351437a1fe2e54aff25}{\-Get\-Closest\-P\-M\-T} (double $\ast$charge\-\_\-center)
@@ -560,6 +564,22 @@ static double \hyperlink{classUBXSecHelper_a3fd25ef568b54aded55d6c1b6a8593fa}{\-
 {\em plane\-\_\-no} & the plane we want to check with \\
 \hline
 \end{DoxyParams}
+\hypertarget{classUBXSecHelper_aa0349c7d405ec64cd1b0c7ed3d54a56e}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Track\-Is\-Contained@{\-Track\-Is\-Contained}}
+\index{\-Track\-Is\-Contained@{\-Track\-Is\-Contained}!UBXSecHelper@{\-U\-B\-X\-Sec\-Helper}}
+\subsubsection[{\-Track\-Is\-Contained}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf \-U\-B\-X\-Sec\-Helper\-::\-Track\-Is\-Contained} (
+\begin{DoxyParamCaption}
+\item[{recob\-::\-Track}]{track}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}\label{classUBXSecHelper_aa0349c7d405ec64cd1b0c7ed3d54a56e}
+
+
+\-Returns true if the track passed is fully contained. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em track} & the recob\-::\-Track \\
+\hline
+\end{DoxyParams}
 \hypertarget{classUBXSecHelper_accf62c400d9e984f1277843de78715a7}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Track\-Passes\-Hit\-Requirment@{\-Track\-Passes\-Hit\-Requirment}}
 \index{\-Track\-Passes\-Hit\-Requirment@{\-Track\-Passes\-Hit\-Requirment}!UBXSecHelper@{\-U\-B\-X\-Sec\-Helper}}
 \subsubsection[{\-Track\-Passes\-Hit\-Requirment}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf \-U\-B\-X\-Sec\-Helper\-::\-Track\-Passes\-Hit\-Requirment} (
@@ -583,6 +603,22 @@ static double \hyperlink{classUBXSecHelper_a3fd25ef568b54aded55d6c1b6a8593fa}{\-
 {\em trk} & the recob\-::\-Track \\
 \hline
 {\em n\-Hits\-Req} & the minimum number of hits \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_a44c8ae9d98197e81da26aeae26c70f0a}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Tracks\-Are\-Contained@{\-Tracks\-Are\-Contained}}
+\index{\-Tracks\-Are\-Contained@{\-Tracks\-Are\-Contained}!UBXSecHelper@{\-U\-B\-X\-Sec\-Helper}}
+\subsubsection[{\-Tracks\-Are\-Contained}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf \-U\-B\-X\-Sec\-Helper\-::\-Tracks\-Are\-Contained} (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ recob\-::\-Track $>$}]{tracks}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}\label{classUBXSecHelper_a44c8ae9d98197e81da26aeae26c70f0a}
+
+
+\-Returns true if all the tracks passed are fully contained. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em tracks} & a vector of recob\-::\-Track \\
 \hline
 \end{DoxyParams}
 

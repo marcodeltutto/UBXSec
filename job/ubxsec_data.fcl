@@ -29,6 +29,9 @@ CosmicFlashMatchProducer:     "CosmicFlashMatch"
 OpFlashBeamProducer:          "simpleFlashBeam"
 ACPTProducer:                 "pandoraCosmicT0Reco"
 TPCObjectProducer:            "TPCObjectMaker"
+POTSummaryProducer:           "beamdata"
+POTSummaryInstance:           "bnbETOR860"
+ParticleIDProducer:           "pandoraNupid"
 
 UseGENIEInfo:                 true
 MinimumHitRequirement:        3

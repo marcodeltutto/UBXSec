@@ -205,6 +205,17 @@ class UBXSecHelper {
   static bool GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v, recob::Track & out_track);
 
   /**
+   *  @brief Returns true if all the tracks passed are fully contained 
+   *
+   *  @param tracks a vector of recob::Track  */
+  static bool TracksAreContained(std::vector<recob::Track> tracks);
+
+  /**
+   *  @brief Returns true if the track passed is fully contained 
+   *
+   *  @param track the recob::Track */
+  static bool TrackIsContained(recob::Track track);
+  /**
    *  @brief Returns true if the point passed is close to a dead region
    *
    *  @param reco_nu_vtx the point to check

@@ -183,6 +183,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     e.put(std::move(flashMatchTrackVector));
     e.put(std::move(assnOutFlashMatchTrack));
     e.put(std::move(assnOutFlashMatchPFParticle));
+    e.put(std::move(assnOutFlashMatchTPCObject));
     return;
   }
   int nBeamFlashes = 0;
@@ -191,6 +192,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
     auto const& flash = (*beamflash_h)[n];
 
+    std::cout << "[NeutrinoFlashMatch] Flash time from " << _opflash_producer_beam << ": " << flash.Time() << std::endl;
     if(flash.Time() < _flash_trange_start || _flash_trange_end < flash.Time()) {
       continue;
     }
@@ -227,6 +229,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     e.put(std::move(flashMatchTrackVector));
     e.put(std::move(assnOutFlashMatchTrack));
     e.put(std::move(assnOutFlashMatchPFParticle));
+    e.put(std::move(assnOutFlashMatchTPCObject));
     return;
   }
 
@@ -236,6 +239,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     e.put(std::move(flashMatchTrackVector));
     e.put(std::move(assnOutFlashMatchTrack));
     e.put(std::move(assnOutFlashMatchPFParticle));
+    e.put(std::move(assnOutFlashMatchTPCObject));
     return;
   }
 
@@ -289,6 +293,11 @@ void NeutrinoFlashMatch::produce(art::Event & e)
   e.getByLabel(_tpcobject_producer, tpcobj_h);
   if (!tpcobj_h.isValid()) {
     std::cout << "[NeutrinoFlashMatch] Cannote locate ubana::TPCObject." << std::endl;
+    e.put(std::move(flashMatchTrackVector));
+    e.put(std::move(assnOutFlashMatchTrack));
+    e.put(std::move(assnOutFlashMatchPFParticle));
+    e.put(std::move(assnOutFlashMatchTPCObject));
+    return;
   }
   art::FindManyP<recob::Track>      tpcobjToTracks(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<recob::PFParticle> tpcobjToPFPs  (tpcobj_h, e, _tpcobject_producer);
@@ -441,7 +450,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
 
 
-//______________________________________________________________________________________________________________________________________
+//_____________________________________________________________________________________________________________________________________
 flashana::QCluster_t NeutrinoFlashMatch::GetQCluster(std::vector<art::Ptr<recob::PFParticle>> pfp_v, lar_pandora::PFParticlesToSpacePoints pfp_to_spacept, lar_pandora::SpacePointsToHits spacept_to_hits) {
 
   flashana::QCluster_t summed_qcluster;

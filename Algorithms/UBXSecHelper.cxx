@@ -724,8 +724,59 @@ bool UBXSecHelper::GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v, r
 
 }
 
+//_________________________________________________________________________________
+bool UBXSecHelper::TracksAreContained(std::vector<recob::Track> tracks){
 
+  TVector3 point;
+  double point_a[3];
 
+  for (auto trk : tracks) {
+
+    point = trk.Vertex();
+    point_a[0] = point.X();
+    point_a[1] = point.Y();
+    point_a[2] = point.Z();
+
+    if (!UBXSecHelper::InFV(point_a))
+      return false;
+
+    point = trk.End();
+    point_a[0] = point.X();
+    point_a[1] = point.Y();
+    point_a[2] = point.Z();
+
+    if (!UBXSecHelper::InFV(point_a))
+      return false;
+
+  }
+  
+  return true;
+}
+
+//_________________________________________________________________________________
+bool UBXSecHelper::TrackIsContained(recob::Track track){
+
+  TVector3 point;
+  double point_a[3];
+
+  point = track.Vertex();
+  point_a[0] = point.X();
+  point_a[1] = point.Y();
+  point_a[2] = point.Z();
+
+  if (!UBXSecHelper::InFV(point_a))
+    return false;
+
+  point = track.End();
+  point_a[0] = point.X();
+  point_a[1] = point.Y();
+  point_a[2] = point.Z();
+
+  if (!UBXSecHelper::InFV(point_a))
+    return false;
+
+  return true;
+}
 
 //_________________________________________________________________________________
 bool UBXSecHelper::PointIsCloseToDeadRegion(double *reco_nu_vtx, int plane_no){

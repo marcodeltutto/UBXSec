@@ -22,6 +22,9 @@ namespace ubana {
   const recob::Vertex                   & TPCObject::GetVertex() const { return this->fVertex;      }
   const ubana::TPCObjectOrigin          & TPCObject::GetOrigin() const { return this->fOrigin;      }
 
+  const size_t TPCObject::GetNTracks()  const { return (this->fTracks).size();      }
+  const size_t TPCObject::GetNPFP()     const { return (this->fPFParticles).size(); }
+  const size_t TPCObject::GetNShowers() const { return (this->fShowers).size();     }
 }
 
 

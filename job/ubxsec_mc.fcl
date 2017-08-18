@@ -12,7 +12,7 @@
 #include "cosmicremovalmodules.fcl"
 #include "cosmicflashtagger.fcl"
 #include "acpttagger.fcl"
-
+#include "recotruematcher.fcl"
 
 
 BEGIN_PROLOG
@@ -31,6 +31,9 @@ CosmicFlashMatchProducer:     "CosmicFlashMatch"
 OpFlashBeamProducer:          "simpleFlashBeam"
 ACPTProducer:                 "pandoraCosmicT0Reco"
 TPCObjectProducer:            "TPCObjectMaker"
+POTSummaryProducer:           "generator"
+POTSummaryInstance:           ""
+ParticleIDProducer:           "pandoraNupid"
 
 UseGENIEInfo:                 true
 MinimumHitRequirement:        3
@@ -51,6 +54,8 @@ ubxsec_mc_reco:
 
 ubxsec_mc_flashmatch:
 {
+   RecoTrueMatcher      : @local::RecoTrueMatcher
+
    TPCObjectMaker       : @local::TPCObjectMaker
 
    NeutrinoMCFlash      : @local::NeutrinoMCFlash
@@ -69,6 +74,7 @@ ubxsec_mc_producers: [ pandoraCosmicTrackPFPart,
                        pandoraCosmicACPTTagger,
                        pandoraCosmicHitRemoval,
                        pandoraNu,
+                       RecoTrueMatcher, 
                        TPCObjectMaker,
                        NeutrinoMCFlash, 
                        NeutrinoFlashMatch ] 

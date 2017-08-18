@@ -16,6 +16,7 @@ ACPTTagger: {
   DzResolutionAnode:     80
   DtResolutionCathode:   5
   DzResolutionCathode:   80
+  MinTrackLength:        0
  
   PEMin:                 0
   Debug:                 true

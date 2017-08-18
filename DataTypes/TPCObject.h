@@ -22,6 +22,7 @@
 #define TPCObject_h
 
 #include "lardataobj/RecoBase/Track.h"
+#include "lardataobj/RecoBase/Shower.h"
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "lardataobj/RecoBase/Vertex.h"
 #include <vector>
@@ -51,14 +52,18 @@ namespace ubana {
     void SetOrigin(ubana::TPCObjectOrigin);
 
     // Getter methods
-    const std::vector<recob::Track>      & GetTracks()  const;
-    const std::vector<recob::PFParticle> & GetPFPs()    const;
-    const recob::Vertex                  & GetVertex()  const;
-    const ubana::TPCObjectOrigin         & GetOrigin()  const;
+    const std::vector<recob::Track>      & GetTracks()   const;
+    const std::vector<recob::PFParticle> & GetPFPs()     const;
+    const recob::Vertex                  & GetVertex()   const;
+    const ubana::TPCObjectOrigin         & GetOrigin()   const;
+    const size_t                           GetNTracks()  const;
+    const size_t                           GetNShowers() const;
+    const size_t                           GetNPFP()     const;
 
   private:
 
     std::vector<recob::Track>      fTracks;
+    std::vector<recob::Shower>     fShowers;
     std::vector<recob::PFParticle> fPFParticles;
     recob::Vertex                  fVertex;
     ubana::TPCObjectOrigin         fOrigin;

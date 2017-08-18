@@ -32,6 +32,7 @@
 
 #include "TVector3.h"
 #include "TTree.h"
+#include "TH1D.h"
 
 #include <memory>
 #include <fstream>
@@ -57,7 +58,8 @@ public:
 
 private:
 
-  bool GetClosestDtDz(TVector3 _end, double _value, double trk_z_center, std::vector<double> &_dt, std::vector<double> &_dz);
+  /// Claculates the (track reco time) - (flash time) from the _end specified point, that is the closest to the _value given
+  bool GetClosestDtDz(TVector3 _end, double _value, double trk_z_center, std::vector<double> &_dt, std::vector<double> &_dz, bool fill_histo);
   /// Returns true if sign is positive, negative otherwise
   bool GetSign(std::vector<TVector3> sorted_trk);
   void SortTrackPoints(const recob::Track& track, std::vector<TVector3>& sorted_trk);
@@ -66,6 +68,8 @@ private:
   std::string _pfp_producer;
   std::string _track_producer;
   std::string _swtrigger_producer;
+
+  double _min_track_length;
 
   double _anodeTime;
   double _cathodeTime;
@@ -85,6 +89,8 @@ private:
   const std::vector<float> endPt1 = {-9999., -9999., -9999.};
   const std::vector<float> endPt2 = {-9999., -9999., -9999.};
 
+  TH1D *_h_diff, *_h_diff_a, *_h_diff_c;
+
   //std::ofstream _csvfile;
   TTree* _tree1;
   int _run, _subrun, _event;
@@ -96,13 +102,14 @@ private:
 };
 
 
-ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p)
-{
+ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
 
   _flash_producer     = p.get<std::string>("FlashProducer", "simpleFlashCosmic");
   _pfp_producer       = p.get<std::string>("PFPartProducer", "pandoraCosmic");
   _track_producer     = p.get<std::string>("TrackProducer", "pandoraCosmic");
   _swtrigger_producer = p.get<std::string>("SWTriggerProducer", "swtrigger");
+
+  _min_track_length   = p.get<double>("MinTrackLength", 0.0);
 
   _anodeTime          = p.get<double>("AnodeTime",   0.53);
   _cathodeTime        = p.get<double>("CathodeTime", 2291);
@@ -119,6 +126,10 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p)
   //_csvfile << "trk_x_up,trk_x_down,fls_time" << std::endl;
 
   art::ServiceHandle<art::TFileService> fs;
+
+  _h_diff   = fs->make<TH1D>("h_diff",  ";Reco time - Flash time;Events", 200, -6000, 6000);
+  _h_diff_a = fs->make<TH1D>("h_diff_a",";Reco time - Flash time;Events", 100, -20, 20);
+  _h_diff_c = fs->make<TH1D>("h_diff_c",";Reco time - Flash time;Events", 200, 2200, 3000);
 
   if (_debug) {
     _tree1 = fs->make<TTree>("tree","");
@@ -270,11 +281,13 @@ void ACPTTagger::produce(art::Event & e)
     std::vector<art::Ptr<recob::Track>> track_v = pfp_track_assn_v.at(i);
 
     if (_debug) {
-      //std::cout << "Looping through pfpart number " << i << std::endl;
+      std::cout << "[ACPTTagger] Looping through pfpart number " << i << std::endl;
       //std::cout << "PFPart has " << track_v.size() << " tracks associated" << std::endl;
     }
 
     for (auto track : track_v) {
+
+      if (track->Length() < _min_track_length) continue;
 
       // get sorted points for the track object [assuming downwards going]
       std::vector<TVector3> sorted_trk;
@@ -289,17 +302,17 @@ void ACPTTagger::produce(art::Event & e)
       z_center /= 2.;
       _trk_z_center.emplace_back(z_center);
 
-      std::cout << "u a" << std::endl;
-      this->GetClosestDtDz(sorted_trk[0],                   _anodeTime,   z_center, _dt_u_anode,   _dz_u_anode);
-      std::cout << "d a" << std::endl;
-      this->GetClosestDtDz(sorted_trk[sorted_trk.size()-1], _anodeTime,   z_center, _dt_d_anode,   _dz_d_anode);
-      std::cout << "u c" << std::endl;
-      this->GetClosestDtDz(sorted_trk[0],                   _cathodeTime, z_center, _dt_u_cathode, _dz_u_cathode);
-      std::cout << "d c" << std::endl;
-      this->GetClosestDtDz(sorted_trk[sorted_trk.size()-1], _cathodeTime, z_center, _dt_d_cathode, _dz_d_cathode);
+      //std::cout << "u a" << std::endl;
+      this->GetClosestDtDz(sorted_trk[0],                   _anodeTime,   z_center, _dt_u_anode,   _dz_u_anode, true);
+      //std::cout << "d a" << std::endl;
+      this->GetClosestDtDz(sorted_trk[sorted_trk.size()-1], _anodeTime,   z_center, _dt_d_anode,   _dz_d_anode, true);
+      //std::cout << "u c" << std::endl;
+      this->GetClosestDtDz(sorted_trk[0],                   _cathodeTime, z_center, _dt_u_cathode, _dz_u_cathode, false);
+      //std::cout << "d c" << std::endl;
+      this->GetClosestDtDz(sorted_trk[sorted_trk.size()-1], _cathodeTime, z_center, _dt_d_cathode, _dz_d_cathode, false);
 
       bool sign = this->GetSign(sorted_trk);
-      std::cout << "sign is " << (sign == true ? "positive" : "negative") << std::endl;
+      //std::cout << "sign is " << (sign == true ? "positive" : "negative") << std::endl;
 
       // A
       if (_dt_u_anode.back() > _anodeTime - _dt_resolution_a && _dt_u_anode.back() < _anodeTime + _dt_resolution_a 
@@ -321,7 +334,8 @@ void ACPTTagger::produce(art::Event & e)
        && _dz_d_cathode.back() > -_dz_resolution_a && _dz_d_cathode.back() < _dz_resolution_a
        && sign) isCosmic = true;
 
-      if (track->Length() > 10.) {
+      
+      if (_debug) {
 
         std::cout << "_dt_u_anode " << _dt_u_anode.back() << std::endl;
         std::cout << "_dt_d_anode " << _dt_d_anode.back() << std::endl;
@@ -333,6 +347,7 @@ void ACPTTagger::produce(art::Event & e)
         std::cout << "_dz_d_cathode " << _dz_d_cathode.back() << std::endl << std::endl;
         if (isCosmic) std::cout << "Tagged!" << std::endl;
       }
+      
     } // Track loop
 
     if (isCosmic) {
@@ -352,8 +367,7 @@ void ACPTTagger::produce(art::Event & e)
 }
 
 
-
-bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_center, std::vector<double> &_dt, std::vector<double> &_dz) {
+bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_center, std::vector<double> &_dt, std::vector<double> &_dz, bool fill_histo) {
 
   double dist = 1e9;
   double min_dist = 1e9;
@@ -363,7 +377,7 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_cente
   for (size_t f = 0; f < _flash_times.size(); f++) {
 
     double diff = _end.X() / _drift_vel - _flash_times[f];
-    std::cout << "diff is " << diff << std::endl;
+    //std::cout << "diff is " << diff << std::endl;
 
     dist = abs(diff - _value);
 
@@ -372,6 +386,13 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_cente
       min_diff = diff;
       theflash = f;
     }
+
+    if (fill_histo){
+      _h_diff->Fill(diff);
+      _h_diff_a->Fill(diff);
+      _h_diff_c->Fill(diff);
+    }
+
   } // flash loop
 
   if (theflash == -1) return false;
@@ -399,6 +420,11 @@ void ACPTTagger::SortTrackPoints(const recob::Track& track, std::vector<TVector3
   auto const&N = track.NumberTrajectoryPoints();
   auto const&start = track.LocationAtPoint(0);
   auto const&end   = track.LocationAtPoint( N - 1 );
+
+  if (_debug) {
+    std::cout << "[ACPTTagger] Track start " << start.X() << " " << start.Y() << " " << start.Z() << std::endl;
+    std::cout << "[ACPTTagger] Track start " << end.X() << " " << end.Y() << " " << end.Z() << std::endl;
+  }
 
   // if points are ordered correctly                                                                                                                                       
   if (start.Y() > end.Y()){

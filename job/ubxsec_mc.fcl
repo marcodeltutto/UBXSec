@@ -34,6 +34,7 @@ TPCObjectProducer:            "TPCObjectMaker"
 POTSummaryProducer:           "generator"
 POTSummaryInstance:           ""
 ParticleIDProducer:           "pandoraNupid"
+MCGhostProducer:              "RecoTrueMatcher"
 
 UseGENIEInfo:                 true
 MinimumHitRequirement:        3

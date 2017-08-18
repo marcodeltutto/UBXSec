@@ -51,6 +51,7 @@
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/SpacePoint.h"
 #include "uboone/UBXSec/DataTypes/FlashMatch.h"
+#include "uboone/UBXSec/DataTypes/MCGhost.h"
 #include "lardataobj/AnalysisBase/T0.h"
 #include "larcoreobj/SummaryData/POTSummary.h"
 #include "lardataobj/AnalysisBase/ParticleID.h"
@@ -125,6 +126,8 @@ private:
   std::string _potsum_producer;
   std::string _potsum_instance;
   std::string _particle_id_producer;
+  std::string _mc_ghost_producer;
+
   bool _recursiveMatching = false;
   bool _debug = true;
   int _minimumHitRequirement; ///< Minimum number of hits in at least a plane for a track
@@ -230,6 +233,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _potsum_producer                = p.get<std::string>("POTSummaryProducer");
   _potsum_instance                = p.get<std::string>("POTSummaryInstance");
   _particle_id_producer           = p.get<std::string>("ParticleIDProducer");
+  _mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
 
   _use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
   _minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
@@ -636,6 +640,16 @@ void UBXSec::analyze(art::Event const & e) {
     std::cout << "[UBXSec] anab::ParticleID is not valid." << std::endl;
   }
 
+  // Get Ghosts
+  art::Handle<std::vector<ubana::MCGhost> > ghost_h;
+  e.getByLabel(_mc_ghost_producer,ghost_h);
+  if(!ghost_h.isValid()){
+    std::cout << "[UBXSec] MCGhost product " << _mc_ghost_producer << " not found..." << std::endl;
+    //throw std::exception();
+  }
+  art::FindManyP<ubana::MCGhost>   mcghost_from_pfp   (pfp_h,   e, _mc_ghost_producer);
+  art::FindManyP<simb::MCParticle> mcpar_from_mcghost (ghost_h, e, _mc_ghost_producer); 
+
   // Check if golden
   /*
   bool is_golden = false;
@@ -992,12 +1006,20 @@ void UBXSec::analyze(art::Event const & e) {
         int planenum = pid->PlaneID().Plane;
         if (planenum < 0 || planenum > 2) continue;
 
-        
-
-
       }
-
     }
+
+    auto pfps_from_tpcobj = tpcobjToPFPAssns.at(slice);
+    for (auto pfp : pfps_from_tpcobj){
+      std::vector<art::Ptr<ubana::MCGhost>> mcghosts = mcghost_from_pfp.at(pfp.key());
+      if (mcghosts.size() == 0 || mcghosts.size() > 1 ) {
+        std::cout << "[UBXSec] mcghosts is ether 0 or 1" << std::endl;
+      } else {
+        std::vector<art::Ptr<simb::MCParticle>> mcpars = mcpar_from_mcghost.at(mcghosts[0].key());
+        std::cout << "[UBXSec] MCPar has pdg " << mcpars[0]->PdgCode() << std::endl;
+      }
+    }
+  
     /*
     std::vector<const anab::ParticleID*> pids = particle_id.at(iTrk);
           //if(pids.size() > 1) {

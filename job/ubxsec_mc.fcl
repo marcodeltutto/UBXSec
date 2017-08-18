@@ -7,6 +7,9 @@
 #include "neutrinoflashmatch.fcl"
 #include "cosmicflashmatch.fcl"
 
+#include "calorimetry_microboone.fcl"
+#include "particleid_microboone.fcl"
+
 #include "pandoramodules_microboone.fcl"
 #include "hitfindermodules_microboone.fcl"
 #include "cosmicremovalmodules.fcl"
@@ -33,7 +36,7 @@ ACPTProducer:                 "pandoraCosmicT0Reco"
 TPCObjectProducer:            "TPCObjectMaker"
 POTSummaryProducer:           "generator"
 POTSummaryInstance:           ""
-ParticleIDProducer:           "pandoraNupid"
+ParticleIDProducer:           "pandoraNupid::UBXSec"
 MCGhostProducer:              "RecoTrueMatcher"
 
 UseGENIEInfo:                 true
@@ -51,6 +54,9 @@ ubxsec_mc_reco:
   pandoraCosmicHitRemoval:        @local::microboone_crhitremoval
 
   pandoraNu:                      @local::microboone_pandora
+
+  pandoraNucalo:                  @local::microboone_calomc
+  pandoraNupid:                   @local::microboone_chi2pid
 }
 
 ubxsec_mc_flashmatch:
@@ -75,6 +81,8 @@ ubxsec_mc_producers: [ pandoraCosmicTrackPFPart,
                        pandoraCosmicACPTTagger,
                        pandoraCosmicHitRemoval,
                        pandoraNu,
+                       pandoraNucalo,
+                       pandoraNupid,
                        RecoTrueMatcher, 
                        TPCObjectMaker,
                        NeutrinoMCFlash, 
@@ -104,7 +112,11 @@ ubxsec_mc_reco.pandoraNu.GeantModuleLabel:                       "largeant"
 ubxsec_mc_reco.pandoraNu.HitFinderModuleLabel:                   "pandoraCosmicHitRemoval::UBXSec"
 ubxsec_mc_reco.pandoraNu.ConfigFile:                             "PandoraSettings_MicroBooNE_Neutrino.xml"
 
+ubxsec_mc_reco.pandoraNucalo.TrackModuleLabel:                   "pandoraNu::UBXSec"
+ubxsec_mc_reco.pandoraNucalo.SpacePointModuleLabel:              "pandoraNu::UBXSec"
 
+ubxsec_mc_reco.pandoraNupid.CalorimetryModuleLabel:              "pandoraNucalo::UBXSec"
+ubxsec_mc_reco.pandoraNupid.TrackModuleLabel:                    "pandoraNu::UBXSec"
 
 # Set FlashMatching properties
 ubxsec_mc_flashmatch.NeutrinoFlashMatch.TrackModule:             "pandoraNu::UBXSec"

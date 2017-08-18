@@ -76,7 +76,7 @@
 #include "TString.h"
 #include "TTree.h"
 #include "TH2F.h"
-
+#include "TH1D.h"
 
 namespace ubxsec {
   struct Hit3D_t {
@@ -159,6 +159,7 @@ private:
   double _fm_score;
   int _fv, _ccnc, _nupdg;
   double _nu_e;
+  bool _is_signal;
   double _recon_muon_start_x, _recon_muon_start_y, _recon_muon_start_z;
   double _recon_muon_end_x, _recon_muon_end_y, _recon_muon_end_z;
   double _mc_muon_start_x, _mc_muon_start_y, _mc_muon_start_z;
@@ -211,6 +212,8 @@ private:
 
   TH2F * _deadRegion2P;
   TH2F * _deadRegion3P;
+  
+  TH1D * _h_pida_proton, * _h_pida_muon, * _h_pida_pion, * _h_pida_kaon;
 
   TTree* _sr_tree;
   int _sr_run, _sr_subrun; 
@@ -260,6 +263,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _tree1->Branch("fv",                   &_fv,                    "fv/I");
   _tree1->Branch("ccnc",                 &_ccnc,                  "ccnc/I");
   _tree1->Branch("nupdg",                &_nupdg,                 "nupdg/I");
+  _tree1->Branch("is_signal",            &_is_signal,             "is_signal/O");
   _tree1->Branch("nu_e",                 &_nu_e,                  "nu_e/D");
   _tree1->Branch("recon_muon_start_x",   &_recon_muon_start_x,    "recon_muon_start_x/D");
   _tree1->Branch("recon_muon_start_y",   &_recon_muon_start_y,    "recon_muon_start_y/D");
@@ -354,6 +358,11 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
 
   _deadRegion2P = fs->make<TH2F>("deadRegion2P","deadRegion2P", 10350,0.0,1035.0,2300,-115.0,115.0);
   _deadRegion3P = fs->make<TH2F>("deadRegion3P","deadRegion3P", 10350,0.0,1035.0,2300,-115.0,115.0);
+
+  _h_pida_muon = fs->make<TH1D>("h_pida_muon", "Muon tracks from signal;PIDa [MeV/cm^{1.42}];", 50, 0, 20);
+  _h_pida_proton = fs->make<TH1D>("h_pida_proton", "Proton tracks from signal;PIDa [MeV/cm^{1.42}];", 50, 0, 20);
+  _h_pida_pion = fs->make<TH1D>("h_pida_pion", "Pion tracks from signal;PIDa [MeV/cm^{1.42}];", 50, 0, 20);
+  _h_pida_kaon = fs->make<TH1D>("h_pida_kaon", "Kaon tracks from signal;PIDa [MeV/cm^{1.42}];", 50, 0, 20);
 
   _sr_tree = fs->make<TTree>("pottree","");
   _sr_tree->Branch("run",                &_sr_run,                "run/I");
@@ -622,7 +631,7 @@ void UBXSec::analyze(art::Event const & e) {
   art::FindManyP<recob::OpFlash> opfls_ptr_coll_v(track_h, e, _acpt_producer);
   
 
-  // Get Giuseppe's Kalman Tracks
+  // Get PFP
   art::Handle<std::vector<recob::PFParticle> > pfp_h;
   e.getByLabel(_pfp_producer,pfp_h);
   if(!pfp_h.isValid()){
@@ -632,13 +641,17 @@ void UBXSec::analyze(art::Event const & e) {
   if(pfp_h->empty()) {
     std::cout << "[UBXSec] PFP " << _pfp_producer << " is empty." << std::endl;
   }
+  art::FindManyP<recob::Track> tracks_from_pfp(pfp_h, e, _pfp_producer);
+
+  // Get Giuseppe's Kalman Tracks
   art::FindManyP<recob::Track> trk_kalman_v(pfp_h, e, "pandoraNuKalmanTrack");
 
   // Get PID information
-  art::FindMany<anab::ParticleID> particle_id (track_h, e, _particle_id_producer);
-  if (!particle_id.isValid()) {
+  art::FindMany<anab::ParticleID> particleids_from_track (track_h, e, _particle_id_producer);
+  if (!particleids_from_track.isValid()) {
     std::cout << "[UBXSec] anab::ParticleID is not valid." << std::endl;
   }
+  std::cout << "[UBXSec] Numeber of particleids_from_track " << particleids_from_track.size() << std::endl;
 
   // Get Ghosts
   art::Handle<std::vector<ubana::MCGhost> > ghost_h;
@@ -716,6 +729,11 @@ void UBXSec::analyze(art::Event const & e) {
       }
 
     }
+  }
+
+  _is_signal = false;
+  if (_ccnc == 0 && _nupdg == 14 && _fv == 1) {
+    _is_signal = true;
   }
 
   lar_pandora::PFParticlesToSpacePoints pfp_to_spacept;
@@ -993,56 +1011,53 @@ void UBXSec::analyze(art::Event const & e) {
 
 
     // Particle ID
-    auto tracks_from_tpcobj = tpcobjToTrackAssns.at(slice);
-    for (auto track : tracks_from_tpcobj){
-     
-      std::vector<const anab::ParticleID*> pids = particle_id.at(track.key());
-      if(pids.size() > 1) {
-        std::cout << "[UBXSec] ParticleID vector is bigger than 1. Only one saved." << std::endl;
-      }
-      for (auto pid : pids) {
-
-        if (!pid->PlaneID().isValid) continue;
-        int planenum = pid->PlaneID().Plane;
-        if (planenum < 0 || planenum > 2) continue;
-
-      }
-    }
-
     auto pfps_from_tpcobj = tpcobjToPFPAssns.at(slice);
+
     for (auto pfp : pfps_from_tpcobj){
+
+      std::cout << "[UBXSec] This is PFP " << pfp->Self()  << std::endl;
       std::vector<art::Ptr<ubana::MCGhost>> mcghosts = mcghost_from_pfp.at(pfp.key());
+      std::vector<art::Ptr<simb::MCParticle>> mcpars;
+      int pdg = -1;
       if (mcghosts.size() == 0 || mcghosts.size() > 1 ) {
-        std::cout << "[UBXSec] mcghosts is ether 0 or 1" << std::endl;
+        std::cout << "[UBXSec] \tmcghosts is ether 0 or >1" << std::endl;
+        continue;
       } else {
-        std::vector<art::Ptr<simb::MCParticle>> mcpars = mcpar_from_mcghost.at(mcghosts[0].key());
-        std::cout << "[UBXSec] MCPar has pdg " << mcpars[0]->PdgCode() << std::endl;
+        mcpars = mcpar_from_mcghost.at(mcghosts[0].key());
+        pdg = mcpars[0]->PdgCode();
+        std::cout << "[UBXSec] \tMCPar has pdg " << pdg << std::endl;
+      }
+
+      std::vector<art::Ptr<recob::Track>> tracks = tracks_from_pfp.at(pfp.key());
+      std::cout << "[UBXSec] \tn tracks ass to this pfp: " << tracks.size() << std::endl;
+      for (auto track : tracks) {
+
+        std::vector<const anab::ParticleID*> pids = particleids_from_track.at(track.key());
+        if(pids.size() == 0) std::cout << "[UBXSec] \tZero ParticleID" << std::endl;
+        if(pids.size() > 1) {
+          std::cout << "[UBXSec] \tParticleID vector is bigger than 1. Only one saved." << std::endl;
+        }
+        for (auto pid : pids) {
+          if (!pid->PlaneID().isValid) continue;
+          int planenum = pid->PlaneID().Plane;
+          if (planenum < 0 || planenum > 2) continue;
+          std::cout << "[UBXSec] \tParticleID PIDA is " << pid->PIDA() << ", plane is " << planenum << std::endl;
+          if (/*_is_signal && (_slc_origin[slice] == 0 || _slc_origin[slice] == 2) &&*/ planenum == 2) {
+            if (pdg == 13) {
+              _h_pida_muon->Fill(pid->PIDA());
+            } else if (pdg == 2212) {
+              _h_pida_proton->Fill(pid->PIDA());
+            } else if (pdg == 211) {
+              _h_pida_pion->Fill(pid->PIDA());
+            } else if (pdg == 321) {
+              _h_pida_kaon->Fill(pid->PIDA());
+            }
+          }
+        }
       }
     }
   
-    /*
-    std::vector<const anab::ParticleID*> pids = particle_id.at(iTrk);
-          //if(pids.size() > 1) {
-          //mf::LogError("AnalysisTree:limits")
-          //<< "the " << fTrackModuleLabel[iTracker] << " track #" << iTrk
-          //<< " has " << pids.size() 
-          //<< " set of ParticleID variables. Only one stored in the tree";
-          //}
-          for (size_t ipid = 0; ipid < pids.size(); ++ipid){
-            if (!pids[ipid]->PlaneID().isValid) continue;
-            int planenum = pids[ipid]->PlaneID().Plane;
-            if (planenum<0||planenum>2) continue;
-            TrackerData.trkpidpdg[iTrk][planenum] = pids[ipid]->Pdg();
-            TrackerData.trkpidchi[iTrk][planenum] = pids[ipid]->MinChi2();
-            TrackerData.trkpidchipr[iTrk][planenum] = pids[ipid]->Chi2Proton();
-            TrackerData.trkpidchika[iTrk][planenum] = pids[ipid]->Chi2Kaon();
-            TrackerData.trkpidchipi[iTrk][planenum] = pids[ipid]->Chi2Pion();
-            TrackerData.trkpidchimu[iTrk][planenum] = pids[ipid]->Chi2Muon();
-            TrackerData.trkpidpida[iTrk][planenum] = pids[ipid]->PIDA();
-          }
-*/
-
-    std::cout << "UBXSec - INFORMATION SAVED" << std::endl;
+    std::cout << "[UBXSec] - SLICE INFORMATION SAVED" << std::endl;
   } // slice loop
 
 

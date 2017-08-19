@@ -1,0 +1,21 @@
+
+BEGIN_PROLOG
+#
+# Module configuration
+#
+CosmicTrackHitTagger: {
+  module_type:           "CosmicTrackHitTagger"
+  PFParticleProducer:    "pandoraNu::UBXSec"
+  TrackProducer:         "pandoraNu::UBXSec"
+  HitProducer:           "pandoraCosmicHitRemoval::UBXSec"
+
+  DebugMode:             true
+
+  CosmicTrackHitTaggerTool: {
+    tool_type: "CosmicTagByHitIntegral" 
+    test:      5
+  }  
+}
+
+
+END_PROLOG

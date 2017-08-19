@@ -21,6 +21,7 @@ art_make( BASENAME_ONLY
                    larevt_CalibrationDBI_IOVData
                    larevt_CalibrationDBI_Providers
                    larsim_MCCheater_BackTracker_service
+                   larsim_Simulation
                    #Simulation
 		   #Utilities
 		   #TimeService_service
@@ -28,8 +29,10 @@ art_make( BASENAME_ONLY
                    lardataobj_RawData
 		   lardataobj_RecoBase
                    lardataobj_AnalysisBase
+                   lardataobj_Simulation
                    lardata_Utilities
                    larpandora_LArPandoraInterface
+                   nusimdata_SimulationBase
                    ${PANDORASDK}
                    ${PANDORAMONITORING}
                    #larpandora_LArPandoraContent

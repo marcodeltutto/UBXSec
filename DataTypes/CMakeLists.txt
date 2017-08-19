@@ -19,6 +19,7 @@ art_make( BASENAME_ONLY
                    lardataobj_AnalysisBase
                    lardata_Utilities
                    larpandora_LArPandoraInterface
+                   nusimdata_SimulationBase
                    ${PANDORASDK}
                    ${PANDORAMONITORING}
                    ${UBOONECODE_LIB}

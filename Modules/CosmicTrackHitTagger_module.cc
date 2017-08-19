@@ -16,10 +16,19 @@
 #include "canvas/Utilities/InputTag.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
+#include "lardata/Utilities/AssociationUtil.h"
+
+#include "lardataobj/RecoBase/Track.h"
+#include "lardataobj/RecoBase/PFParticle.h"
+#include "lardataobj/RecoBase/Hit.h"
+#include "uboone/RawData/utils/ubdaqSoftwareTriggerData.h"
+
+
+#include "uboone/UBXSec/Algorithms/CosmicTagToolInterface.h"
 
 #include <memory>
 
-
+/*
 namespace ubana {
   struct SimpleHit {
     double time;
@@ -29,7 +38,7 @@ namespace ubana {
 }
 
 using SimpleHitVector = std::vector<ubana::SimpleHit>;
-
+*/
 
 class CosmicTrackHitTagger;
 
@@ -52,11 +61,14 @@ public:
 private:
 
   /// Takes a vector of hits and returns a vector of hits only in the collection plane
-  std::vector<recob::Hit> FilterHits(std::vector<recob::Hit>);
+  std::vector<art::Ptr<recob::Hit>> FilterHits(std::vector<art::Ptr<recob::Hit>>);
 
   std::string _pfp_producer;
   std::string _track_producer;
   std::string _hit_producer;
+
+  bool _debug;
+
 };
 
 
@@ -65,6 +77,7 @@ CosmicTrackHitTagger::CosmicTrackHitTagger(fhicl::ParameterSet const & p) {
   _pfp_producer       = p.get<std::string>("PFPartProducer", "pandoraCosmic");
   _track_producer     = p.get<std::string>("TrackProducer", "pandoraCosmic");
   _hit_producer       = p.get<std::string>("HitProducer", "swtrigger");
+  _debug              = p.get<bool>("DebugMode", "false");
 }
 
 void CosmicTrackHitTagger::produce(art::Event & e) {
@@ -113,8 +126,8 @@ void CosmicTrackHitTagger::produce(art::Event & e) {
   // PFParticle loop
   for (size_t i = 0; i < PFPVec.size(); i++) {
 
-    bool isCosmic = false;
-    auto pfp = PFPVec.at(i);
+    //bool isCosmic = false;
+    //auto pfp = PFPVec.at(i);
 
     // grab associated tracks
     std::vector<art::Ptr<recob::Track>> track_v = pfp_track_assn_v.at(i);
@@ -127,33 +140,33 @@ void CosmicTrackHitTagger::produce(art::Event & e) {
     // Track loop
     for (auto track : track_v) {
 
-      std::vector<recob::Hit> hits = hits_from_track.at(track.key());
+      std::vector<art::Ptr<recob::Hit>> hits = hits_from_track.at(track.key());
       hits = this->FilterHits(hits);
       
-      SimpleHitVector simple_hit_v;
+      ubana::SimpleHitVector simple_hit_v;
 
       for (auto hit : hits) {
 
-        ubana::SimpleHit simple_hit;
+        ubana::SimpleHit_t simple_hit;
    
-        simple_hit.time     = hit.PeakTime();
-        simple_hit.wire     = hit.WireID();
-        simple_hit.integral = hit.Integral();
+        simple_hit.time     = hit->PeakTime();
+        simple_hit.wire     = hit->WireID().Wire;
+        simple_hit.integral = hit->Integral();
 
         simple_hit_v.emplace_back(simple_hit);
+
       }
     }
   }
-
 }
 
-std::vector<recob::Hit> CosmicTrackHitTagger::FilterHits(std::vector<recob::Hit> hits){
+std::vector<art::Ptr<recob::Hit>> CosmicTrackHitTagger::FilterHits(std::vector<art::Ptr<recob::Hit>> hits){
 
-  std::vector<recob::Hit> output;
+  std::vector<art::Ptr<recob::Hit>> output;
 
   for (auto hit : hits) {
 
-    if (hit.View() != 2) continue;
+    if (hit->View() != 2) continue;
 
     output.emplace_back(hit);
   }

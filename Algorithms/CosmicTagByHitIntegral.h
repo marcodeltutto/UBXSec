@@ -23,7 +23,7 @@
 #define COSMICTAGBYHITINTEGRAL
 
 #include <iostream>
-#include "art/Utilities/ToolMacros.h" 
+//#include "art/Utilities/ToolMacros.h" 
 #include "fhiclcpp/ParameterSet.h"
 #include "uboone/UBXSec/Algorithms/CosmicTagToolInterface.h"
 
@@ -36,7 +36,7 @@ namespace ubana {
 
     /// Constructor
     explicit CosmicTagByHitIntegral(fhicl::ParameterSet const& ps) :
-      _test {ps.get<unsigned>("test")}
+      _test {ps.get<double>("test")}
     {}
 
     /// Description
@@ -46,9 +46,9 @@ namespace ubana {
   private:
     double _test;
     
-  }
+  };
 }
 
-DEFINE_ART_CLASS_TOOL(ubana::CosmicTagByHitIntegral)
+//DEFINE_ART_CLASS_TOOL(ubana::CosmicTagByHitIntegral)
 
 #endif //  COSMICTAGBYHITINTEGRAL

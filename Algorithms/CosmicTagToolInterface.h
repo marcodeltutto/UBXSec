@@ -27,6 +27,16 @@
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 //#include "uboone/UBXSec/DataTypes/UBXSecFMWKInterface.h"
 
+namespace ubana {
+  using SimpleHit_t = struct SimpleHit {
+    double time;
+    unsigned int wire;
+    double integral;
+  };
+
+  using SimpleHitVector = std::vector<ubana::SimpleHit_t>;
+}
+
 
 namespace ubana {
 
@@ -37,18 +47,11 @@ namespace ubana {
     /// Default destructor
     virtual ~CosmicTagToolInterface() noexcept = default;
 
-
-    using SimpleHit_t = struct SimpleHit {
-      double time;
-      double wire;
-      double integral;
-    };
-
-    using SimpleHitVector = std::vector<ubana::SimpleHit_t>;
-
-
     /// Performs the matching
     virtual bool IsCosmic(SimpleHitVector) = 0;
+
+  };
 }
+
 
 #endif //  COSMICTAGTOOLINTERFACE_H

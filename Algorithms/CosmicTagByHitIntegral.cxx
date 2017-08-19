@@ -10,6 +10,7 @@ namespace ubana {
 
     std::cout << ">>>>>>>>>>>>>>>>> Hi! Test is " << _test << std::endl;
 
+    return true;
   }
 
 }

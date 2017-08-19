@@ -59,17 +59,19 @@ Parsing file /home/travis/build/marcodeltutto/UBXSec/Algorithms/Cos/home/travis/
 /home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:44: warning: Compound ACPTTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoFlashMatch_module.cc:57: warning: Compound NeutrinoFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicFlashMatch_module.cc:56: warning: Compound CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:24: warning: Compound ubana::SimpleHit is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:37: warning: Compound CosmicTrackHitTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:46: warning: Compound CosmicTrackHitTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FindDeadRegions.h:36: warning: Compound FindDeadRegions is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:49: warning: Compound RecoTrueMatcher is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/CosmicTagToolInterface.h:43: warning: Compound ubana::CosmicTagToolInterface is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FindDeadRegions.h:25: warning: Compound BoundaryWire is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/PhotonActivity_module.cc:40: warning: Compound PhotonActivity is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/CosmicTagByHitIntegral.h:33: warning: Compound ubana::CosmicTagByHitIntegral is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:57: warning: Compound ubana::TPCObjectMaker is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/DeDxAna_module.cc:47: warning: Compound DeDxAna is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:82: warning: Compound ubxsec::Hit3D_t is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/CosmicTagByHitIntegral.cxx:9: warning: documented function `bool CosmicTagByHitIntegral::IsCosmic' was not declared or defined.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/CosmicTagByHitIntegral.cxx:9: warning: no matching class member found for 
+  bool CosmicTagByHitIntegral::IsCosmic(SimpleHitVector simple_hit_v)
+
 micTagByHitIntegral.cxx...
 Preprocessing /home/travis/build/marcodeltutto/UBXSec/Algorithms/CosmicTagByHitIntegral.h...
 Parsing file /home/travis/build/marcodeltutto/UBXSec/Algorithms/CosmicTagByHitIntegral.h...
@@ -183,12 +185,12 @@ Generating code for f/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMa
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicFlashMatch_module.cc:71: warning: Member GetTrajectory(std::vector< art::Ptr< recob::Track >>,::geoalgo::Trajectory &) (function) of class CosmicFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicFlashMatch_module.cc:72: warning: Member Trial(std::vector< art::Ptr< recob::Track >> track_v, flashana::Flash_t flashBeam, double &_chi2, double &_ll) (function) of class CosmicFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicFlashMatch_module.cc:75: warning: Member produce(art::Event &e) override (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:39: warning: Member CosmicTrackHitTagger(fhicl::ParameterSet const &p) (function) of class CosmicTrackHitTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:44: warning: Member CosmicTrackHitTagger(CosmicTrackHitTagger const &) (function) of class CosmicTrackHitTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:45: warning: Member CosmicTrackHitTagger(CosmicTrackHitTagger &&) (function) of class CosmicTrackHitTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:46: warning: Member operator=(CosmicTrackHitTagger const &) (function) of class CosmicTrackHitTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:47: warning: Member operator=(CosmicTrackHitTagger &&) (function) of class CosmicTrackHitTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:50: warning: Member produce(art::Event &e) override (function) of class CosmicTrackHitTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:48: warning: Member CosmicTrackHitTagger(fhicl::ParameterSet const &p) (function) of class CosmicTrackHitTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:53: warning: Member CosmicTrackHitTagger(CosmicTrackHitTagger const &) (function) of class CosmicTrackHitTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:54: warning: Member CosmicTrackHitTagger(CosmicTrackHitTagger &&) (function) of class CosmicTrackHitTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:55: warning: Member operator=(CosmicTrackHitTagger const &) (function) of class CosmicTrackHitTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:56: warning: Member operator=(CosmicTrackHitTagger &&) (function) of class CosmicTrackHitTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:59: warning: Member produce(art::Event &e) override (function) of class CosmicTrackHitTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/DeDxAna_module.cc:49: warning: Member DeDxAna(fhicl::ParameterSet const &p) (function) of class DeDxAna is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/DeDxAna_module.cc:54: warning: Member DeDxAna(DeDxAna const &) (function) of class DeDxAna is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/DeDxAna_module.cc:55: warning: Member DeDxAna(DeDxAna &&) (function) of class DeDxAna is not documented.
@@ -230,9 +232,6 @@ Generating code for f/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMa
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:58: warning: The following parameters of UBXSecHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits, PFParticleSet &recoVeto, MCParticleSet &trueVeto, bool _recursiveMatching) are not documented:
   parameter '_recursiveMatching'
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:107: warning: argument '_particleLabel' of command @param is not found in the argument list of UBXSecHelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v)
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:25: warning: Member time (variable) of class ubana::SimpleHit is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:26: warning: Member wire (variable) of class ubana::SimpleHit is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:27: warning: Member integral (variable) of class ubana::SimpleHit is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:59: warning: Member TPCObjectMaker(fhicl::ParameterSet const &p) (function) of class ubana::TPCObjectMaker is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:64: warning: Member TPCObjectMaker(TPCObjectMaker const &) (function) of class ubana::TPCObjectMaker is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:65: warning: Member TPCObjectMaker(TPCObjectMaker &&) (function) of class ubana::TPCObjectMaker is not documented.
@@ -315,12 +314,12 @@ Generating docs for compound RecoTrueMatcher...
 Generating docs for compound UBXSec...
 Generating docs for compound UBXSecHelper...
 Generating namespace index...
-Generating docs for compound ubana::SimpleHit...
 Generating docs for compound ubana::TPCObjectMaker...
 Generating docs for compound ubana::FlashMatch...
 Generating docs for compound ubana::MCGhost...
 Generating docs for compound ubana::TPCObject...
 Generating docs for compound ubana::CosmicTagByHitIntegral...
+Generating docs for compound ubana::CosmicTagToolInterface...
 Generating docs for compound ubxsec::Hit3D_t...
 Generating docs for compound ubxsec::ACPTAlgo...
 Generating docs for compound ubxsec::McPfpMatch...
@@ -339,6 +338,6 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-symbol cache used 553/65536 hits=12058 misses=553
-lookup cache used 215/65536 hits=1574 misses=229
+symbol cache used 555/65536 hits=12137 misses=555
+lookup cache used 239/65536 hits=2111 misses=263
 finished...

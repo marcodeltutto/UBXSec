@@ -25,6 +25,7 @@
 
 
 #include "uboone/UBXSec/Algorithms/CosmicTagToolInterface.h"
+#include "uboone/UBXSec/Algorithms/CosmicTagByHitIntegral.h"
 
 #include <memory>
 
@@ -69,6 +70,8 @@ private:
 
   bool _debug;
 
+  // Insitantiate algorithm
+  ::ubana::CosmicTagByHitIntegral _algo;
 };
 
 
@@ -126,8 +129,8 @@ void CosmicTrackHitTagger::produce(art::Event & e) {
   // PFParticle loop
   for (size_t i = 0; i < PFPVec.size(); i++) {
 
-    //bool isCosmic = false;
-    //auto pfp = PFPVec.at(i);
+    bool isCosmic = false;
+    auto pfp = PFPVec.at(i);
 
     // grab associated tracks
     std::vector<art::Ptr<recob::Track>> track_v = pfp_track_assn_v.at(i);
@@ -139,6 +142,11 @@ void CosmicTrackHitTagger::produce(art::Event & e) {
 
     // Track loop
     for (auto track : track_v) {
+
+      if (_debug) {
+        std::cout << "[CosmicTrackHitTagger] Track start " << track->Vertex().X() << ", " << track->Vertex().Y() << ", " << track->Vertex().Z() << std::endl;
+        std::cout << "[CosmicTrackHitTagger] Track end   " << track->End().X() << ", " << track->End().Y() << ", " << track->End().Z() << std::endl;
+      }
 
       std::vector<art::Ptr<recob::Hit>> hits = hits_from_track.at(track.key());
       hits = this->FilterHits(hits);
@@ -154,9 +162,12 @@ void CosmicTrackHitTagger::produce(art::Event & e) {
         simple_hit.integral = hit->Integral();
 
         simple_hit_v.emplace_back(simple_hit);
-
       }
+
+      isCosmic = _algo.IsCosmic(simple_hit_v);
     }
+
+    std::cout << "[CosmicTrackHitTagger] PFP " << pfp->Self() << " " << (isCosmic ? "is" : "is not") << " a cosmic" << std::endl;
   }
 }
 

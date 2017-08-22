@@ -5,9 +5,9 @@ BEGIN_PROLOG
 #
 CosmicTrackHitTagger: {
   module_type:           "CosmicTrackHitTagger"
-  PFParticleProducer:    "pandoraNu::UBXSec"
-  TrackProducer:         "pandoraNu::UBXSec"
-  HitProducer:           "pandoraCosmicHitRemoval::UBXSec"
+  PFParticleProducer:    "pandoraCosmic"
+  TrackProducer:         "pandoraCosmic"
+  HitProducer:           "gaushit"
 
   DebugMode:             true
 

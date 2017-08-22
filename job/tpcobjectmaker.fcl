@@ -7,6 +7,7 @@ TPCObjectMaker: {
   module_type:                "TPCObjectMaker"
   PFParticleProducer:         "pandoraNu::UBXSec"
   TrackProducer:              "pandoraNu::UBXSec"
+  ShowerProducer:             "pandoraNu::UBXSec"
   VertexProducer:             "pandoraNu::UBXSec"
   HitProducer:                "pandoraCosmicHitRemoval::UBXSec"
   GeantModule:                "largeant"

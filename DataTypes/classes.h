@@ -43,6 +43,8 @@ template class art::Assns<ubana::TPCObject,recob::PFParticle>;
 template class art::Assns<recob::PFParticle,ubana::TPCObject>;
 template class art::Assns<ubana::TPCObject,recob::Track,void>;
 template class art::Assns<recob::Track,ubana::TPCObject,void>;
+template class art::Assns<ubana::TPCObject,recob::Shower,void>;
+template class art::Assns<recob::Shower,ubana::TPCObject,void>;
 template class art::Assns<ubana::TPCObject,ubana::FlashMatch,void>;
 template class art::Assns<ubana::FlashMatch,ubana::TPCObject,void>;
 
@@ -50,6 +52,8 @@ template class art::Wrapper<art::Assns<ubana::TPCObject,  recob::PFParticle>>;
 template class art::Wrapper<art::Assns<recob::PFParticle, ubana::TPCObject >>;
 template class art::Wrapper<art::Assns<recob::Track,ubana::TPCObject,void> >;
 template class art::Wrapper<art::Assns<ubana::TPCObject,recob::Track,void> >;
+template class art::Wrapper<art::Assns<recob::Shower,ubana::TPCObject,void> >;
+template class art::Wrapper<art::Assns<ubana::TPCObject,recob::Shower,void> >;
 template class art::Wrapper<art::Assns<ubana::TPCObject,ubana::FlashMatch,void> >;
 template class art::Wrapper<art::Assns<ubana::FlashMatch,ubana::TPCObject,void> >;
 

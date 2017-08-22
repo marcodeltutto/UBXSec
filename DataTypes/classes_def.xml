@@ -52,6 +52,8 @@
   <class name="art::Assns<recob::PFParticle,ubana::TPCObject,void>"           />
   <class name="art::Assns<recob::Track,ubana::TPCObject,void>"                />
   <class name="art::Assns<ubana::TPCObject,recob::Track,void>"                />
+  <class name="art::Assns<recob::Shower,ubana::TPCObject,void>"                />
+  <class name="art::Assns<ubana::TPCObject,recob::Shower,void>"                />
   <class name="art::Assns<ubana::TPCObject,ubana::FlashMatch,void>"           />
   <class name="art::Assns<ubana::FlashMatch,ubana::TPCObject,void>"           />
 
@@ -60,6 +62,8 @@
   <class name="art::Wrapper<art::Assns<recob::PFParticle,ubana::TPCObject,void> >" />
   <class name="art::Wrapper<art::Assns<recob::Track,ubana::TPCObject,void> >"      />
   <class name="art::Wrapper<art::Assns<ubana::TPCObject,recob::Track,void> >"      />
+  <class name="art::Wrapper<art::Assns<recob::Shower,ubana::TPCObject,void> >"      />
+  <class name="art::Wrapper<art::Assns<ubana::TPCObject,recob::Shower,void> >"      />
   <class name="art::Wrapper<art::Assns<ubana::TPCObject,ubana::FlashMatch,void> >" />
   <class name="art::Wrapper<art::Assns<ubana::FlashMatch,ubana::TPCObject,void> >" />
 

@@ -14,6 +14,7 @@ NeutrinoFlashMatch: {
   BeamOpFlashProducer:      "simpleFlashBeam"
   FlashVetoTimeStart:       3.2
   FlashVetoTimeEnd:         4.8
+  UseShowersAsTracks:       true
 
   FlashMatchConfig: @local::flashmatch_config
 }

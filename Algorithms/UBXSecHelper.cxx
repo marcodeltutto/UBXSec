@@ -932,9 +932,17 @@ bool UBXSecHelper::PointIsCloseToDeadRegion(double *reco_nu_vtx, int plane_no){
 
   ::art::ServiceHandle<geo::Geometry> geo;
 
+  // Check point first
+  if (reco_nu_vtx[2] < 0. || reco_nu_vtx[2] > geo->DetLength() 
+      || reco_nu_vtx[1] < -geo->DetHalfHeight() || reco_nu_vtx[1] > geo->DetHalfHeight()) {
+
+    std::cout << "[UBXSecHelper::PointIsCloseToDeadRegion] Point is outside the dector in Z or Y, really?" << std::endl; 
+    std::cout << "[UBXSecHelper::PointIsCloseToDeadRegion] Point: " << reco_nu_vtx[0] << ", " << reco_nu_vtx[1] << ", " << reco_nu_vtx[2] << std::endl;
+    return false;
+  }
+
   // Get nearest channel
   raw::ChannelID_t ch = geo->NearestChannel(reco_nu_vtx, plane_no);
-  //std::cout << "nearest channel is " << ch << std::endl;
 
   // Get channel status
   const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();

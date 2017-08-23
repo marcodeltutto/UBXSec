@@ -641,13 +641,13 @@ bool UBXSecHelper::IsCrossingTopBoundary(recob::Track track, int & vtx_ok){
   vtx[0] = track.Vertex().X();
   vtx[1] = track.Vertex().Y();
   vtx[2] = track.Vertex().Z();
-  std::cout << "VTX X " <<vtx[0] << "Y " <<vtx[1] << "Z " <<vtx[2] << std::endl;
+  //std::cout << "VTX X " <<vtx[0] << "Y " <<vtx[1] << "Z " <<vtx[2] << std::endl;
 
   double end[3];
   end[0] = track.End().X();
   end[1] = track.End().Y();
   end[2] = track.End().Z();
-  std::cout << "END X " <<end[0] << "Y " <<end[1] << "Z " <<end[2] << std::endl;
+  //std::cout << "END X " <<end[0] << "Y " <<end[1] << "Z " <<end[2] << std::endl;
 
   if ( InFV(vtx) && !InFV(end) && (end[1] > 233/2.-20)) {
     std::cout << "Crossing top boundary, vertex is in FV" << std::endl;

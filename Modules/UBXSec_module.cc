@@ -77,6 +77,7 @@
 #include "TTree.h"
 #include "TH2F.h"
 #include "TH1D.h"
+#include "TH2D.h"
 
 namespace ubxsec {
   struct Hit3D_t {
@@ -188,6 +189,7 @@ private:
   std::vector<double> _slc_maxdistance_vtxtrack;
   std::vector<int> _slc_npfp, _slc_ntrack, _slc_nshower;
   std::vector<bool> _slc_iscontained;
+  std::vector<int> _slc_mult_pfp, _slc_mult_track, _slc_mult_shower;
 
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe, _beamfls_z;
@@ -213,7 +215,8 @@ private:
   TH2F * _deadRegion2P;
   TH2F * _deadRegion3P;
   
-  TH1D * _h_pida_proton, * _h_pida_muon, * _h_pida_pion, * _h_pida_kaon;
+  TH1D * _h_pida_proton,     * _h_pida_muon,     * _h_pida_pion,     * _h_pida_kaon;
+  TH2D * _h_pida_len_proton, * _h_pida_len_muon, * _h_pida_len_pion, * _h_pida_len_kaon;
 
   TTree* _sr_tree;
   int _sr_run, _sr_subrun; 
@@ -316,6 +319,9 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _tree1->Branch("slc_ntrack",                     "std::vector<int>",    &_slc_ntrack);
   _tree1->Branch("slc_nshower",                    "std::vector<int>",    &_slc_nshower);
   _tree1->Branch("slc_iscontained",                "std::vector<bool>",   &_slc_iscontained);
+  _tree1->Branch("slc_mult_pfp",                   "std::vector<int>",    &_slc_mult_pfp);
+  _tree1->Branch("slc_mult_track",                 "std::vector<int>",    &_slc_mult_track);
+  _tree1->Branch("slc_mult_shower",                "std::vector<int>",    &_slc_mult_shower);
 
   _tree1->Branch("nbeamfls",                   &_nbeamfls,                         "nbeamfls/I");
   _tree1->Branch("beamfls_time",               "std::vector<double>",              &_beamfls_time);
@@ -359,10 +365,15 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _deadRegion2P = fs->make<TH2F>("deadRegion2P","deadRegion2P", 10350,0.0,1035.0,2300,-115.0,115.0);
   _deadRegion3P = fs->make<TH2F>("deadRegion3P","deadRegion3P", 10350,0.0,1035.0,2300,-115.0,115.0);
 
-  _h_pida_muon = fs->make<TH1D>("h_pida_muon", "Muon tracks from signal;PIDa [MeV/cm^{1.42}];", 50, 0, 20);
-  _h_pida_proton = fs->make<TH1D>("h_pida_proton", "Proton tracks from signal;PIDa [MeV/cm^{1.42}];", 50, 0, 20);
-  _h_pida_pion = fs->make<TH1D>("h_pida_pion", "Pion tracks from signal;PIDa [MeV/cm^{1.42}];", 50, 0, 20);
-  _h_pida_kaon = fs->make<TH1D>("h_pida_kaon", "Kaon tracks from signal;PIDa [MeV/cm^{1.42}];", 50, 0, 20);
+  _h_pida_muon = fs->make<TH1D>("h_pida_muon", "Muon tracks;PIDa [MeV/cm^{1.42}];", 50, 0, 20);
+  _h_pida_proton = fs->make<TH1D>("h_pida_proton", "Proton tracks;PIDa [MeV/cm^{1.42}];", 50, 0, 20);
+  _h_pida_pion = fs->make<TH1D>("h_pida_pion", "Pion tracks;PIDa [MeV/cm^{1.42}];", 50, 0, 20);
+  _h_pida_kaon = fs->make<TH1D>("h_pida_kaon", "Kaon tracks;PIDa [MeV/cm^{1.42}];", 50, 0, 20);
+
+  _h_pida_len_muon = fs->make<TH2D>("h_pida_len_muon", "Muon tracks;PIDa [MeV/cm^{1.42}];Track length [cm];", 50, 0, 20, 100, 0, 700);
+  _h_pida_len_proton = fs->make<TH2D>("h_pida_len_proton", "Proton tracks;PIDa [MeV/cm^{1.42}];Track length [cm];", 50, 0, 20, 100, 0, 700);
+  _h_pida_len_pion = fs->make<TH2D>("h_pida_len_pion", "Pion tracks;PIDa [MeV/cm^{1.42}];Track length [cm];", 50, 0, 20, 100, 0, 700);
+  _h_pida_len_kaon = fs->make<TH2D>("h_pida_len_kaon", "Kaon tracks;PIDa [MeV/cm^{1.42}];Track length [cm];", 50, 0, 20, 100, 0, 700);
 
   _sr_tree = fs->make<TTree>("pottree","");
   _sr_tree->Branch("run",                &_sr_run,                "run/I");
@@ -797,11 +808,14 @@ void UBXSec::analyze(art::Event const & e) {
   _slc_ntrack.resize(_nslices, -9999);
   _slc_nshower.resize(_nslices, -9999);
   _slc_iscontained.resize(_nslices, -9999);
+  _slc_mult_pfp.resize(_nslices, -9999);
+  _slc_mult_track.resize(_nslices, -9999);
+  _slc_mult_shower.resize(_nslices, -9999);
 
-  std::cout << "UBXSec - SAVING INFORMATION" << std::endl;
+  std::cout << "[UBXSec] --- SAVING INFORMATION" << std::endl;
   _vtx_resolution = -9999;
   for (unsigned int slice = 0; slice < tpcobj_h->size(); slice++){
-    std::cout << ">>> SLICE" << slice << std::endl;
+    std::cout << "[UBXSec] >>> SLICE " << slice << std::endl;
 
     ubana::TPCObject tpcobj = (*tpcobj_h)[slice];
 
@@ -811,7 +825,7 @@ void UBXSec::analyze(art::Event const & e) {
 
     // Slice origin 
     _slc_origin[slice] = tpcobj.GetOrigin();
-    std::cout << "    Origin is " << _slc_origin[slice] << std::endl;
+    std::cout << "[UBXSec] \t Origin is " << _slc_origin[slice] << std::endl;
 
     // Containment
     _slc_iscontained[slice] = UBXSecHelper::TracksAreContained(tpcobj.GetTracks());
@@ -824,18 +838,25 @@ void UBXSec::analyze(art::Event const & e) {
     _slc_nuvtx_y[slice] = reco_nu_vtx[1];
     _slc_nuvtx_z[slice] = reco_nu_vtx[2];
     _slc_nuvtx_fv[slice] = (UBXSecHelper::InFV(reco_nu_vtx) ? 1 : 0);
-    std::cout << "    Reco vertex saved" << std::endl;
+    std::cout << "[UBXSec] \t Reco vertex saved" << std::endl;
 
     // Vertex resolution
     if (_slc_origin[slice] == ubana::kBeamNeutrino) {
       _vtx_resolution = sqrt( pow(_slc_nuvtx_y[slice]-_tvtx_y[0], 2) + pow(_slc_nuvtx_z[slice]-_tvtx_z[0], 2) );
     } 
 
+    // Multiplicity
+    int p, t, s;
+    tpcobj.GetMultiplicity(p, t, s);
+    _slc_mult_pfp[slice] = p;
+    _slc_mult_track[slice] = t;
+    _slc_mult_shower[slice] = s;
+
     // Neutrino Flash match
     _slc_flsmatch_score[slice] = -9999;
     std::vector<art::Ptr<ubana::FlashMatch>> pfpToFlashMatch_v = tpcobjToFlashMatchAssns.at(slice);
     if (pfpToFlashMatch_v.size() > 1) {
-      std::cout << "    More than one flash match per nu pfp ?!" << std::endl;
+      std::cout << "[UBXSec] \t More than one flash match per nu pfp ?!" << std::endl;
       continue;
     } else if (pfpToFlashMatch_v.size() == 0){
       // do nothing
@@ -851,8 +872,8 @@ void UBXSec::analyze(art::Event const & e) {
       _slc_flshypo_spec[slice]         = pfpToFlashMatch_v[0]->GetHypoFlashSpec();
       //for (auto v : _slc_flshypo_spec[slice]) std::cout << "Hypo PE: " << v << std::endl;
 
-      std::cout << "FM score:       " << _slc_flsmatch_score[slice] << std::endl;
-      std::cout << "qllx - tpcx is: " << _slc_flsmatch_qllx[slice] - _slc_flsmatch_tpcx[slice] << std::endl;
+      std::cout << "[UBXSec] \t FM score:       " << _slc_flsmatch_score[slice] << std::endl;
+      std::cout << "[UBXSec] \t qllx - tpcx is: " << _slc_flsmatch_qllx[slice] - _slc_flsmatch_tpcx[slice] << std::endl;
     }
 
     // Cosmic Flash Match
@@ -897,7 +918,7 @@ void UBXSec::analyze(art::Event const & e) {
     _slc_acpt_outoftime[slice] = 0;
     for (unsigned int t = 0; t < track_v_v[slice].size(); t++) {
       if(opfls_ptr_coll_v.at(track_v_v[slice][t].key()).size()>1) {
-        std::cout << "[UBXSec] More than 1 association found (ACPT)!" << std::endl;
+        std::cout << "[UBXSec] \t More than 1 association found (ACPT)!" << std::endl;
         //throw std::exception();
       } else if (opfls_ptr_coll_v.at(track_v_v[slice][t].key()).size()==0){
         continue;
@@ -913,7 +934,7 @@ void UBXSec::analyze(art::Event const & e) {
     _slc_kalman_chi2[slice] = -9999;
     for (unsigned int t = 0; t < pfp_v_v[slice].size(); t++) {
       if(trk_kalman_v.at(pfp_v_v[slice][t].key()).size()>1) {
-        std::cout << "[UBXSec] TQ more than one track per PFP, ntracks " << trk_kalman_v.at(pfp_v_v[slice][t].key()).size() << std::endl;
+        std::cout << "[UBXSec] \t TQ more than one track per PFP, ntracks " << trk_kalman_v.at(pfp_v_v[slice][t].key()).size() << std::endl;
       } else if (trk_kalman_v.at(pfp_v_v[slice][t].key()).size()==0){
         continue;
       } else {
@@ -952,7 +973,7 @@ void UBXSec::analyze(art::Event const & e) {
       if (iter != pfp_to_spacept.end()) {
         //std::cout << "[UBXSec] Found related spacepoints, size is " << (iter->second).size() << std::endl;
       } else {
-        std::cout << "[UBXSec] Can't find spacepoints for pfp with pdg " << pfp->PdgCode() << std::endl;
+        std::cout << "[UBXSec] \t Can't find spacepoints for pfp with pdg " << pfp->PdgCode() << std::endl;
         continue;
       }
       // Loop through the hits associated 
@@ -961,7 +982,7 @@ void UBXSec::analyze(art::Event const & e) {
         if (iter2 != spacept_to_hits.end()) {
           //std::cout << "[UBXSec] Founds hits associated to this sp_pt" << std::endl;
         } else {
-          std::cout << "[UBXSec] Can't find hits ass to this sp_pt" << std::endl;
+          std::cout << "[UBXSec] \t Can't find hits ass to this sp_pt" << std::endl;
           continue;
         }   
         // Save sp_pt position and hit charge for all the sp_pt you have
@@ -974,7 +995,7 @@ void UBXSec::analyze(art::Event const & e) {
         hit3d_v.emplace_back(thishit);
       }
     }
-    std::cout << "[UBXSec] For this TPC object we have " << hit3d_v.size() << " Hit3D_t hits." << std::endl;
+    std::cout << "[UBXSec] \t For this TPC object we have " << hit3d_v.size() << " Hit3D_t hits." << std::endl;
 
     // Now construct average position
     double sumx = 0, sumy = 0, sumz = 0;
@@ -1015,49 +1036,53 @@ void UBXSec::analyze(art::Event const & e) {
 
     for (auto pfp : pfps_from_tpcobj){
 
-      std::cout << "[UBXSec] This is PFP " << pfp->Self()  << std::endl;
+      std::cout << "[UBXSec] \t This is PFP " << pfp->Self()  << std::endl;
       std::vector<art::Ptr<ubana::MCGhost>> mcghosts = mcghost_from_pfp.at(pfp.key());
       std::vector<art::Ptr<simb::MCParticle>> mcpars;
       int pdg = -1;
       if (mcghosts.size() == 0 || mcghosts.size() > 1 ) {
-        std::cout << "[UBXSec] \tmcghosts is ether 0 or >1" << std::endl;
+        std::cout << "[UBXSec] \t\t mcghosts is ether 0 or >1" << std::endl;
         continue;
       } else {
         mcpars = mcpar_from_mcghost.at(mcghosts[0].key());
         pdg = mcpars[0]->PdgCode();
-        std::cout << "[UBXSec] \tMCPar has pdg " << pdg << std::endl;
+        std::cout << "[UBXSec] \t\t MCPar has pdg " << pdg << std::endl;
       }
 
       std::vector<art::Ptr<recob::Track>> tracks = tracks_from_pfp.at(pfp.key());
-      std::cout << "[UBXSec] \tn tracks ass to this pfp: " << tracks.size() << std::endl;
+      std::cout << "[UBXSec] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;
       for (auto track : tracks) {
 
         std::vector<const anab::ParticleID*> pids = particleids_from_track.at(track.key());
-        if(pids.size() == 0) std::cout << "[UBXSec] \tZero ParticleID" << std::endl;
+        if(pids.size() == 0) std::cout << "[UBXSec] \t\t Zero ParticleID" << std::endl;
         if(pids.size() > 1) {
-          std::cout << "[UBXSec] \tParticleID vector is bigger than 1. Only one saved." << std::endl;
+          std::cout << "[UBXSec] \t\t ParticleID vector is bigger than 1. Only one saved." << std::endl;
         }
         for (auto pid : pids) {
           if (!pid->PlaneID().isValid) continue;
           int planenum = pid->PlaneID().Plane;
           if (planenum < 0 || planenum > 2) continue;
-          std::cout << "[UBXSec] \tParticleID PIDA is " << pid->PIDA() << ", plane is " << planenum << std::endl;
+          std::cout << "[UBXSec] \t\t ParticleID PIDA is " << pid->PIDA() << ", plane is " << planenum << std::endl;
           if (/*_is_signal && (_slc_origin[slice] == 0 || _slc_origin[slice] == 2) &&*/ planenum == 2) {
             if (pdg == 13) {
               _h_pida_muon->Fill(pid->PIDA());
+              _h_pida_len_muon->Fill(pid->PIDA(), track->Length());
             } else if (pdg == 2212) {
               _h_pida_proton->Fill(pid->PIDA());
+              _h_pida_len_proton->Fill(pid->PIDA(), track->Length());
             } else if (pdg == 211) {
               _h_pida_pion->Fill(pid->PIDA());
+              _h_pida_len_pion->Fill(pid->PIDA(), track->Length());
             } else if (pdg == 321) {
               _h_pida_kaon->Fill(pid->PIDA());
+              _h_pida_len_kaon->Fill(pid->PIDA(), track->Length());
             }
           }
         }
       }
     }
   
-    std::cout << "[UBXSec] - SLICE INFORMATION SAVED" << std::endl;
+    std::cout << "[UBXSec] --- SLICE INFORMATION SAVED" << std::endl;
   } // slice loop
 
 

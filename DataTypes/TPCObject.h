@@ -50,6 +50,7 @@ namespace ubana {
     void SetPFPs(std::vector<recob::PFParticle>);
     void SetVertex(recob::Vertex);
     void SetOrigin(ubana::TPCObjectOrigin);
+    void SetMultiplicity(int pfpMult, int trackMult, int showerMult);
 
     // Getter methods
     const std::vector<recob::Track>      & GetTracks()   const;
@@ -59,6 +60,7 @@ namespace ubana {
     const size_t                           GetNTracks()  const;
     const size_t                           GetNShowers() const;
     const size_t                           GetNPFP()     const;
+    const void                             GetMultiplicity(int &, int &, int &) const;
 
   private:
 
@@ -67,7 +69,9 @@ namespace ubana {
     std::vector<recob::PFParticle> fPFParticles;
     recob::Vertex                  fVertex;
     ubana::TPCObjectOrigin         fOrigin;
-
+    int                            fPfpMult;
+    int                            fTrackMult;
+    int                            fShowerMult;
  };
 }
 

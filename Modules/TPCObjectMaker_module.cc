@@ -77,8 +77,19 @@ public:
    *  @param pfParticleToShowerMap map from PFP to showers
    *  @param particle the PFP
    *  @param pfp_v output, a vector of PFP (the TPC object)
-   *  @param track_v output, a of tracks (the TPC object)   */
+   *  @param track_v output, a vector of tracks (the TPC object)   
+   *  @param shower_v output, a vector of showers (the TPC object) */
   void CollectTracksAndPFP(lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToShowers pfParticleToShowerMap, lar_pandora::PFParticleVector pfParticleList, art::Ptr<recob::PFParticle> particle, lar_pandora::PFParticleVector &pfp_v, lar_pandora::TrackVector &track_v, lar_pandora::ShowerVector &shower_v);
+
+  /**
+   *  @brief Gets the pfp, track and shower multiplicity for a neutrino PFP
+   *
+   *  @param pfParticleList the list of PFP
+   *  @param particle the input neutrino PFP
+   *  @param p output, multiplicity in number of PFPs
+   *  @param t output, multiplicity in number of tracks
+   *  @param s output, multiplicity in number of showers */
+  void GetMultiplicity(lar_pandora::PFParticleVector pfParticleList, art::Ptr<recob::PFParticle> particle, int & p, int & t, int & s);
 
   /**
    *  @brief Constructs TPC objects using Pandora PFP slices
@@ -90,8 +101,11 @@ public:
    *  @param _pfp_producer the PFP producer module
    *  @param pfp_v_v output, a vector of vector of PFP (a vector of TPC objects)
    *  @param track_v_v output, a vector of vector of tracks (a vector of TPC objects)   
-   *  @param shower_v_v output, a vector of vector of showers (a vector of TPC objects) */
-  void GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToShowers pfParticleToShowerMap, lar_pandora::PFParticlesToVertices  pfParticleToVertexMap, std::vector<lar_pandora::PFParticleVector> & pfp_v_v, std::vector<lar_pandora::TrackVector> & track_v_v, std::vector<lar_pandora::ShowerVector> & shower_v_V);
+   *  @param shower_v_v output, a vector of vector of showers (a vector of TPC objects) 
+   *  @param p_v output, multiplicity in number of PFPs
+   *  @param t_v output, multiplicity in number of tracks
+   *  @param s_v output, multiplicity in number of showers */
+  void GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToShowers pfParticleToShowerMap, lar_pandora::PFParticlesToVertices  pfParticleToVertexMap, std::vector<lar_pandora::PFParticleVector> & pfp_v_v, std::vector<lar_pandora::TrackVector> & track_v_v, std::vector<lar_pandora::ShowerVector> & shower_v_v, std::vector<int> & p_v, std::vector<int> & t_v, std::vector<int> & s_v);
 
 
   /**
@@ -170,8 +184,9 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
   std::vector<lar_pandora::TrackVector     > track_v_v;
   std::vector<lar_pandora::ShowerVector    > shower_v_v;
   std::vector<lar_pandora::PFParticleVector> pfp_v_v;
+  std::vector<int> p_v, t_v, s_v;
 
-  this->GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToShowerMap,  pfParticleToVertexMap, pfp_v_v, track_v_v, shower_v_v);
+  this->GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToShowerMap,  pfParticleToVertexMap, pfp_v_v, track_v_v, shower_v_v, p_v, t_v, s_v);
 
 
   // Do the MCParticle to PFParticle matching
@@ -190,6 +205,8 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
   std::vector<art::Ptr<recob::PFParticle>> cosmicOriginPFP;
   neutrinoOriginPFP.clear();
   cosmicOriginPFP.clear();
+
+  if (!_is_mc) goto constructobjects;
 
   for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
       iter1 != iterEnd1; ++iter1) {
@@ -214,7 +231,10 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
   }
 
 
+
+
   // Construct TPCObjects
+  constructobjects:
 
   for (size_t i = 0; i < pfp_v_v.size(); i++){
 
@@ -245,6 +265,9 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
       origin = UBXSecHelper::GetSliceOrigin(neutrinoOriginPFP, cosmicOriginPFP, pfp_v_v[i]); 
     obj.SetOrigin(origin);
 
+    // Set Multiplicity
+    obj.SetMultiplicity(p_v[i], t_v[i], s_v[i]);
+
     tpcObjectVector->emplace_back(obj);
     util::CreateAssn(*this, e, *tpcObjectVector, track_v_v[i],  *assnOutTPCObjectTrack);
     util::CreateAssn(*this, e, *tpcObjectVector, shower_v_v[i], *assnOutTPCObjectShower);
@@ -254,7 +277,6 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
 
 
   // Put TPCObjects into the Event
-
   e.put(std::move(tpcObjectVector)); 
   e.put(std::move(assnOutTPCObjectTrack));
   e.put(std::move(assnOutTPCObjectShower));
@@ -291,11 +313,16 @@ void ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfPartic
                                             lar_pandora::PFParticlesToVertices  pfParticleToVertexMap,
                                             std::vector<lar_pandora::PFParticleVector> & pfp_v_v,
                                             std::vector<lar_pandora::TrackVector> & track_v_v,
-                                            std::vector<lar_pandora::ShowerVector> & shower_v_v) {
+                                            std::vector<lar_pandora::ShowerVector> & shower_v_v,
+                                            std::vector<int> & p_v, std::vector<int> & t_v, std::vector<int> & s_v) {
 
   track_v_v.clear();
   shower_v_v.clear();
   pfp_v_v.clear();
+  p_v.clear();
+  t_v.clear();
+  s_v.clear();
+
 
   if (_debug) std::cout << "[TPCObjectMaker] Getting TPC Objects..." << std::endl;
 
@@ -304,7 +331,6 @@ void ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfPartic
 
     if(lar_pandora::LArPandoraHelper::IsNeutrino(particle)) {
       if (_debug) std::cout << "[TPCObjectMaker] \t Creating TPC Object " << track_v_v.size() << std::endl;
-      //std::cout << "IS NEUTRINO, pfp id " << particle->Self() << std::endl;
       lar_pandora::VertexVector nu_vertex_v;
       auto search = pfParticleToVertexMap.find(particle);
       if(search != pfParticleToVertexMap.end()) {
@@ -313,13 +339,14 @@ void ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfPartic
 
       double nu_vertex_xyz[3]={0.,0.,0.};
       nu_vertex_v[0]->XYZ(nu_vertex_xyz);
-      //if (!this->InFV(nu_vertex_xyz)) continue;
 
       lar_pandora::TrackVector track_v;
       lar_pandora::ShowerVector shower_v;
       lar_pandora::PFParticleVector pfp_v;
+      int p, t, s;
 
       this->CollectTracksAndPFP(pfParticleToTrackMap, pfParticleToShowerMap, pfParticleList, particle, pfp_v, track_v, shower_v);
+      this->GetMultiplicity(pfParticleList, particle, p, t, s);
 
       if (_debug) std::cout << "[TPCObjectMaker] \t Number of pfp for this TPC object: "    << pfp_v.size()   << std::endl;
       for (auto pfp : pfp_v) {
@@ -333,15 +360,22 @@ void ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfPartic
           if (_debug) std::cout << " and vertex " << xyz[0] << " " << xyz[1] << " " << xyz[2] << std::endl;
         }
       }
-      std::cout << std::endl;
-      if (_debug) std::cout << "[TPCObjectMaker] \t Number of tracks for this TPC object:  " << track_v.size()  << std::endl;
-      if (_debug) std::cout << "[TPCObjectMaker] \t Number of showers for this TPC object: " << shower_v.size() << std::endl;
+      if (_debug) {
+        std::cout << "[TPCObjectMaker] \t Number of tracks for this TPC object:  " << track_v.size()  << std::endl;
+        std::cout << "[TPCObjectMaker] \t Number of showers for this TPC object: " << shower_v.size() << std::endl;
+        std::cout << "[TPCObjectMaker] \t Multiplicity (PFP) for this TPC object:    " << p << std::endl;
+        std::cout << "[TPCObjectMaker] \t Multiplicity (Track) for this TPC object:  " << t << std::endl;
+        std::cout << "[TPCObjectMaker] \t Multiplicity (Shower) for this TPC object: " << s << std::endl;
+        std::cout << "[TPCObjectMaker]" << std::endl;
+      }
 
       pfp_v_v.emplace_back(pfp_v);
       track_v_v.emplace_back(track_v);
       shower_v_v.emplace_back(shower_v);
+      p_v.emplace_back(p);
+      t_v.emplace_back(t);
+      s_v.emplace_back(s);
 
-      //for (unsigned int i = 0; i < pfp_v.size(); i++) std::cout << "   pfp with ID " << pfp_v[i]->Self() << std::endl;
     } // end if neutrino
   } // end pfp loop
 }
@@ -384,6 +418,43 @@ void ubana::TPCObjectMaker::CollectTracksAndPFP(lar_pandora::PFParticlesToTracks
     for (unsigned int m = 0; m < daughterIDs.size(); ++m) {
       const art::Ptr<recob::PFParticle> daughter = pfParticleList.at(daughterIDs.at(m));
       CollectTracksAndPFP(pfParticleToTrackMap, pfParticleToShowerMap, pfParticleList, daughter, pfp_v, track_v, shower_v);
+    }
+  }
+
+}
+
+
+
+//______________________________________________________________________________________________________________________________________
+void ubana::TPCObjectMaker::GetMultiplicity(lar_pandora::PFParticleVector pfParticleList, 
+                                            art::Ptr<recob::PFParticle> particle,
+                                            int & p,
+                                            int & t,
+                                            int & s) {
+
+  // Input PFP has to be a neutrino
+  if (!lar_pandora::LArPandoraHelper::IsNeutrino(particle)) {
+    std::cerr << "[TPCObjectMaker] Using ubana::TPCObjectMaker::GetMultiplicity with a non neutrino PFP as input. Exiting now." << std::endl;
+    throw std::exception();
+  }
+
+  // Initialize
+  p = 0;
+  t = 0;
+  s = 0;
+
+  const std::vector<size_t> &daughterIDs = particle->Daughters();
+  if(daughterIDs.size() == 0) {
+    if (_debug) std::cout << "[TPCObjectMaker] No daughters for this neutrino PFP." << std::endl;
+    return;
+  }
+  else {
+    for (unsigned int m = 0; m < daughterIDs.size(); ++m) {
+
+      const art::Ptr<recob::PFParticle> daughter = pfParticleList.at(daughterIDs.at(m));
+      p++;
+      if (lar_pandora::LArPandoraHelper::IsTrack(daughter))  t++;
+      if (lar_pandora::LArPandoraHelper::IsShower(daughter)) s++;
     }
   }
 

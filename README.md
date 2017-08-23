@@ -1,5 +1,7 @@
 # UBXSec
 
+[![Build Status](https://travis-ci.org/marcodeltutto/UBXSec.svg?branch=master)](https://travis-ci.org/marcodeltutto/UBXSec)
+
 Doxygen Documentation: https://marcodeltutto.github.io/UBXSec/documentation/html/index.html
 
 ## How it works

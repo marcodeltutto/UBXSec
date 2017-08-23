@@ -426,11 +426,15 @@ void UBXSec::analyze(art::Event const & e)
         lar_pandora::PFParticlesToVertices particlesToVertices;
         lar_pandora::LArPandoraHelper::CollectVertices(e, _pfp_producer, vertexVector, particlesToVertices);
 
-        lar_pandora::VertexVector vertex_v = particlesToVertices.find(pf_par)->second;
-        double xyz[3];
-        vertex_v[0]->XYZ(xyz);
-
-        std::cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM The PFP has vtx x="<<xyz[0]<<" y="<<xyz[1]<<" z="<<xyz[2] << std::endl;
+        auto iter = particlesToVertices.find(pf_par);
+        if (iter != particlesToVertices.end()) {
+          lar_pandora::VertexVector vertex_v = particlesToVertices.find(pf_par)->second;
+          double xyz[3];
+          vertex_v[0]->XYZ(xyz);
+          std::cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM The PFP has vtx x="<<xyz[0]<<" y="<<xyz[1]<<" z="<<xyz[2] << std::endl;
+        } else {
+          std::cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Can't find ass vertex" << std::endl;
+        }
       }
          
     }

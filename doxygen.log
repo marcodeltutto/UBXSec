@@ -68,7 +68,7 @@ Parsing file /home/travis/build/marcodeltutto/UBXSec/Algorithms/Cos/home/travis/
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/CosmicTagByHitIntegral.h:35: warning: Compound ubana::CosmicTagByHitIntegral is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:57: warning: Compound ubana::TPCObjectMaker is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/DeDxAna_module.cc:47: warning: Compound DeDxAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:82: warning: Compound ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:83: warning: Compound ubxsec::Hit3D_t is not documented.
 micTagByHitIntegral.cxx...
 Preprocessing /home/travis/build/marcodeltutto/UBXSec/Algorithms/CosmicTagByHitIntegral.h...
 Parsing file /home/travis/build/marcodeltutto/UBXSec/Algorithms/CosmicTagByHitIntegral.h...
@@ -153,12 +153,7 @@ Generating code for f/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMa
 /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:70: warning: Member produce(art::Event &e) override (function) of class ubana::TPCObjectMaker is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:49: warning: Member NEUTRINO_ORIGIN (variable) of group UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:50: warning: Member COSMIC_ORIGIN (variable) of group UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:72: warning: The following parameters of ubana::TPCObjectMaker::CollectTracksAndPFP(lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToShowers pfParticleToShowerMap, lar_pandora::PFParticleVector pfParticleList, art::Ptr< recob::PFParticle > particle, lar_pandora::PFParticleVector &pfp_v, lar_pandora::TrackVector &track_v, lar_pandora::ShowerVector &shower_v) are not documented:
-  parameter 'shower_v'
-/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:83: warning: argument '_pfp_producer' of command @param is not found in the argument list of ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToShowers pfParticleToShowerMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v, std::vector< lar_pandora::ShowerVector > &shower_v_V)
-/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:83: warning: argument 'shower_v_v' of command @param is not found in the argument list of ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToShowers pfParticleToShowerMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v, std::vector< lar_pandora::ShowerVector > &shower_v_V)
-/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:83: warning: The following parameters of ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToShowers pfParticleToShowerMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v, std::vector< lar_pandora::ShowerVector > &shower_v_V) are not documented:
-  parameter 'shower_v_V'
+/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:94: warning: argument '_pfp_producer' of command @param is not found in the argument list of ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToShowers pfParticleToShowerMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v, std::vector< lar_pandora::ShowerVector > &shower_v_v, std::vector< int > &p_v, std::vector< int > &t_v, std::vector< int > &s_v)
 /home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:46: warning: Member ACPTTagger(fhicl::ParameterSet const &p) (function) of class ACPTTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:51: warning: Member ACPTTagger(ACPTTagger const &) (function) of class ACPTTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:52: warning: Member ACPTTagger(ACPTTagger &&) (function) of class ACPTTagger is not documented.
@@ -218,13 +213,13 @@ Generating code for f/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMa
 /home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:58: warning: Member operator=(RecoTrueMatcher const &) (function) of class RecoTrueMatcher is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:59: warning: Member operator=(RecoTrueMatcher &&) (function) of class RecoTrueMatcher is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:62: warning: Member produce(art::Event &e) override (function) of class RecoTrueMatcher is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:96: warning: Member UBXSec(fhicl::ParameterSet const &p) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:101: warning: Member UBXSec(UBXSec const &) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:102: warning: Member UBXSec(UBXSec &&) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:103: warning: Member operator=(UBXSec const &) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:104: warning: Member operator=(UBXSec &&) (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:107: warning: Member analyze(art::Event const &e) override (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:108: warning: Member endSubRun(const art::SubRun &sr) override (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:97: warning: Member UBXSec(fhicl::ParameterSet const &p) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:102: warning: Member UBXSec(UBXSec const &) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:103: warning: Member UBXSec(UBXSec &&) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:104: warning: Member operator=(UBXSec const &) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:105: warning: Member operator=(UBXSec &&) (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:108: warning: Member analyze(art::Event const &e) override (function) of class UBXSec is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:109: warning: Member endSubRun(const art::SubRun &sr) override (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:71: warning: Member GetRecoToTrueMatches(art::Event const &e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits) (function) of class UBXSecHelper is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:58: warning: The following parameters of UBXSecHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits, PFParticleSet &recoVeto, MCParticleSet &trueVeto, bool _recursiveMatching) are not documented:
   parameter '_recursiveMatching'
@@ -262,18 +257,20 @@ Generating code for f/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMa
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:50: warning: Member SetPFPs(std::vector< recob::PFParticle >) (function) of class ubana::TPCObject is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:51: warning: Member SetVertex(recob::Vertex) (function) of class ubana::TPCObject is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:52: warning: Member SetOrigin(ubana::TPCObjectOrigin) (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:55: warning: Member GetTracks() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:56: warning: Member GetPFPs() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:57: warning: Member GetVertex() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:58: warning: Member GetOrigin() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:59: warning: Member GetNTracks() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:60: warning: Member GetNShowers() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:61: warning: Member GetNPFP() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:53: warning: Member SetMultiplicity(int pfpMult, int trackMult, int showerMult) (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:56: warning: Member GetTracks() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:57: warning: Member GetPFPs() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:58: warning: Member GetVertex() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:59: warning: Member GetOrigin() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:60: warning: Member GetNTracks() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:61: warning: Member GetNShowers() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:62: warning: Member GetNPFP() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:63: warning: Member GetMultiplicity(int &, int &, int &) const  (function) of class ubana::TPCObject is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/CosmicTagByHitIntegral.h:43: warning: Member _counter(0) (function) of class ubana::CosmicTagByHitIntegral is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:83: warning: Member x (variable) of class ubxsec::Hit3D_t is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:84: warning: Member y (variable) of class ubxsec::Hit3D_t is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:85: warning: Member z (variable) of class ubxsec::Hit3D_t is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:86: warning: Member q (variable) of class ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:84: warning: Member x (variable) of class ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:85: warning: Member y (variable) of class ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:86: warning: Member z (variable) of class ubxsec::Hit3D_t is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:87: warning: Member q (variable) of class ubxsec::Hit3D_t is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/ACPTAlgo.h:70: warning: Member _max_distance (variable) of class ubxsec::ACPTAlgo is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/ACPTAlgo.h:71: warning: Member _tpcObjIsSet (variable) of class ubxsec::ACPTAlgo is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/ACPTAlgo.h:71: warning: Member _vtxIsSet (variable) of class ubxsec::ACPTAlgo is not documented.
@@ -336,6 +333,6 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-symbol cache used 564/65536 hits=12397 misses=564
-lookup cache used 245/65536 hits=2154 misses=270
+symbol cache used 577/65536 hits=12675 misses=577
+lookup cache used 251/65536 hits=2202 misses=276
 finished...

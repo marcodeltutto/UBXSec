@@ -84,60 +84,47 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00022"></a>00022 <span class="preprocessor"></span><span class="preprocessor">#define TPCObject_h</span>
 <a name="l00023"></a>00023 <span class="preprocessor"></span>
 <a name="l00024"></a>00024 <span class="preprocessor">#include &quot;lardataobj/RecoBase/Track.h&quot;</span>
-<a name="l00025"></a>00025 <span class="preprocessor">#include &quot;lardataobj/RecoBase/Shower.h&quot;</span>
-<a name="l00026"></a>00026 <span class="preprocessor">#include &quot;lardataobj/RecoBase/PFParticle.h&quot;</span>
-<a name="l00027"></a>00027 <span class="preprocessor">#include &quot;lardataobj/RecoBase/Vertex.h&quot;</span>
-<a name="l00028"></a>00028 <span class="preprocessor">#include &lt;vector&gt;</span>
-<a name="l00029"></a>00029 
-<a name="l00030"></a>00030 <span class="keyword">namespace </span>ubana {
-<a name="l00031"></a>00031   <span class="keyword">enum</span> TPCObjectOrigin{
-<a name="l00032"></a>00032     kUnknown = -1,          <span class="comment">// -1           </span>
-<a name="l00033"></a>00033     kBeamNeutrino = 0,      <span class="comment">// 0</span>
-<a name="l00034"></a>00034     kCosmicRay,             <span class="comment">// 1</span>
-<a name="l00035"></a>00035     kMixed,                 <span class="comment">// 2</span>
-<a name="l00036"></a>00036   };
-<a name="l00037"></a>00037 }
+<a name="l00025"></a>00025 <span class="preprocessor">#include &quot;lardataobj/RecoBase/Vertex.h&quot;</span>
+<a name="l00026"></a>00026 <span class="preprocessor">#include &lt;vector&gt;</span>
+<a name="l00027"></a>00027 
+<a name="l00028"></a>00028 <span class="keyword">namespace </span>ubana {
+<a name="l00029"></a>00029   <span class="keyword">enum</span> TPCObjectOrigin{
+<a name="l00030"></a>00030     kUnknown = -1,          <span class="comment">// -1           </span>
+<a name="l00031"></a>00031     kBeamNeutrino = 0,      <span class="comment">// 0</span>
+<a name="l00032"></a>00032     kCosmicRay,             <span class="comment">// 1</span>
+<a name="l00033"></a>00033     kMixed,                 <span class="comment">// 2</span>
+<a name="l00034"></a>00034   };
+<a name="l00035"></a>00035 }
+<a name="l00036"></a>00036 
+<a name="l00037"></a>00037 <span class="keyword">namespace </span>ubana {
 <a name="l00038"></a>00038 
-<a name="l00039"></a>00039 <span class="keyword">namespace </span>ubana {
+<a name="l00039"></a><a class="code" href="classubana_1_1TPCObject.html">00039</a>   <span class="keyword">class </span><a class="code" href="classubana_1_1TPCObject.html" title="Data product to store a TPC Object.">TPCObject</a> {
 <a name="l00040"></a>00040 
-<a name="l00041"></a><a class="code" href="classubana_1_1TPCObject.html">00041</a>   <span class="keyword">class </span><a class="code" href="classubana_1_1TPCObject.html" title="Data product to store a TPC Object.">TPCObject</a> {
+<a name="l00041"></a>00041   <span class="keyword">public</span>:
 <a name="l00042"></a>00042 
-<a name="l00043"></a>00043   <span class="keyword">public</span>:
-<a name="l00044"></a>00044 
-<a name="l00045"></a>00045     <a class="code" href="classubana_1_1TPCObject.html" title="Data product to store a TPC Object.">TPCObject</a>();
-<a name="l00046"></a>00046     <span class="keyword">virtual</span> ~<a class="code" href="classubana_1_1TPCObject.html" title="Data product to store a TPC Object.">TPCObject</a>();
-<a name="l00047"></a>00047 
-<a name="l00048"></a>00048     <span class="comment">// Setter methods</span>
-<a name="l00049"></a>00049     <span class="keywordtype">void</span> SetTracks(std::vector&lt;recob::Track&gt;);
-<a name="l00050"></a>00050     <span class="keywordtype">void</span> SetPFPs(std::vector&lt;recob::PFParticle&gt;);
-<a name="l00051"></a>00051     <span class="keywordtype">void</span> SetVertex(recob::Vertex);
-<a name="l00052"></a>00052     <span class="keywordtype">void</span> SetOrigin(ubana::TPCObjectOrigin);
-<a name="l00053"></a>00053     <span class="keywordtype">void</span> SetMultiplicity(<span class="keywordtype">int</span> pfpMult, <span class="keywordtype">int</span> trackMult, <span class="keywordtype">int</span> showerMult);
-<a name="l00054"></a>00054 
-<a name="l00055"></a>00055     <span class="comment">// Getter methods</span>
-<a name="l00056"></a>00056     <span class="keyword">const</span> std::vector&lt;recob::Track&gt;      &amp; GetTracks()   <span class="keyword">const</span>;
-<a name="l00057"></a>00057     <span class="keyword">const</span> std::vector&lt;recob::PFParticle&gt; &amp; GetPFPs()     <span class="keyword">const</span>;
-<a name="l00058"></a>00058     <span class="keyword">const</span> recob::Vertex                  &amp; GetVertex()   <span class="keyword">const</span>;
-<a name="l00059"></a>00059     <span class="keyword">const</span> ubana::TPCObjectOrigin         &amp; GetOrigin()   <span class="keyword">const</span>;
-<a name="l00060"></a>00060     <span class="keyword">const</span> <span class="keywordtype">size_t</span>                           GetNTracks()  <span class="keyword">const</span>;
-<a name="l00061"></a>00061     <span class="keyword">const</span> <span class="keywordtype">size_t</span>                           GetNShowers() <span class="keyword">const</span>;
-<a name="l00062"></a>00062     <span class="keyword">const</span> <span class="keywordtype">size_t</span>                           GetNPFP()     <span class="keyword">const</span>;
-<a name="l00063"></a>00063     <span class="keyword">const</span> <span class="keywordtype">void</span>                             GetMultiplicity(<span class="keywordtype">int</span> &amp;, <span class="keywordtype">int</span> &amp;, <span class="keywordtype">int</span> &amp;) <span class="keyword">const</span>;
+<a name="l00043"></a>00043     <a class="code" href="classubana_1_1TPCObject.html" title="Data product to store a TPC Object.">TPCObject</a>();
+<a name="l00044"></a>00044     <span class="keyword">virtual</span> ~<a class="code" href="classubana_1_1TPCObject.html" title="Data product to store a TPC Object.">TPCObject</a>();
+<a name="l00045"></a>00045 
+<a name="l00046"></a>00046     <span class="comment">// Setter methods</span>
+<a name="l00047"></a>00047     <span class="keywordtype">void</span> SetTracks(std::vector&lt;recob::Track&gt;);
+<a name="l00048"></a>00048     <span class="keywordtype">void</span> SetVertex(recob::Vertex);
+<a name="l00049"></a>00049     <span class="keywordtype">void</span> SetOrigin(ubana::TPCObjectOrigin);
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051     <span class="comment">// Getter methods</span>
+<a name="l00052"></a>00052     <span class="keyword">const</span> std::vector&lt;recob::Track&gt;  &amp; GetTracks()  <span class="keyword">const</span>;
+<a name="l00053"></a>00053     <span class="keyword">const</span> recob::Vertex              &amp; GetVertex()  <span class="keyword">const</span>;
+<a name="l00054"></a>00054     <span class="keyword">const</span> ubana::TPCObjectOrigin     &amp; GetOrigin()  <span class="keyword">const</span>;
+<a name="l00055"></a>00055 
+<a name="l00056"></a>00056   <span class="keyword">private</span>:
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058     std::vector&lt;recob::Track&gt;  fTracks;
+<a name="l00059"></a>00059     recob::Vertex              fVertex;
+<a name="l00060"></a>00060     ubana::TPCObjectOrigin     fOrigin;
+<a name="l00061"></a>00061 
+<a name="l00062"></a>00062  };
+<a name="l00063"></a>00063 }
 <a name="l00064"></a>00064 
-<a name="l00065"></a>00065   <span class="keyword">private</span>:
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067     std::vector&lt;recob::Track&gt;      fTracks;
-<a name="l00068"></a>00068     std::vector&lt;recob::Shower&gt;     fShowers;
-<a name="l00069"></a>00069     std::vector&lt;recob::PFParticle&gt; fPFParticles;
-<a name="l00070"></a>00070     recob::Vertex                  fVertex;
-<a name="l00071"></a>00071     ubana::TPCObjectOrigin         fOrigin;
-<a name="l00072"></a>00072     <span class="keywordtype">int</span>                            fPfpMult;
-<a name="l00073"></a>00073     <span class="keywordtype">int</span>                            fTrackMult;
-<a name="l00074"></a>00074     <span class="keywordtype">int</span>                            fShowerMult;
-<a name="l00075"></a>00075  };
-<a name="l00076"></a>00076 }
-<a name="l00077"></a>00077 
-<a name="l00078"></a>00078 <span class="preprocessor">#endif </span><span class="comment">/* TPCObject_h */</span>
+<a name="l00065"></a>00065 <span class="preprocessor">#endif </span><span class="comment">/* TPCObject_h */</span>
 </pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"

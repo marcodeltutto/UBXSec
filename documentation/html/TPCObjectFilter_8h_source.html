@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>UBXSec: /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc File Reference</title>
+<title>UBXSec: /home/travis/build/marcodeltutto/UBXSec/Algorithms/TPCObjectFilter.h Source File</title>
 
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
@@ -75,54 +75,49 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
-<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
-<div class="title">/home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc File Reference<div class="ingroups"><a class="el" href="group__UBXSec.html">UBXSec</a></div></div>  </div>
+<div class="title">/home/travis/build/marcodeltutto/UBXSec/Algorithms/TPCObjectFilter.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>LArSoft plugin to generate TPC Objects.  
-<a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;art/Framework/Core/EDProducer.h&quot;</code><br/>
-<code>#include &quot;art/Framework/Core/ModuleMacros.h&quot;</code><br/>
-<code>#include &quot;art/Framework/Principal/Event.h&quot;</code><br/>
-<code>#include &quot;art/Framework/Principal/Handle.h&quot;</code><br/>
-<code>#include &quot;art/Framework/Principal/Run.h&quot;</code><br/>
-<code>#include &quot;art/Framework/Principal/SubRun.h&quot;</code><br/>
-<code>#include &quot;canvas/Utilities/InputTag.h&quot;</code><br/>
-<code>#include &quot;fhiclcpp/ParameterSet.h&quot;</code><br/>
-<code>#include &quot;messagefacility/MessageLogger/MessageLogger.h&quot;</code><br/>
-<code>#include &quot;lardata/Utilities/AssociationUtil.h&quot;</code><br/>
-<code>#include &quot;lardataobj/RecoBase/PFParticle.h&quot;</code><br/>
-<code>#include &quot;lardataobj/RecoBase/Shower.h&quot;</code><br/>
-<code>#include &quot;lardataobj/RecoBase/Track.h&quot;</code><br/>
-<code>#include &quot;lardataobj/RecoBase/Vertex.h&quot;</code><br/>
-<code>#include &quot;nusimdata/SimulationBase/MCParticle.h&quot;</code><br/>
-<code>#include &quot;nusimdata/SimulationBase/MCTruth.h&quot;</code><br/>
-<code>#include &quot;larpandora/LArPandoraInterface/LArPandoraHelper.h&quot;</code><br/>
-<code>#include &quot;larsim/MCCheater/BackTracker.h&quot;</code><br/>
-<code>#include &quot;uboone/UBXSec/DataTypes/TPCObject.h&quot;</code><br/>
-<code>#include &quot;uboone/UBXSec/Algorithms/McPfpMatch.h&quot;</code><br/>
-<code>#include &quot;uboone/UBXSec/Algorithms/UBXSecHelper.h&quot;</code><br/>
-<code>#include &quot;uboone/UBXSec/Algorithms/TPCObjectFilter.h&quot;</code><br/>
-<code>#include &lt;memory&gt;</code><br/>
-</div><table class="memberdecls">
-<tr><td colspan="2"><h2><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1TPCObjectMaker.html">ubana::TPCObjectMaker</a></td></tr>
-<tr><td colspan="2"><h2><a name="var-members"></a>
-Variables</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga8c1cb2271faf4557586c53e3f096f35a"></a><!-- doxytag: member="TPCObjectMaker_module.cc::NEUTRINO_ORIGIN" ref="ga8c1cb2271faf4557586c53e3f096f35a" args="" -->
-const simb::Origin_t&#160;</td><td class="memItemRight" valign="bottom"><b>NEUTRINO_ORIGIN</b> = simb::kBeamNeutrino</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="gad9e94c0c3656e123f9ff20869847b357"></a><!-- doxytag: member="TPCObjectMaker_module.cc::COSMIC_ORIGIN" ref="gad9e94c0c3656e123f9ff20869847b357" args="" -->
-const simb::Origin_t&#160;</td><td class="memItemRight" valign="bottom"><b>COSMIC_ORIGIN</b> = simb::kCosmicRay</td></tr>
-</table>
-<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p>LArSoft plugin to generate TPC Objects. </p>
-<dl class="author"><dt><b>Author:</b></dt><dd>Marco Del Tutto </dd></dl>
-</div></div><!-- contents -->
+<a href="TPCObjectFilter_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 
+<a name="l00014"></a>00014 <span class="preprocessor">#ifndef TPCOBJECTFILTER_H</span>
+<a name="l00015"></a>00015 <span class="preprocessor"></span><span class="preprocessor">#define TPCOBJECTFILTER_H</span>
+<a name="l00016"></a>00016 <span class="preprocessor"></span>
+<a name="l00017"></a>00017 <span class="preprocessor">#include &lt;iostream&gt;</span>
+<a name="l00018"></a>00018 <span class="preprocessor">#include &quot;fhiclcpp/ParameterSet.h&quot;</span>
+<a name="l00019"></a>00019 <span class="preprocessor">#include &quot;lardataobj/RecoBase/Track.h&quot;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &quot;lardataobj/RecoBase/Shower.h&quot;</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#include &quot;lardataobj/RecoBase/Vertex.h&quot;</span>
+<a name="l00022"></a>00022 <span class="preprocessor">#include &quot;lardataobj/RecoBase/PFParticle.h&quot;</span>
+<a name="l00023"></a>00023 <span class="preprocessor">#include &quot;larpandora/LArPandoraInterface/LArPandoraHelper.h&quot;</span>
+<a name="l00024"></a>00024 
+<a name="l00025"></a>00025 <span class="keyword">namespace </span>ubana{
+<a name="l00026"></a>00026   
+<a name="l00033"></a><a class="code" href="classubana_1_1TPCObjectFilter.html">00033</a>   <span class="keyword">class </span><a class="code" href="classubana_1_1TPCObjectFilter.html">TPCObjectFilter</a> {
+<a name="l00034"></a>00034     
+<a name="l00035"></a>00035   <span class="keyword">public</span>:
+<a name="l00036"></a>00036     
+<a name="l00038"></a>00038     <a class="code" href="classubana_1_1TPCObjectFilter.html#aa898a1ea96ce8bf1bf164111157a497d" title="Default constructor.">TPCObjectFilter</a>();
+<a name="l00039"></a>00039 
+<a name="l00041"></a><a class="code" href="classubana_1_1TPCObjectFilter.html#ad8a3f726f247b5651272397ee344ef1e">00041</a>     <a class="code" href="classubana_1_1TPCObjectFilter.html#ad8a3f726f247b5651272397ee344ef1e" title="Default destructor.">~TPCObjectFilter</a>(){}
+<a name="l00042"></a>00042 
+<a name="l00044"></a>00044     <span class="keywordtype">void</span> <a class="code" href="classubana_1_1TPCObjectFilter.html#a49a5f29b105c442cc8fe97d05066c72a" title="Configure function parameters.">Configure</a>(fhicl::ParameterSet <span class="keyword">const</span>&amp; p);
+<a name="l00045"></a>00045 
+<a name="l00047"></a>00047     <span class="keywordtype">void</span> <a class="code" href="classubana_1_1TPCObjectFilter.html#a542681a3872f6662e58e83330dddfe8c" title="Printd the current configuration.">PrintConfig</a>();
+<a name="l00048"></a>00048 
+<a name="l00050"></a>00050     lar_pandora::PFParticleVector <a class="code" href="classubana_1_1TPCObjectFilter.html#a4522b692674aeee4f88a134a1cf36a08" title="Do the filtering.">Filter</a>(lar_pandora::PFParticleVector pfp_v, lar_pandora::PFParticlesToTracks pfp_to_tracks, lar_pandora::PFParticlesToShowers pfp_to_showers);
+<a name="l00051"></a>00051 
+<a name="l00052"></a>00052   <span class="keyword">protected</span>:
+<a name="l00053"></a>00053 
+<a name="l00054"></a>00054     <span class="keywordtype">double</span> _tolerance;
+<a name="l00055"></a>00055 
+<a name="l00056"></a>00056   };
+<a name="l00057"></a>00057 }
+<a name="l00058"></a>00058 
+<a name="l00059"></a>00059 <span class="preprocessor">#endif</span>
+<a name="l00060"></a>00060 <span class="preprocessor"></span> <span class="comment">// end of doxygen group </span>
+<a name="l00061"></a>00061 
+</pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"

@@ -61,6 +61,7 @@ namespace ubana {
     const size_t                           GetNShowers() const;
     const size_t                           GetNPFP()     const;
     const void                             GetMultiplicity(int &, int &, int &) const;
+    const int                              GetNTracksCloseToVertex(double) const;
 
   private:
 

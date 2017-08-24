@@ -215,6 +215,21 @@ class UBXSecHelper {
    *
    *  @param track the recob::Track */
   static bool TrackIsContained(recob::Track track);
+
+  /**
+   *  @brief Returns the value of the phi angle for the track considering the nu vertex
+   *
+   *  @param t the recob::Track 
+   *  @param tpcobj_nu_vtx the recob::Vertex neutrino vertex */
+  static double GetCorrectedPhi(recob::Track t, recob::Vertex tpcobj_nu_vtx);
+
+  /**
+   *  @brief Returns the value of the theta angle for the track considering the nu vertex
+   *
+   *  @param track the recob::Track 
+   *  @param tpcobj_nu_vtx the recob::Vertex neutrino vertex */
+  static double GetCorrectedTheta(recob::Track t, recob::Vertex tpcobj_nu_vtx);
+
   /**
    *  @brief Returns true if the point passed is close to a dead region
    *

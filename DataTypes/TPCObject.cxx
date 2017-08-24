@@ -29,6 +29,34 @@ namespace ubana {
 
   const void TPCObject::GetMultiplicity(int &p, int &t, int &s) const { p = this->fPfpMult; t = this->fTrackMult; s = this->fShowerMult;}
 
+  const int  TPCObject::GetNTracksCloseToVertex(double tolerance) const {
+
+    if (tolerance < 0.) {
+      std::cout << "[TPCObject] tolerance can't be less than zero" << std::endl; 
+      throw std::exception();
+    }
+
+    // Output
+    int multiplicity = 0;
+
+    // Vertex
+    double v[3];
+    this->fVertex.XYZ(v);
+    TVector3 vtx(v[0], v[1], v[2]);
+
+    // Loop over tracks and calulate multiplicity
+    for (auto t : this->fTracks) {
+      
+      TVector3 start = t.Vertex();
+      TVector3 end = t.End();
+
+      if ( (vtx-start).Mag() < tolerance   ||   (vtx-end).Mag() < tolerance ) {
+        multiplicity++;
+      }
+    }
+
+    return multiplicity;
+  }
 }
 
 

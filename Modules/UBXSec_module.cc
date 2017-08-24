@@ -178,6 +178,7 @@ private:
   std::vector<int> _slc_origin;
   std::vector<int> _slc_nhits_u, _slc_nhits_v, _slc_nhits_w;
   std::vector<double> _slc_longesttrack_length;
+  std::vector<double> _slc_longesttrack_phi, _slc_longesttrack_theta;
   std::vector<bool> _slc_longesttrack_iscontained;
   std::vector<int> _slc_acpt_outoftime;
   std::vector<int> _slc_crosses_top_boundary;
@@ -189,7 +190,7 @@ private:
   std::vector<double> _slc_maxdistance_vtxtrack;
   std::vector<int> _slc_npfp, _slc_ntrack, _slc_nshower;
   std::vector<bool> _slc_iscontained;
-  std::vector<int> _slc_mult_pfp, _slc_mult_track, _slc_mult_shower;
+  std::vector<int> _slc_mult_pfp, _slc_mult_track, _slc_mult_shower, _slc_mult_track_tolerance;
 
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe, _beamfls_z;
@@ -304,6 +305,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _tree1->Branch("slc_nhits_v",                    "std::vector<int>",    &_slc_nhits_v);
   _tree1->Branch("slc_nhits_w",                    "std::vector<int>",    &_slc_nhits_w);
   _tree1->Branch("slc_longesttrack_length",        "std::vector<double>", &_slc_longesttrack_length);
+  _tree1->Branch("slc_longesttrack_phi",           "std::vector<double>", &_slc_longesttrack_phi);
+  _tree1->Branch("slc_longesttrack_theta",         "std::vector<double>", &_slc_longesttrack_theta);
   _tree1->Branch("slc_longesttrack_iscontained",   "std::vector<bool>",   &_slc_longesttrack_iscontained);
   _tree1->Branch("slc_acpt_outoftime",             "std::vector<int>",    &_slc_acpt_outoftime);
   _tree1->Branch("slc_crosses_top_boundary",       "std::vector<int>",    &_slc_crosses_top_boundary);
@@ -322,6 +325,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _tree1->Branch("slc_mult_pfp",                   "std::vector<int>",    &_slc_mult_pfp);
   _tree1->Branch("slc_mult_track",                 "std::vector<int>",    &_slc_mult_track);
   _tree1->Branch("slc_mult_shower",                "std::vector<int>",    &_slc_mult_shower);
+  _tree1->Branch("slc_mult_track_tolerance",       "std::vector<int>",    &_slc_mult_track_tolerance);
 
   _tree1->Branch("nbeamfls",                   &_nbeamfls,                         "nbeamfls/I");
   _tree1->Branch("beamfls_time",               "std::vector<double>",              &_beamfls_time);
@@ -793,6 +797,8 @@ void UBXSec::analyze(art::Event const & e) {
   _slc_flsmatch_cosmic_score.resize(_nslices, -9999);
   _slc_flsmatch_cosmic_t0.resize(_nslices, -9999);
   _slc_longesttrack_length.resize(_nslices, -9999);
+  _slc_longesttrack_phi.resize(_nslices, -9999);
+  _slc_longesttrack_theta.resize(_nslices, -9999);
   _slc_longesttrack_iscontained.resize(_nslices, -9999);
   _slc_acpt_outoftime.resize(_nslices, -9999);
   _slc_crosses_top_boundary.resize(_nslices, -9999);
@@ -811,6 +817,7 @@ void UBXSec::analyze(art::Event const & e) {
   _slc_mult_pfp.resize(_nslices, -9999);
   _slc_mult_track.resize(_nslices, -9999);
   _slc_mult_shower.resize(_nslices, -9999);
+  _slc_mult_track_tolerance.resize(_nslices, -9999);
 
   std::cout << "[UBXSec] --- SAVING INFORMATION" << std::endl;
   _vtx_resolution = -9999;
@@ -832,8 +839,8 @@ void UBXSec::analyze(art::Event const & e) {
 
     // Reco vertex
     double reco_nu_vtx[3];
-    recob::Vertex temp = tpcobj.GetVertex();
-    temp.XYZ(reco_nu_vtx);
+    recob::Vertex tpcobj_nu_vtx = tpcobj.GetVertex();
+    tpcobj_nu_vtx.XYZ(reco_nu_vtx);
     _slc_nuvtx_x[slice] = reco_nu_vtx[0];
     _slc_nuvtx_y[slice] = reco_nu_vtx[1];
     _slc_nuvtx_z[slice] = reco_nu_vtx[2];
@@ -851,6 +858,7 @@ void UBXSec::analyze(art::Event const & e) {
     _slc_mult_pfp[slice] = p;
     _slc_mult_track[slice] = t;
     _slc_mult_shower[slice] = s;
+    _slc_mult_track_tolerance[slice] = tpcobj.GetNTracksCloseToVertex(5.);
 
     // Neutrino Flash match
     _slc_flsmatch_score[slice] = -9999;
@@ -907,6 +915,8 @@ void UBXSec::analyze(art::Event const & e) {
     recob::Track lt;
     if (UBXSecHelper::GetLongestTrackFromTPCObj(track_v_v[slice], lt)){
       _slc_longesttrack_length[slice] = lt.Length();
+      _slc_longesttrack_phi[slice]   = UBXSecHelper::GetCorrectedPhi(lt, tpcobj_nu_vtx);
+      _slc_longesttrack_theta[slice] = UBXSecHelper::GetCorrectedTheta(lt, tpcobj_nu_vtx);
       _slc_longesttrack_iscontained[slice] = UBXSecHelper::TrackIsContained(lt);
       int vtx_ok;
       _slc_crosses_top_boundary[slice] = (UBXSecHelper::IsCrossingTopBoundary(lt, vtx_ok) ? 1 : 0);

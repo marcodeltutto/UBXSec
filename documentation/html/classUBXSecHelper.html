@@ -71,6 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -131,6 +132,14 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the track is crossing the FV border from the TOP.  <a href="#af2924ae512f2c8cc5be6feb2bd21a112"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a76b009afef0cc69f281ca3215a901f35">GetLongestTrackFromTPCObj</a> (lar_pandora::TrackVector track_v, recob::Track &amp;out_track)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the longest track from a TPC object, returns false if there are no tracks in the TPC object.  <a href="#a76b009afef0cc69f281ca3215a901f35"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a44c8ae9d98197e81da26aeae26c70f0a">TracksAreContained</a> (std::vector&lt; recob::Track &gt; tracks)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if all the tracks passed are fully contained.  <a href="#a44c8ae9d98197e81da26aeae26c70f0a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#aa0349c7d405ec64cd1b0c7ed3d54a56e">TrackIsContained</a> (recob::Track track)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the track passed is fully contained.  <a href="#aa0349c7d405ec64cd1b0c7ed3d54a56e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a79b61783bfe19d8dcd33d6aba4c3e61a">GetCorrectedPhi</a> (recob::Track t, recob::Vertex tpcobj_nu_vtx)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the phi angle for the track considering the nu vertex.  <a href="#a79b61783bfe19d8dcd33d6aba4c3e61a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a994f8158cb00b028048af055c487bd9d">GetCorrectedTheta</a> (recob::Track t, recob::Vertex tpcobj_nu_vtx)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the theta angle for the track considering the nu vertex.  <a href="#a994f8158cb00b028048af055c487bd9d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a7df598dfbdfdb620737fd69297e67faf">PointIsCloseToDeadRegion</a> (double *reco_nu_vtx, int plane_no)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the point passed is close to a dead region.  <a href="#a7df598dfbdfdb620737fd69297e67faf"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a88533a5a59d61351437a1fe2e54aff25">GetClosestPMT</a> (double *charge_center)</td></tr>
@@ -225,6 +234,78 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">charge_center</td><td>the 3D point (c array) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a79b61783bfe19d8dcd33d6aba4c3e61a"></a><!-- doxytag: member="UBXSecHelper::GetCorrectedPhi" ref="a79b61783bfe19d8dcd33d6aba4c3e61a" args="(recob::Track t, recob::Vertex tpcobj_nu_vtx)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classUBXSecHelper.html#a79b61783bfe19d8dcd33d6aba4c3e61a">UBXSecHelper::GetCorrectedPhi</a> </td>
+          <td>(</td>
+          <td class="paramtype">recob::Track&#160;</td>
+          <td class="paramname"><em>t</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">recob::Vertex&#160;</td>
+          <td class="paramname"><em>tpcobj_nu_vtx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the value of the phi angle for the track considering the nu vertex. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">t</td><td>the recob::Track </td></tr>
+    <tr><td class="paramname">tpcobj_nu_vtx</td><td>the recob::Vertex neutrino vertex </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a994f8158cb00b028048af055c487bd9d"></a><!-- doxytag: member="UBXSecHelper::GetCorrectedTheta" ref="a994f8158cb00b028048af055c487bd9d" args="(recob::Track t, recob::Vertex tpcobj_nu_vtx)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classUBXSecHelper.html#a994f8158cb00b028048af055c487bd9d">UBXSecHelper::GetCorrectedTheta</a> </td>
+          <td>(</td>
+          <td class="paramtype">recob::Track&#160;</td>
+          <td class="paramname"><em>t</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">recob::Vertex&#160;</td>
+          <td class="paramname"><em>tpcobj_nu_vtx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the value of the theta angle for the track considering the nu vertex. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">track</td><td>the recob::Track </td></tr>
+    <tr><td class="paramname">tpcobj_nu_vtx</td><td>the recob::Vertex neutrino vertex </td></tr>
   </table>
   </dd>
 </dl>
@@ -1056,6 +1137,31 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 
 </div>
 </div>
+<a class="anchor" id="aa0349c7d405ec64cd1b0c7ed3d54a56e"></a><!-- doxytag: member="UBXSecHelper::TrackIsContained" ref="aa0349c7d405ec64cd1b0c7ed3d54a56e" args="(recob::Track track)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classUBXSecHelper.html#aa0349c7d405ec64cd1b0c7ed3d54a56e">UBXSecHelper::TrackIsContained</a> </td>
+          <td>(</td>
+          <td class="paramtype">recob::Track&#160;</td>
+          <td class="paramname"><em>track</em></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns true if the track passed is fully contained. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">track</td><td>the recob::Track </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="accf62c400d9e984f1277843de78715a7"></a><!-- doxytag: member="UBXSecHelper::TrackPassesHitRequirment" ref="accf62c400d9e984f1277843de78715a7" args="(art::Event const &amp;e, std::string _particleLabel, art::Ptr&lt; recob::Track &gt; trk, int nHitsReq)" -->
 <div class="memitem">
 <div class="memproto">
@@ -1100,6 +1206,31 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
     <tr><td class="paramname">_particleLabel</td><td>the PFP procuder module </td></tr>
     <tr><td class="paramname">trk</td><td>the recob::Track </td></tr>
     <tr><td class="paramname">nHitsReq</td><td>the minimum number of hits </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a44c8ae9d98197e81da26aeae26c70f0a"></a><!-- doxytag: member="UBXSecHelper::TracksAreContained" ref="a44c8ae9d98197e81da26aeae26c70f0a" args="(std::vector&lt; recob::Track &gt; tracks)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classUBXSecHelper.html#a44c8ae9d98197e81da26aeae26c70f0a">UBXSecHelper::TracksAreContained</a> </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; recob::Track &gt;&#160;</td>
+          <td class="paramname"><em>tracks</em></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns true if all the tracks passed are fully contained. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tracks</td><td>a vector of recob::Track </td></tr>
   </table>
   </dd>
 </dl>

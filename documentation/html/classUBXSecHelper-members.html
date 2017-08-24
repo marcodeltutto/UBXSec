@@ -71,6 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -83,6 +84,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 This is the complete list of members for <a class="el" href="classUBXSecHelper.html">UBXSecHelper</a>, including all inherited members.<table>
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#ab441342f0c71741e353f323a26f27728">CollectTracksAndPFP</a>(lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticleVector pfParticleList, art::Ptr&lt; recob::PFParticle &gt; particle, lar_pandora::PFParticleVector &amp;pfp_v, lar_pandora::TrackVector &amp;track_v)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a88533a5a59d61351437a1fe2e54aff25">GetClosestPMT</a>(double *charge_center)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a79b61783bfe19d8dcd33d6aba4c3e61a">GetCorrectedPhi</a>(recob::Track t, recob::Vertex tpcobj_nu_vtx)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a994f8158cb00b028048af055c487bd9d">GetCorrectedTheta</a>(recob::Track t, recob::Vertex tpcobj_nu_vtx)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a3fd25ef568b54aded55d6c1b6a8593fa">GetFlashZCenter</a>(std::vector&lt; double &gt; pe)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a76b009afef0cc69f281ca3215a901f35">GetLongestTrackFromTPCObj</a>(lar_pandora::TrackVector track_v, recob::Track &amp;out_track)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a5d811318d7fb66ab5e1816453c017e63">GetNumberOfHitsPerPlane</a>(art::Event const &amp;e, std::string _particleLabel, lar_pandora::TrackVector track_v, int &amp;nhits_u, int &amp;nhits_v, int &amp;nhits_w)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
@@ -102,7 +105,9 @@ This is the complete list of members for <a class="el" href="classUBXSecHelper.h
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#aef82eb512853d8bd9a40fca00f254b7e">IsCrossingBoundary</a>(recob::Track track, int &amp;vtx_ok)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#af2924ae512f2c8cc5be6feb2bd21a112">IsCrossingTopBoundary</a>(recob::Track track, int &amp;vtx_ok)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a7df598dfbdfdb620737fd69297e67faf">PointIsCloseToDeadRegion</a>(double *reco_nu_vtx, int plane_no)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#aa0349c7d405ec64cd1b0c7ed3d54a56e">TrackIsContained</a>(recob::Track track)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#accf62c400d9e984f1277843de78715a7">TrackPassesHitRequirment</a>(art::Event const &amp;e, std::string _particleLabel, art::Ptr&lt; recob::Track &gt; trk, int nHitsReq)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classUBXSecHelper.html#a44c8ae9d98197e81da26aeae26c70f0a">TracksAreContained</a>(std::vector&lt; recob::Track &gt; tracks)</td><td><a class="el" href="classUBXSecHelper.html">UBXSecHelper</a></td><td><code> [static]</code></td></tr>
 </table></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"

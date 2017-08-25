@@ -91,32 +91,36 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00022"></a>00022 <span class="preprocessor">#include &quot;lardataobj/RecoBase/PFParticle.h&quot;</span>
 <a name="l00023"></a>00023 <span class="preprocessor">#include &quot;larpandora/LArPandoraInterface/LArPandoraHelper.h&quot;</span>
 <a name="l00024"></a>00024 
-<a name="l00025"></a>00025 <span class="keyword">namespace </span>ubana{
-<a name="l00026"></a>00026   
-<a name="l00033"></a><a class="code" href="classubana_1_1TPCObjectFilter.html">00033</a>   <span class="keyword">class </span><a class="code" href="classubana_1_1TPCObjectFilter.html">TPCObjectFilter</a> {
-<a name="l00034"></a>00034     
-<a name="l00035"></a>00035   <span class="keyword">public</span>:
-<a name="l00036"></a>00036     
-<a name="l00038"></a>00038     <a class="code" href="classubana_1_1TPCObjectFilter.html#aa898a1ea96ce8bf1bf164111157a497d" title="Default constructor.">TPCObjectFilter</a>();
-<a name="l00039"></a>00039 
-<a name="l00041"></a><a class="code" href="classubana_1_1TPCObjectFilter.html#ad8a3f726f247b5651272397ee344ef1e">00041</a>     <a class="code" href="classubana_1_1TPCObjectFilter.html#ad8a3f726f247b5651272397ee344ef1e" title="Default destructor.">~TPCObjectFilter</a>(){}
-<a name="l00042"></a>00042 
-<a name="l00044"></a>00044     <span class="keywordtype">void</span> <a class="code" href="classubana_1_1TPCObjectFilter.html#a49a5f29b105c442cc8fe97d05066c72a" title="Configure function parameters.">Configure</a>(fhicl::ParameterSet <span class="keyword">const</span>&amp; p);
-<a name="l00045"></a>00045 
-<a name="l00047"></a>00047     <span class="keywordtype">void</span> <a class="code" href="classubana_1_1TPCObjectFilter.html#a542681a3872f6662e58e83330dddfe8c" title="Printd the current configuration.">PrintConfig</a>();
-<a name="l00048"></a>00048 
-<a name="l00050"></a>00050     lar_pandora::PFParticleVector <a class="code" href="classubana_1_1TPCObjectFilter.html#a4522b692674aeee4f88a134a1cf36a08" title="Do the filtering.">Filter</a>(lar_pandora::PFParticleVector pfp_v, lar_pandora::PFParticlesToTracks pfp_to_tracks, lar_pandora::PFParticlesToShowers pfp_to_showers);
-<a name="l00051"></a>00051 
-<a name="l00052"></a>00052   <span class="keyword">protected</span>:
-<a name="l00053"></a>00053 
-<a name="l00054"></a>00054     <span class="keywordtype">double</span> _tolerance;
+<a name="l00025"></a>00025 <span class="keywordtype">int</span> factorial(<span class="keywordtype">int</span> n) {
+<a name="l00026"></a>00026     <span class="keywordflow">return</span> (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
+<a name="l00027"></a>00027 }
+<a name="l00028"></a>00028 
+<a name="l00029"></a>00029 <span class="keyword">namespace </span>ubana{
+<a name="l00030"></a>00030   
+<a name="l00037"></a><a class="code" href="classubana_1_1TPCObjectFilter.html">00037</a>   <span class="keyword">class </span><a class="code" href="classubana_1_1TPCObjectFilter.html">TPCObjectFilter</a> {
+<a name="l00038"></a>00038     
+<a name="l00039"></a>00039   <span class="keyword">public</span>:
+<a name="l00040"></a>00040     
+<a name="l00042"></a>00042     <a class="code" href="classubana_1_1TPCObjectFilter.html#aa898a1ea96ce8bf1bf164111157a497d" title="Default constructor.">TPCObjectFilter</a>();
+<a name="l00043"></a>00043 
+<a name="l00045"></a><a class="code" href="classubana_1_1TPCObjectFilter.html#ad8a3f726f247b5651272397ee344ef1e">00045</a>     <a class="code" href="classubana_1_1TPCObjectFilter.html#ad8a3f726f247b5651272397ee344ef1e" title="Default destructor.">~TPCObjectFilter</a>(){}
+<a name="l00046"></a>00046 
+<a name="l00048"></a>00048     <span class="keywordtype">void</span> <a class="code" href="classubana_1_1TPCObjectFilter.html#a49a5f29b105c442cc8fe97d05066c72a" title="Configure function parameters.">Configure</a>(fhicl::ParameterSet <span class="keyword">const</span>&amp; p);
+<a name="l00049"></a>00049 
+<a name="l00051"></a>00051     <span class="keywordtype">void</span> <a class="code" href="classubana_1_1TPCObjectFilter.html#a542681a3872f6662e58e83330dddfe8c" title="Printd the current configuration.">PrintConfig</a>();
+<a name="l00052"></a>00052 
+<a name="l00054"></a>00054     lar_pandora::PFParticleVector <a class="code" href="classubana_1_1TPCObjectFilter.html#ab485fca5770b8a9622d56c294b361ef3" title="Do the filtering.">Filter</a>(lar_pandora::PFParticleVector pfp_v, lar_pandora::PFParticlesToTracks pfp_to_tracks, lar_pandora::PFParticlesToShowers pfp_to_showers, lar_pandora::PFParticlesToVertices pfp_to_vertices);
 <a name="l00055"></a>00055 
-<a name="l00056"></a>00056   };
-<a name="l00057"></a>00057 }
-<a name="l00058"></a>00058 
-<a name="l00059"></a>00059 <span class="preprocessor">#endif</span>
-<a name="l00060"></a>00060 <span class="preprocessor"></span> <span class="comment">// end of doxygen group </span>
-<a name="l00061"></a>00061 
+<a name="l00056"></a>00056   <span class="keyword">protected</span>:
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058     <span class="keywordtype">double</span> _tolerance;
+<a name="l00059"></a>00059     <span class="keywordtype">bool</span> _debug;
+<a name="l00060"></a>00060   };
+<a name="l00061"></a>00061 }
+<a name="l00062"></a>00062 
+<a name="l00063"></a>00063 <span class="preprocessor">#endif</span>
+<a name="l00064"></a>00064 <span class="preprocessor"></span> <span class="comment">// end of doxygen group </span>
+<a name="l00065"></a>00065 
 </pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"

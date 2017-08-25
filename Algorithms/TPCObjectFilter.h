@@ -22,6 +22,10 @@
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 
+int factorial(int n) {
+    return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
+}
+
 namespace ubana{
   
   /**
@@ -47,12 +51,12 @@ namespace ubana{
     void PrintConfig();
 
     /// Do the filtering 
-    lar_pandora::PFParticleVector Filter(lar_pandora::PFParticleVector pfp_v, lar_pandora::PFParticlesToTracks pfp_to_tracks, lar_pandora::PFParticlesToShowers pfp_to_showers);
+    lar_pandora::PFParticleVector Filter(lar_pandora::PFParticleVector pfp_v, lar_pandora::PFParticlesToTracks pfp_to_tracks, lar_pandora::PFParticlesToShowers pfp_to_showers, lar_pandora::PFParticlesToVertices pfp_to_vertices);
 
   protected:
 
     double _tolerance;
-
+    bool _debug;
   };
 }
 

@@ -794,14 +794,15 @@ double UBXSecHelper::GetCorrectedPhi(recob::Track t, recob::Vertex tpcobj_nu_vtx
   if ( (pt1-nu).Mag() > (pt2-nu).Mag() )
     reverse = true;
 
+  /*
   double original_phi = t.Phi();
 
   if (reverse) 
     return ::TMath::Pi() - original_phi;
   else
     return original_phi;
+  */
 
-  /*
   TVector3 dir = pt2 - pt1;
   if (reverse) dir = pt1 - pt2;
 
@@ -811,13 +812,17 @@ double UBXSecHelper::GetCorrectedPhi(recob::Track t, recob::Vertex tpcobj_nu_vtx
   
   double phi = phi_versor.Angle(dir);
 
+  // Just convention
+  if (dir.Y() < 0)
+    phi = -phi;
+
   std::cout << "My phi is " << phi << ", track phi is " << t.Phi() << ", reverse is " << (reverse ? "true" : "false") << std::endl;
   return phi;
-  */
+  
 }
 
 //_________________________________________________________________________________
-double UBXSecHelper::GetCorrectedTheta(recob::Track t, recob::Vertex tpcobj_nu_vtx) {
+double UBXSecHelper::GetCorrectedCosTheta(recob::Track t, recob::Vertex tpcobj_nu_vtx) {
 
   TVector3 pt1 = t.Vertex();
   TVector3 pt2 = t.End();
@@ -831,12 +836,25 @@ double UBXSecHelper::GetCorrectedTheta(recob::Track t, recob::Vertex tpcobj_nu_v
   if ( (pt1-nu).Mag() > (pt2-nu).Mag() )
     reverse = true;
 
+  /*
   double original_theta = t.Theta();
 
   if (reverse)
     return ::TMath::Pi() - original_theta;
   else 
     return original_theta;
+  */
+
+  TVector3 dir = pt2 - pt1;
+  if (reverse) dir = pt1 - pt2;
+
+  TVector3 theta_versor (0, 0, 1);
+  
+  double theta = theta_versor.Angle(dir);
+
+  std::cout << "My theta is " << theta << ", track theta is " << t.Theta() << ", reverse is " << (reverse ? "true" : "false") << std::endl;
+
+  return std::cos(theta);
 
 }
 

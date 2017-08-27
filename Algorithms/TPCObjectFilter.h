@@ -50,13 +50,13 @@ namespace ubana{
     /// Printd the current configuration
     void PrintConfig();
 
-    /// Do the filtering 
+    /// Returns a filtered vector of PFParticles: the new TPCObject 
     lar_pandora::PFParticleVector Filter(lar_pandora::PFParticleVector pfp_v, lar_pandora::PFParticlesToTracks pfp_to_tracks, lar_pandora::PFParticlesToShowers pfp_to_showers, lar_pandora::PFParticlesToVertices pfp_to_vertices);
 
   protected:
 
-    double _tolerance;
-    bool _debug;
+    double _tolerance; ///< Tolerance for reclustering
+    bool _debug;       ///< Enabels debug printouts
   };
 }
 

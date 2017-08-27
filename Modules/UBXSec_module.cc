@@ -79,6 +79,9 @@
 #include "TH1D.h"
 #include "TH2D.h"
 
+#include <fstream>
+
+
 namespace ubxsec {
   struct Hit3D_t {
     double x;
@@ -223,6 +226,9 @@ private:
   int _sr_run, _sr_subrun; 
   double _sr_begintime, _sr_endtime;
   double _sr_pot;
+
+  std::ofstream _csvfile;
+
 };
 
 
@@ -385,6 +391,9 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _sr_tree->Branch("begintime",          &_sr_begintime,          "begintime/D");
   _sr_tree->Branch("endtime",            &_sr_endtime,            "endtime/D");
   _sr_tree->Branch("pot",                &_sr_pot,                "pot/D");
+
+  _csvfile.open ("pida_trklen.csv", std::ofstream::out | std::ofstream::trunc);
+  _csvfile << "pida,trklen,y" << std::endl;
 }
 
 void UBXSec::analyze(art::Event const & e) {
@@ -916,7 +925,7 @@ void UBXSec::analyze(art::Event const & e) {
     if (UBXSecHelper::GetLongestTrackFromTPCObj(track_v_v[slice], lt)){
       _slc_longesttrack_length[slice] = lt.Length();
       _slc_longesttrack_phi[slice]   = UBXSecHelper::GetCorrectedPhi(lt, tpcobj_nu_vtx);
-      _slc_longesttrack_theta[slice] = UBXSecHelper::GetCorrectedTheta(lt, tpcobj_nu_vtx);
+      _slc_longesttrack_theta[slice] = UBXSecHelper::GetCorrectedCosTheta(lt, tpcobj_nu_vtx);
       _slc_longesttrack_iscontained[slice] = UBXSecHelper::TrackIsContained(lt);
       int vtx_ok;
       _slc_crosses_top_boundary[slice] = (UBXSecHelper::IsCrossingTopBoundary(lt, vtx_ok) ? 1 : 0);
@@ -1077,9 +1086,11 @@ void UBXSec::analyze(art::Event const & e) {
             if (pdg == 13) {
               _h_pida_muon->Fill(pid->PIDA());
               _h_pida_len_muon->Fill(pid->PIDA(), track->Length());
+              if( pid->PIDA() > 0 && pid->PIDA() < 50. ) _csvfile << pid->PIDA() << "," << track->Length() << "," << "1" << std::endl;
             } else if (pdg == 2212) {
               _h_pida_proton->Fill(pid->PIDA());
               _h_pida_len_proton->Fill(pid->PIDA(), track->Length());
+              if( pid->PIDA() > 0 && pid->PIDA() < 50. ) _csvfile << pid->PIDA() << "," << track->Length() << "," << "0" << std::endl;
             } else if (pdg == 211) {
               _h_pida_pion->Fill(pid->PIDA());
               _h_pida_len_pion->Fill(pid->PIDA(), track->Length());

@@ -150,8 +150,8 @@ ubana::TPCObjectMaker::TPCObjectMaker(fhicl::ParameterSet const & p)
   _hitfinderLabel     = p.get<std::string>("HitProducer");
   _geantModuleLabel   = p.get<std::string>("GeantModule");
   _spacepointLabel    = p.get<std::string>("SpacePointProducer");
-  _do_filter          = p.get<bool>       ("FilterObjects", true);
-  _debug              = p.get<bool>       ("Debug", false);
+  _do_filter          = p.get<bool>       ("FilterObjects");
+  _debug              = p.get<bool>       ("Debug");
 
   if (_do_filter) _tpcobj_filter = new ubana::TPCObjectFilter();
 

@@ -59,8 +59,8 @@ static bool \hyperlink{classUBXSecHelper_aa0349c7d405ec64cd1b0c7ed3d54a56e}{\-Tr
 \begin{DoxyCompactList}\small\item\em \-Returns true if the track passed is fully contained. \end{DoxyCompactList}\item 
 static double \hyperlink{classUBXSecHelper_a79b61783bfe19d8dcd33d6aba4c3e61a}{\-Get\-Corrected\-Phi} (recob\-::\-Track t, recob\-::\-Vertex tpcobj\-\_\-nu\-\_\-vtx)
 \begin{DoxyCompactList}\small\item\em \-Returns the value of the phi angle for the track considering the nu vertex. \end{DoxyCompactList}\item 
-static double \hyperlink{classUBXSecHelper_a994f8158cb00b028048af055c487bd9d}{\-Get\-Corrected\-Theta} (recob\-::\-Track t, recob\-::\-Vertex tpcobj\-\_\-nu\-\_\-vtx)
-\begin{DoxyCompactList}\small\item\em \-Returns the value of the theta angle for the track considering the nu vertex. \end{DoxyCompactList}\item 
+static double \hyperlink{classUBXSecHelper_aefae2cc8a7598aa54848247ad228371e}{\-Get\-Corrected\-Cos\-Theta} (recob\-::\-Track t, recob\-::\-Vertex tpcobj\-\_\-nu\-\_\-vtx)
+\begin{DoxyCompactList}\small\item\em \-Returns the value of the cos(theta) angle for the track considering the nu vertex. \end{DoxyCompactList}\item 
 static bool \hyperlink{classUBXSecHelper_a7df598dfbdfdb620737fd69297e67faf}{\-Point\-Is\-Close\-To\-Dead\-Region} (double $\ast$reco\-\_\-nu\-\_\-vtx, int plane\-\_\-no)
 \begin{DoxyCompactList}\small\item\em \-Returns true if the point passed is close to a dead region. \end{DoxyCompactList}\item 
 static int \hyperlink{classUBXSecHelper_a88533a5a59d61351437a1fe2e54aff25}{\-Get\-Closest\-P\-M\-T} (double $\ast$charge\-\_\-center)
@@ -145,6 +145,25 @@ static double \hyperlink{classUBXSecHelper_a3fd25ef568b54aded55d6c1b6a8593fa}{\-
 {\em charge\-\_\-center} & the 3\-D point (c array) \\
 \hline
 \end{DoxyParams}
+\hypertarget{classUBXSecHelper_aefae2cc8a7598aa54848247ad228371e}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Get\-Corrected\-Cos\-Theta@{\-Get\-Corrected\-Cos\-Theta}}
+\index{\-Get\-Corrected\-Cos\-Theta@{\-Get\-Corrected\-Cos\-Theta}!UBXSecHelper@{\-U\-B\-X\-Sec\-Helper}}
+\subsubsection[{\-Get\-Corrected\-Cos\-Theta}]{\setlength{\rightskip}{0pt plus 5cm}double {\bf \-U\-B\-X\-Sec\-Helper\-::\-Get\-Corrected\-Cos\-Theta} (
+\begin{DoxyParamCaption}
+\item[{recob\-::\-Track}]{t, }
+\item[{recob\-::\-Vertex}]{tpcobj\-\_\-nu\-\_\-vtx}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}\label{classUBXSecHelper_aefae2cc8a7598aa54848247ad228371e}
+
+
+\-Returns the value of the cos(theta) angle for the track considering the nu vertex. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em track} & the recob\-::\-Track \\
+\hline
+{\em tpcobj\-\_\-nu\-\_\-vtx} & the recob\-::\-Vertex neutrino vertex \\
+\hline
+\end{DoxyParams}
 \hypertarget{classUBXSecHelper_a79b61783bfe19d8dcd33d6aba4c3e61a}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Get\-Corrected\-Phi@{\-Get\-Corrected\-Phi}}
 \index{\-Get\-Corrected\-Phi@{\-Get\-Corrected\-Phi}!UBXSecHelper@{\-U\-B\-X\-Sec\-Helper}}
 \subsubsection[{\-Get\-Corrected\-Phi}]{\setlength{\rightskip}{0pt plus 5cm}double {\bf \-U\-B\-X\-Sec\-Helper\-::\-Get\-Corrected\-Phi} (
@@ -160,25 +179,6 @@ static double \hyperlink{classUBXSecHelper_a3fd25ef568b54aded55d6c1b6a8593fa}{\-
 
 \begin{DoxyParams}{\-Parameters}
 {\em t} & the recob\-::\-Track \\
-\hline
-{\em tpcobj\-\_\-nu\-\_\-vtx} & the recob\-::\-Vertex neutrino vertex \\
-\hline
-\end{DoxyParams}
-\hypertarget{classUBXSecHelper_a994f8158cb00b028048af055c487bd9d}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Get\-Corrected\-Theta@{\-Get\-Corrected\-Theta}}
-\index{\-Get\-Corrected\-Theta@{\-Get\-Corrected\-Theta}!UBXSecHelper@{\-U\-B\-X\-Sec\-Helper}}
-\subsubsection[{\-Get\-Corrected\-Theta}]{\setlength{\rightskip}{0pt plus 5cm}double {\bf \-U\-B\-X\-Sec\-Helper\-::\-Get\-Corrected\-Theta} (
-\begin{DoxyParamCaption}
-\item[{recob\-::\-Track}]{t, }
-\item[{recob\-::\-Vertex}]{tpcobj\-\_\-nu\-\_\-vtx}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}\label{classUBXSecHelper_a994f8158cb00b028048af055c487bd9d}
-
-
-\-Returns the value of the theta angle for the track considering the nu vertex. 
-
-
-\begin{DoxyParams}{\-Parameters}
-{\em track} & the recob\-::\-Track \\
 \hline
 {\em tpcobj\-\_\-nu\-\_\-vtx} & the recob\-::\-Vertex neutrino vertex \\
 \hline

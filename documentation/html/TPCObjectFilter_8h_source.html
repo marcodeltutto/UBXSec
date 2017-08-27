@@ -109,12 +109,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00049"></a>00049 
 <a name="l00051"></a>00051     <span class="keywordtype">void</span> <a class="code" href="classubana_1_1TPCObjectFilter.html#a542681a3872f6662e58e83330dddfe8c" title="Printd the current configuration.">PrintConfig</a>();
 <a name="l00052"></a>00052 
-<a name="l00054"></a>00054     lar_pandora::PFParticleVector <a class="code" href="classubana_1_1TPCObjectFilter.html#ab485fca5770b8a9622d56c294b361ef3" title="Do the filtering.">Filter</a>(lar_pandora::PFParticleVector pfp_v, lar_pandora::PFParticlesToTracks pfp_to_tracks, lar_pandora::PFParticlesToShowers pfp_to_showers, lar_pandora::PFParticlesToVertices pfp_to_vertices);
+<a name="l00054"></a>00054     lar_pandora::PFParticleVector <a class="code" href="classubana_1_1TPCObjectFilter.html#ab485fca5770b8a9622d56c294b361ef3" title="Returns a filtered vector of PFParticles: the new TPCObject.">Filter</a>(lar_pandora::PFParticleVector pfp_v, lar_pandora::PFParticlesToTracks pfp_to_tracks, lar_pandora::PFParticlesToShowers pfp_to_showers, lar_pandora::PFParticlesToVertices pfp_to_vertices);
 <a name="l00055"></a>00055 
 <a name="l00056"></a>00056   <span class="keyword">protected</span>:
 <a name="l00057"></a>00057 
-<a name="l00058"></a>00058     <span class="keywordtype">double</span> _tolerance;
-<a name="l00059"></a>00059     <span class="keywordtype">bool</span> _debug;
+<a name="l00058"></a><a class="code" href="classubana_1_1TPCObjectFilter.html#a86137c0a525fdd2b5a63afe4ff79c23c">00058</a>     <span class="keywordtype">double</span> <a class="code" href="classubana_1_1TPCObjectFilter.html#a86137c0a525fdd2b5a63afe4ff79c23c" title="Tolerance for reclustering.">_tolerance</a>; 
+<a name="l00059"></a><a class="code" href="classubana_1_1TPCObjectFilter.html#a44156494ed6ccc98d9016c2c4306f282">00059</a>     <span class="keywordtype">bool</span> <a class="code" href="classubana_1_1TPCObjectFilter.html#a44156494ed6ccc98d9016c2c4306f282" title="Enabels debug printouts.">_debug</a>;       
 <a name="l00060"></a>00060   };
 <a name="l00061"></a>00061 }
 <a name="l00062"></a>00062 

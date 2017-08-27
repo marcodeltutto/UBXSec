@@ -138,8 +138,8 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the track passed is fully contained.  <a href="#aa0349c7d405ec64cd1b0c7ed3d54a56e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a79b61783bfe19d8dcd33d6aba4c3e61a">GetCorrectedPhi</a> (recob::Track t, recob::Vertex tpcobj_nu_vtx)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the phi angle for the track considering the nu vertex.  <a href="#a79b61783bfe19d8dcd33d6aba4c3e61a"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a994f8158cb00b028048af055c487bd9d">GetCorrectedTheta</a> (recob::Track t, recob::Vertex tpcobj_nu_vtx)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the theta angle for the track considering the nu vertex.  <a href="#a994f8158cb00b028048af055c487bd9d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#aefae2cc8a7598aa54848247ad228371e">GetCorrectedCosTheta</a> (recob::Track t, recob::Vertex tpcobj_nu_vtx)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the cos(theta) angle for the track considering the nu vertex.  <a href="#aefae2cc8a7598aa54848247ad228371e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a7df598dfbdfdb620737fd69297e67faf">PointIsCloseToDeadRegion</a> (double *reco_nu_vtx, int plane_no)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the point passed is close to a dead region.  <a href="#a7df598dfbdfdb620737fd69297e67faf"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a88533a5a59d61351437a1fe2e54aff25">GetClosestPMT</a> (double *charge_center)</td></tr>
@@ -240,6 +240,42 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 
 </div>
 </div>
+<a class="anchor" id="aefae2cc8a7598aa54848247ad228371e"></a><!-- doxytag: member="UBXSecHelper::GetCorrectedCosTheta" ref="aefae2cc8a7598aa54848247ad228371e" args="(recob::Track t, recob::Vertex tpcobj_nu_vtx)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classUBXSecHelper.html#aefae2cc8a7598aa54848247ad228371e">UBXSecHelper::GetCorrectedCosTheta</a> </td>
+          <td>(</td>
+          <td class="paramtype">recob::Track&#160;</td>
+          <td class="paramname"><em>t</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">recob::Vertex&#160;</td>
+          <td class="paramname"><em>tpcobj_nu_vtx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the value of the cos(theta) angle for the track considering the nu vertex. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">track</td><td>the recob::Track </td></tr>
+    <tr><td class="paramname">tpcobj_nu_vtx</td><td>the recob::Vertex neutrino vertex </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a79b61783bfe19d8dcd33d6aba4c3e61a"></a><!-- doxytag: member="UBXSecHelper::GetCorrectedPhi" ref="a79b61783bfe19d8dcd33d6aba4c3e61a" args="(recob::Track t, recob::Vertex tpcobj_nu_vtx)" -->
 <div class="memitem">
 <div class="memproto">
@@ -269,42 +305,6 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">t</td><td>the recob::Track </td></tr>
-    <tr><td class="paramname">tpcobj_nu_vtx</td><td>the recob::Vertex neutrino vertex </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a994f8158cb00b028048af055c487bd9d"></a><!-- doxytag: member="UBXSecHelper::GetCorrectedTheta" ref="a994f8158cb00b028048af055c487bd9d" args="(recob::Track t, recob::Vertex tpcobj_nu_vtx)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double <a class="el" href="classUBXSecHelper.html#a994f8158cb00b028048af055c487bd9d">UBXSecHelper::GetCorrectedTheta</a> </td>
-          <td>(</td>
-          <td class="paramtype">recob::Track&#160;</td>
-          <td class="paramname"><em>t</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">recob::Vertex&#160;</td>
-          <td class="paramname"><em>tpcobj_nu_vtx</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td><code> [static]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Returns the value of the theta angle for the track considering the nu vertex. </p>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">track</td><td>the recob::Track </td></tr>
     <tr><td class="paramname">tpcobj_nu_vtx</td><td>the recob::Vertex neutrino vertex </td></tr>
   </table>
   </dd>

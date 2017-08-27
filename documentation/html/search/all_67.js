@@ -1,8 +1,8 @@
 var searchData=
 [
   ['getclosestpmt',['GetClosestPMT',['../classUBXSecHelper.html#a88533a5a59d61351437a1fe2e54aff25',1,'UBXSecHelper']]],
+  ['getcorrectedcostheta',['GetCorrectedCosTheta',['../classUBXSecHelper.html#aefae2cc8a7598aa54848247ad228371e',1,'UBXSecHelper']]],
   ['getcorrectedphi',['GetCorrectedPhi',['../classUBXSecHelper.html#a79b61783bfe19d8dcd33d6aba4c3e61a',1,'UBXSecHelper']]],
-  ['getcorrectedtheta',['GetCorrectedTheta',['../classUBXSecHelper.html#a994f8158cb00b028048af055c487bd9d',1,'UBXSecHelper']]],
   ['getdeadregionhisto2p',['GetDeadRegionHisto2P',['../classFindDeadRegions.html#a712767abce6132b0dd6638a335da87fa',1,'FindDeadRegions::GetDeadRegionHisto2P()'],['../classFindDeadRegions.html#a93fcf74bb534831495f50a79fede19f9',1,'FindDeadRegions::GetDeadRegionHisto2P(TH2F *)']]],
   ['getdeadregionhisto3p',['GetDeadRegionHisto3P',['../classFindDeadRegions.html#abb378991861e7fdef4cd94a27d52ec07',1,'FindDeadRegions::GetDeadRegionHisto3P()'],['../classFindDeadRegions.html#a50de57c6d1792a6f2a93df8a44ba840a',1,'FindDeadRegions::GetDeadRegionHisto3P(TH2F *)']]],
   ['getdistance',['GetDistance',['../classubxsec_1_1ACPTAlgo.html#ab08b8c49e6376227fa9bf2175912eca0',1,'ubxsec::ACPTAlgo::GetDistance()'],['../classubxsec_1_1VertexCheck.html#a2cf14a77ddd16b2fd282e2748ed4a3d9',1,'ubxsec::VertexCheck::GetDistance()']]],

@@ -43,6 +43,8 @@ static bool \hyperlink{classUBXSecHelper_a4ff7e0d6774d5628cc2a3d19bb2d3492}{\-In
 \begin{DoxyCompactList}\small\item\em \-Returns true if the point passed is in the fiducial volume. \end{DoxyCompactList}\item 
 static ubana\-::\-T\-P\-C\-Object\-Origin \hyperlink{classUBXSecHelper_a7f4a880c5880a678c7d0f181e92cb748}{\-Get\-Slice\-Origin} (std\-::vector$<$ art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$$>$ neutrino\-Origin\-P\-F\-P, std\-::vector$<$ art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$$>$ cosmic\-Origin\-P\-F\-P, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v)
 \begin{DoxyCompactList}\small\item\em \-Returns the origin of the \-T\-P\-C object (neutrino/cosmic/mixed) \end{DoxyCompactList}\item 
+static ubana\-::\-T\-P\-C\-Object\-Origin\-Extra \hyperlink{classUBXSecHelper_a0ebb67197779a043e0f07436e8a979dc}{\-Get\-Slice\-Origin\-Extra} (std\-::vector$<$ art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$$>$ cosmic\-Stopping\-Origin\-P\-F\-P, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v)
+\begin{DoxyCompactList}\small\item\em \-Returns extra origin information for a \-T\-P\-C object (for now only if it is a stopping muon in the \-T\-P\-C) \end{DoxyCompactList}\item 
 static void \hyperlink{classUBXSecHelper_a5d811318d7fb66ab5e1816453c017e63}{\-Get\-Number\-Of\-Hits\-Per\-Plane} (art\-::\-Event const \&e, std\-::string \-\_\-particle\-Label, lar\-\_\-pandora\-::\-Track\-Vector track\-\_\-v, int \&nhits\-\_\-u, int \&nhits\-\_\-v, int \&nhits\-\_\-w)
 \begin{DoxyCompactList}\small\item\em \-Returns number of hits on each plane for a \-T\-P\-C obj. \end{DoxyCompactList}\item 
 static bool \hyperlink{classUBXSecHelper_accf62c400d9e984f1277843de78715a7}{\-Track\-Passes\-Hit\-Requirment} (art\-::\-Event const \&e, std\-::string \-\_\-particle\-Label, art\-::\-Ptr$<$ recob\-::\-Track $>$ trk, int n\-Hits\-Req)
@@ -390,6 +392,25 @@ static double \hyperlink{classUBXSecHelper_a3fd25ef568b54aded55d6c1b6a8593fa}{\-
 {\em neutrino\-Origin\-P\-F\-P} & list of \-P\-F\-P with neutrino origin \\
 \hline
 {\em cosmic\-Origin\-P\-F\-P} & list of \-P\-F\-P with cosmic origin \\
+\hline
+{\em pfp\-\_\-v} & the \-T\-P\-C object (vector of \-P\-F\-P) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_a0ebb67197779a043e0f07436e8a979dc}{\index{\-U\-B\-X\-Sec\-Helper@{\-U\-B\-X\-Sec\-Helper}!\-Get\-Slice\-Origin\-Extra@{\-Get\-Slice\-Origin\-Extra}}
+\index{\-Get\-Slice\-Origin\-Extra@{\-Get\-Slice\-Origin\-Extra}!UBXSecHelper@{\-U\-B\-X\-Sec\-Helper}}
+\subsubsection[{\-Get\-Slice\-Origin\-Extra}]{\setlength{\rightskip}{0pt plus 5cm}ubana\-::\-T\-P\-C\-Object\-Origin\-Extra {\bf \-U\-B\-X\-Sec\-Helper\-::\-Get\-Slice\-Origin\-Extra} (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$$>$}]{cosmic\-Stopping\-Origin\-P\-F\-P, }
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pfp\-\_\-v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}\label{classUBXSecHelper_a0ebb67197779a043e0f07436e8a979dc}
+
+
+\-Returns extra origin information for a \-T\-P\-C object (for now only if it is a stopping muon in the \-T\-P\-C) 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em cosmic\-Stopping\-Origin\-P\-F\-P} & list of \-P\-F\-P with cosmic origin that stop in the \-T\-P\-C \\
 \hline
 {\em pfp\-\_\-v} & the \-T\-P\-C object (vector of \-P\-F\-P) \\
 \hline

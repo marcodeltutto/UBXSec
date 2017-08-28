@@ -567,6 +567,31 @@ ubana::TPCObjectOrigin UBXSecHelper::GetSliceOrigin(std::vector<art::Ptr<recob::
 
 }
 
+//__________________________________________________________________________
+ubana::TPCObjectOriginExtra UBXSecHelper::GetSliceOriginExtra(std::vector<art::Ptr<recob::PFParticle>> cosmicStoppingOriginPFP, lar_pandora::PFParticleVector pfp_v) {
+
+  ::ubana::TPCObjectOriginExtra origin_extra = ubana::kNotSet;
+
+  int stoppingOrigin = 0;
+
+  // Loop over pfp in the slice
+  for ( unsigned int i = 0; i < pfp_v.size(); i++) {
+
+    // Loop over pfp that are stopping
+    for ( unsigned int j = 0; j < cosmicStoppingOriginPFP.size(); j++) {
+
+      if (cosmicStoppingOriginPFP[j] == pfp_v[i]) {
+        stoppingOrigin ++;
+      }
+    }
+  }
+
+  if (stoppingOrigin > 0) origin_extra = ubana::kStoppingMuon;
+
+  return origin_extra;
+
+}
+
 //______________________________________________________________________________
 bool UBXSecHelper::TrackPassesHitRequirment(art::Event const & e,
                                             std::string _particleLabel,

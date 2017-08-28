@@ -39,6 +39,10 @@
 #include "nusimdata/SimulationBase/MCTruth.h"
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 #include "larsim/MCCheater/BackTracker.h"
+#include "larcore/Geometry/Geometry.h"
+
+#include "uboone/LLBasicTool/GeoAlgo/GeoVector.h"
+#include "uboone/LLBasicTool/GeoAlgo/GeoAABox.h"
 
 #include "uboone/UBXSec/DataTypes/TPCObject.h"
 #include "uboone/UBXSec/Algorithms/McPfpMatch.h"
@@ -175,7 +179,9 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
   std::unique_ptr< art::Assns<ubana::TPCObject, recob::Shower>>     assnOutTPCObjectShower (new art::Assns<ubana::TPCObject, recob::Shower>     );
   std::unique_ptr< art::Assns<ubana::TPCObject, recob::PFParticle>> assnOutTPCObjectPFP    (new art::Assns<ubana::TPCObject, recob::PFParticle> );
 
-  art::ServiceHandle<cheat::BackTracker> bt;
+  // Get the needed services
+  ::art::ServiceHandle<cheat::BackTracker> bt;
+  ::art::ServiceHandle<geo::Geometry> geo;
 
   // Use LArPandoraHelper functions to collect Pandora information
   lar_pandora::PFParticleVector pfParticleList;              //vector of PFParticles
@@ -214,8 +220,10 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
 
   std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP;
   std::vector<art::Ptr<recob::PFParticle>> cosmicOriginPFP;
+  std::vector<art::Ptr<recob::PFParticle>> cosmicStoppingOriginPFP;
   neutrinoOriginPFP.clear();
   cosmicOriginPFP.clear();
+  cosmicStoppingOriginPFP.clear();
 
   if (!_is_mc) goto constructobjects;
 
@@ -232,10 +240,23 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
       continue;
     }
 
+    // Cosmic origin
     if (mc_truth->Origin() == COSMIC_ORIGIN) {
       cosmicOriginPFP.emplace_back(pf_par);
+
+      // Check if this is a stopping muon in the TPC 
+      ::geoalgo::Vector mcpar_end(mc_par->EndX(), mc_par->EndY(), mc_par->EndZ());
+
+      ::geoalgo::AABox tpc_vol(0., (-1.)*(geo->DetHalfHeight()), 0.,
+                               geo->DetHalfWidth()*2., geo->DetHalfHeight(), geo->DetLength());
+
+      if((mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13) && tpc_vol.Contain(mcpar_end)) {
+        cosmicStoppingOriginPFP.emplace_back(pf_par); 
+      }
+
     }
 
+    // Neutrino origin
     if (mc_truth->Origin() == NEUTRINO_ORIGIN) {
       neutrinoOriginPFP.emplace_back(pf_par);
     }
@@ -275,6 +296,12 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
     if (_is_mc)
       origin = UBXSecHelper::GetSliceOrigin(neutrinoOriginPFP, cosmicOriginPFP, pfp_v_v[i]); 
     obj.SetOrigin(origin);
+
+    // Set origin extra
+    ::ubana::TPCObjectOriginExtra origin_extra = ubana::kNotSet;
+    if (_is_mc)
+      origin_extra = UBXSecHelper::GetSliceOriginExtra(cosmicStoppingOriginPFP, pfp_v_v[i]);
+    obj.SetOriginExtra(origin_extra);
 
     // Set Multiplicity
     obj.SetMultiplicity(p_v[i], t_v[i], s_v[i]);

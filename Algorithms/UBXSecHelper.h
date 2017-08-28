@@ -164,6 +164,13 @@ class UBXSecHelper {
   static ubana::TPCObjectOrigin GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP, std::vector<art::Ptr<recob::PFParticle>> cosmicOriginPFP, lar_pandora::PFParticleVector pfp_v);
 
   /**
+   *  @brief Returns extra origin information for a TPC object (for now only if it is a stopping muon in the TPC)
+   *
+   *  @param cosmicStoppingOriginPFP list of PFP with cosmic origin that stop in the TPC
+   *  @param pfp_v the TPC object (vector of PFP)  */
+  static ubana::TPCObjectOriginExtra GetSliceOriginExtra(std::vector<art::Ptr<recob::PFParticle>> cosmicStoppingOriginPFP, lar_pandora::PFParticleVector pfp_v);
+
+  /**
    *  @brief Returns number of hits on each plane for a TPC obj
    *
    *  @param e the ART event

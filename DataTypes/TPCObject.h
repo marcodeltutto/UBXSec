@@ -34,7 +34,14 @@ namespace ubana {
     kCosmicRay,             // 1
     kMixed,                 // 2
   };
+
+  enum TPCObjectOriginExtra{
+    kNotSet = -1,           // -1 
+    kStoppingMuon = 0,      // 0
+    kACPT,                  // 1
+  };
 }
+
 
 namespace ubana {
 
@@ -50,18 +57,20 @@ namespace ubana {
     void SetPFPs(std::vector<recob::PFParticle>);
     void SetVertex(recob::Vertex);
     void SetOrigin(ubana::TPCObjectOrigin);
+    void SetOriginExtra(ubana::TPCObjectOriginExtra);
     void SetMultiplicity(int pfpMult, int trackMult, int showerMult);
 
     // Getter methods
-    const std::vector<recob::Track>      & GetTracks()   const;
-    const std::vector<recob::PFParticle> & GetPFPs()     const;
-    const recob::Vertex                  & GetVertex()   const;
-    const ubana::TPCObjectOrigin         & GetOrigin()   const;
-    const size_t                           GetNTracks()  const;
-    const size_t                           GetNShowers() const;
-    const size_t                           GetNPFP()     const;
+    const std::vector<recob::Track>      & GetTracks()      const;
+    const std::vector<recob::PFParticle> & GetPFPs()        const;
+    const recob::Vertex                  & GetVertex()      const;
+    const ubana::TPCObjectOrigin         & GetOrigin()      const;
+    const ubana::TPCObjectOriginExtra    & GetOriginExtra() const;
+    const size_t                           GetNTracks()     const;
+    const size_t                           GetNShowers()    const;
+    const size_t                           GetNPFP()        const;
     const void                             GetMultiplicity(int &, int &, int &) const;
-    const int                              GetNTracksCloseToVertex(double) const;
+    const int                              GetNTracksCloseToVertex(double)      const;
 
   private:
 
@@ -70,6 +79,7 @@ namespace ubana {
     std::vector<recob::PFParticle> fPFParticles;
     recob::Vertex                  fVertex;
     ubana::TPCObjectOrigin         fOrigin;
+    ubana::TPCObjectOriginExtra    fOriginExtra;
     int                            fPfpMult;
     int                            fTrackMult;
     int                            fShowerMult;

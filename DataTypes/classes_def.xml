@@ -68,6 +68,8 @@
   <class name="art::Wrapper<art::Assns<ubana::FlashMatch,ubana::TPCObject,void> >" />
 
   <enum  name="ubana::TPCObjectOrigin"/>
+  <enum  name="ubana::TPCObjectOriginExtra"/>
+
 
 
   <!-- support classes (e.g., elements of data product classes) -->

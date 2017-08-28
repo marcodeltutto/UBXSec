@@ -178,7 +178,7 @@ private:
   std::vector<double> _slc_nuvtx_x, _slc_nuvtx_y, _slc_nuvtx_z;
   std::vector<int> _slc_nuvtx_fv;
   std::vector<double> _slc_vtxcheck_angle;
-  std::vector<int> _slc_origin;
+  std::vector<int> _slc_origin, _slc_origin_extra;
   std::vector<int> _slc_nhits_u, _slc_nhits_v, _slc_nhits_w;
   std::vector<double> _slc_longesttrack_length;
   std::vector<double> _slc_longesttrack_phi, _slc_longesttrack_theta;
@@ -188,7 +188,7 @@ private:
   std::vector<int> _slc_nuvtx_closetodeadregion_u, _slc_nuvtx_closetodeadregion_v, _slc_nuvtx_closetodeadregion_w;
   std::vector<double> _slc_kalman_chi2;
   std::vector<int> _slc_kalman_ndof;
-  std::vector<bool> _slc_passed_min_track_quality;
+  std::vector<bool> _slc_passed_min_track_quality, _slc_passed_min_vertex_quality;
   std::vector<double> _slc_n_intime_pe_closestpmt;
   std::vector<double> _slc_maxdistance_vtxtrack;
   std::vector<int> _slc_npfp, _slc_ntrack, _slc_nshower;
@@ -307,6 +307,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _tree1->Branch("slc_nuvtx_fv",                   "std::vector<int>",    &_slc_nuvtx_fv);
   _tree1->Branch("slc_vtxcheck_angle",             "std::vector<double>", &_slc_vtxcheck_angle);
   _tree1->Branch("slc_origin",                     "std::vector<int>",    &_slc_origin);
+  _tree1->Branch("slc_origin_extra",               "std::vector<int>",    &_slc_origin_extra);
   _tree1->Branch("slc_nhits_u",                    "std::vector<int>",    &_slc_nhits_u);
   _tree1->Branch("slc_nhits_v",                    "std::vector<int>",    &_slc_nhits_v);
   _tree1->Branch("slc_nhits_w",                    "std::vector<int>",    &_slc_nhits_w);
@@ -322,6 +323,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _tree1->Branch("slc_kalman_chi2",                "std::vector<double>", &_slc_kalman_chi2);
   _tree1->Branch("slc_kalman_ndof",                "std::vector<int>",    &_slc_kalman_ndof);
   _tree1->Branch("slc_passed_min_track_quality",   "std::vector<bool>",   &_slc_passed_min_track_quality);
+  _tree1->Branch("slc_passed_min_vertex_quality",  "std::vector<bool>",   &_slc_passed_min_vertex_quality);
   _tree1->Branch("slc_n_intime_pe_closestpmt",     "std::vector<double>", &_slc_n_intime_pe_closestpmt);
   _tree1->Branch("slc_maxdistance_vtxtrack",       "std::vector<double>", &_slc_maxdistance_vtxtrack);
   _tree1->Branch("slc_npfp",                       "std::vector<int>",    &_slc_npfp);
@@ -798,6 +800,7 @@ void UBXSec::analyze(art::Event const & e) {
   _slc_nuvtx_fv.resize(_nslices);
   _slc_vtxcheck_angle.resize(_nslices);
   _slc_origin.resize(_nslices);
+  _slc_origin_extra.resize(_nslices);
   _slc_flshypo_xfixed_spec.resize(_nslices);
   _slc_flshypo_spec.resize(_nslices);
   _slc_nhits_u.resize(_nslices, -9999);
@@ -817,6 +820,7 @@ void UBXSec::analyze(art::Event const & e) {
   _slc_kalman_chi2.resize(_nslices, -9999);
   _slc_kalman_ndof.resize(_nslices, -9999);  
   _slc_passed_min_track_quality.resize(_nslices, -9999);
+  _slc_passed_min_vertex_quality.resize(_nslices, -9999);
   _slc_n_intime_pe_closestpmt.resize(_nslices, -9999);
   _slc_maxdistance_vtxtrack.resize(_nslices, -9999);
   _slc_npfp.resize(_nslices, -9999);
@@ -842,6 +846,10 @@ void UBXSec::analyze(art::Event const & e) {
     // Slice origin 
     _slc_origin[slice] = tpcobj.GetOrigin();
     std::cout << "[UBXSec] \t Origin is " << _slc_origin[slice] << std::endl;
+
+    // Slice origin extra
+    _slc_origin_extra[slice] = tpcobj.GetOriginExtra();
+    std::cout << "[UBXSec] \t Origin extra is " << _slc_origin_extra[slice] << std::endl;
 
     // Containment
     _slc_iscontained[slice] = UBXSecHelper::TracksAreContained(tpcobj.GetTracks());
@@ -974,13 +982,20 @@ void UBXSec::analyze(art::Event const & e) {
     if (goodTrack) _slc_passed_min_track_quality[slice] = true;
     else _slc_passed_min_track_quality[slice] = false;
 
+    // Vertex quality
+    recob::Vertex slice_vtx = tpcobj.GetVertex();
+    double slice_vtx_xyz[3];
+    slice_vtx->XYZ(slice_vtx_xyz);
+    _slc_passed_min_vertex_quality[slice] = true;
+    if (!deadRegionsFinder.NearDeadReg2P(slice_vtx_xyz[2], slice_vtx_xyz[3], 0.6 ))
+      _slc_passed_min_vertex_quality[slice] = false;
+
     // Channel status
     _slc_nuvtx_closetodeadregion_u[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 0) ? 1 : 0);
     _slc_nuvtx_closetodeadregion_v[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 1) ? 1 : 0);
     _slc_nuvtx_closetodeadregion_w[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 2) ? 1 : 0);
 
     // Vertex check
-    recob::Vertex slice_vtx = tpcobj.GetVertex();
     ubxsec::VertexCheck vtxCheck(track_v_v[slice], slice_vtx);
     _slc_vtxcheck_angle[slice] = vtxCheck.AngleBetweenLongestTracks();
     

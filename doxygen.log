@@ -224,8 +224,8 @@ Generating code for file /home/travis/buil/home/travis/build/marcodeltutto/UBXSe
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:111: warning: Member analyze(art::Event const &e) override (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:112: warning: Member endSubRun(const art::SubRun &sr) override (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:71: warning: Member GetRecoToTrueMatches(art::Event const &e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits) (function) of class UBXSecHelper is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:233: warning: argument 'track' of command @param is not found in the argument list of UBXSecHelper::GetCorrectedCosTheta(recob::Track t, recob::Vertex tpcobj_nu_vtx)
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:233: warning: The following parameters of UBXSecHelper::GetCorrectedCosTheta(recob::Track t, recob::Vertex tpcobj_nu_vtx) are not documented:
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:241: warning: argument 'track' of command @param is not found in the argument list of UBXSecHelper::GetCorrectedCosTheta(recob::Track t, recob::Vertex tpcobj_nu_vtx)
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:241: warning: The following parameters of UBXSecHelper::GetCorrectedCosTheta(recob::Track t, recob::Vertex tpcobj_nu_vtx) are not documented:
   parameter 't'
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:58: warning: The following parameters of UBXSecHelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits, PFParticleSet &recoVeto, MCParticleSet &trueVeto, bool _recursiveMatching) are not documented:
   parameter '_recursiveMatching'
@@ -354,6 +354,6 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-symbol cache used 610/65536 hits=13659 misses=610
-lookup cache used 277/65536 hits=2328 misses=305
+symbol cache used 611/65536 hits=13745 misses=611
+lookup cache used 278/65536 hits=2334 misses=306
 finished...

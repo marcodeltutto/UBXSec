@@ -122,8 +122,10 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the point passed is in the fiducial volume.  <a href="#a4ff7e0d6774d5628cc2a3d19bb2d3492"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static ubana::TPCObjectOrigin&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a7f4a880c5880a678c7d0f181e92cb748">GetSliceOrigin</a> (std::vector&lt; art::Ptr&lt; recob::PFParticle &gt;&gt; neutrinoOriginPFP, std::vector&lt; art::Ptr&lt; recob::PFParticle &gt;&gt; cosmicOriginPFP, lar_pandora::PFParticleVector pfp_v)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the origin of the TPC object (neutrino/cosmic/mixed)  <a href="#a7f4a880c5880a678c7d0f181e92cb748"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">static ubana::TPCObjectOriginExtra&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a0ebb67197779a043e0f07436e8a979dc">GetSliceOriginExtra</a> (std::vector&lt; art::Ptr&lt; recob::PFParticle &gt;&gt; cosmicStoppingOriginPFP, lar_pandora::PFParticleVector pfp_v)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns extra origin information for a TPC object (for now only if it is a stopping muon in the TPC)  <a href="#a0ebb67197779a043e0f07436e8a979dc"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static ubana::TPCObjectOriginExtra&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#afe28141046a637997685e43478ea6e25">GetSliceOriginExtra_NC</a> (lar_pandora::PFParticleVector protonNCOriginPFP, lar_pandora::PFParticleVector pionNCOriginPFP, lar_pandora::PFParticleVector pfp_v)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns extra origin information for a TPC object (for now if it is a stopping muon in the TPC)  <a href="#afe28141046a637997685e43478ea6e25"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static ubana::TPCObjectOriginExtra&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#ae4071096536a66ccd1de84b8cc15fb12">GetSliceOriginExtra_Stopping</a> (lar_pandora::PFParticleVector cosmicStoppingOriginPFP, lar_pandora::PFParticleVector pfp_v)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns extra origin information for a TPC object (for now only if it is a stopping muon in the TPC)  <a href="#ae4071096536a66ccd1de84b8cc15fb12"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a5d811318d7fb66ab5e1816453c017e63">GetNumberOfHitsPerPlane</a> (art::Event const &amp;e, std::string _particleLabel, lar_pandora::TrackVector track_v, int &amp;nhits_u, int &amp;nhits_v, int &amp;nhits_w)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns number of hits on each plane for a TPC obj.  <a href="#a5d811318d7fb66ab5e1816453c017e63"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#accf62c400d9e984f1277843de78715a7">TrackPassesHitRequirment</a> (art::Event const &amp;e, std::string _particleLabel, art::Ptr&lt; recob::Track &gt; trk, int nHitsReq)</td></tr>
@@ -727,14 +729,57 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 
 </div>
 </div>
-<a class="anchor" id="a0ebb67197779a043e0f07436e8a979dc"></a><!-- doxytag: member="UBXSecHelper::GetSliceOriginExtra" ref="a0ebb67197779a043e0f07436e8a979dc" args="(std::vector&lt; art::Ptr&lt; recob::PFParticle &gt;&gt; cosmicStoppingOriginPFP, lar_pandora::PFParticleVector pfp_v)" -->
+<a class="anchor" id="afe28141046a637997685e43478ea6e25"></a><!-- doxytag: member="UBXSecHelper::GetSliceOriginExtra_NC" ref="afe28141046a637997685e43478ea6e25" args="(lar_pandora::PFParticleVector protonNCOriginPFP, lar_pandora::PFParticleVector pionNCOriginPFP, lar_pandora::PFParticleVector pfp_v)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ubana::TPCObjectOriginExtra <a class="el" href="classUBXSecHelper.html#a0ebb67197779a043e0f07436e8a979dc">UBXSecHelper::GetSliceOriginExtra</a> </td>
+          <td class="memname">ubana::TPCObjectOriginExtra <a class="el" href="classUBXSecHelper.html#afe28141046a637997685e43478ea6e25">UBXSecHelper::GetSliceOriginExtra_NC</a> </td>
           <td>(</td>
-          <td class="paramtype">std::vector&lt; art::Ptr&lt; recob::PFParticle &gt;&gt;&#160;</td>
+          <td class="paramtype">lar_pandora::PFParticleVector&#160;</td>
+          <td class="paramname"><em>protonNCOriginPFP</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">lar_pandora::PFParticleVector&#160;</td>
+          <td class="paramname"><em>pionNCOriginPFP</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">lar_pandora::PFParticleVector&#160;</td>
+          <td class="paramname"><em>pfp_v</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns extra origin information for a TPC object (for now if it is a stopping muon in the TPC) </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">protonNCOriginPFP</td><td>list of PFP with nc origin with proton </td></tr>
+    <tr><td class="paramname">pionNCOriginPFP</td><td>list of PFP with nc origin with pion </td></tr>
+    <tr><td class="paramname">pfp_v</td><td>the TPC object (vector of PFP) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ae4071096536a66ccd1de84b8cc15fb12"></a><!-- doxytag: member="UBXSecHelper::GetSliceOriginExtra_Stopping" ref="ae4071096536a66ccd1de84b8cc15fb12" args="(lar_pandora::PFParticleVector cosmicStoppingOriginPFP, lar_pandora::PFParticleVector pfp_v)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ubana::TPCObjectOriginExtra <a class="el" href="classUBXSecHelper.html#ae4071096536a66ccd1de84b8cc15fb12">UBXSecHelper::GetSliceOriginExtra_Stopping</a> </td>
+          <td>(</td>
+          <td class="paramtype">lar_pandora::PFParticleVector&#160;</td>
           <td class="paramname"><em>cosmicStoppingOriginPFP</em>, </td>
         </tr>
         <tr>

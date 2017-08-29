@@ -985,9 +985,9 @@ void UBXSec::analyze(art::Event const & e) {
     // Vertex quality
     recob::Vertex slice_vtx = tpcobj.GetVertex();
     double slice_vtx_xyz[3];
-    slice_vtx->XYZ(slice_vtx_xyz);
+    slice_vtx.XYZ(slice_vtx_xyz);
     _slc_passed_min_vertex_quality[slice] = true;
-    if (!deadRegionsFinder.NearDeadReg2P(slice_vtx_xyz[2], slice_vtx_xyz[3], 0.6 ))
+    if (!deadRegionsFinder.NearDeadReg2P(slice_vtx_xyz[1], slice_vtx_xyz[2], 0.6))
       _slc_passed_min_vertex_quality[slice] = false;
 
     // Channel status

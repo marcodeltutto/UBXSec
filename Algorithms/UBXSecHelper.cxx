@@ -568,7 +568,8 @@ ubana::TPCObjectOrigin UBXSecHelper::GetSliceOrigin(std::vector<art::Ptr<recob::
 }
 
 //__________________________________________________________________________
-ubana::TPCObjectOriginExtra UBXSecHelper::GetSliceOriginExtra(std::vector<art::Ptr<recob::PFParticle>> cosmicStoppingOriginPFP, lar_pandora::PFParticleVector pfp_v) {
+ubana::TPCObjectOriginExtra UBXSecHelper::GetSliceOriginExtra_Stopping(lar_pandora::PFParticleVector cosmicStoppingOriginPFP, 
+                                                                       lar_pandora::PFParticleVector pfp_v) {
 
   ::ubana::TPCObjectOriginExtra origin_extra = ubana::kNotSet;
 
@@ -591,6 +592,48 @@ ubana::TPCObjectOriginExtra UBXSecHelper::GetSliceOriginExtra(std::vector<art::P
   return origin_extra;
 
 }
+
+
+
+//__________________________________________________________________________
+ubana::TPCObjectOriginExtra UBXSecHelper::GetSliceOriginExtra_NC(lar_pandora::PFParticleVector protonNCOriginPFP, 
+                                                                lar_pandora::PFParticleVector pionNCOriginPFP, 
+                                                                lar_pandora::PFParticleVector pfp_v) {
+
+  ::ubana::TPCObjectOriginExtra origin_extra = ubana::kNotSet;
+
+  int protonNCOrigin = 0;
+  int pionNCOrigin = 0;
+
+  // Loop over pfp in the slice
+  for ( unsigned int i = 0; i < pfp_v.size(); i++) {
+
+    // Loop over pfp that are protons from NC
+    for ( unsigned int j = 0; j < protonNCOriginPFP.size(); j++) {
+
+      if (protonNCOriginPFP[j] == pfp_v[i]) {
+        protonNCOrigin ++;
+      }
+    }
+
+    // Loop over pfp that are pions from NC
+    for ( unsigned int j = 0; j < pionNCOriginPFP.size(); j++) {
+
+      if (pionNCOriginPFP[j] == pfp_v[i]) {
+        pionNCOrigin ++;
+      }
+    }
+  }
+
+  if (pionNCOrigin > 0) origin_extra = ubana::kNCPion;
+  if (protonNCOrigin > pionNCOrigin) origin_extra = ubana::kNCProton;
+
+  return origin_extra;
+
+}
+
+
+
 
 //______________________________________________________________________________
 bool UBXSecHelper::TrackPassesHitRequirment(art::Event const & e,

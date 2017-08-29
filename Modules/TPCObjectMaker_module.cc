@@ -183,6 +183,16 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
   ::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
 
+  // Is nc?
+  bool _is_nc = false;
+  art::Handle< std::vector<simb::MCTruth> > mctruth_h;
+  std::vector<art::Ptr<simb::MCTruth> > mclist;
+  if (e.getByLabel("generator",mctruth_h)) {
+    art::fill_ptr_vector(mclist, mctruth_h);
+    int iList = 0; // 1 nu int per spill
+    _is_nc = (mclist[iList]->GetNeutrino().CCNC() == 1);
+  }
+
   // Use LArPandoraHelper functions to collect Pandora information
   lar_pandora::PFParticleVector pfParticleList;              //vector of PFParticles
   lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, pfParticleList);
@@ -221,9 +231,15 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
   std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP;
   std::vector<art::Ptr<recob::PFParticle>> cosmicOriginPFP;
   std::vector<art::Ptr<recob::PFParticle>> cosmicStoppingOriginPFP;
-  neutrinoOriginPFP.clear();
+  std::vector<art::Ptr<recob::PFParticle>> neutrinoStoppingOriginPFP;
+  std::vector<art::Ptr<recob::PFParticle>> protonNCOriginPFP;
+  std::vector<art::Ptr<recob::PFParticle>> pionNCOriginPFP;
   cosmicOriginPFP.clear();
   cosmicStoppingOriginPFP.clear();
+  neutrinoStoppingOriginPFP.clear();
+  protonNCOriginPFP.clear();
+  pionNCOriginPFP.clear();
+
 
   if (!_is_mc) goto constructobjects;
 
@@ -259,6 +275,24 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
     // Neutrino origin
     if (mc_truth->Origin() == NEUTRINO_ORIGIN) {
       neutrinoOriginPFP.emplace_back(pf_par);
+
+      // Check if this is a stopping muon in the TPC
+      ::geoalgo::Vector mcpar_end(mc_par->EndX(), mc_par->EndY(), mc_par->EndZ());
+
+      ::geoalgo::AABox tpc_vol(0., (-1.)*(geo->DetHalfHeight()), 0.,
+                               geo->DetHalfWidth()*2., geo->DetHalfHeight(), geo->DetLength());
+            
+      if((mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13) && tpc_vol.Contain(mcpar_end)) {
+        neutrinoStoppingOriginPFP.emplace_back(pf_par);
+      }
+
+      // Check if it's a proton or pion from NC interaction
+      if(_is_nc) {
+        if (mc_par->PdgCode() == 2212)
+          protonNCOriginPFP.emplace_back(pf_par);
+        if (mc_par->PdgCode() == 211) 
+          pionNCOriginPFP.emplace_back(pf_par);
+      }
     }
   }
 
@@ -299,8 +333,13 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
 
     // Set origin extra
     ::ubana::TPCObjectOriginExtra origin_extra = ubana::kNotSet;
-    if (_is_mc)
-      origin_extra = UBXSecHelper::GetSliceOriginExtra(cosmicStoppingOriginPFP, pfp_v_v[i]);
+    if (_is_mc) {
+      if (origin == ubana::kCosmicRay) origin_extra = UBXSecHelper::GetSliceOriginExtra_Stopping(cosmicStoppingOriginPFP, pfp_v_v[i]);
+      else {
+        origin_extra = UBXSecHelper::GetSliceOriginExtra_Stopping(neutrinoStoppingOriginPFP, pfp_v_v[i]);
+        origin_extra = UBXSecHelper::GetSliceOriginExtra_NC(protonNCOriginPFP, pionNCOriginPFP, pfp_v_v[i]);
+      }
+    }
     obj.SetOriginExtra(origin_extra);
 
     // Set Multiplicity
@@ -534,6 +573,7 @@ void ubana::TPCObjectMaker::GetMultiplicity(lar_pandora::PFParticleVector pfPart
   }
 
 }
+
 
 
 DEFINE_ART_MODULE(ubana::TPCObjectMaker)

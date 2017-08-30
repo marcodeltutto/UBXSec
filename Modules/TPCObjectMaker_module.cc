@@ -336,8 +336,10 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
     if (_is_mc) {
       if (origin == ubana::kCosmicRay) origin_extra = UBXSecHelper::GetSliceOriginExtra_Stopping(cosmicStoppingOriginPFP, pfp_v_v[i]);
       else {
-        origin_extra = UBXSecHelper::GetSliceOriginExtra_Stopping(neutrinoStoppingOriginPFP, pfp_v_v[i]);
         origin_extra = UBXSecHelper::GetSliceOriginExtra_NC(protonNCOriginPFP, pionNCOriginPFP, pfp_v_v[i]);
+        if (origin_extra != ubana::kNotSet) {
+          origin_extra = UBXSecHelper::GetSliceOriginExtra_Stopping(neutrinoStoppingOriginPFP, pfp_v_v[i]);
+        }
       }
     }
     obj.SetOriginExtra(origin_extra);

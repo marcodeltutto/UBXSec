@@ -39,6 +39,8 @@ namespace ubana {
     kNotSet = -1,           // -1 
     kStoppingMuon = 0,      // 0
     kACPT,                  // 1
+    kNCPion,                // 2
+    kNCProton,              // 3
   };
 }
 

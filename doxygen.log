@@ -259,22 +259,22 @@ Generating code for file /home/travis/buil/home/travis/build/marcodeltutto/UBXSe
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/FlashMatch.h:58: warning: Member GetXFixedLl() const  (function) of class ubana::FlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/MCGhost.h:36: warning: Member SetMode(std::string) (function) of class ubana::MCGhost is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/MCGhost.h:39: warning: Member GetMode() const  (function) of class ubana::MCGhost is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:56: warning: Member SetTracks(std::vector< recob::Track >) (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:57: warning: Member SetPFPs(std::vector< recob::PFParticle >) (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:58: warning: Member SetVertex(recob::Vertex) (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:59: warning: Member SetOrigin(ubana::TPCObjectOrigin) (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:60: warning: Member SetOriginExtra(ubana::TPCObjectOriginExtra) (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:61: warning: Member SetMultiplicity(int pfpMult, int trackMult, int showerMult) (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:64: warning: Member GetTracks() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:65: warning: Member GetPFPs() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:66: warning: Member GetVertex() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:67: warning: Member GetOrigin() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:68: warning: Member GetOriginExtra() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:69: warning: Member GetNTracks() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:70: warning: Member GetNShowers() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:71: warning: Member GetNPFP() const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:72: warning: Member GetMultiplicity(int &, int &, int &) const  (function) of class ubana::TPCObject is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:73: warning: Member GetNTracksCloseToVertex(double) const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:58: warning: Member SetTracks(std::vector< recob::Track >) (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:59: warning: Member SetPFPs(std::vector< recob::PFParticle >) (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:60: warning: Member SetVertex(recob::Vertex) (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:61: warning: Member SetOrigin(ubana::TPCObjectOrigin) (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:62: warning: Member SetOriginExtra(ubana::TPCObjectOriginExtra) (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:63: warning: Member SetMultiplicity(int pfpMult, int trackMult, int showerMult) (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:66: warning: Member GetTracks() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:67: warning: Member GetPFPs() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:68: warning: Member GetVertex() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:69: warning: Member GetOrigin() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:70: warning: Member GetOriginExtra() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:71: warning: Member GetNTracks() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:72: warning: Member GetNShowers() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:73: warning: Member GetNPFP() const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:74: warning: Member GetMultiplicity(int &, int &, int &) const  (function) of class ubana::TPCObject is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:75: warning: Member GetNTracksCloseToVertex(double) const  (function) of class ubana::TPCObject is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/CosmicTagByHitIntegral.h:43: warning: Member _counter(0) (function) of class ubana::CosmicTagByHitIntegral is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/TPCObjectFilter.cxx:29: warning: Member pt1 (variable) of class ubana::two_points is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/TPCObjectFilter.cxx:30: warning: Member pt2 (variable) of class ubana::two_points is not documented.
@@ -354,6 +354,6 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-symbol cache used 611/65536 hits=13745 misses=611
-lookup cache used 278/65536 hits=2334 misses=306
+symbol cache used 613/65536 hits=13791 misses=613
+lookup cache used 280/65536 hits=2338 misses=308
 finished...

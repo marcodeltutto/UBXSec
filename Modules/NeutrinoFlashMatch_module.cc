@@ -395,12 +395,18 @@ void NeutrinoFlashMatch::produce(art::Event & e)
       art::fill_ptr_vector(mclist, mctruthListHandle);
  
     int iList = 0; // 1 nu int per spill
-    double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),mclist[iList]->GetNeutrino().Nu().Vy(),mclist[iList]->GetNeutrino().Nu().Vz()}; 
-    if (UBXSecHelper::InFV(truth_nu_vtx)) _fv = 1;
-    else _fv = 0;
+    if (mclist[iList]->Origin() == simb::kBeamNeutrino) {
+      double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),mclist[iList]->GetNeutrino().Nu().Vy(),mclist[iList]->GetNeutrino().Nu().Vz()}; 
+      if (UBXSecHelper::InFV(truth_nu_vtx)) _fv = 1;
+      else _fv = 0;
 
-    _ccnc    = mclist[iList]->GetNeutrino().CCNC();
-    _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
+      _ccnc    = mclist[iList]->GetNeutrino().CCNC();
+      _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
+    }
+    else {
+      _ccnc = -1;
+      _nupdg = -1;
+    }
   }
 
   if (_debug) _tree1->Fill();

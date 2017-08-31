@@ -630,36 +630,49 @@ void UBXSec::analyze(art::Event const & e)
       art::fill_ptr_vector(mclist, mctruthListHandle);
 
     int iList = 0; // 1 nu int per spill
-    double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),
-                              mclist[iList]->GetNeutrino().Nu().Vy(),
-                              mclist[iList]->GetNeutrino().Nu().Vz()};
-    if (UBXSecHelper::InFV(truth_nu_vtx)) _fv = 1;
-    else _fv = 0;
-    _ccnc    = mclist[iList]->GetNeutrino().CCNC();
-    _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
-    _nu_e    = mclist[iList]->GetNeutrino().Nu().E();
 
-    _tvtx_x.clear(); _tvtx_y.clear(); _tvtx_z.clear();
-    for(size_t n = 0; n < mclist.size(); n++ ) {
-      _tvtx_x.emplace_back(mclist[n]->GetNeutrino().Nu().Vx());
-      _tvtx_y.emplace_back(mclist[n]->GetNeutrino().Nu().Vy());
-      _tvtx_z.emplace_back(mclist[n]->GetNeutrino().Nu().Vz());
-    }
+    if (mclist[iList]->Origin() == NEUTRINO_ORIGIN) {
+      double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),
+                                mclist[iList]->GetNeutrino().Nu().Vy(),
+                                mclist[iList]->GetNeutrino().Nu().Vz()};
+      if (UBXSecHelper::InFV(truth_nu_vtx)) _fv = 1;
+      else _fv = 0;
+      _ccnc    = mclist[iList]->GetNeutrino().CCNC();
+      _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
+      _nu_e    = mclist[iList]->GetNeutrino().Nu().E();
 
-    _nsignal = 0;
-    if(_nupdg==14 && _ccnc==0 && _fv==1) _nsignal=1; 
-
-    // Also save muon momentum if is signal
-    _true_muon_mom = -9999.;
-    if (_nsignal == 1) {
-      for (int p = 0; p < mclist[iList]->NParticles(); p++) {
-        auto const & mcp = mclist[iList]->GetParticle(p);
-        if (mcp.Mother() != 0) continue;
-        if (mcp.PdgCode() != 13) continue;
-        _true_muon_mom = mcp.P();
+      _tvtx_x.clear(); _tvtx_y.clear(); _tvtx_z.clear();
+      for(size_t n = 0; n < mclist.size(); n++ ) {
+        _tvtx_x.emplace_back(mclist[n]->GetNeutrino().Nu().Vx());
+        _tvtx_y.emplace_back(mclist[n]->GetNeutrino().Nu().Vy());
+        _tvtx_z.emplace_back(mclist[n]->GetNeutrino().Nu().Vz());
       }
 
+      _nsignal = 0;
+      if(_nupdg==14 && _ccnc==0 && _fv==1) _nsignal=1; 
+
+      // Also save muon momentum if is signal
+      _true_muon_mom = -9999.;
+      if (_nsignal == 1) {
+        for (int p = 0; p < mclist[iList]->NParticles(); p++) {
+          auto const & mcp = mclist[iList]->GetParticle(p);
+          if (mcp.Mother() != 0) continue;
+          if (mcp.PdgCode() != 13) continue;
+          _true_muon_mom = mcp.P();
+        }
+      }
+    } // neutrino origin
+    else {
+      _ccnc = -1;
+      _nupdg = -1;
+      _nu_e = -1;
+      _true_muon_mom = -9999.;
     }
+  } else {
+    _ccnc = -1;
+    _nupdg = -1;
+    _nu_e = -1;
+    _true_muon_mom = -9999.;
   }
 
   // OpHits related 

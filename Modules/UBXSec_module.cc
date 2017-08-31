@@ -113,6 +113,9 @@ public:
 
 private:
 
+  /// Prints MC particles from GENIE on the screen
+  void PrintMC(std::vector<art::Ptr<simb::MCTruth>> mclist);
+
   FindDeadRegions deadRegionsFinder;
   ubxsec::McPfpMatch mcpfpMatcher;
   ::pmtana::PECalib _pecalib;
@@ -532,13 +535,13 @@ void UBXSec::analyze(art::Event const & e) {
          std::cout << "Neutrino related track found." << std::endl;
          std::cout << "Process (0==CC, 1==NC) " << mc_truth->GetNeutrino().CCNC()         << std::endl;
          std::cout << "Neutrino PDG           " << mc_truth->GetNeutrino().Nu().PdgCode() << std::endl;
-         std::cout << "PDG  " << mc_par->PdgCode() << std::endl;
-         std::cout << "Mass " << mc_par->Mass()    << std::endl;
-         std::cout << "Proc " << mc_par->Process() << std::endl;
-         std::cout << "Vx   " << mc_par->Vx()      << std::endl;
-         std::cout << "Vy   " << mc_par->Vy()      << std::endl;
-         std::cout << "Vz   " << mc_par->Vz()      << std::endl;
-         std::cout << "T    " << mc_par->T()       << std::endl;
+         std::cout << "Particle PDG  " << mc_par->PdgCode() << std::endl;
+         std::cout << "Particle Mass " << mc_par->Mass()    << std::endl;
+         std::cout << "Particle Proc " << mc_par->Process() << std::endl;
+         std::cout << "Particle Vx   " << mc_par->Vx()      << std::endl;
+         std::cout << "Particle Vy   " << mc_par->Vy()      << std::endl;
+         std::cout << "Particle Vz   " << mc_par->Vz()      << std::endl;
+         std::cout << "Particle T    " << mc_par->T()       << std::endl;
          double timeCorrection = 343.75;
          std::cout << "Remeber a time correction of " << timeCorrection << std::endl;
          auto iter =  matchedParticleHits.find(mc_par);
@@ -731,6 +734,9 @@ void UBXSec::analyze(art::Event const & e) {
     int iList = 0; // 1 nu int per spill
 
     if (mclist[iList]->Origin() == NEUTRINO_ORIGIN) {
+
+      if (_debug) this->PrintMC(mclist); 
+
       double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),
                                 mclist[iList]->GetNeutrino().Nu().Vy(),
                                 mclist[iList]->GetNeutrino().Nu().Vz()};
@@ -1333,6 +1339,23 @@ void UBXSec::endSubRun(const art::SubRun& sr) {
   _sr_tree->Fill();
 
   if (_debug) std::cout << "[UBXSec::endSubRun] Ends" << std::endl;
+}
+
+void UBXSec::PrintMC(std::vector<art::Ptr<simb::MCTruth>> mclist) {
+
+  std::cout << "[UBXSec] ================= MC Information ================= [UBXSec]" << std::endl;
+
+  for (int p = 0; p < mclist[0]->NParticles(); p++) {
+    const simb::MCParticle mc_par = mclist[0]->GetParticle(p);
+    std::cout << "PDG           " << mc_par.PdgCode() << std::endl;
+    std::cout << "Start process " << mc_par.Process() << std::endl;
+    std::cout << "Energy        " << mc_par.E() << std::endl;
+    std::cout << "Momentum      " << mc_par.P() << std::endl;
+    std::cout << "Vertex        " << mc_par.Vx() << ", " << mc_par.Vy() << ", " << mc_par.Vz() << std::endl;
+    std::cout << "Status Code   " << mc_par.StatusCode() << std::endl << std::endl;
+  }
+
+  std::cout << "[UBXSec] ================= MC Information ================= [UBXSec]" << std::endl;
 }
 
 DEFINE_ART_MODULE(UBXSec)

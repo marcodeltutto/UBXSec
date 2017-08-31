@@ -12,6 +12,7 @@
 #include "cosmicremovalmodules.fcl"
 #include "cosmicflashtagger.fcl"
 #include "acpttagger.fcl"
+#include "recotruematcher.fcl"
 
 BEGIN_PROLOG
 #
@@ -32,6 +33,7 @@ TPCObjectProducer:            "TPCObjectMaker"
 POTSummaryProducer:           "beamdata"
 POTSummaryInstance:           "bnbETOR860"
 ParticleIDProducer:           "pandoraNupid"
+MCGhostProducer:              "RecoTrueMatcher"
 
 UseGENIEInfo:                 true
 MinimumHitRequirement:        3
@@ -52,6 +54,8 @@ ubxsec_data_reco:
 
 ubxsec_data_flashmatch:
 {
+   RecoTrueMatcher      : @local::RecoTrueMatcher
+
    TPCObjectMaker       : @local::TPCObjectMaker
 
    NeutrinoFlashMatch   : @local::NeutrinoFlashMatch
@@ -69,6 +73,7 @@ ubxsec_data_producers: [ pandoraCosmicTrackPFPart,
                          pandoraCosmicACPTTagger,
                          pandoraCosmicHitRemoval,
                          pandoraNu,
+                         RecoTrueMatcher,
                          TPCObjectMaker,
                          NeutrinoFlashMatch ] 
 

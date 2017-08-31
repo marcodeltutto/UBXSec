@@ -105,6 +105,9 @@ void RecoTrueMatcher::produce(art::Event & e)
 
   if (_is_data) {
     std::cout << "[RecoTrueMatcher] Running on a real data file. No MC-PFP matching will be attempted." << std::endl;
+    e.put(std::move(mcGhostVector));
+    e.put(std::move(assnOutGhostMCP));
+    e.put(std::move(assnOutGhostPFP));
     return;
   } 
     

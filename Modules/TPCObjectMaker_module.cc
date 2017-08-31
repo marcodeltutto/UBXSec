@@ -290,7 +290,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
       if(_is_nc) {
         if (mc_par->PdgCode() == 2212)
           protonNCOriginPFP.emplace_back(pf_par);
-        if (mc_par->PdgCode() == 211) 
+        if (mc_par->PdgCode() == 211 || mc_par->PdgCode() == -211) 
           pionNCOriginPFP.emplace_back(pf_par);
       }
     }
@@ -337,7 +337,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
       if (origin == ubana::kCosmicRay) origin_extra = UBXSecHelper::GetSliceOriginExtra_Stopping(cosmicStoppingOriginPFP, pfp_v_v[i]);
       else {
         origin_extra = UBXSecHelper::GetSliceOriginExtra_NC(protonNCOriginPFP, pionNCOriginPFP, pfp_v_v[i]);
-        if (origin_extra != ubana::kNotSet) {
+        if (origin_extra == ubana::kNotSet) {
           origin_extra = UBXSecHelper::GetSliceOriginExtra_Stopping(neutrinoStoppingOriginPFP, pfp_v_v[i]);
         }
       }

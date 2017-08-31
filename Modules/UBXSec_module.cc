@@ -987,7 +987,7 @@ void UBXSec::analyze(art::Event const & e) {
     double slice_vtx_xyz[3];
     slice_vtx.XYZ(slice_vtx_xyz);
     _slc_passed_min_vertex_quality[slice] = true;
-    if (!deadRegionsFinder.NearDeadReg2P(slice_vtx_xyz[1], slice_vtx_xyz[2], 0.6))
+    if (deadRegionsFinder.NearDeadReg2P(slice_vtx_xyz[1], slice_vtx_xyz[2], 5.0))
       _slc_passed_min_vertex_quality[slice] = false;
 
     // Channel status

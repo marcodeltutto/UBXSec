@@ -41,6 +41,7 @@ set( hitfinder_tool_lib_list
 art_make( BASENAME_ONLY
           LIBRARY_NAME     uboonecode_uboone_UBXSec_Algorithms
           LIB_LIBRARIES
+                   uboonecode_uboone_UBXSec_DataTypes
                    uboonecode_uboone_BasicTool_GeoAlgo
                    uboone_UBFlashFinder
 		   uboonecode_uboone_SelectionTool_OpT0FinderBase
@@ -93,7 +94,8 @@ art_make( BASENAME_ONLY
           TOOL_LIBRARIES
                    ${hitfinder_tool_lib_list}
 
-          MODULE_LIBRARIES 
+          MODULE_LIBRARIES
+                   uboonecode_uboone_UBXSec_DataTypes
                    uboonecode_uboone_UBXSec_Algorithms
                    larsim_MCCheater_BackTracker_service
 		   larpandora_LArPandoraInterface

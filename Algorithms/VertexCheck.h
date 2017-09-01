@@ -75,7 +75,6 @@ namespace ubxsec{
     TVector3 start, end; ///< will store track start and end
     double dist; ///< will store track distance
     std::vector<recob::Track> keep_track; ///< will store tracks to be kept for calculation
-    std::vector<TVector3> track_dir; ///< will store the track direction (always away from the vertex) to calcuate the angle
 
   };
 }

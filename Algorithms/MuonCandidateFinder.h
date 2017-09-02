@@ -1,14 +1,14 @@
 /**
  * \file MuonCandidateFinder.h
  *
- * \ingroup UBXSec
+ * \ingroup ubana
  * 
  * \brief Class def header for a class MuonCandidateFinder
  *
  * @author Marco Del Tutto
  */
 
-/** \addtogroup UBXSec
+/** \addtogroup ubana
 
     @{*/
 #ifndef MUONCANDIDATEFINDER_H
@@ -23,7 +23,7 @@
 #include "lardataobj/AnalysisBase/ParticleID.h"
 #include "uboone/UBXSec/DataTypes/TPCObject.h"
 
-namespace ubxsec{
+namespace ubana{
   
   /**
    \class MuonCandidateFinder

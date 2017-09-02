@@ -72,6 +72,7 @@
 #include "uboone/UBXSec/Algorithms/VertexCheck.h"
 #include "uboone/UBXSec/Algorithms/McPfpMatch.h"
 #include "uboone/UBXSec/Algorithms/FindDeadRegions.h"
+#include "uboone/UBXSec/Algorithms/MuonCandidateFinder.h"
 
 // Root include
 #include "TString.h"
@@ -671,10 +672,10 @@ void UBXSec::analyze(art::Event const & e) {
     std::cout << "[UBXSec] Track handle is not valid or empty." << std::endl;
     //throw std::exception();
   }
-
+  std::vector<art::Ptr<recob::Track>> track_p_v;
+  art::fill_ptr_vector(track_p_v, track_h);
   art::FindManyP<recob::OpFlash> opfls_ptr_coll_v(track_h, e, _acpt_producer);
   
-
   // Get PFP
   art::Handle<std::vector<recob::PFParticle> > pfp_h;
   e.getByLabel(_pfp_producer,pfp_h);
@@ -696,6 +697,23 @@ void UBXSec::analyze(art::Event const & e) {
     std::cout << "[UBXSec] anab::ParticleID is not valid." << std::endl;
   }
   std::cout << "[UBXSec] Numeber of particleids_from_track " << particleids_from_track.size() << std::endl;
+
+  // Fill a std::map Track->ParticleID
+  std::map<recob::Track, anab::ParticleID> track_to_pid_map;
+  for (auto track : track_p_v) {
+    std::vector<const anab::ParticleID*> pids = particleids_from_track.at(track.key());
+
+    if(pids.size() == 0) 
+      continue;
+
+    for (auto pid : pids) {
+      if (!pid->PlaneID().isValid) continue;
+      int planenum = pid->PlaneID().Plane;
+      if (planenum != 2) continue;
+      track_to_pid_map[(*track)] = (*pid);
+      continue;
+    }
+  }
 
   // Get Ghosts
   art::Handle<std::vector<ubana::MCGhost> > ghost_h;
@@ -1134,6 +1152,16 @@ void UBXSec::analyze(art::Event const & e) {
     // Distance from recon nu vertex to thefar away track in TPCObject
     //_slc_maxdistance_vtxtrack = UBXSecHelper::GetMaxTrackVertexDistance();
 
+    // Muon Candidate
+    ubana::MuonCandidateFinder muon_finder;
+    muon_finder.SetTPCObject(tpcobj);
+    muon_finder.SetTrackToPIDMap(track_to_pid_map);
+    recob::Track candidate_track;
+    if (muon_finder.GetCandidateTrack(candidate_track)) {
+
+    } else {
+
+    }
 
     // Particle ID
     auto pfps_from_tpcobj = tpcobjToPFPAssns.at(slice);

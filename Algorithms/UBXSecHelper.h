@@ -265,6 +265,14 @@ class UBXSecHelper {
    *  @param pe a vector of PEs per OpDet */
   static double GetFlashZCenter(std::vector<double> pe); 
 
+  /**
+   *  @brief Takes a dimension 3 array, interaction time and drift velocity, and returns a corrected point (shifting in x)
+   *
+   *  @param point_raw raw 3d point 
+   *  @param point_corrected corrected 3d point
+   *  @param interaction_time The interaction time (usually from flash)
+   *  @param drift_velocity The drift velocity */
+  static void GetTimeCorrectedPoint(double * point_raw, double * point_corrected, double interaction_time, double drift_velocity);
 };
 
 #endif //  UBXSECHELPER_H

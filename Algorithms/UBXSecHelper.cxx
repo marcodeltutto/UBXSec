@@ -1035,5 +1035,19 @@ double UBXSecHelper::GetFlashZCenter(std::vector<double> hypo_pe) {
 
 }
 
+//_________________________________________________________________________________
+void UBXSecHelper::GetTimeCorrectedPoint(double * point_raw, double * point_corrected, double interaction_time, double drift_velocity) {
+
+  double x_offset = interaction_time * drift_velocity;
+
+  std::cout << "X correction is: " << x_offset << std::endl;
+
+  point_corrected[0] = point_raw[0] - x_offset;
+  point_corrected[1] = point_raw[1];
+  point_corrected[2] = point_raw[2];
+
+}
+
+
 
 

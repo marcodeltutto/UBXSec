@@ -55,6 +55,7 @@
 #include "lardataobj/AnalysisBase/T0.h"
 #include "larcoreobj/SummaryData/POTSummary.h"
 #include "lardataobj/AnalysisBase/ParticleID.h"
+#include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
 
 // LArSoft include
 #include "uboone/UBFlashFinder/PECalib.h"
@@ -120,6 +121,7 @@ private:
   ubxsec::McPfpMatch mcpfpMatcher;
   ::pmtana::PECalib _pecalib;
 
+  // To be set via fcl parameters
   std::string _hitfinderLabel;
   std::string _pfp_producer;
   std::string _geantModuleLabel;
@@ -134,26 +136,24 @@ private:
   std::string _potsum_instance;
   std::string _particle_id_producer;
   std::string _mc_ghost_producer;
-
   bool _recursiveMatching = false;
   bool _debug = true;
   int _minimumHitRequirement; ///< Minimum number of hits in at least a plane for a track
   bool _use_genie_info; ///< Turn this off if looking at cosmic only files
   double _beam_spill_start; 
   double _beam_spill_end;
+  double _total_pe_cut;
 
+  // Constants
   const simb::Origin_t NEUTRINO_ORIGIN = simb::kBeamNeutrino;
   const simb::Origin_t COSMIC_ORIGIN   = simb::kCosmicRay;
 
+  // To be filled within module
   bool _is_data, _is_mc;
+  double _candidate_flash_time;
+  double _drift_velocity;
 
-  /// Maps used for PFParticle truth matching
-  //typedef std::map< art::Ptr<recob::PFParticle>, unsigned int > RecoParticleToNMatchedHits;
-  //typedef std::map< art::Ptr<simb::MCParticle>,  RecoParticleToNMatchedHits > ParticleMatchingMap;
-  //typedef std::set< art::Ptr<recob::PFParticle> > PFParticleSet;
-  //typedef std::set< art::Ptr<simb::MCParticle> >  MCParticleSet;
-
-
+  // Outputs trees
   TTree* _tree1;
   int _run, _subrun, _event;
   int _muon_is_reco;
@@ -256,6 +256,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
 
   _beam_spill_start               = p.get<double>("BeamSpillStart", 3.2);
   _beam_spill_end                 = p.get<double>("BeamSpillEnd",   4.8);
+  _total_pe_cut                   = p.get<double>("TotalPECut",     50);
 
   _pecalib.Configure(p.get<fhicl::ParameterSet>("PECalib"));
 
@@ -401,6 +402,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _csvfile << "pida,trklen,y" << std::endl;
 }
 
+
+
 void UBXSec::analyze(art::Event const & e) {
 
   if(_debug) std::cout << "********** UBXSec starts" << std::endl;
@@ -427,6 +430,14 @@ void UBXSec::analyze(art::Event const & e) {
 
   ::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
+
+  // Use '_detp' to find 'efield' and 'temp'
+  auto const* _detp = lar::providerFrom<detinfo::DetectorPropertiesService>();
+  double efield = _detp -> Efield();
+  double temp   = _detp -> Temperature();
+  // Determine the drift velocity from 'efield' and 'temp'
+  _drift_velocity = _detp -> DriftVelocity(efield,temp);
+  if (_debug) std::cout << "Using drift velocity = " << _drift_velocity << " cm/us, with E = " << efield << ", and T = " << temp << std::endl;
 
   // Collect tracks
   lar_pandora::TrackVector            allPfParticleTracks;
@@ -696,6 +707,38 @@ void UBXSec::analyze(art::Event const & e) {
   art::FindManyP<ubana::MCGhost>   mcghost_from_pfp   (pfp_h,   e, _mc_ghost_producer);
   art::FindManyP<simb::MCParticle> mcpar_from_mcghost (ghost_h, e, _mc_ghost_producer); 
 
+  // Flashes
+  ::art::Handle<std::vector<recob::OpFlash>> beamflash_h;
+  e.getByLabel(_opflash_producer_beam,beamflash_h);
+  if( !beamflash_h.isValid() || beamflash_h->empty() ) {
+    std::cerr << "Don't have good flashes." << std::endl;
+  }
+
+  _nbeamfls = beamflash_h->size();
+  _beamfls_pe.resize(_nbeamfls);
+  _beamfls_time.resize(_nbeamfls);
+  _beamfls_z.resize(_nbeamfls);
+  _beamfls_spec.resize(_nbeamfls);
+
+  for (size_t n = 0; n < beamflash_h->size(); n++) {
+    auto const& flash = (*beamflash_h)[n];
+    _beamfls_pe[n]   = flash.TotalPE();
+    _beamfls_time[n] = flash.Time();
+    _beamfls_z[n]    = flash.ZCenter();
+
+    _beamfls_spec[n].resize(32);
+    if (_debug) std::cout << "[UBXSec] Reco beam flash pe: " << std::endl;
+    for (unsigned int i = 0; i < 32; i++) {
+      unsigned int opdet = geo->OpDetFromOpChannel(i);
+      _beamfls_spec[n][opdet] = flash.PE(i);
+      if (_beamfls_time[n] > _beam_spill_start && _beamfls_time[n] < _beam_spill_end) {
+        if (flash.TotalPE() > _total_pe_cut) 
+          _candidate_flash_time = flash.Time();
+        if (_debug) std::cout << "\t PMT " << opdet << ": " << _beamfls_spec[n][opdet] << std::endl;
+      }
+    }
+  }
+
   // Check if golden
   /*
   bool is_golden = false;
@@ -878,9 +921,13 @@ void UBXSec::analyze(art::Event const & e) {
     _slc_iscontained[slice] = UBXSecHelper::TracksAreContained(tpcobj.GetTracks());
 
     // Reco vertex
-    double reco_nu_vtx[3];
+    double reco_nu_vtx_raw[3];
     recob::Vertex tpcobj_nu_vtx = tpcobj.GetVertex();
-    tpcobj_nu_vtx.XYZ(reco_nu_vtx);
+    tpcobj_nu_vtx.XYZ(reco_nu_vtx_raw);
+
+    // X position correction
+    double reco_nu_vtx[3];
+    UBXSecHelper::GetTimeCorrectedPoint(reco_nu_vtx_raw, reco_nu_vtx, _candidate_flash_time, _drift_velocity);
     _slc_nuvtx_x[slice] = reco_nu_vtx[0];
     _slc_nuvtx_y[slice] = reco_nu_vtx[1];
     _slc_nuvtx_z[slice] = reco_nu_vtx[2];
@@ -1153,36 +1200,6 @@ void UBXSec::analyze(art::Event const & e) {
   deadRegionsFinder.GetDeadRegionHisto3P(_deadRegion3P);
   */
 
-  // Flashes
-  ::art::Handle<std::vector<recob::OpFlash>> beamflash_h;
-  e.getByLabel(_opflash_producer_beam,beamflash_h);
-  if( !beamflash_h.isValid() || beamflash_h->empty() ) {
-    std::cerr << "Don't have good flashes." << std::endl;
-  }
-
-  _nbeamfls = beamflash_h->size();
-  _beamfls_pe.resize(_nbeamfls);
-  _beamfls_time.resize(_nbeamfls);
-  _beamfls_z.resize(_nbeamfls);
-  _beamfls_spec.resize(_nbeamfls);
-
-  for (size_t n = 0; n < beamflash_h->size(); n++) {
-    auto const& flash = (*beamflash_h)[n];
-    _beamfls_pe[n]   = flash.TotalPE();
-    _beamfls_time[n] = flash.Time();
-    _beamfls_z[n]    = flash.ZCenter();
-
-    _beamfls_spec[n].resize(32);
-    std::cout << "[UBXSec] Reco beam flash pe: " << std::endl;
-    for (unsigned int i = 0; i < 32; i++) {
-      unsigned int opdet = geo->OpDetFromOpChannel(i);
-      _beamfls_spec[n][opdet] = flash.PE(i);
-      if (_beamfls_time[n] > 3 && _beamfls_time[n] < 5) {
-        std::cout << "\t PMT " << opdet << ": " << _beamfls_spec[n][opdet] << std::endl;
-      }
-    }
-  }
-  
 
 
 

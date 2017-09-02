@@ -70,7 +70,9 @@ static bool \hyperlink{classUBXSecHelper_a7df598dfbdfdb620737fd69297e67faf}{Poin
 static int \hyperlink{classUBXSecHelper_a88533a5a59d61351437a1fe2e54aff25}{Get\-Closest\-P\-M\-T} (double $\ast$charge\-\_\-center)
 \begin{DoxyCompactList}\small\item\em Returns the clostes opchannel to the 3\-D specified point. \end{DoxyCompactList}\item 
 static double \hyperlink{classUBXSecHelper_a3fd25ef568b54aded55d6c1b6a8593fa}{Get\-Flash\-Z\-Center} (std\-::vector$<$ double $>$ pe)
-\begin{DoxyCompactList}\small\item\em Returns Z position of a flash. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Returns Z position of a flash. \end{DoxyCompactList}\item 
+static void \hyperlink{classUBXSecHelper_a44a38546ab8f9a473f0957af008219d4}{Get\-Time\-Corrected\-Point} (double $\ast$point\-\_\-raw, double $\ast$point\-\_\-corrected, double interaction\-\_\-time, double drift\-\_\-velocity)
+\begin{DoxyCompactList}\small\item\em Takes a dimension 3 array, interaction time and drift velocity, and returns a corrected point (shifting in x) \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -437,6 +439,31 @@ Returns extra origin information for a T\-P\-C object (for now only if it is a s
 {\em cosmic\-Stopping\-Origin\-P\-F\-P} & list of P\-F\-P with cosmic origin that stop in the T\-P\-C \\
 \hline
 {\em pfp\-\_\-v} & the T\-P\-C object (vector of P\-F\-P) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_a44a38546ab8f9a473f0957af008219d4}{\index{U\-B\-X\-Sec\-Helper@{U\-B\-X\-Sec\-Helper}!Get\-Time\-Corrected\-Point@{Get\-Time\-Corrected\-Point}}
+\index{Get\-Time\-Corrected\-Point@{Get\-Time\-Corrected\-Point}!UBXSecHelper@{U\-B\-X\-Sec\-Helper}}
+\subsubsection[{Get\-Time\-Corrected\-Point}]{\setlength{\rightskip}{0pt plus 5cm}void U\-B\-X\-Sec\-Helper\-::\-Get\-Time\-Corrected\-Point (
+\begin{DoxyParamCaption}
+\item[{double $\ast$}]{point\-\_\-raw, }
+\item[{double $\ast$}]{point\-\_\-corrected, }
+\item[{double}]{interaction\-\_\-time, }
+\item[{double}]{drift\-\_\-velocity}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classUBXSecHelper_a44a38546ab8f9a473f0957af008219d4}
+
+
+Takes a dimension 3 array, interaction time and drift velocity, and returns a corrected point (shifting in x) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point\-\_\-raw} & raw 3d point \\
+\hline
+{\em point\-\_\-corrected} & corrected 3d point \\
+\hline
+{\em interaction\-\_\-time} & The interaction time (usually from flash) \\
+\hline
+{\em drift\-\_\-velocity} & The drift velocity \\
 \hline
 \end{DoxyParams}
 \hypertarget{classUBXSecHelper_a36ef4a258300c98061cd01782157433b}{\index{U\-B\-X\-Sec\-Helper@{U\-B\-X\-Sec\-Helper}!Get\-T\-P\-C\-Objects@{Get\-T\-P\-C\-Objects}}

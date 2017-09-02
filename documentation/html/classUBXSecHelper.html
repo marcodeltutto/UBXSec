@@ -182,6 +182,9 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <tr class="memitem:a3fd25ef568b54aded55d6c1b6a8593fa"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a3fd25ef568b54aded55d6c1b6a8593fa">GetFlashZCenter</a> (std::vector&lt; double &gt; pe)</td></tr>
 <tr class="memdesc:a3fd25ef568b54aded55d6c1b6a8593fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns Z position of a flash.  <a href="#a3fd25ef568b54aded55d6c1b6a8593fa">More...</a><br/></td></tr>
 <tr class="separator:a3fd25ef568b54aded55d6c1b6a8593fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44a38546ab8f9a473f0957af008219d4"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a44a38546ab8f9a473f0957af008219d4">GetTimeCorrectedPoint</a> (double *point_raw, double *point_corrected, double interaction_time, double drift_velocity)</td></tr>
+<tr class="memdesc:a44a38546ab8f9a473f0957af008219d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes a dimension 3 array, interaction time and drift velocity, and returns a corrected point (shifting in x)  <a href="#a44a38546ab8f9a473f0957af008219d4">More...</a><br/></td></tr>
+<tr class="separator:a44a38546ab8f9a473f0957af008219d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An helper class for <a class="el" href="classUBXSec.html" title="Art analyzer module. ">UBXSec</a>. </p>
@@ -939,6 +942,63 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
   <table class="params">
     <tr><td class="paramname">cosmicStoppingOriginPFP</td><td>list of PFP with cosmic origin that stop in the TPC </td></tr>
     <tr><td class="paramname">pfp_v</td><td>the TPC object (vector of PFP) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a44a38546ab8f9a473f0957af008219d4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void UBXSecHelper::GetTimeCorrectedPoint </td>
+          <td>(</td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>point_raw</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>point_corrected</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>interaction_time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>drift_velocity</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Takes a dimension 3 array, interaction time and drift velocity, and returns a corrected point (shifting in x) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">point_raw</td><td>raw 3d point </td></tr>
+    <tr><td class="paramname">point_corrected</td><td>corrected 3d point </td></tr>
+    <tr><td class="paramname">interaction_time</td><td>The interaction time (usually from flash) </td></tr>
+    <tr><td class="paramname">drift_velocity</td><td>The drift velocity </td></tr>
   </table>
   </dd>
 </dl>

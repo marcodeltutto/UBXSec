@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['settpcobj',['SetTPCObj',['../classubxsec_1_1ACPTAlgo.html#ae92b36aadcc1dadfb7e1ca5c72c29fb3',1,'ubxsec::ACPTAlgo::SetTPCObj()'],['../classubxsec_1_1VertexCheck.html#afe6992fb059684ac84b4cbf873ca190c',1,'ubxsec::VertexCheck::SetTPCObj()']]],
-  ['setvtx',['SetVtx',['../classubxsec_1_1ACPTAlgo.html#ad1a4982ef30c3b8395eb346ae155c50e',1,'ubxsec::ACPTAlgo::SetVtx()'],['../classubxsec_1_1VertexCheck.html#aa7ba14f2c0dc87099769e11a78a7e156',1,'ubxsec::VertexCheck::SetVtx()']]]
+  ['neardeadreg2p',['NearDeadReg2P',['../classFindDeadRegions.html#a7a884dc4685e66734b98afea9a2c6c21',1,'FindDeadRegions']]],
+  ['neardeadreg3p',['NearDeadReg3P',['../classFindDeadRegions.html#a2ef76eca81785361bf95c17e8e1a7574',1,'FindDeadRegions']]]
 ];

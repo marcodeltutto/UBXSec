@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['_7eacptalgo',['~ACPTAlgo',['../classubxsec_1_1ACPTAlgo.html#a5d275bcfb0b9d3935136d1387e548774',1,'ubxsec::ACPTAlgo']]],
-  ['_7emcpfpmatch',['~McPfpMatch',['../classubxsec_1_1McPfpMatch.html#a3fa822d7321aca21a0ad42e692a29bf2',1,'ubxsec::McPfpMatch']]],
-  ['_7evertexcheck',['~VertexCheck',['../classubxsec_1_1VertexCheck.html#a31f02bd272b70d96d3e20be2519c5b74',1,'ubxsec::VertexCheck']]]
+  ['tpcobjectfilter',['TPCObjectFilter',['../classubana_1_1TPCObjectFilter.html#aa898a1ea96ce8bf1bf164111157a497d',1,'ubana::TPCObjectFilter']]],
+  ['trackiscontained',['TrackIsContained',['../classUBXSecHelper.html#aa0349c7d405ec64cd1b0c7ed3d54a56e',1,'UBXSecHelper']]],
+  ['trackpasseshitrequirment',['TrackPassesHitRequirment',['../classUBXSecHelper.html#accf62c400d9e984f1277843de78715a7',1,'UBXSecHelper']]],
+  ['tracksarecontained',['TracksAreContained',['../classUBXSecHelper.html#a44c8ae9d98197e81da26aeae26c70f0a',1,'UBXSecHelper']]],
+  ['trial',['Trial',['../classNeutrinoFlashMatch.html#aa957152a8c232e4b23cc7544aa6bfdd1',1,'NeutrinoFlashMatch']]]
 ];

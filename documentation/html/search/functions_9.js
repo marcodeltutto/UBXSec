@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['vertexcheck',['VertexCheck',['../classubxsec_1_1VertexCheck.html#af6ef46e3fc198a067987f64ef863aa45',1,'ubxsec::VertexCheck::VertexCheck()'],['../classubxsec_1_1VertexCheck.html#af1d0f2f6c434db12aee3c8ae4b810da8',1,'ubxsec::VertexCheck::VertexCheck(lar_pandora::TrackVector, recob::Vertex)']]]
+  ['settpcobj',['SetTPCObj',['../classubxsec_1_1ACPTAlgo.html#ae92b36aadcc1dadfb7e1ca5c72c29fb3',1,'ubxsec::ACPTAlgo::SetTPCObj()'],['../classubxsec_1_1VertexCheck.html#afe6992fb059684ac84b4cbf873ca190c',1,'ubxsec::VertexCheck::SetTPCObj()']]],
+  ['settpcobject',['SetTPCObject',['../classubana_1_1MuonCandidateFinder.html#a45e5b12b14e673ce7454cd4546189136',1,'ubana::MuonCandidateFinder']]],
+  ['settracktopidmap',['SetTrackToPIDMap',['../classubana_1_1MuonCandidateFinder.html#af61b1a598acd44cdc27c0ec3b00d99f8',1,'ubana::MuonCandidateFinder']]],
+  ['setvtx',['SetVtx',['../classubxsec_1_1ACPTAlgo.html#ad1a4982ef30c3b8395eb346ae155c50e',1,'ubxsec::ACPTAlgo::SetVtx()'],['../classubxsec_1_1VertexCheck.html#aa7ba14f2c0dc87099769e11a78a7e156',1,'ubxsec::VertexCheck::SetVtx()']]]
 ];

@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['infv',['InFV',['../classUBXSecHelper.html#a4ff7e0d6774d5628cc2a3d19bb2d3492',1,'UBXSecHelper']]],
-  ['iscosmic',['IsCosmic',['../classubana_1_1CosmicTagByHitIntegral.html#a33a59b4d8c00231b368879a591e80b5c',1,'ubana::CosmicTagByHitIntegral::IsCosmic()'],['../classubana_1_1CosmicTagToolInterface.html#a5363b61b1dfab1e6b9cade4b3eed2c66',1,'ubana::CosmicTagToolInterface::IsCosmic()']]],
-  ['iscrossingboundary',['IsCrossingBoundary',['../classUBXSecHelper.html#aef82eb512853d8bd9a40fca00f254b7e',1,'UBXSecHelper']]],
-  ['iscrossingtopboundary',['IsCrossingTopBoundary',['../classUBXSecHelper.html#af2924ae512f2c8cc5be6feb2bd21a112',1,'UBXSecHelper']]]
+  ['neardeadreg2p',['NearDeadReg2P',['../classFindDeadRegions.html#a7a884dc4685e66734b98afea9a2c6c21',1,'FindDeadRegions']]],
+  ['neardeadreg3p',['NearDeadReg3P',['../classFindDeadRegions.html#a2ef76eca81785361bf95c17e8e1a7574',1,'FindDeadRegions']]]
 ];

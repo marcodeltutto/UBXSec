@@ -93,74 +93,48 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define TPCObject_h</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;lardataobj/RecoBase/Track.h&quot;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &quot;lardataobj/RecoBase/Shower.h&quot;</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &quot;lardataobj/RecoBase/PFParticle.h&quot;</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &quot;lardataobj/RecoBase/Vertex.h&quot;</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">namespace </span>ubana {</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">enum</span> TPCObjectOrigin{</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    kUnknown = -1,          <span class="comment">// -1           </span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    kBeamNeutrino = 0,      <span class="comment">// 0</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    kCosmicRay,             <span class="comment">// 1</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    kMixed,                 <span class="comment">// 2</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  };</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">enum</span> TPCObjectOriginExtra{</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    kNotSet = -1,           <span class="comment">// -1 </span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    kStoppingMuon = 0,      <span class="comment">// 0</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    kACPT,                  <span class="comment">// 1</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    kNCPion,                <span class="comment">// 2</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    kNCProton,              <span class="comment">// 3</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  };</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;}</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keyword">namespace </span>ubana {</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="classubana_1_1TPCObject.html">   50</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classubana_1_1TPCObject.html">TPCObject</a> {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <a class="code" href="classubana_1_1TPCObject.html">TPCObject</a>();</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classubana_1_1TPCObject.html">TPCObject</a>();</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="comment">// Setter methods</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> SetTracks(std::vector&lt;recob::Track&gt;);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> SetPFPs(std::vector&lt;recob::PFParticle&gt;);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">void</span> SetVertex(recob::Vertex);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">void</span> SetOrigin(ubana::TPCObjectOrigin);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">void</span> SetOriginExtra(ubana::TPCObjectOriginExtra);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">void</span> SetMultiplicity(<span class="keywordtype">int</span> pfpMult, <span class="keywordtype">int</span> trackMult, <span class="keywordtype">int</span> showerMult);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &quot;lardataobj/RecoBase/Vertex.h&quot;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">namespace </span>ubana {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">enum</span> TPCObjectOrigin{</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    kUnknown = -1,          <span class="comment">// -1           </span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    kBeamNeutrino = 0,      <span class="comment">// 0</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    kCosmicRay,             <span class="comment">// 1</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    kMixed,                 <span class="comment">// 2</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  };</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;}</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">namespace </span>ubana {</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="classubana_1_1TPCObject.html">   39</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classubana_1_1TPCObject.html">TPCObject</a> {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <a class="code" href="classubana_1_1TPCObject.html">TPCObject</a>();</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classubana_1_1TPCObject.html">TPCObject</a>();</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="comment">// Setter methods</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">void</span> SetTracks(std::vector&lt;recob::Track&gt;);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">void</span> SetVertex(recob::Vertex);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">void</span> SetOrigin(ubana::TPCObjectOrigin);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="comment">// Getter methods</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keyword">const</span> std::vector&lt;recob::Track&gt;  &amp; GetTracks()  <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">const</span> recob::Vertex              &amp; GetVertex()  <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">const</span> ubana::TPCObjectOrigin     &amp; GetOrigin()  <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    std::vector&lt;recob::Track&gt;  fTracks;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    recob::Vertex              fVertex;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    ubana::TPCObjectOrigin     fOrigin;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; };</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;}</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="comment">// Getter methods</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">const</span> std::vector&lt;recob::Track&gt;      &amp; GetTracks()      <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keyword">const</span> std::vector&lt;recob::PFParticle&gt; &amp; GetPFPs()        <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">const</span> recob::Vertex                  &amp; GetVertex()      <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">const</span> ubana::TPCObjectOrigin         &amp; GetOrigin()      <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keyword">const</span> ubana::TPCObjectOriginExtra    &amp; GetOriginExtra() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">size_t</span>                           GetNTracks()     <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">size_t</span>                           GetNShowers()    <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">size_t</span>                           GetNPFP()        <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">void</span>                             GetMultiplicity(<span class="keywordtype">int</span> &amp;, <span class="keywordtype">int</span> &amp;, <span class="keywordtype">int</span> &amp;) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span>                              GetNTracksCloseToVertex(<span class="keywordtype">double</span>)      <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    std::vector&lt;recob::Track&gt;      fTracks;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    std::vector&lt;recob::Shower&gt;     fShowers;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    std::vector&lt;recob::PFParticle&gt; fPFParticles;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    recob::Vertex                  fVertex;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    ubana::TPCObjectOrigin         fOrigin;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    ubana::TPCObjectOriginExtra    fOriginExtra;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">int</span>                            fPfpMult;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">int</span>                            fTrackMult;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">int</span>                            fShowerMult;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; };</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;}</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* TPCObject_h */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="classubana_1_1TPCObject_html"><div class="ttname"><a href="classubana_1_1TPCObject.html">ubana::TPCObject</a></div><div class="ttdoc">Data product to store a TPC Object. </div><div class="ttdef"><b>Definition:</b> TPCObject.h:50</div></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* TPCObject_h */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="classubana_1_1TPCObject_html"><div class="ttname"><a href="classubana_1_1TPCObject.html">ubana::TPCObject</a></div><div class="ttdoc">Data product to store a TPC Object. </div><div class="ttdef"><b>Definition:</b> TPCObject.h:39</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

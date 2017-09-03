@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['ubxsec',['UBXSec',['../classUBXSec.html',1,'']]],
-  ['ubxsechelper',['UBXSecHelper',['../classUBXSecHelper.html',1,'']]]
+  ['vertexcheck',['VertexCheck',['../classubxsec_1_1VertexCheck.html',1,'ubxsec']]]
 ];

@@ -13,3 +13,10 @@ physics.end_paths:     [ ana, stream1 ]
 outputs.out1.fileName: "%ifb_%tc_ubxsec.root"
 outputs.out1.dataTier: "ubxsec"
 source.inputCommands: ["keep *_*_*_*"]
+
+
+physics.producers.NeutrinoFlashMatch.FlashVetoTimeStart: 3.20
+physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   4.80
+
+physics.analyzers.UBXSec.BeamSpillStart:                 3.20
+physics.analyzers.UBXSec.BeamSpillEnd:                   4.80

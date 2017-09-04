@@ -35,6 +35,10 @@ POTSummaryInstance:           "bnbETOR860"
 ParticleIDProducer:           "pandoraNupid"
 MCGhostProducer:              "RecoTrueMatcher"
 
+BeamSpillStart:               3.30
+BeamSpillEnd:                 4.90
+TotalPECut:                   50
+
 UseGENIEInfo:                 true
 MinimumHitRequirement:        3
 

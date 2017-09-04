@@ -1,0 +1,22 @@
+#include "ubxsec_data_common.fcl"
+
+process_name: UBXSec
+
+services.TFileService.fileName: "ubxsec_output_data.root"
+
+physics.reco:          [ @sequence::ubxsec_data_producers ]
+physics.trigger_paths: [ reco ]
+physics.ana:           [ @sequence::ubxsec_data_analyzers ]
+physics.stream1:       [ out1 ]
+physics.end_paths:     [ ana, stream1 ]
+
+outputs.out1.fileName: "%ifb_%tc_ubxsec.root"
+outputs.out1.dataTier: "ubxsec"
+source.inputCommands: ["keep *_*_*_*"]
+
+
+physics.producers.NeutrinoFlashMatch.FlashVetoTimeStart: 3.65
+physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   5.25
+
+physics.analyzers.UBXSec.BeamSpillStart:                 3.65
+physics.analyzers.UBXSec.BeamSpillEnd:                   5.25

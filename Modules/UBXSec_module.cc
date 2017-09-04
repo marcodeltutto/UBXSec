@@ -796,7 +796,7 @@ void UBXSec::analyze(art::Event const & e) {
 
     if (mclist[iList]->Origin() == NEUTRINO_ORIGIN) {
 
-      if (_debug) this->PrintMC(mclist); 
+      //if (_debug) this->PrintMC(mclist); 
 
       double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),
                                 mclist[iList]->GetNeutrino().Nu().Vy(),
@@ -1390,14 +1390,36 @@ void UBXSec::PrintMC(std::vector<art::Ptr<simb::MCTruth>> mclist) {
 
   std::cout << "[UBXSec] ================= MC Information ================= [UBXSec]" << std::endl;
 
+  int iList = 0;
+  std::cout << " NEUTRINO:" << std::endl;
+  if (mclist[iList]->NeutrinoSet()) {
+    std::cout << "\tPDG      " << mclist[iList]->GetNeutrino().Nu().PdgCode() << std::endl;
+    std::cout << "\tCC/NC?   " << (mclist[iList]->GetNeutrino().CCNC() == 0 ? "CC" : "NC") << std::endl;
+    std::cout << "\tMode     " << mclist[iList]->GetNeutrino().Mode() << std::endl;
+    std::cout << "\tQSqr     " << mclist[iList]->GetNeutrino().QSqr() << std::endl;
+    std::cout << "\tW        " << mclist[iList]->GetNeutrino().W() << std::endl;
+    std::cout << "\tX        " << mclist[iList]->GetNeutrino().X() << std::endl;
+    std::cout << "\tY        " << mclist[iList]->GetNeutrino().Y() << std::endl;
+    std::cout << "\tHitNuc   " << mclist[iList]->GetNeutrino().HitNuc() << std::endl;
+    std::cout << "\tE        " << mclist[iList]->GetNeutrino().Nu().E() << std::endl;
+    std::cout << "\tVx       " << mclist[iList]->GetNeutrino().Nu().Vx() << std::endl;
+    std::cout << "\tVy       " << mclist[iList]->GetNeutrino().Nu().Vy() << std::endl;
+    std::cout << "\tVz       " << mclist[iList]->GetNeutrino().Nu().Vz() << std::endl;
+  } else
+    std::cout << "\t---No Neutrino information---" << std::endl;
+
+  std::cout << std::endl;
+  std::cout << " PRIMARIES (only with status code==1):" << std::endl;
   for (int p = 0; p < mclist[0]->NParticles(); p++) {
     const simb::MCParticle mc_par = mclist[0]->GetParticle(p);
-    std::cout << "PDG           " << mc_par.PdgCode() << std::endl;
-    std::cout << "Start process " << mc_par.Process() << std::endl;
-    std::cout << "Energy        " << mc_par.E() << std::endl;
-    std::cout << "Momentum      " << mc_par.P() << std::endl;
-    std::cout << "Vertex        " << mc_par.Vx() << ", " << mc_par.Vy() << ", " << mc_par.Vz() << std::endl;
-    std::cout << "Status Code   " << mc_par.StatusCode() << std::endl << std::endl;
+    if (mc_par.StatusCode() != 1) continue;
+    std::cout << "\tPDG           " << mc_par.PdgCode() << std::endl;
+    std::cout << "\tStart process " << mc_par.Process() << std::endl;
+    std::cout << "\tEnd process   " << mc_par.EndProcess() << std::endl;
+    std::cout << "\tEnergy        " << mc_par.E() << std::endl;
+    std::cout << "\tMomentum      " << mc_par.P() << std::endl;
+    std::cout << "\tVertex        " << mc_par.Vx() << ", " << mc_par.Vy() << ", " << mc_par.Vz() << std::endl;
+    std::cout << "\tStatus Code   " << mc_par.StatusCode() << std::endl << std::endl;
   }
 
   std::cout << "[UBXSec] ================= MC Information ================= [UBXSec]" << std::endl;

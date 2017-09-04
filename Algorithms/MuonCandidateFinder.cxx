@@ -60,7 +60,14 @@ namespace ubana {
       }
     }
 
-    // Sort remaining tracks by length
+    if (possible_tracks.size() == 0) {
+      return false;
+    }else if (possible_tracks.size() == 1) {
+      out_track = possible_tracks.at(0);
+      return true;
+    }
+    
+    // Otherwise sort remaining tracks by length
     std::sort(possible_tracks.begin(), possible_tracks.end(),
               [](recob::Track a, recob::Track b) -> bool
               {

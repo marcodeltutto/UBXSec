@@ -1,6 +1,8 @@
 # UBXSec
 
-[![Build Status](https://travis-ci.org/marcodeltutto/UBXSec.svg?branch=develop)](https://travis-ci.org/marcodeltutto/UBXSec)
+[![Build Status](https://travis-ci.org/marcodeltutto/UBXSec.svg?branch=master)](https://travis-ci.org/marcodeltutto/UBXSec)
+
+Go to the develop branch for the latest code.
 
 Wiki Page: https://github.com/marcodeltutto/UBXSec/wiki
 

@@ -803,7 +803,7 @@ void UBXSec::analyze(art::Event const & e) {
 
     if (mclist[iList]->Origin() == NEUTRINO_ORIGIN) {
 
-      //if (_debug) this->PrintMC(mclist); 
+      if (_debug) this->PrintMC(mclist); 
 
       double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),
                                 mclist[iList]->GetNeutrino().Nu().Vy(),

@@ -187,6 +187,9 @@ private:
   std::vector<double> _slc_longesttrack_length;
   std::vector<double> _slc_longesttrack_phi, _slc_longesttrack_theta;
   std::vector<bool> _slc_longesttrack_iscontained;
+  std::vector<bool> _slc_muoncandidate_exists;
+  std::vector<double> _slc_muoncandidate_length;
+  std::vector<double> _slc_muoncandidate_phi, _slc_muoncandidate_theta;
   std::vector<int> _slc_acpt_outoftime;
   std::vector<int> _slc_crosses_top_boundary;
   std::vector<int> _slc_nuvtx_closetodeadregion_u, _slc_nuvtx_closetodeadregion_v, _slc_nuvtx_closetodeadregion_w;
@@ -320,6 +323,10 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _tree1->Branch("slc_longesttrack_phi",           "std::vector<double>", &_slc_longesttrack_phi);
   _tree1->Branch("slc_longesttrack_theta",         "std::vector<double>", &_slc_longesttrack_theta);
   _tree1->Branch("slc_longesttrack_iscontained",   "std::vector<bool>",   &_slc_longesttrack_iscontained);
+  _tree1->Branch("slc_muoncandidate_exists",       "std::vector<bool>",   &_slc_muoncandidate_exists);
+  _tree1->Branch("slc_muoncandidate_length",       "std::vector<double>", &_slc_muoncandidate_length);
+  _tree1->Branch("slc_muoncandidate_phi"   ,       "std::vector<double>", &_slc_muoncandidate_phi);
+  _tree1->Branch("slc_muoncandidate_theta",        "std::vector<double>", &_slc_muoncandidate_theta);
   _tree1->Branch("slc_acpt_outoftime",             "std::vector<int>",    &_slc_acpt_outoftime);
   _tree1->Branch("slc_crosses_top_boundary",       "std::vector<int>",    &_slc_crosses_top_boundary);
   _tree1->Branch("slc_nuvtx_closetodeadregion_u",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion_u);
@@ -896,6 +903,10 @@ void UBXSec::analyze(art::Event const & e) {
   _slc_longesttrack_phi.resize(_nslices, -9999);
   _slc_longesttrack_theta.resize(_nslices, -9999);
   _slc_longesttrack_iscontained.resize(_nslices, -9999);
+  _slc_muoncandidate_exists.resize(_nslices, -9999);
+  _slc_muoncandidate_length.resize(_nslices, -9999);
+  _slc_muoncandidate_phi.resize(_nslices, -9999);
+  _slc_muoncandidate_theta.resize(_nslices, -9999);
   _slc_acpt_outoftime.resize(_nslices, -9999);
   _slc_crosses_top_boundary.resize(_nslices, -9999);
   _slc_nuvtx_closetodeadregion_u.resize(_nslices, -9999);
@@ -1157,10 +1168,17 @@ void UBXSec::analyze(art::Event const & e) {
     muon_finder.SetTPCObject(tpcobj);
     muon_finder.SetTrackToPIDMap(track_to_pid_map);
     recob::Track candidate_track;
+
     if (muon_finder.GetCandidateTrack(candidate_track)) {
-
+      _slc_muoncandidate_exists[slice] = true;
+      _slc_muoncandidate_length[slice] = candidate_track.Length();
+      _slc_muoncandidate_phi[slice]    = UBXSecHelper::GetCorrectedPhi(candidate_track, tpcobj_nu_vtx); 
+      _slc_muoncandidate_theta[slice]  = UBXSecHelper::GetCorrectedCosTheta(candidate_track, tpcobj_nu_vtx);
     } else {
-
+      _slc_muoncandidate_exists[slice] = false;
+      _slc_muoncandidate_length[slice] = -9999;
+      _slc_muoncandidate_phi[slice]    = -9999;
+      _slc_muoncandidate_theta[slice]  = -9999;
     }
 
     // Particle ID

@@ -884,7 +884,8 @@ double UBXSecHelper::GetCorrectedPhi(recob::Track t, recob::Vertex tpcobj_nu_vtx
   if (dir.Y() < 0)
     phi = -phi;
 
-  std::cout << "My phi is " << phi << ", track phi is " << t.Phi() << ", reverse is " << (reverse ? "true" : "false") << std::endl;
+  //std::cout << "My phi is " << phi << ", track phi is " << t.Phi() << ", reverse is " << (reverse ? "true" : "false") << std::endl;
+
   return phi;
   
 }
@@ -920,7 +921,7 @@ double UBXSecHelper::GetCorrectedCosTheta(recob::Track t, recob::Vertex tpcobj_n
   
   double theta = theta_versor.Angle(dir);
 
-  std::cout << "My theta is " << theta << ", track theta is " << t.Theta() << ", reverse is " << (reverse ? "true" : "false") << std::endl;
+  //std::cout << "My theta is " << theta << ", track theta is " << t.Theta() << ", reverse is " << (reverse ? "true" : "false") << std::endl;
 
   return std::cos(theta);
 

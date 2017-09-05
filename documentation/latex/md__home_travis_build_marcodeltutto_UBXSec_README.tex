@@ -6,7 +6,7 @@ Wiki Page\-: \href{https://github.com/marcodeltutto/UBXSec/wiki}{\tt https\-://g
 
 Doxygen Documentation\-: \href{https://marcodeltutto.github.io/UBXSec/documentation/html/index.html}{\tt https\-://marcodeltutto.\-github.\-io/\-U\-B\-X\-Sec/documentation/html/index.\-html}
 
-\subsection*{How it works}
+\subsection*{How to install}
 
 On uboonegpvm, from a fresh terminal session\-:
 
@@ -16,4 +16,12 @@ source /grid/fermiapp/products/uboone/setup\-\_\-uboone.sh
 
 setup git setup gitflow setup mrb export M\-R\-B\-\_\-\-P\-R\-O\-J\-E\-C\-T=larsoft
 
-mkdir mylarsoft setup uboonecode \$\-U\-B\-C\-O\-D\-E\-\_\-\-R\-E\-L\-E\-A\-S\-E -\/q \$\{Q\-U\-A\-L1\}\-:\$\{Q\-U\-A\-L2\} cd mylarsoft mrb new\-Dev source local\-Products\-\_\-larsoft\-\_\-\$\{U\-B\-C\-O\-D\-E\-\_\-\-R\-E\-L\-E\-A\-S\-E\}\-\_\-\$\{Q\-U\-A\-L1\}\-\_\-\$\{Q\-U\-A\-L2\}/setup cd srcs mrb g -\/t \$\-U\-B\-C\-O\-D\-E\-\_\-\-R\-E\-L\-E\-A\-S\-E uboonecode cd uboonecode/uboone/ git clone \href{mailto:git@github.com}{\tt git@github.\-com}\-:marcodeltutto/\-U\-B\-X\-Sec.\-git \mbox{[}add \hyperlink{classUBXSec}{U\-B\-X\-Sec} to the C\-Make\-Lists.\-txt\mbox{]} cd \$\{M\-R\-B\-\_\-\-T\-O\-P\}/build\-\_\-slf6.x86\-\_\-64 mrbsetenv mrb i cd .. mrbslp ``` 
+mkdir mylarsoft setup uboonecode \$\-U\-B\-C\-O\-D\-E\-\_\-\-R\-E\-L\-E\-A\-S\-E -\/q \$\{Q\-U\-A\-L1\}\-:\$\{Q\-U\-A\-L2\} cd mylarsoft mrb new\-Dev source local\-Products\-\_\-larsoft\-\_\-\$\{U\-B\-C\-O\-D\-E\-\_\-\-R\-E\-L\-E\-A\-S\-E\}\-\_\-\$\{Q\-U\-A\-L1\}\-\_\-\$\{Q\-U\-A\-L2\}/setup cd srcs mrb g -\/t \$\-U\-B\-C\-O\-D\-E\-\_\-\-R\-E\-L\-E\-A\-S\-E uboonecode cd uboonecode/uboone/ git clone \href{mailto:git@github.com}{\tt git@github.\-com}\-:marcodeltutto/\-U\-B\-X\-Sec.\-git \mbox{[}add \hyperlink{classUBXSec}{U\-B\-X\-Sec} to the C\-Make\-Lists.\-txt\mbox{]} cd \$\{M\-R\-B\-\_\-\-T\-O\-P\}/build\-\_\-slf6.x86\-\_\-64 mrbsetenv mrb i cd .. mrbslp ```
+
+\subsection*{How to run}
+
+To run over a B\-N\-B+\-Cosmic file\-: {\ttfamily lar -\/c run\-\_\-ubxsec\-\_\-mc.\-fcl -\/s art\-\_\-root\-\_\-file.\-root}
+
+To run over a B\-N\-B\-O\-N data file\-: {\ttfamily lar -\/c run\-\_\-ubxsec\-\_\-data\-\_\-bnbon.\-fcl -\/s art\-\_\-root\-\_\-file.\-root}
+
+To run over a E\-X\-T\-B\-N\-B data file\-: {\ttfamily lar -\/c run\-\_\-ubxsec\-\_\-data\-\_\-extbnb.\-fcl -\/s art\-\_\-root\-\_\-file.\-root} 

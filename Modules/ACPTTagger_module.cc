@@ -84,7 +84,7 @@ private:
   std::vector<double> _flash_zwidth;
   double _pe_min;
 
-  bool _debug;
+  bool _debug, _create_histo;
 
   const std::vector<float> endPt1 = {-9999., -9999., -9999.};
   const std::vector<float> endPt2 = {-9999., -9999., -9999.};
@@ -120,16 +120,19 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
   _dz_resolution_c    = p.get<double>("DzResolutionCathode", 80);
 
   _pe_min             = p.get<double> ("PEMin", 0);
-  _debug              = p.get<bool> ("Debug", true);
+  _debug              = p.get<bool>("Debug", true);
+  _create_histo       = p.get<double>("CreateHisto", false); 
 
   //_csvfile.open ("acpt.csv", std::ofstream::out | std::ofstream::trunc);
   //_csvfile << "trk_x_up,trk_x_down,fls_time" << std::endl;
 
   art::ServiceHandle<art::TFileService> fs;
 
-  _h_diff   = fs->make<TH1D>("h_diff",  ";Reco time - Flash time;Events", 200, -6000, 6000);
-  _h_diff_a = fs->make<TH1D>("h_diff_a",";Reco time - Flash time;Events", 100, -20, 20);
-  _h_diff_c = fs->make<TH1D>("h_diff_c",";Reco time - Flash time;Events", 200, 2200, 3000);
+  if (_create_histo) {
+    _h_diff   = fs->make<TH1D>("h_diff",  ";Reco time - Flash time;Events", 200, -6000, 6000);
+    _h_diff_a = fs->make<TH1D>("h_diff_a",";Reco time - Flash time;Events", 100, -20, 20);
+    _h_diff_c = fs->make<TH1D>("h_diff_c",";Reco time - Flash time;Events", 200, 2200, 3000);
+  }
 
   if (_debug) {
     _tree1 = fs->make<TTree>("tree","");
@@ -302,17 +305,12 @@ void ACPTTagger::produce(art::Event & e)
       z_center /= 2.;
       _trk_z_center.emplace_back(z_center);
 
-      //std::cout << "u a" << std::endl;
       this->GetClosestDtDz(sorted_trk[0],                   _anodeTime,   z_center, _dt_u_anode,   _dz_u_anode, true);
-      //std::cout << "d a" << std::endl;
       this->GetClosestDtDz(sorted_trk[sorted_trk.size()-1], _anodeTime,   z_center, _dt_d_anode,   _dz_d_anode, true);
-      //std::cout << "u c" << std::endl;
       this->GetClosestDtDz(sorted_trk[0],                   _cathodeTime, z_center, _dt_u_cathode, _dz_u_cathode, false);
-      //std::cout << "d c" << std::endl;
       this->GetClosestDtDz(sorted_trk[sorted_trk.size()-1], _cathodeTime, z_center, _dt_d_cathode, _dz_d_cathode, false);
 
       bool sign = this->GetSign(sorted_trk);
-      //std::cout << "sign is " << (sign == true ? "positive" : "negative") << std::endl;
 
       // A
       if (_dt_u_anode.back() > _anodeTime - _dt_resolution_a && _dt_u_anode.back() < _anodeTime + _dt_resolution_a 
@@ -377,7 +375,6 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_cente
   for (size_t f = 0; f < _flash_times.size(); f++) {
 
     double diff = _end.X() / _drift_vel - _flash_times[f];
-    //std::cout << "diff is " << diff << std::endl;
 
     dist = abs(diff - _value);
 
@@ -387,7 +384,7 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_cente
       theflash = f;
     }
 
-    if (fill_histo){
+    if (fill_histo && _create_histo){
       _h_diff->Fill(diff);
       _h_diff_a->Fill(diff);
       _h_diff_c->Fill(diff);

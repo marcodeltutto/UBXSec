@@ -12,15 +12,15 @@
 #include "time_memory_tracker_microboone.fcl"
 #include "photpropservices_microboone.fcl"
 
-#include "ubxsec.fcl"
+#include "cosmictrackhittagger.fcl"
 
-process_name : UBXSec      #The process name must NOT contain any underscores
+process_name : Test    #The process name must NOT contain any underscores
 
 services:
 {
   scheduler:               { defaultExceptions: false }    # Make all uncaught exceptions fatal.
   # Load the service that manages root files for histograms.
-  TFileService:            { fileName: "output.root" }
+  TFileService:            { fileName: "cosmictrackhittagger_output.root" }
   TimeTracker:             @local::microboone_time_tracker
   MemoryTracker:           @local::microboone_memory_tracker
   RandomNumberGenerator:   {} #ART native random number generator                                                                                          
@@ -30,24 +30,20 @@ services:
   BackTracker:             @local::microboone_backtracker
 }
 
-services.PmtGainService.PmtGainProvider.UseDB:               true
-services.ChannelStatusService.ChannelStatusProvider.UseDB:   false
-services.DetPedestalService.DetPedestalRetrievalAlg.UseDB:   false
-
 services.DetectorPropertiesService.NumberTimeSamples:        6400
 services.DetectorPropertiesService.ReadOutWindowSize:        6400
 services.DetectorClocksService.InheritClockConfig:           false
 services.DetectorClocksService.TriggerOffsetTPC:             -0.400e3
 services.DetectorClocksService.TrigModuleName:               "daq"
 
-services.Geometry.ForceUseFCLOnly:                           true
+services.Geometry.ForceUseFCLOnly: true
 
-services.TimeTracker.printSummary:                           false
-services.TimeTracker.dbOutput:                               {}
+services.TimeTracker.printSummary: false
+services.TimeTracker.dbOutput: {}
 
-services.MemoryTracker.printSummaries:                       []
-services.MemoryTracker.includeMallocInfo:                    false
-services.MemoryTracker.dbOutput.filename:                    ""
+services.MemoryTracker.printSummaries: []
+services.MemoryTracker.includeMallocInfo: false
+services.MemoryTracker.dbOutput.filename: ""
 
 
 #source is now a root file
@@ -64,18 +60,32 @@ physics:
 
  producers:
  {
-   @table::ubxsec_flashmatch
-   @table::ubxsec_acpt
+   cosmictrackhittagger: @local::CosmicTrackHitTagger
  }
 
  analyzers:
  {
-   @table::ubxsec_ana
  }
 
- #reco sequence and trigger_paths to be defined elsewhere
+ reco: [ cosmictrackhittagger ]
+
+ #define the output stream, there could be more than one if using filters 
+ stream1:  [ out1 ]
+
+ #trigger_paths is a keyword and contains the paths that modify the art::event, 
+ #ie filters and producers
+ trigger_paths: [ reco ]
+
+ ana: [ ]
+
+ #end_paths is a keyword and contains the paths that do not modify the art::Event, 
+ #ie analyzers and output streams.  these all run simultaneously
+ end_paths:     [ana, stream1]
 }
 
+services.PmtGainService.PmtGainProvider.UseDB:             false
+services.ChannelStatusService.ChannelStatusProvider.UseDB: false
+services.DetPedestalService.DetPedestalRetrievalAlg.UseDB: false
 
 
 outputs:
@@ -83,7 +93,7 @@ outputs:
  out1:
  { 
    module_type: RootOutput
-   fileName:    "%ifb_%tc_ubxsec.root"
+   fileName:    "%ifb_%tc_cosmictrackhittagger.root"
    dataTier:    "reco"
    compressionLevel: 1
    outputCommands: [
@@ -109,7 +119,7 @@ services.message.destinations :
   STDCOUT:
   {
      type:      "cout"      #tells the message service to output this destination to cout
-     threshold: "WARNING"   #tells the message service that this destination applies to WARNING and higher level messages
+     threshold: "DEBUG"   #tells the message service that this destination applies to WARNING and higher level messages
      append:     true       #says to append all messages to the output
      categories:
      {

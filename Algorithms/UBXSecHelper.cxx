@@ -567,6 +567,74 @@ ubana::TPCObjectOrigin UBXSecHelper::GetSliceOrigin(std::vector<art::Ptr<recob::
 
 }
 
+//__________________________________________________________________________
+ubana::TPCObjectOriginExtra UBXSecHelper::GetSliceOriginExtra_Stopping(lar_pandora::PFParticleVector cosmicStoppingOriginPFP, 
+                                                                       lar_pandora::PFParticleVector pfp_v) {
+
+  ::ubana::TPCObjectOriginExtra origin_extra = ubana::kNotSet;
+
+  int stoppingOrigin = 0;
+
+  // Loop over pfp in the slice
+  for ( unsigned int i = 0; i < pfp_v.size(); i++) {
+
+    // Loop over pfp that are stopping
+    for ( unsigned int j = 0; j < cosmicStoppingOriginPFP.size(); j++) {
+
+      if (cosmicStoppingOriginPFP[j] == pfp_v[i]) {
+        stoppingOrigin ++;
+      }
+    }
+  }
+
+  if (stoppingOrigin > 0) origin_extra = ubana::kStoppingMuon;
+
+  return origin_extra;
+
+}
+
+
+
+//__________________________________________________________________________
+ubana::TPCObjectOriginExtra UBXSecHelper::GetSliceOriginExtra_NC(lar_pandora::PFParticleVector protonNCOriginPFP, 
+                                                                lar_pandora::PFParticleVector pionNCOriginPFP, 
+                                                                lar_pandora::PFParticleVector pfp_v) {
+
+  ::ubana::TPCObjectOriginExtra origin_extra = ubana::kNotSet;
+
+  int protonNCOrigin = 0;
+  int pionNCOrigin = 0;
+
+  // Loop over pfp in the slice
+  for ( unsigned int i = 0; i < pfp_v.size(); i++) {
+
+    // Loop over pfp that are protons from NC
+    for ( unsigned int j = 0; j < protonNCOriginPFP.size(); j++) {
+
+      if (protonNCOriginPFP[j] == pfp_v[i]) {
+        protonNCOrigin ++;
+      }
+    }
+
+    // Loop over pfp that are pions from NC
+    for ( unsigned int j = 0; j < pionNCOriginPFP.size(); j++) {
+
+      if (pionNCOriginPFP[j] == pfp_v[i]) {
+        pionNCOrigin ++;
+      }
+    }
+  }
+
+  if (pionNCOrigin > 0) origin_extra = ubana::kNCPion;
+  if (protonNCOrigin > pionNCOrigin) origin_extra = ubana::kNCProton;
+
+  return origin_extra;
+
+}
+
+
+
+
 //______________________________________________________________________________
 bool UBXSecHelper::TrackPassesHitRequirment(art::Event const & e,
                                             std::string _particleLabel,
@@ -641,13 +709,13 @@ bool UBXSecHelper::IsCrossingTopBoundary(recob::Track track, int & vtx_ok){
   vtx[0] = track.Vertex().X();
   vtx[1] = track.Vertex().Y();
   vtx[2] = track.Vertex().Z();
-  std::cout << "VTX X " <<vtx[0] << "Y " <<vtx[1] << "Z " <<vtx[2] << std::endl;
+  //std::cout << "VTX X " <<vtx[0] << "Y " <<vtx[1] << "Z " <<vtx[2] << std::endl;
 
   double end[3];
   end[0] = track.End().X();
   end[1] = track.End().Y();
   end[2] = track.End().Z();
-  std::cout << "END X " <<end[0] << "Y " <<end[1] << "Z " <<end[2] << std::endl;
+  //std::cout << "END X " <<end[0] << "Y " <<end[1] << "Z " <<end[2] << std::endl;
 
   if ( InFV(vtx) && !InFV(end) && (end[1] > 233/2.-20)) {
     std::cout << "Crossing top boundary, vertex is in FV" << std::endl;
@@ -724,7 +792,140 @@ bool UBXSecHelper::GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v, r
 
 }
 
+//_________________________________________________________________________________
+bool UBXSecHelper::TracksAreContained(std::vector<recob::Track> tracks){
 
+  TVector3 point;
+  double point_a[3];
+
+  for (auto trk : tracks) {
+
+    point = trk.Vertex();
+    point_a[0] = point.X();
+    point_a[1] = point.Y();
+    point_a[2] = point.Z();
+
+    if (!UBXSecHelper::InFV(point_a))
+      return false;
+
+    point = trk.End();
+    point_a[0] = point.X();
+    point_a[1] = point.Y();
+    point_a[2] = point.Z();
+
+    if (!UBXSecHelper::InFV(point_a))
+      return false;
+
+  }
+  
+  return true;
+}
+
+//_________________________________________________________________________________
+bool UBXSecHelper::TrackIsContained(recob::Track track){
+
+  TVector3 point;
+  double point_a[3];
+
+  point = track.Vertex();
+  point_a[0] = point.X();
+  point_a[1] = point.Y();
+  point_a[2] = point.Z();
+
+  if (!UBXSecHelper::InFV(point_a))
+    return false;
+
+  point = track.End();
+  point_a[0] = point.X();
+  point_a[1] = point.Y();
+  point_a[2] = point.Z();
+
+  if (!UBXSecHelper::InFV(point_a))
+    return false;
+
+  return true;
+}
+
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetCorrectedPhi(recob::Track t, recob::Vertex tpcobj_nu_vtx) {
+
+  TVector3 pt1 = t.Vertex();
+  TVector3 pt2 = t.End();
+
+  double nu_vtx[3];
+  tpcobj_nu_vtx.XYZ(nu_vtx);
+  TVector3 nu(nu_vtx[0], nu_vtx[1], nu_vtx[2]);
+
+  bool reverse = false;
+
+  if ( (pt1-nu).Mag() > (pt2-nu).Mag() )
+    reverse = true;
+
+  /*
+  double original_phi = t.Phi();
+
+  if (reverse) 
+    return ::TMath::Pi() - original_phi;
+  else
+    return original_phi;
+  */
+
+  TVector3 dir = pt2 - pt1;
+  if (reverse) dir = pt1 - pt2;
+
+  // We are in the plane Z = 0
+  dir.SetZ(0);
+  TVector3 phi_versor (1, 0, 0);
+  
+  double phi = phi_versor.Angle(dir);
+
+  // Just convention
+  if (dir.Y() < 0)
+    phi = -phi;
+
+  //std::cout << "My phi is " << phi << ", track phi is " << t.Phi() << ", reverse is " << (reverse ? "true" : "false") << std::endl;
+
+  return phi;
+  
+}
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetCorrectedCosTheta(recob::Track t, recob::Vertex tpcobj_nu_vtx) {
+
+  TVector3 pt1 = t.Vertex();
+  TVector3 pt2 = t.End();
+
+  double nu_vtx[3];
+  tpcobj_nu_vtx.XYZ(nu_vtx);
+  TVector3 nu(nu_vtx[0], nu_vtx[1], nu_vtx[2]);
+
+  bool reverse = false;
+
+  if ( (pt1-nu).Mag() > (pt2-nu).Mag() )
+    reverse = true;
+
+  /*
+  double original_theta = t.Theta();
+
+  if (reverse)
+    return ::TMath::Pi() - original_theta;
+  else 
+    return original_theta;
+  */
+
+  TVector3 dir = pt2 - pt1;
+  if (reverse) dir = pt1 - pt2;
+
+  TVector3 theta_versor (0, 0, 1);
+  
+  double theta = theta_versor.Angle(dir);
+
+  //std::cout << "My theta is " << theta << ", track theta is " << t.Theta() << ", reverse is " << (reverse ? "true" : "false") << std::endl;
+
+  return std::cos(theta);
+
+}
 
 
 //_________________________________________________________________________________
@@ -834,6 +1035,20 @@ double UBXSecHelper::GetFlashZCenter(std::vector<double> hypo_pe) {
   return Zcenter;
 
 }
+
+//_________________________________________________________________________________
+void UBXSecHelper::GetTimeCorrectedPoint(double * point_raw, double * point_corrected, double interaction_time, double drift_velocity) {
+
+  double x_offset = interaction_time * drift_velocity;
+
+  std::cout << "X correction is: " << x_offset << std::endl;
+
+  point_corrected[0] = point_raw[0] - x_offset;
+  point_corrected[1] = point_raw[1];
+  point_corrected[2] = point_raw[2];
+
+}
+
 
 
 

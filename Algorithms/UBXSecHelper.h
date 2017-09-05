@@ -24,20 +24,13 @@
 
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
+#include "uboone/UBXSec/DataTypes/TPCObject.h"
 
 typedef std::map< art::Ptr<recob::PFParticle>, unsigned int > RecoParticleToNMatchedHits;
 typedef std::map< art::Ptr<simb::MCParticle>,  RecoParticleToNMatchedHits > ParticleMatchingMap;
 typedef std::set< art::Ptr<recob::PFParticle> > PFParticleSet;
 typedef std::set< art::Ptr<simb::MCParticle> >  MCParticleSet;
 
-namespace ubana {
-  enum TPCObjectOrigin{
-    kUnknown = -1,          // -1           
-    kBeamNeutrino = 0,      // 0
-    kCosmicRay,             // 1
-    kMixed,                 // 2
-  };            
-}
 
 class UBXSecHelper {
 
@@ -171,6 +164,21 @@ class UBXSecHelper {
   static ubana::TPCObjectOrigin GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP, std::vector<art::Ptr<recob::PFParticle>> cosmicOriginPFP, lar_pandora::PFParticleVector pfp_v);
 
   /**
+   *  @brief Returns extra origin information for a TPC object (for now if it is a stopping muon in the TPC)
+   *
+   *  @param protonNCOriginPFP list of PFP with nc origin with proton
+   *  @param pionNCOriginPFP list of PFP with nc origin with pion
+   *  @param pfp_v the TPC object (vector of PFP)  */
+  static ubana::TPCObjectOriginExtra GetSliceOriginExtra_NC(lar_pandora::PFParticleVector protonNCOriginPFP, lar_pandora::PFParticleVector pionNCOriginPFP, lar_pandora::PFParticleVector pfp_v);
+
+  /**
+   *  @brief Returns extra origin information for a TPC object (for now only if it is a stopping muon in the TPC)
+   *
+   *  @param cosmicStoppingOriginPFP list of PFP with cosmic origin that stop in the TPC
+   *  @param pfp_v the TPC object (vector of PFP)  */
+  static ubana::TPCObjectOriginExtra GetSliceOriginExtra_Stopping(lar_pandora::PFParticleVector cosmicStoppingOriginPFP, lar_pandora::PFParticleVector pfp_v);
+
+  /**
    *  @brief Returns number of hits on each plane for a TPC obj
    *
    *  @param e the ART event
@@ -212,6 +220,32 @@ class UBXSecHelper {
   static bool GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v, recob::Track & out_track);
 
   /**
+   *  @brief Returns true if all the tracks passed are fully contained 
+   *
+   *  @param tracks a vector of recob::Track  */
+  static bool TracksAreContained(std::vector<recob::Track> tracks);
+
+  /**
+   *  @brief Returns true if the track passed is fully contained 
+   *
+   *  @param track the recob::Track */
+  static bool TrackIsContained(recob::Track track);
+
+  /**
+   *  @brief Returns the value of the phi angle for the track considering the nu vertex
+   *
+   *  @param t the recob::Track 
+   *  @param tpcobj_nu_vtx the recob::Vertex neutrino vertex */
+  static double GetCorrectedPhi(recob::Track t, recob::Vertex tpcobj_nu_vtx);
+
+  /**
+   *  @brief Returns the value of the cos(theta) angle for the track considering the nu vertex
+   *
+   *  @param track the recob::Track 
+   *  @param tpcobj_nu_vtx the recob::Vertex neutrino vertex */
+  static double GetCorrectedCosTheta(recob::Track t, recob::Vertex tpcobj_nu_vtx);
+
+  /**
    *  @brief Returns true if the point passed is close to a dead region
    *
    *  @param reco_nu_vtx the point to check
@@ -231,6 +265,14 @@ class UBXSecHelper {
    *  @param pe a vector of PEs per OpDet */
   static double GetFlashZCenter(std::vector<double> pe); 
 
+  /**
+   *  @brief Takes a dimension 3 array, interaction time and drift velocity, and returns a corrected point (shifting in x)
+   *
+   *  @param point_raw raw 3d point 
+   *  @param point_corrected corrected 3d point
+   *  @param interaction_time The interaction time (usually from flash)
+   *  @param drift_velocity The drift velocity */
+  static void GetTimeCorrectedPoint(double * point_raw, double * point_corrected, double interaction_time, double drift_velocity);
 };
 
 #endif //  UBXSECHELPER_H

@@ -49,15 +49,14 @@ namespace ubxsec {
   double VertexCheck::AngleBetweenLongestTracks() {
 
     if (!_tpcObjIsSet || !_vtxIsSet){
-      std::cerr << "The TPC object or the vertex was not set. Exiting now." << std::endl;
-      exit(0);
+      std::cerr << "[VertexCheck] The TPC object or the vertex was not set. Exiting now." << std::endl;
+      throw std::exception();
     }
 
     // Get vertex location
     _vtx.XYZ(xyz);
 
     keep_track.clear();
-    track_dir.clear();
 
     // Loop over tracks 
     for (size_t t = 0; t < _track_v.size(); t++) {
@@ -67,14 +66,12 @@ namespace ubxsec {
       dist = GetDistance(xyz, start);
       if (dist < _max_distance){
         keep_track.emplace_back(*(_track_v[t]));
-        track_dir.emplace_back(_track_v[t]->VertexDirection());
         continue;
       }
 
       dist = GetDistance(xyz, end);
       if (dist < _max_distance){
         keep_track.emplace_back(*(_track_v[t]));
-        track_dir.emplace_back(-(_track_v[t]->EndDirection()));
       }  
     }
 
@@ -88,7 +85,10 @@ namespace ubxsec {
     if (keep_track.size() < 2) return -9999;
 
     // Calculate angle between two longest tracks
-    return track_dir[0].Angle(track_dir[1]);  
+    TVector3 dir1 = keep_track.at(0).VertexDirection();
+    TVector3 dir2 = keep_track.at(1).VertexDirection();
+
+    return dir1.Angle(dir2);
   }
 
 

@@ -6,13 +6,15 @@ BEGIN_PROLOG
 #
 NeutrinoFlashMatch: {
   module_type:              "NeutrinoFlashMatch"
-  PFParticleModule:         "pandoraNu"
-  TrackModule:              "pandoraNu"
+  PFParticleModule:         "pandoraNu::UBXSec"
+  TrackModule:              "pandoraNu::UBXSec"
+  TPCObjectModule:          "TPCObjectMaker"
   NeutrinoMCFlashModule:    "NeutrinoMCFlash"
   DebugMode:                true
   BeamOpFlashProducer:      "simpleFlashBeam"
   FlashVetoTimeStart:       3.2
   FlashVetoTimeEnd:         4.8
+  UseShowersAsTracks:       true
 
   FlashMatchConfig: @local::flashmatch_config
 }

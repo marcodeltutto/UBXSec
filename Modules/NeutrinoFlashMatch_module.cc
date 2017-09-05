@@ -44,6 +44,7 @@
 #include "uboone/LLSelectionTool/OpT0Finder/Algorithms/PhotonLibHypothesis.h"
 
 #include "uboone/UBXSec/DataTypes/FlashMatch.h"
+#include "uboone/UBXSec/DataTypes/TPCObject.h"
 #include "uboone/UBXSec/Algorithms/UBXSecHelper.h"
 
 #include "TTree.h"
@@ -73,6 +74,12 @@ public:
   flashana::QCluster_t GetQCluster(std::vector<art::Ptr<recob::Track>>);
 
   /**
+   *  @brief Takes a vector of recob::Tracks and a vector of recob::Shower and returns a QCluster made out from all the tracks in the vector and all the showers (showers are treated as tracks here)
+   *
+   */
+  flashana::QCluster_t GetQCluster(std::vector<art::Ptr<recob::Track>>, std::vector<art::Ptr<recob::Shower>>);
+
+  /**
    *  @brief Takes a vector of recob::PFParticle and two maps and returns a QCluster made out from all the tracks in the vector (test)
    *
    */
@@ -91,11 +98,13 @@ private:
   std::string _pfp_producer;           ///<
   std::string _track_producer;         ///<
   std::string _opflash_producer_beam;  ///<
+  std::string _tpcobject_producer;     ///<
   std::string _nuMcFlash_producer;     ///<
   double _flash_trange_start;          ///<
   double _flash_trange_end;            ///<
   bool _debug;                         ///<
   bool _use_genie_info;                ///<
+  bool _use_showers_as_tracks;         ///< If true makes tracks out of showers and passes them to the matcher
 
   std::vector<::flashana::Flash_t>    beam_flashes;
 
@@ -120,13 +129,15 @@ NeutrinoFlashMatch::NeutrinoFlashMatch(fhicl::ParameterSet const & p)
 {
   _pfp_producer            = p.get<std::string>("PFParticleModule",      "pandoraNu");
   _track_producer          = p.get<std::string>("TrackModule",           "pandoraNu");
+  _tpcobject_producer      = p.get<std::string>("TPCObjectModule",       "");
   _nuMcFlash_producer      = p.get<std::string>("NeutrinoMCFlashModule", "NeutrinoMCFlash");
   _debug                   = p.get<bool>       ("DebugMode",             true);
   _opflash_producer_beam   = p.get<std::string>("BeamOpFlashProducer",   "simpleFlashBeam");
   _flash_trange_start      = p.get<double>     ("FlashVetoTimeStart",    3);
   _flash_trange_end        = p.get<double>     ("FlashVetoTimeEnd",      5);
   _use_genie_info          = p.get<bool>       ("UseGENIEInfo",          true); 
-    
+  _use_showers_as_tracks   = p.get<bool>       ("UseShowersAsTracks",    false);
+
   _mgr.Configure(p.get<flashana::Config_t>("FlashMatchConfig"));
 
   if (_debug) {
@@ -152,17 +163,19 @@ NeutrinoFlashMatch::NeutrinoFlashMatch(fhicl::ParameterSet const & p)
   produces< std::vector<ubana::FlashMatch>>();
   produces< art::Assns<ubana::FlashMatch,   recob::Track>>();
   produces< art::Assns<ubana::FlashMatch,   recob::PFParticle>>();
+  produces< art::Assns<ubana::FlashMatch,   ubana::TPCObject>>();
 }
 
 void NeutrinoFlashMatch::produce(art::Event & e)
 {
 
-  if(_debug) std::cout << "NeutrinoFlashMatch starts." << std::endl;
+  if(_debug) std::cout << "[NeutrinoFlashMatch] NeutrinoFlashMatch starts." << std::endl;
 
   // Instantiate the output
   std::unique_ptr< std::vector<ubana::FlashMatch>>                   flashMatchTrackVector      (new std::vector<ubana::FlashMatch>);
   std::unique_ptr< art::Assns<ubana::FlashMatch, recob::Track>>      assnOutFlashMatchTrack     (new art::Assns<ubana::FlashMatch, recob::Track>     );
   std::unique_ptr< art::Assns<ubana::FlashMatch, recob::PFParticle>> assnOutFlashMatchPFParticle(new art::Assns<ubana::FlashMatch, recob::PFParticle>);
+  std::unique_ptr< art::Assns<ubana::FlashMatch, ubana::TPCObject>>  assnOutFlashMatchTPCObject (new art::Assns<ubana::FlashMatch, ubana::TPCObject>);
 
   ::art::ServiceHandle<geo::Geometry> geo;
 
@@ -178,6 +191,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     e.put(std::move(flashMatchTrackVector));
     e.put(std::move(assnOutFlashMatchTrack));
     e.put(std::move(assnOutFlashMatchPFParticle));
+    e.put(std::move(assnOutFlashMatchTPCObject));
     return;
   }
   int nBeamFlashes = 0;
@@ -186,6 +200,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
     auto const& flash = (*beamflash_h)[n];
 
+    std::cout << "[NeutrinoFlashMatch] Flash time from " << _opflash_producer_beam << ": " << flash.Time() << std::endl;
     if(flash.Time() < _flash_trange_start || _flash_trange_end < flash.Time()) {
       continue;
     }
@@ -222,6 +237,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     e.put(std::move(flashMatchTrackVector));
     e.put(std::move(assnOutFlashMatchTrack));
     e.put(std::move(assnOutFlashMatchPFParticle));
+    e.put(std::move(assnOutFlashMatchTPCObject));
     return;
   }
 
@@ -231,6 +247,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     e.put(std::move(flashMatchTrackVector));
     e.put(std::move(assnOutFlashMatchTrack));
     e.put(std::move(assnOutFlashMatchPFParticle));
+    e.put(std::move(assnOutFlashMatchTPCObject));
     return;
   }
 
@@ -267,31 +284,51 @@ void NeutrinoFlashMatch::produce(art::Event & e)
   // Construct TPC Objects
   // ********************
 
-  std::vector<lar_pandora::TrackVector     > track_v_v; // the TPC obj as vector of tracks
-  std::vector<lar_pandora::PFParticleVector> pfp_v_v;   // the TPC obj as vector of PFP
-  lar_pandora::PFParticlesToSpacePoints pfp_to_spacept; // map from PFP to SpacePoint
-  lar_pandora::SpacePointsToHits spacept_to_hits;       // map from SpacePoint to Hit
-
   std::vector<flashana::Flash_t> xfixed_hypo_v;
   std::vector<double> xfixed_chi2_v, xfixed_ll_v;
 
-  //UBXSecHelper::GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToVertexMap, pfp_v_v, track_v_v);
-  UBXSecHelper::GetTPCObjects(e, _pfp_producer, _track_producer, pfp_v_v, track_v_v, pfp_to_spacept, spacept_to_hits);
+  // Get TPCObjects from the Event
+  art::Handle<std::vector<ubana::TPCObject>> tpcobj_h;
+  e.getByLabel(_tpcobject_producer, tpcobj_h);
+  if (!tpcobj_h.isValid()) {
+    std::cout << "[NeutrinoFlashMatch] Cannote locate ubana::TPCObject." << std::endl;
+    e.put(std::move(flashMatchTrackVector));
+    e.put(std::move(assnOutFlashMatchTrack));
+    e.put(std::move(assnOutFlashMatchPFParticle));
+    e.put(std::move(assnOutFlashMatchTPCObject));
+    return;
+  }
+  art::FindManyP<recob::Track>      tpcobjToTracks(tpcobj_h, e, _tpcobject_producer);
+  art::FindManyP<recob::Shower>     tpcobjToShowers(tpcobj_h, e, _tpcobject_producer);
+  art::FindManyP<recob::PFParticle> tpcobjToPFPs  (tpcobj_h, e, _tpcobject_producer);
 
-  if(_debug) std::cout << "For this event we have " << track_v_v.size() << " pandora slices." << std::endl;
+  int n_objects = tpcobj_h->size();
 
-  xfixed_hypo_v.resize(track_v_v.size());
-  xfixed_chi2_v.resize(track_v_v.size());
-  xfixed_ll_v.resize(track_v_v.size());
+  if(_debug) std::cout << "[NeutrinoFlashMatch] For this event we have " << n_objects << " TPCObjects." << std::endl;
 
-  for (unsigned int tpcObj = 0; tpcObj < track_v_v.size(); tpcObj++) {
+  xfixed_hypo_v.resize(n_objects);
+  xfixed_chi2_v.resize(n_objects);
+  xfixed_ll_v.resize(n_objects);
 
-    lar_pandora::TrackVector tpcObjTrk_v      = track_v_v[tpcObj];
-    lar_pandora::PFParticleVector tpcObjPfp_v = pfp_v_v[tpcObj];
+  for (int tpcObj = 0; tpcObj < n_objects; tpcObj++) {
+
+    ubana::TPCObject tpcobj = (*tpcobj_h)[tpcObj];
+
+    std::vector<art::Ptr<recob::Track>> tpcObjTrk_v      = tpcobjToTracks.at(tpcObj);
+    std::vector<art::Ptr<recob::Shower>> tpcObjSho_v     = tpcobjToShowers.at(tpcObj);
+    std::vector<art::Ptr<recob::PFParticle>> tpcObjPfp_v = tpcobjToPFPs.at(tpcObj);
+
+    std::cout << "[NeutrinoFlashMatch] Emplacing TPCObj " << tpcObj << std::endl;
+    for (auto t : tpcObjTrk_v) std::cout << "[NeutrinoFlashMatch] \t Track x start, end is " << t->Vertex().X() << ", " << t->End().X() << std::endl;
 
     // Get QCluster for this TPC Object
-    flashana::QCluster_t qcluster = this->GetQCluster(tpcObjPfp_v, pfp_to_spacept, spacept_to_hits);
-    qcluster = this->GetQCluster(tpcObjTrk_v);
+    flashana::QCluster_t qcluster;
+    //flashana::QCluster_t qcluster = this->GetQCluster(tpcObjPfp_v, pfp_to_spacept, spacept_to_hits);
+    if (_use_showers_as_tracks) {
+      qcluster = this->GetQCluster(tpcObjTrk_v, tpcObjSho_v);
+    } else {
+      qcluster = this->GetQCluster(tpcObjTrk_v);
+    }
 
     qcluster.idx = tpcObj;
 
@@ -304,7 +341,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     xfixed_ll_v[tpcObj] = ll;
   }
 
-  if(_debug) std::cout << "Finished emplacing beam flash and tpc objects" << std::endl;
+  if(_debug) std::cout << "[NeutrinoFlashMatch] Finished emplacing beam flash and tpc objects" << std::endl;
 
   // ********************
   // Run Flash Matching
@@ -318,7 +355,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
   // ********************
   
   if(_debug) {
-    std::cout << "Number of matches: " << _result.size() << std::endl;
+    std::cout << "[NeutrinoFlashMatch] Number of matches: " << _result.size() << std::endl;
     _hypo_flash_spec.resize(_result.size());
     _run    = e.id().run();
     _subrun = e.id().subRun();
@@ -340,11 +377,15 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     auto const& flash = _mgr.FlashArray()[_flashid];
     _t0[_matchid] = flash.time;
 
-    if(_debug) std::cout << "For this match, the score is " << match.score << std::endl;
-
-    // Get the TPC obj 
-    lar_pandora::TrackVector      track_v = track_v_v[match.tpc_id];
-    lar_pandora::PFParticleVector pfp_v   = pfp_v_v[match.tpc_id];
+    if(_debug) std::cout << "[NeutrinoFlashMatch] For this match, the score is " << match.score << std::endl;
+ 
+    // Get the TPCObject
+    art::Ptr<ubana::TPCObject> the_tpcobj(tpcobj_h, match.tpc_id);
+    std::vector<art::Ptr<recob::Track>> track_v    = tpcobjToTracks.at(match.tpc_id);
+    std::vector<art::Ptr<recob::PFParticle>> pfp_v = tpcobjToPFPs.at(match.tpc_id);
+    std::vector<art::Ptr<ubana::TPCObject>>  tpcobj_v;
+    tpcobj_v.resize(1);
+    tpcobj_v.at(0) = the_tpcobj;
 
     // Get hypo spec
     if(_debug){
@@ -375,15 +416,16 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     fm.SetXFixedLl            ( _xfixed_ll );
 
     flashMatchTrackVector->emplace_back(std::move(fm));
-    util::CreateAssn(*this, e, *flashMatchTrackVector, track_v, *assnOutFlashMatchTrack);
-    util::CreateAssn(*this, e, *flashMatchTrackVector, pfp_v,   *assnOutFlashMatchPFParticle);
+    util::CreateAssn(*this, e, *flashMatchTrackVector, track_v,  *assnOutFlashMatchTrack);
+    util::CreateAssn(*this, e, *flashMatchTrackVector, pfp_v,    *assnOutFlashMatchPFParticle);
+    util::CreateAssn(*this, e, *flashMatchTrackVector, tpcobj_v, *assnOutFlashMatchTPCObject);
   }
 
 
   e.put(std::move(flashMatchTrackVector));
   e.put(std::move(assnOutFlashMatchTrack));
   e.put(std::move(assnOutFlashMatchPFParticle));
-
+  e.put(std::move(assnOutFlashMatchTPCObject));
 
 
   if (_debug && !e.isRealData() && _use_genie_info) {
@@ -411,7 +453,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
   if (_debug) _tree1->Fill();
 
-  if (_debug) std::cout << "NeutrinoFlashMatch ends." << std::endl;
+  if (_debug) std::cout << "[NeutrinoFlashMatch] NeutrinoFlashMatch ends." << std::endl;
 
 
   return;
@@ -420,7 +462,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
 
 
-//______________________________________________________________________________________________________________________________________
+//_____________________________________________________________________________________________________________________________________
 flashana::QCluster_t NeutrinoFlashMatch::GetQCluster(std::vector<art::Ptr<recob::PFParticle>> pfp_v, lar_pandora::PFParticlesToSpacePoints pfp_to_spacept, lar_pandora::SpacePointsToHits spacept_to_hits) {
 
   flashana::QCluster_t summed_qcluster;
@@ -483,6 +525,50 @@ flashana::QCluster_t NeutrinoFlashMatch::GetQCluster(std::vector<art::Ptr<recob:
   } // track loop
 
   return summed_qcluster;
+}
+
+//______________________________________________________________________________________________________________________________________
+flashana::QCluster_t NeutrinoFlashMatch::GetQCluster(std::vector<art::Ptr<recob::Track>> track_v, std::vector<art::Ptr<recob::Shower>> shower_v){
+
+  flashana::QCluster_t summed_qcluster_1;
+  summed_qcluster_1.clear();
+
+  for (auto s : shower_v) {
+
+    ::geoalgo::Trajectory track_geotrj;
+    track_geotrj.resize(2, ::geoalgo::Vector(0.,0.,0.));
+
+    TVector3 s_start = s->ShowerStart();
+    double s_len = s->Length();
+    TVector3 s_dir   = s->Direction();
+    s_dir = s_dir.Unit();
+
+    TVector3 s_end = s_start + s_dir * s_len;
+
+    /*
+    std::cout << "[NeutrinoFlashMatch] Making track from shower. Shower start: " << s_start.X() << ", " << s_start.Y() << ", " << s_start.Z() << std::endl;
+    std::cout << "[NeutrinoFlashMatch]                           Shower end:   " << s_end.X() << ", " << s_end.Y() << ", " << s_end.Z() << std::endl;
+    */
+
+    // First point
+    track_geotrj[0][0] = s_start.X();
+    track_geotrj[0][1] = s_start.Y();
+    track_geotrj[0][2] = s_start.Z();
+
+    // Second point
+    track_geotrj[1][0] = s_end.X();
+    track_geotrj[1][1] = s_end.Y();
+    track_geotrj[1][2] = s_end.Z();
+
+    auto qcluster = ((flashana::LightPath*)(_mgr.GetCustomAlgo("LightPath")))->FlashHypothesis(track_geotrj);
+    summed_qcluster_1 += qcluster;
+  }
+
+  flashana::QCluster_t summed_qcluster_2;
+  summed_qcluster_2.clear();
+  summed_qcluster_2 = this->GetQCluster(track_v);
+
+  return summed_qcluster_1 + summed_qcluster_2;
 }
 
 //______________________________________________________________________________________________________________________________________

@@ -1,0 +1,126 @@
+#include "ubflashfinder.fcl"
+#include "ubflashcalib.fcl"
+#include "T0RecoAnodeCathodePiercing.fcl"
+
+#include "tpcobjectmaker.fcl"
+#include "neutrinomcflash.fcl"
+#include "neutrinoflashmatch.fcl"
+#include "cosmicflashmatch.fcl"
+
+#include "calorimetry_microboone.fcl"
+#include "particleid_microboone.fcl"
+
+#include "pandoramodules_microboone.fcl"
+#include "hitfindermodules_microboone.fcl"
+#include "cosmicremovalmodules.fcl"
+#include "cosmicflashtagger.fcl"
+#include "acpttagger.fcl"
+#include "recotruematcher.fcl"
+
+
+BEGIN_PROLOG
+#
+# Module configuration
+#
+
+UBXSec: {
+module_type:                  "UBXSec"
+PFParticleProducer:           "pandoraNu::UBXSec"
+HitProducer:                  "pandoraCosmicHitRemoval::UBXSec"
+GeantModule:                  "largeant"
+SpacePointProducer:           "pandoraNu::UBXSec"
+NeutrinoFlashMatchProducer:   "NeutrinoFlashMatch"
+CosmicFlashMatchProducer:     "CosmicFlashMatch"
+OpFlashBeamProducer:          "simpleFlashBeam"
+ACPTProducer:                 "pandoraCosmicT0Reco"
+TPCObjectProducer:            "TPCObjectMaker"
+POTSummaryProducer:           "generator"
+POTSummaryInstance:           ""
+ParticleIDProducer:           "pandoraNupid::UBXSec"
+MCGhostProducer:              "RecoTrueMatcher"
+
+UseGENIEInfo:                 true
+MinimumHitRequirement:        3
+
+PECalib:                      @local::SPECalib
+}
+
+
+ubxsec_mc_reco:
+{
+  pandoraCosmicTrackPFPart:       @local::microboone_cosmicpfparticletagger
+  pandoraCosmicFlashTag:          @local::microboone_cosmicpfpflashtagger
+  pandoraCosmicACPTTagger:        @local::microboone_acpttagger 
+  pandoraCosmicHitRemoval:        @local::microboone_crhitremoval
+
+  pandoraNu:                      @local::microboone_pandora
+
+  pandoraNucalo:                  @local::microboone_calomc
+  pandoraNupid:                   @local::microboone_chi2pid
+}
+
+ubxsec_mc_flashmatch:
+{
+   RecoTrueMatcher      : @local::RecoTrueMatcher
+
+   TPCObjectMaker       : @local::TPCObjectMaker
+
+   NeutrinoMCFlash      : @local::NeutrinoMCFlash
+   NeutrinoFlashMatch   : @local::NeutrinoFlashMatch
+   #CosmicFlashMatch   : @local::CosmicFlashMatch
+}
+
+ubxsec_mc_ana:
+{
+   UBXSec   : @local::UBXSec
+}
+
+
+ubxsec_mc_producers: [ pandoraCosmicTrackPFPart,
+                       pandoraCosmicFlashTag,
+                       pandoraCosmicACPTTagger,
+                       pandoraCosmicHitRemoval,
+                       pandoraNu,
+                       pandoraNucalo,
+                       pandoraNupid,
+                       RecoTrueMatcher, 
+                       TPCObjectMaker,
+                       NeutrinoMCFlash, 
+                       NeutrinoFlashMatch ] 
+
+ubxsec_mc_analyzers: [ UBXSec ]
+
+
+
+
+# Set reco properties
+ubxsec_mc_reco.pandoraCosmicTrackPFPart.PFParticleModuleLabel:   "pandoraCosmic"
+ubxsec_mc_reco.pandoraCosmicTrackPFPart.TrackModuleLabel:        "pandoraCosmic"
+ubxsec_mc_reco.pandoraCosmicTrackPFPart.EndTickPadding:          75
+ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCXBoundary:            10
+ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCYBoundary:            20
+ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCZBoundary:            10
+
+ubxsec_mc_reco.pandoraCosmicHitRemoval.CosmicProducerLabels:     ["pandoraCosmicTrackPFPart", "pandoraCosmicFlashTag", "pandoraCosmicACPTTagger" ]
+ubxsec_mc_reco.pandoraCosmicHitRemoval.TrackProducerLabels:      ["pandoraCosmic",            "pandoraCosmic",         "pandoraCosmicKHit"       ]
+ubxsec_mc_reco.pandoraCosmicHitRemoval.AssnProducerLabels:       ["pandoraCosmic",            "pandoraCosmic",         "pandoraCosmicKHit"       ]
+ubxsec_mc_reco.pandoraCosmicHitRemoval.CosmicTagThresholds:      [0.6,                        0.99,                    0.99                      ]
+ubxsec_mc_reco.pandoraCosmicHitRemoval.PFParticleProducerLabel:  "pandoraCosmic"
+ubxsec_mc_reco.pandoraCosmicHitRemoval.EndTickPadding:           75
+
+ubxsec_mc_reco.pandoraNu.GeantModuleLabel:                       "largeant"
+ubxsec_mc_reco.pandoraNu.HitFinderModuleLabel:                   "pandoraCosmicHitRemoval::UBXSec"
+ubxsec_mc_reco.pandoraNu.ConfigFile:                             "PandoraSettings_MicroBooNE_Neutrino.xml"
+
+ubxsec_mc_reco.pandoraNucalo.TrackModuleLabel:                   "pandoraNu::UBXSec"
+ubxsec_mc_reco.pandoraNucalo.SpacePointModuleLabel:              "pandoraNu::UBXSec"
+
+ubxsec_mc_reco.pandoraNupid.CalorimetryModuleLabel:              "pandoraNucalo::UBXSec"
+ubxsec_mc_reco.pandoraNupid.TrackModuleLabel:                    "pandoraNu::UBXSec"
+
+# Set FlashMatching properties
+ubxsec_mc_flashmatch.NeutrinoFlashMatch.TrackModule:             "pandoraNu::UBXSec"
+
+
+
+END_PROLOG

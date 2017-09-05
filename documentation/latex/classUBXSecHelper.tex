@@ -43,6 +43,10 @@ static bool \hyperlink{classUBXSecHelper_a4ff7e0d6774d5628cc2a3d19bb2d3492}{In\-
 \begin{DoxyCompactList}\small\item\em Returns true if the point passed is in the fiducial volume. \end{DoxyCompactList}\item 
 static ubana\-::\-T\-P\-C\-Object\-Origin \hyperlink{classUBXSecHelper_a7f4a880c5880a678c7d0f181e92cb748}{Get\-Slice\-Origin} (std\-::vector$<$ art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$$>$ neutrino\-Origin\-P\-F\-P, std\-::vector$<$ art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$$>$ cosmic\-Origin\-P\-F\-P, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v)
 \begin{DoxyCompactList}\small\item\em Returns the origin of the T\-P\-C object (neutrino/cosmic/mixed) \end{DoxyCompactList}\item 
+static ubana\-::\-T\-P\-C\-Object\-Origin\-Extra \hyperlink{classUBXSecHelper_afe28141046a637997685e43478ea6e25}{Get\-Slice\-Origin\-Extra\-\_\-\-N\-C} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector proton\-N\-C\-Origin\-P\-F\-P, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pion\-N\-C\-Origin\-P\-F\-P, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v)
+\begin{DoxyCompactList}\small\item\em Returns extra origin information for a T\-P\-C object (for now if it is a stopping muon in the T\-P\-C) \end{DoxyCompactList}\item 
+static ubana\-::\-T\-P\-C\-Object\-Origin\-Extra \hyperlink{classUBXSecHelper_ae4071096536a66ccd1de84b8cc15fb12}{Get\-Slice\-Origin\-Extra\-\_\-\-Stopping} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector cosmic\-Stopping\-Origin\-P\-F\-P, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v)
+\begin{DoxyCompactList}\small\item\em Returns extra origin information for a T\-P\-C object (for now only if it is a stopping muon in the T\-P\-C) \end{DoxyCompactList}\item 
 static void \hyperlink{classUBXSecHelper_a5d811318d7fb66ab5e1816453c017e63}{Get\-Number\-Of\-Hits\-Per\-Plane} (art\-::\-Event const \&e, std\-::string \-\_\-particle\-Label, lar\-\_\-pandora\-::\-Track\-Vector track\-\_\-v, int \&nhits\-\_\-u, int \&nhits\-\_\-v, int \&nhits\-\_\-w)
 \begin{DoxyCompactList}\small\item\em Returns number of hits on each plane for a T\-P\-C obj. \end{DoxyCompactList}\item 
 static bool \hyperlink{classUBXSecHelper_accf62c400d9e984f1277843de78715a7}{Track\-Passes\-Hit\-Requirment} (art\-::\-Event const \&e, std\-::string \-\_\-particle\-Label, art\-::\-Ptr$<$ recob\-::\-Track $>$ trk, int n\-Hits\-Req)
@@ -53,12 +57,22 @@ static bool \hyperlink{classUBXSecHelper_af2924ae512f2c8cc5be6feb2bd21a112}{Is\-
 \begin{DoxyCompactList}\small\item\em Returns true if the track is crossing the F\-V border from the T\-O\-P. \end{DoxyCompactList}\item 
 static bool \hyperlink{classUBXSecHelper_a76b009afef0cc69f281ca3215a901f35}{Get\-Longest\-Track\-From\-T\-P\-C\-Obj} (lar\-\_\-pandora\-::\-Track\-Vector track\-\_\-v, recob\-::\-Track \&out\-\_\-track)
 \begin{DoxyCompactList}\small\item\em Gets the longest track from a T\-P\-C object, returns false if there are no tracks in the T\-P\-C object. \end{DoxyCompactList}\item 
+static bool \hyperlink{classUBXSecHelper_a44c8ae9d98197e81da26aeae26c70f0a}{Tracks\-Are\-Contained} (std\-::vector$<$ recob\-::\-Track $>$ tracks)
+\begin{DoxyCompactList}\small\item\em Returns true if all the tracks passed are fully contained. \end{DoxyCompactList}\item 
+static bool \hyperlink{classUBXSecHelper_aa0349c7d405ec64cd1b0c7ed3d54a56e}{Track\-Is\-Contained} (recob\-::\-Track track)
+\begin{DoxyCompactList}\small\item\em Returns true if the track passed is fully contained. \end{DoxyCompactList}\item 
+static double \hyperlink{classUBXSecHelper_a79b61783bfe19d8dcd33d6aba4c3e61a}{Get\-Corrected\-Phi} (recob\-::\-Track t, recob\-::\-Vertex tpcobj\-\_\-nu\-\_\-vtx)
+\begin{DoxyCompactList}\small\item\em Returns the value of the phi angle for the track considering the nu vertex. \end{DoxyCompactList}\item 
+static double \hyperlink{classUBXSecHelper_aefae2cc8a7598aa54848247ad228371e}{Get\-Corrected\-Cos\-Theta} (recob\-::\-Track t, recob\-::\-Vertex tpcobj\-\_\-nu\-\_\-vtx)
+\begin{DoxyCompactList}\small\item\em Returns the value of the cos(theta) angle for the track considering the nu vertex. \end{DoxyCompactList}\item 
 static bool \hyperlink{classUBXSecHelper_a7df598dfbdfdb620737fd69297e67faf}{Point\-Is\-Close\-To\-Dead\-Region} (double $\ast$reco\-\_\-nu\-\_\-vtx, int plane\-\_\-no)
 \begin{DoxyCompactList}\small\item\em Returns true if the point passed is close to a dead region. \end{DoxyCompactList}\item 
 static int \hyperlink{classUBXSecHelper_a88533a5a59d61351437a1fe2e54aff25}{Get\-Closest\-P\-M\-T} (double $\ast$charge\-\_\-center)
 \begin{DoxyCompactList}\small\item\em Returns the clostes opchannel to the 3\-D specified point. \end{DoxyCompactList}\item 
 static double \hyperlink{classUBXSecHelper_a3fd25ef568b54aded55d6c1b6a8593fa}{Get\-Flash\-Z\-Center} (std\-::vector$<$ double $>$ pe)
-\begin{DoxyCompactList}\small\item\em Returns Z position of a flash. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Returns Z position of a flash. \end{DoxyCompactList}\item 
+static void \hyperlink{classUBXSecHelper_a44a38546ab8f9a473f0957af008219d4}{Get\-Time\-Corrected\-Point} (double $\ast$point\-\_\-raw, double $\ast$point\-\_\-corrected, double interaction\-\_\-time, double drift\-\_\-velocity)
+\begin{DoxyCompactList}\small\item\em Takes a dimension 3 array, interaction time and drift velocity, and returns a corrected point (shifting in x) \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -135,6 +149,44 @@ Returns the clostes opchannel to the 3\-D specified point.
 
 \begin{DoxyParams}{Parameters}
 {\em charge\-\_\-center} & the 3\-D point (c array) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_aefae2cc8a7598aa54848247ad228371e}{\index{U\-B\-X\-Sec\-Helper@{U\-B\-X\-Sec\-Helper}!Get\-Corrected\-Cos\-Theta@{Get\-Corrected\-Cos\-Theta}}
+\index{Get\-Corrected\-Cos\-Theta@{Get\-Corrected\-Cos\-Theta}!UBXSecHelper@{U\-B\-X\-Sec\-Helper}}
+\subsubsection[{Get\-Corrected\-Cos\-Theta}]{\setlength{\rightskip}{0pt plus 5cm}double U\-B\-X\-Sec\-Helper\-::\-Get\-Corrected\-Cos\-Theta (
+\begin{DoxyParamCaption}
+\item[{recob\-::\-Track}]{t, }
+\item[{recob\-::\-Vertex}]{tpcobj\-\_\-nu\-\_\-vtx}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classUBXSecHelper_aefae2cc8a7598aa54848247ad228371e}
+
+
+Returns the value of the cos(theta) angle for the track considering the nu vertex. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em track} & the recob\-::\-Track \\
+\hline
+{\em tpcobj\-\_\-nu\-\_\-vtx} & the recob\-::\-Vertex neutrino vertex \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_a79b61783bfe19d8dcd33d6aba4c3e61a}{\index{U\-B\-X\-Sec\-Helper@{U\-B\-X\-Sec\-Helper}!Get\-Corrected\-Phi@{Get\-Corrected\-Phi}}
+\index{Get\-Corrected\-Phi@{Get\-Corrected\-Phi}!UBXSecHelper@{U\-B\-X\-Sec\-Helper}}
+\subsubsection[{Get\-Corrected\-Phi}]{\setlength{\rightskip}{0pt plus 5cm}double U\-B\-X\-Sec\-Helper\-::\-Get\-Corrected\-Phi (
+\begin{DoxyParamCaption}
+\item[{recob\-::\-Track}]{t, }
+\item[{recob\-::\-Vertex}]{tpcobj\-\_\-nu\-\_\-vtx}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classUBXSecHelper_a79b61783bfe19d8dcd33d6aba4c3e61a}
+
+
+Returns the value of the phi angle for the track considering the nu vertex. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & the recob\-::\-Track \\
+\hline
+{\em tpcobj\-\_\-nu\-\_\-vtx} & the recob\-::\-Vertex neutrino vertex \\
 \hline
 \end{DoxyParams}
 \hypertarget{classUBXSecHelper_a3fd25ef568b54aded55d6c1b6a8593fa}{\index{U\-B\-X\-Sec\-Helper@{U\-B\-X\-Sec\-Helper}!Get\-Flash\-Z\-Center@{Get\-Flash\-Z\-Center}}
@@ -346,6 +398,72 @@ Returns the origin of the T\-P\-C object (neutrino/cosmic/mixed)
 {\em cosmic\-Origin\-P\-F\-P} & list of P\-F\-P with cosmic origin \\
 \hline
 {\em pfp\-\_\-v} & the T\-P\-C object (vector of P\-F\-P) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_afe28141046a637997685e43478ea6e25}{\index{U\-B\-X\-Sec\-Helper@{U\-B\-X\-Sec\-Helper}!Get\-Slice\-Origin\-Extra\-\_\-\-N\-C@{Get\-Slice\-Origin\-Extra\-\_\-\-N\-C}}
+\index{Get\-Slice\-Origin\-Extra\-\_\-\-N\-C@{Get\-Slice\-Origin\-Extra\-\_\-\-N\-C}!UBXSecHelper@{U\-B\-X\-Sec\-Helper}}
+\subsubsection[{Get\-Slice\-Origin\-Extra\-\_\-\-N\-C}]{\setlength{\rightskip}{0pt plus 5cm}ubana\-::\-T\-P\-C\-Object\-Origin\-Extra U\-B\-X\-Sec\-Helper\-::\-Get\-Slice\-Origin\-Extra\-\_\-\-N\-C (
+\begin{DoxyParamCaption}
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{proton\-N\-C\-Origin\-P\-F\-P, }
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pion\-N\-C\-Origin\-P\-F\-P, }
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pfp\-\_\-v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classUBXSecHelper_afe28141046a637997685e43478ea6e25}
+
+
+Returns extra origin information for a T\-P\-C object (for now if it is a stopping muon in the T\-P\-C) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em proton\-N\-C\-Origin\-P\-F\-P} & list of P\-F\-P with nc origin with proton \\
+\hline
+{\em pion\-N\-C\-Origin\-P\-F\-P} & list of P\-F\-P with nc origin with pion \\
+\hline
+{\em pfp\-\_\-v} & the T\-P\-C object (vector of P\-F\-P) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_ae4071096536a66ccd1de84b8cc15fb12}{\index{U\-B\-X\-Sec\-Helper@{U\-B\-X\-Sec\-Helper}!Get\-Slice\-Origin\-Extra\-\_\-\-Stopping@{Get\-Slice\-Origin\-Extra\-\_\-\-Stopping}}
+\index{Get\-Slice\-Origin\-Extra\-\_\-\-Stopping@{Get\-Slice\-Origin\-Extra\-\_\-\-Stopping}!UBXSecHelper@{U\-B\-X\-Sec\-Helper}}
+\subsubsection[{Get\-Slice\-Origin\-Extra\-\_\-\-Stopping}]{\setlength{\rightskip}{0pt plus 5cm}ubana\-::\-T\-P\-C\-Object\-Origin\-Extra U\-B\-X\-Sec\-Helper\-::\-Get\-Slice\-Origin\-Extra\-\_\-\-Stopping (
+\begin{DoxyParamCaption}
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{cosmic\-Stopping\-Origin\-P\-F\-P, }
+\item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pfp\-\_\-v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classUBXSecHelper_ae4071096536a66ccd1de84b8cc15fb12}
+
+
+Returns extra origin information for a T\-P\-C object (for now only if it is a stopping muon in the T\-P\-C) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cosmic\-Stopping\-Origin\-P\-F\-P} & list of P\-F\-P with cosmic origin that stop in the T\-P\-C \\
+\hline
+{\em pfp\-\_\-v} & the T\-P\-C object (vector of P\-F\-P) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_a44a38546ab8f9a473f0957af008219d4}{\index{U\-B\-X\-Sec\-Helper@{U\-B\-X\-Sec\-Helper}!Get\-Time\-Corrected\-Point@{Get\-Time\-Corrected\-Point}}
+\index{Get\-Time\-Corrected\-Point@{Get\-Time\-Corrected\-Point}!UBXSecHelper@{U\-B\-X\-Sec\-Helper}}
+\subsubsection[{Get\-Time\-Corrected\-Point}]{\setlength{\rightskip}{0pt plus 5cm}void U\-B\-X\-Sec\-Helper\-::\-Get\-Time\-Corrected\-Point (
+\begin{DoxyParamCaption}
+\item[{double $\ast$}]{point\-\_\-raw, }
+\item[{double $\ast$}]{point\-\_\-corrected, }
+\item[{double}]{interaction\-\_\-time, }
+\item[{double}]{drift\-\_\-velocity}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classUBXSecHelper_a44a38546ab8f9a473f0957af008219d4}
+
+
+Takes a dimension 3 array, interaction time and drift velocity, and returns a corrected point (shifting in x) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point\-\_\-raw} & raw 3d point \\
+\hline
+{\em point\-\_\-corrected} & corrected 3d point \\
+\hline
+{\em interaction\-\_\-time} & The interaction time (usually from flash) \\
+\hline
+{\em drift\-\_\-velocity} & The drift velocity \\
 \hline
 \end{DoxyParams}
 \hypertarget{classUBXSecHelper_a36ef4a258300c98061cd01782157433b}{\index{U\-B\-X\-Sec\-Helper@{U\-B\-X\-Sec\-Helper}!Get\-T\-P\-C\-Objects@{Get\-T\-P\-C\-Objects}}
@@ -560,6 +678,22 @@ Returns true if the point passed is close to a dead region.
 {\em plane\-\_\-no} & the plane we want to check with \\
 \hline
 \end{DoxyParams}
+\hypertarget{classUBXSecHelper_aa0349c7d405ec64cd1b0c7ed3d54a56e}{\index{U\-B\-X\-Sec\-Helper@{U\-B\-X\-Sec\-Helper}!Track\-Is\-Contained@{Track\-Is\-Contained}}
+\index{Track\-Is\-Contained@{Track\-Is\-Contained}!UBXSecHelper@{U\-B\-X\-Sec\-Helper}}
+\subsubsection[{Track\-Is\-Contained}]{\setlength{\rightskip}{0pt plus 5cm}bool U\-B\-X\-Sec\-Helper\-::\-Track\-Is\-Contained (
+\begin{DoxyParamCaption}
+\item[{recob\-::\-Track}]{track}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classUBXSecHelper_aa0349c7d405ec64cd1b0c7ed3d54a56e}
+
+
+Returns true if the track passed is fully contained. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em track} & the recob\-::\-Track \\
+\hline
+\end{DoxyParams}
 \hypertarget{classUBXSecHelper_accf62c400d9e984f1277843de78715a7}{\index{U\-B\-X\-Sec\-Helper@{U\-B\-X\-Sec\-Helper}!Track\-Passes\-Hit\-Requirment@{Track\-Passes\-Hit\-Requirment}}
 \index{Track\-Passes\-Hit\-Requirment@{Track\-Passes\-Hit\-Requirment}!UBXSecHelper@{U\-B\-X\-Sec\-Helper}}
 \subsubsection[{Track\-Passes\-Hit\-Requirment}]{\setlength{\rightskip}{0pt plus 5cm}bool U\-B\-X\-Sec\-Helper\-::\-Track\-Passes\-Hit\-Requirment (
@@ -583,6 +717,22 @@ Returns true if the track passes a minimum hit requirment in at least one plane.
 {\em trk} & the recob\-::\-Track \\
 \hline
 {\em n\-Hits\-Req} & the minimum number of hits \\
+\hline
+\end{DoxyParams}
+\hypertarget{classUBXSecHelper_a44c8ae9d98197e81da26aeae26c70f0a}{\index{U\-B\-X\-Sec\-Helper@{U\-B\-X\-Sec\-Helper}!Tracks\-Are\-Contained@{Tracks\-Are\-Contained}}
+\index{Tracks\-Are\-Contained@{Tracks\-Are\-Contained}!UBXSecHelper@{U\-B\-X\-Sec\-Helper}}
+\subsubsection[{Tracks\-Are\-Contained}]{\setlength{\rightskip}{0pt plus 5cm}bool U\-B\-X\-Sec\-Helper\-::\-Tracks\-Are\-Contained (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ recob\-::\-Track $>$}]{tracks}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classUBXSecHelper_a44c8ae9d98197e81da26aeae26c70f0a}
+
+
+Returns true if all the tracks passed are fully contained. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tracks} & a vector of recob\-::\-Track \\
 \hline
 \end{DoxyParams}
 

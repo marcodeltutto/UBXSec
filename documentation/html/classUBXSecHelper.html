@@ -140,6 +140,12 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <tr class="memitem:a7f4a880c5880a678c7d0f181e92cb748"><td class="memItemLeft" align="right" valign="top">static ubana::TPCObjectOrigin&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a7f4a880c5880a678c7d0f181e92cb748">GetSliceOrigin</a> (std::vector&lt; art::Ptr&lt; recob::PFParticle &gt;&gt; neutrinoOriginPFP, std::vector&lt; art::Ptr&lt; recob::PFParticle &gt;&gt; cosmicOriginPFP, lar_pandora::PFParticleVector pfp_v)</td></tr>
 <tr class="memdesc:a7f4a880c5880a678c7d0f181e92cb748"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the origin of the TPC object (neutrino/cosmic/mixed)  <a href="#a7f4a880c5880a678c7d0f181e92cb748">More...</a><br/></td></tr>
 <tr class="separator:a7f4a880c5880a678c7d0f181e92cb748"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe28141046a637997685e43478ea6e25"><td class="memItemLeft" align="right" valign="top">static ubana::TPCObjectOriginExtra&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#afe28141046a637997685e43478ea6e25">GetSliceOriginExtra_NC</a> (lar_pandora::PFParticleVector protonNCOriginPFP, lar_pandora::PFParticleVector pionNCOriginPFP, lar_pandora::PFParticleVector pfp_v)</td></tr>
+<tr class="memdesc:afe28141046a637997685e43478ea6e25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns extra origin information for a TPC object (for now if it is a stopping muon in the TPC)  <a href="#afe28141046a637997685e43478ea6e25">More...</a><br/></td></tr>
+<tr class="separator:afe28141046a637997685e43478ea6e25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4071096536a66ccd1de84b8cc15fb12"><td class="memItemLeft" align="right" valign="top">static ubana::TPCObjectOriginExtra&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#ae4071096536a66ccd1de84b8cc15fb12">GetSliceOriginExtra_Stopping</a> (lar_pandora::PFParticleVector cosmicStoppingOriginPFP, lar_pandora::PFParticleVector pfp_v)</td></tr>
+<tr class="memdesc:ae4071096536a66ccd1de84b8cc15fb12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns extra origin information for a TPC object (for now only if it is a stopping muon in the TPC)  <a href="#ae4071096536a66ccd1de84b8cc15fb12">More...</a><br/></td></tr>
+<tr class="separator:ae4071096536a66ccd1de84b8cc15fb12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d811318d7fb66ab5e1816453c017e63"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a5d811318d7fb66ab5e1816453c017e63">GetNumberOfHitsPerPlane</a> (art::Event const &amp;e, std::string _particleLabel, lar_pandora::TrackVector track_v, int &amp;nhits_u, int &amp;nhits_v, int &amp;nhits_w)</td></tr>
 <tr class="memdesc:a5d811318d7fb66ab5e1816453c017e63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns number of hits on each plane for a TPC obj.  <a href="#a5d811318d7fb66ab5e1816453c017e63">More...</a><br/></td></tr>
 <tr class="separator:a5d811318d7fb66ab5e1816453c017e63"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -155,6 +161,18 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <tr class="memitem:a76b009afef0cc69f281ca3215a901f35"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a76b009afef0cc69f281ca3215a901f35">GetLongestTrackFromTPCObj</a> (lar_pandora::TrackVector track_v, recob::Track &amp;out_track)</td></tr>
 <tr class="memdesc:a76b009afef0cc69f281ca3215a901f35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the longest track from a TPC object, returns false if there are no tracks in the TPC object.  <a href="#a76b009afef0cc69f281ca3215a901f35">More...</a><br/></td></tr>
 <tr class="separator:a76b009afef0cc69f281ca3215a901f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44c8ae9d98197e81da26aeae26c70f0a"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a44c8ae9d98197e81da26aeae26c70f0a">TracksAreContained</a> (std::vector&lt; recob::Track &gt; tracks)</td></tr>
+<tr class="memdesc:a44c8ae9d98197e81da26aeae26c70f0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if all the tracks passed are fully contained.  <a href="#a44c8ae9d98197e81da26aeae26c70f0a">More...</a><br/></td></tr>
+<tr class="separator:a44c8ae9d98197e81da26aeae26c70f0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0349c7d405ec64cd1b0c7ed3d54a56e"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#aa0349c7d405ec64cd1b0c7ed3d54a56e">TrackIsContained</a> (recob::Track track)</td></tr>
+<tr class="memdesc:aa0349c7d405ec64cd1b0c7ed3d54a56e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the track passed is fully contained.  <a href="#aa0349c7d405ec64cd1b0c7ed3d54a56e">More...</a><br/></td></tr>
+<tr class="separator:aa0349c7d405ec64cd1b0c7ed3d54a56e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79b61783bfe19d8dcd33d6aba4c3e61a"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a79b61783bfe19d8dcd33d6aba4c3e61a">GetCorrectedPhi</a> (recob::Track t, recob::Vertex tpcobj_nu_vtx)</td></tr>
+<tr class="memdesc:a79b61783bfe19d8dcd33d6aba4c3e61a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the phi angle for the track considering the nu vertex.  <a href="#a79b61783bfe19d8dcd33d6aba4c3e61a">More...</a><br/></td></tr>
+<tr class="separator:a79b61783bfe19d8dcd33d6aba4c3e61a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefae2cc8a7598aa54848247ad228371e"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#aefae2cc8a7598aa54848247ad228371e">GetCorrectedCosTheta</a> (recob::Track t, recob::Vertex tpcobj_nu_vtx)</td></tr>
+<tr class="memdesc:aefae2cc8a7598aa54848247ad228371e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the cos(theta) angle for the track considering the nu vertex.  <a href="#aefae2cc8a7598aa54848247ad228371e">More...</a><br/></td></tr>
+<tr class="separator:aefae2cc8a7598aa54848247ad228371e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7df598dfbdfdb620737fd69297e67faf"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a7df598dfbdfdb620737fd69297e67faf">PointIsCloseToDeadRegion</a> (double *reco_nu_vtx, int plane_no)</td></tr>
 <tr class="memdesc:a7df598dfbdfdb620737fd69297e67faf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the point passed is close to a dead region.  <a href="#a7df598dfbdfdb620737fd69297e67faf">More...</a><br/></td></tr>
 <tr class="separator:a7df598dfbdfdb620737fd69297e67faf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,6 +182,9 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <tr class="memitem:a3fd25ef568b54aded55d6c1b6a8593fa"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a3fd25ef568b54aded55d6c1b6a8593fa">GetFlashZCenter</a> (std::vector&lt; double &gt; pe)</td></tr>
 <tr class="memdesc:a3fd25ef568b54aded55d6c1b6a8593fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns Z position of a flash.  <a href="#a3fd25ef568b54aded55d6c1b6a8593fa">More...</a><br/></td></tr>
 <tr class="separator:a3fd25ef568b54aded55d6c1b6a8593fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44a38546ab8f9a473f0957af008219d4"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a44a38546ab8f9a473f0957af008219d4">GetTimeCorrectedPoint</a> (double *point_raw, double *point_corrected, double interaction_time, double drift_velocity)</td></tr>
+<tr class="memdesc:a44a38546ab8f9a473f0957af008219d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes a dimension 3 array, interaction time and drift velocity, and returns a corrected point (shifting in x)  <a href="#a44a38546ab8f9a473f0957af008219d4">More...</a><br/></td></tr>
+<tr class="separator:a44a38546ab8f9a473f0957af008219d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An helper class for <a class="el" href="classUBXSec.html" title="Art analyzer module. ">UBXSec</a>. </p>
@@ -266,6 +287,92 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">charge_center</td><td>the 3D point (c array) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="aefae2cc8a7598aa54848247ad228371e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double UBXSecHelper::GetCorrectedCosTheta </td>
+          <td>(</td>
+          <td class="paramtype">recob::Track&#160;</td>
+          <td class="paramname"><em>t</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">recob::Vertex&#160;</td>
+          <td class="paramname"><em>tpcobj_nu_vtx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the value of the cos(theta) angle for the track considering the nu vertex. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">track</td><td>the recob::Track </td></tr>
+    <tr><td class="paramname">tpcobj_nu_vtx</td><td>the recob::Vertex neutrino vertex </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a79b61783bfe19d8dcd33d6aba4c3e61a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double UBXSecHelper::GetCorrectedPhi </td>
+          <td>(</td>
+          <td class="paramtype">recob::Track&#160;</td>
+          <td class="paramname"><em>t</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">recob::Vertex&#160;</td>
+          <td class="paramname"><em>tpcobj_nu_vtx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the value of the phi angle for the track considering the nu vertex. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">t</td><td>the recob::Track </td></tr>
+    <tr><td class="paramname">tpcobj_nu_vtx</td><td>the recob::Vertex neutrino vertex </td></tr>
   </table>
   </dd>
 </dl>
@@ -748,6 +855,156 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 
 </div>
 </div>
+<a class="anchor" id="afe28141046a637997685e43478ea6e25"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ubana::TPCObjectOriginExtra UBXSecHelper::GetSliceOriginExtra_NC </td>
+          <td>(</td>
+          <td class="paramtype">lar_pandora::PFParticleVector&#160;</td>
+          <td class="paramname"><em>protonNCOriginPFP</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">lar_pandora::PFParticleVector&#160;</td>
+          <td class="paramname"><em>pionNCOriginPFP</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">lar_pandora::PFParticleVector&#160;</td>
+          <td class="paramname"><em>pfp_v</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns extra origin information for a TPC object (for now if it is a stopping muon in the TPC) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">protonNCOriginPFP</td><td>list of PFP with nc origin with proton </td></tr>
+    <tr><td class="paramname">pionNCOriginPFP</td><td>list of PFP with nc origin with pion </td></tr>
+    <tr><td class="paramname">pfp_v</td><td>the TPC object (vector of PFP) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ae4071096536a66ccd1de84b8cc15fb12"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ubana::TPCObjectOriginExtra UBXSecHelper::GetSliceOriginExtra_Stopping </td>
+          <td>(</td>
+          <td class="paramtype">lar_pandora::PFParticleVector&#160;</td>
+          <td class="paramname"><em>cosmicStoppingOriginPFP</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">lar_pandora::PFParticleVector&#160;</td>
+          <td class="paramname"><em>pfp_v</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns extra origin information for a TPC object (for now only if it is a stopping muon in the TPC) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cosmicStoppingOriginPFP</td><td>list of PFP with cosmic origin that stop in the TPC </td></tr>
+    <tr><td class="paramname">pfp_v</td><td>the TPC object (vector of PFP) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a44a38546ab8f9a473f0957af008219d4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void UBXSecHelper::GetTimeCorrectedPoint </td>
+          <td>(</td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>point_raw</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&#160;</td>
+          <td class="paramname"><em>point_corrected</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>interaction_time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>drift_velocity</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Takes a dimension 3 array, interaction time and drift velocity, and returns a corrected point (shifting in x) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">point_raw</td><td>raw 3d point </td></tr>
+    <tr><td class="paramname">point_corrected</td><td>corrected 3d point </td></tr>
+    <tr><td class="paramname">interaction_time</td><td>The interaction time (usually from flash) </td></tr>
+    <tr><td class="paramname">drift_velocity</td><td>The drift velocity </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a36ef4a258300c98061cd01782157433b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1223,6 +1480,38 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 
 </div>
 </div>
+<a class="anchor" id="aa0349c7d405ec64cd1b0c7ed3d54a56e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool UBXSecHelper::TrackIsContained </td>
+          <td>(</td>
+          <td class="paramtype">recob::Track&#160;</td>
+          <td class="paramname"><em>track</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns true if the track passed is fully contained. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">track</td><td>the recob::Track </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="accf62c400d9e984f1277843de78715a7"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1274,6 +1563,38 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
     <tr><td class="paramname">_particleLabel</td><td>the PFP procuder module </td></tr>
     <tr><td class="paramname">trk</td><td>the recob::Track </td></tr>
     <tr><td class="paramname">nHitsReq</td><td>the minimum number of hits </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a44c8ae9d98197e81da26aeae26c70f0a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool UBXSecHelper::TracksAreContained </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; recob::Track &gt;&#160;</td>
+          <td class="paramname"><em>tracks</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns true if all the tracks passed are fully contained. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tracks</td><td>a vector of recob::Track </td></tr>
   </table>
   </dd>
 </dl>

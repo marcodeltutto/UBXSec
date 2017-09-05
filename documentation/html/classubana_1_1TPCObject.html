@@ -104,21 +104,52 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0766c8648ada3d539b474e40a107d8c1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0766c8648ada3d539b474e40a107d8c1"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SetTracks</b> (std::vector&lt; recob::Track &gt;)</td></tr>
 <tr class="separator:a0766c8648ada3d539b474e40a107d8c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab35b580187ad16cbd53325e8c776f655"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab35b580187ad16cbd53325e8c776f655"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetPFPs</b> (std::vector&lt; recob::PFParticle &gt;)</td></tr>
+<tr class="separator:ab35b580187ad16cbd53325e8c776f655"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1fed8d9f87fc301a8cbee484a8434a05"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1fed8d9f87fc301a8cbee484a8434a05"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SetVertex</b> (recob::Vertex)</td></tr>
 <tr class="separator:a1fed8d9f87fc301a8cbee484a8434a05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4946cb455555486b701dd1301a26f56"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad4946cb455555486b701dd1301a26f56"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SetOrigin</b> (ubana::TPCObjectOrigin)</td></tr>
 <tr class="separator:ad4946cb455555486b701dd1301a26f56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04af7a6b0627988b8ac2e2980f5bc181"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04af7a6b0627988b8ac2e2980f5bc181"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetOriginExtra</b> (ubana::TPCObjectOriginExtra)</td></tr>
+<tr class="separator:a04af7a6b0627988b8ac2e2980f5bc181"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad67da2b0cd00fb82f8eb4d8f87bf18f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aad67da2b0cd00fb82f8eb4d8f87bf18f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetMultiplicity</b> (int pfpMult, int trackMult, int showerMult)</td></tr>
+<tr class="separator:aad67da2b0cd00fb82f8eb4d8f87bf18f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44cc29b00093d89d9f7fe834570d77be"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a44cc29b00093d89d9f7fe834570d77be"></a>
 const std::vector&lt; recob::Track &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetTracks</b> () const </td></tr>
 <tr class="separator:a44cc29b00093d89d9f7fe834570d77be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98af6b4a96031938afd18c372cd9d6d6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98af6b4a96031938afd18c372cd9d6d6"></a>
+const std::vector<br class="typebreak"/>
+&lt; recob::PFParticle &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetPFPs</b> () const </td></tr>
+<tr class="separator:a98af6b4a96031938afd18c372cd9d6d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3845ae1b31ab6590c5597d157dc01e6a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3845ae1b31ab6590c5597d157dc01e6a"></a>
 const recob::Vertex &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetVertex</b> () const </td></tr>
 <tr class="separator:a3845ae1b31ab6590c5597d157dc01e6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a253b4e844b4de1333fa80263c03fceb7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a253b4e844b4de1333fa80263c03fceb7"></a>
 const ubana::TPCObjectOrigin &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetOrigin</b> () const </td></tr>
 <tr class="separator:a253b4e844b4de1333fa80263c03fceb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8060105ac9e5d4f3bc88b90695c38c95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8060105ac9e5d4f3bc88b90695c38c95"></a>
+const ubana::TPCObjectOriginExtra &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetOriginExtra</b> () const </td></tr>
+<tr class="separator:a8060105ac9e5d4f3bc88b90695c38c95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af083d0e6577c431c1787eb46d313110b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af083d0e6577c431c1787eb46d313110b"></a>
+const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetNTracks</b> () const </td></tr>
+<tr class="separator:af083d0e6577c431c1787eb46d313110b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a988b385655d32acd03121089058d49c4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a988b385655d32acd03121089058d49c4"></a>
+const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetNShowers</b> () const </td></tr>
+<tr class="separator:a988b385655d32acd03121089058d49c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ec2d5ffe50fe31e05d5d1c4fd486df6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5ec2d5ffe50fe31e05d5d1c4fd486df6"></a>
+const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetNPFP</b> () const </td></tr>
+<tr class="separator:a5ec2d5ffe50fe31e05d5d1c4fd486df6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c83c2331680f657d7fdcee1298e541b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7c83c2331680f657d7fdcee1298e541b"></a>
+const void&#160;</td><td class="memItemRight" valign="bottom"><b>GetMultiplicity</b> (int &amp;, int &amp;, int &amp;) const </td></tr>
+<tr class="separator:a7c83c2331680f657d7fdcee1298e541b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad6393ccb8f6b6e4ba6f36f790729c0b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aad6393ccb8f6b6e4ba6f36f790729c0b"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><b>GetNTracksCloseToVertex</b> (double) const </td></tr>
+<tr class="separator:aad6393ccb8f6b6e4ba6f36f790729c0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Data product to store a TPC Object. </p>

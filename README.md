@@ -8,7 +8,7 @@ Wiki Page: https://github.com/marcodeltutto/UBXSec/wiki
 
 Doxygen Documentation: https://marcodeltutto.github.io/UBXSec/documentation/html/index.html
 
-## How it works
+## How to install
 
 On uboonegpvm, from a fresh terminal session:
 
@@ -40,5 +40,16 @@ mrb i
 cd ..
 mrbslp
 ```
+
+## How to run
+
+To run over a BNB+Cosmic file:
+`lar -c run_ubxsec_mc.fcl -s art_root_file.root`
+
+To run over a BNBON data file:
+`lar -c run_ubxsec_data_bnbon.fcl -s art_root_file.root`
+
+To run over a EXTBNB data file:
+`lar -c run_ubxsec_data_extbnb.fcl -s art_root_file.root`
 
 

@@ -235,7 +235,7 @@ private:
   double _sr_pot;
 
   std::ofstream _csvfile;
-
+  std::ofstream _run_subrun_list_file;
 };
 
 
@@ -408,6 +408,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
 
   _csvfile.open ("pida_trklen.csv", std::ofstream::out | std::ofstream::trunc);
   _csvfile << "pida,trklen,y" << std::endl;
+
+  _run_subrun_list_file.open ("run_subrub_list.txt", std::ofstream::out | std::ofstream::trunc);
 }
 
 
@@ -1369,6 +1371,9 @@ void UBXSec::analyze(art::Event const & e) {
 void UBXSec::endSubRun(const art::SubRun& sr) {
 
   if (_debug) std::cout << "[UBXSec::endSubRun] Starts" << std::endl;
+
+  // Saving run and subrun number on file so that we can run Zarko's script easily
+  _run_subrun_list_file << sr.run() << " " << sr.subRun() << std::endl;
 
   _sr_run       = sr.run();
   _sr_subrun    = sr.subRun();

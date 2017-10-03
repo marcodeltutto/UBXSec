@@ -16,6 +16,7 @@
 #include "cosmicflashtagger.fcl"
 #include "acpttagger.fcl"
 #include "recotruematcher.fcl"
+#include "cosmictaggerana.fcl"
 
 
 BEGIN_PROLOG
@@ -72,7 +73,8 @@ ubxsec_mc_flashmatch:
 
 ubxsec_mc_ana:
 {
-   UBXSec   : @local::UBXSec
+   CosmicTaggerAna : @local::CosmicTaggerAna 
+   UBXSec          : @local::UBXSec
 }
 
 
@@ -88,7 +90,8 @@ ubxsec_mc_producers: [ pandoraCosmicTrackPFPart,
                        NeutrinoMCFlash, 
                        NeutrinoFlashMatch ] 
 
-ubxsec_mc_analyzers: [ UBXSec ]
+ubxsec_mc_analyzers: [ CosmicTaggerAna,
+                       UBXSec ]
 
 
 

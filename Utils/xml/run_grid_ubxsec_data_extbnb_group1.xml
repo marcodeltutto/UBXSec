@@ -45,8 +45,8 @@
     <workdir>&PNFSpath;grid_workdir_ubxsec_data_extbnb_group1</workdir>
     <numjobs>620</numjobs>
     <datatier>ubana</datatier>
-    <memory>4000</memory>
-    <jobsub> --expected-lifetime=6h </jobsub>
+    <memory>6000</memory>
+    <jobsub> --expected-lifetime=12h </jobsub>
     <disk>80GB</disk>
   </stage>
 

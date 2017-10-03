@@ -47,8 +47,8 @@
     <numjobs>920</numjobs> 
     <datatier>ubana</datatier>
     <jobsub> --expected-lifetime=12h </jobsub>
-    <memory>4000</memory>
-     <disk>80GB</disk>
+    <memory>6000</memory>
+    <disk>80GB</disk>
   </stage>
 
   <!-- file type -->

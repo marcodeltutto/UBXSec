@@ -20,6 +20,7 @@ ACPTTagger: {
  
   PEMin:                 0
   Debug:                 false
+  CreateHisto:           true
 }
 
 microboone_acpttagger: @local::ACPTTagger

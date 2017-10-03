@@ -121,7 +121,7 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
 
   _pe_min             = p.get<double> ("PEMin", 0);
   _debug              = p.get<bool>("Debug", true);
-  _create_histo       = p.get<double>("CreateHisto", false); 
+  _create_histo       = p.get<bool>("CreateHisto", false); 
 
   //_csvfile.open ("acpt.csv", std::ofstream::out | std::ofstream::trunc);
   //_csvfile << "trk_x_up,trk_x_down,fls_time" << std::endl;

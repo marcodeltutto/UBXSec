@@ -8,7 +8,8 @@ var searchData=
   ['cosmicflashmatch',['CosmicFlashMatch',['../classCosmicFlashMatch.html',1,'']]],
   ['cosmictagbyhitintegral',['CosmicTagByHitIntegral',['../classubana_1_1CosmicTagByHitIntegral.html',1,'ubana']]],
   ['cosmictagbyhitintegral',['CosmicTagByHitIntegral',['../classCosmicTagByHitIntegral.html',1,'CosmicTagByHitIntegral'],['../classubana_1_1CosmicTagByHitIntegral.html#ae58970463cfcb6fa697e19073da6a91c',1,'ubana::CosmicTagByHitIntegral::CosmicTagByHitIntegral(fhicl::ParameterSet const &amp;ps)'],['../classubana_1_1CosmicTagByHitIntegral.html#ad51d5460821d3a81262f8515a8e08487',1,'ubana::CosmicTagByHitIntegral::CosmicTagByHitIntegral()']]],
-  ['cosmictagtoolinterface',['CosmicTagToolInterface',['../classubana_1_1CosmicTagToolInterface.html',1,'ubana']]],
+  ['cosmictaggerana',['CosmicTaggerAna',['../classCosmicTaggerAna.html',1,'']]],
   ['cosmictagtoolinterface',['CosmicTagToolInterface',['../classCosmicTagToolInterface.html',1,'']]],
+  ['cosmictagtoolinterface',['CosmicTagToolInterface',['../classubana_1_1CosmicTagToolInterface.html',1,'ubana']]],
   ['cosmictrackhittagger',['CosmicTrackHitTagger',['../classCosmicTrackHitTagger.html',1,'']]]
 ];

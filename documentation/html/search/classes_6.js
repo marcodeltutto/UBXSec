@@ -1,7 +1,4 @@
 var searchData=
 [
-  ['mcghost',['MCGhost',['../classubana_1_1MCGhost.html',1,'ubana']]],
-  ['mcpfpmatch',['McPfpMatch',['../classMcPfpMatch.html',1,'']]],
-  ['mcpfpmatch',['McPfpMatch',['../classubxsec_1_1McPfpMatch.html',1,'ubxsec']]],
-  ['muoncandidatefinder',['MuonCandidateFinder',['../classubana_1_1MuonCandidateFinder.html',1,'ubana']]]
+  ['hit3d_5ft',['Hit3D_t',['../structubxsec_1_1Hit3D__t.html',1,'ubxsec']]]
 ];

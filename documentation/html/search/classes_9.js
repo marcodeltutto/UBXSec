@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['recotruematcher',['RecoTrueMatcher',['../classRecoTrueMatcher.html',1,'']]]
+  ['photonactivity',['PhotonActivity',['../classPhotonActivity.html',1,'']]]
 ];

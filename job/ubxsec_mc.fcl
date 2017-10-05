@@ -18,6 +18,9 @@
 #include "recotruematcher.fcl"
 #include "cosmictaggerana.fcl"
 
+#include "opticaldetectormodules_microboone.fcl"
+#include "ubflashfinder.fcl"
+#include "correct_saturation.fcl"
 
 BEGIN_PROLOG
 #
@@ -49,6 +52,11 @@ PECalib:                      @local::SPECalib
 
 ubxsec_mc_reco:
 {
+
+  saturation:                     @local::correct_saturation_mc
+  ophitBeam:                      @local::microboone_ophit_saturation_beam
+  simpleFlashBeam:                @local::UBFlashBeamMC
+
   pandoraCosmicTrackPFPart:       @local::microboone_cosmicpfparticletagger
   pandoraCosmicFlashTag:          @local::microboone_cosmicpfpflashtagger
   pandoraCosmicACPTTagger:        @local::microboone_acpttagger 
@@ -78,7 +86,10 @@ ubxsec_mc_ana:
 }
 
 
-ubxsec_mc_producers: [ pandoraCosmicTrackPFPart,
+ubxsec_mc_producers: [ saturation, 
+                       ophitBeam,
+                       simpleFlashBeam,
+                       pandoraCosmicTrackPFPart,
                        pandoraCosmicFlashTag,
                        pandoraCosmicACPTTagger,
                        pandoraCosmicHitRemoval,

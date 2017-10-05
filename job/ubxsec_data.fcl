@@ -14,6 +14,10 @@
 #include "acpttagger.fcl"
 #include "recotruematcher.fcl"
 
+#include "opticaldetectormodules_microboone.fcl"
+#include "ubflashfinder.fcl"
+#include "correct_saturation.fcl"
+
 BEGIN_PROLOG
 #
 # Module configuration
@@ -48,6 +52,10 @@ PECalib:                      @local::SPECalib
 
 ubxsec_data_reco:
 {
+  saturation:                     @local::correct_saturation
+  ophitBeam:                      @local::microboone_ophit_saturation_beam
+  simpleFlashBeam:                @local::UBFlashBeam
+
   pandoraCosmicTrackPFPart:       @local::microboone_cosmicpfparticletagger
   pandoraCosmicFlashTag:          @local::microboone_cosmicpfpflashtagger
   pandoraCosmicACPTTagger:        @local::microboone_acpttagger
@@ -72,7 +80,10 @@ ubxsec_data_ana:
 }
 
 
-ubxsec_data_producers: [ pandoraCosmicTrackPFPart,
+ubxsec_data_producers: [ saturation,
+                         ophitBeam,
+                         simpleFlashBeam,
+                         pandoraCosmicTrackPFPart,
                          pandoraCosmicFlashTag,
                          pandoraCosmicACPTTagger,
                          pandoraCosmicHitRemoval,

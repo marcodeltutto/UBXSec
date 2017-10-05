@@ -93,6 +93,11 @@ namespace ubxsec {
       lar_pandora::LArPandoraHelper::BuildMCParticleHitMaps(e, _geantModuleLabel, hitVector, trueParticlesToHits, trueHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
     }
 
+    std::cout << "trueParticleVector.size()" << trueParticleVector.size() << std::endl;
+    std::cout << "hitVector.size() " << hitVector.size() << std::endl;
+    std::cout << "trueHitsToParticles.size() " <<trueHitsToParticles.size() << std::endl;
+
+
     if (_verbose) {
       std::cout << "[McPfpMatch] TrueParticles: " << particlesToTruth.size() << std::endl;
       std::cout << "[McPfpMatch] TrueEvents: " << truthToParticles.size() << std::endl;
@@ -103,7 +108,7 @@ namespace ubxsec {
     _recoParticlesToHits = recoParticlesToHits;
 
     if (_debug) { // yes, don't do it
-      std::cout << "[McPfpMatch] This is event " << e.id().run() << std::endl;
+      std::cout << "[McPfpMatch] This is event " << e.id().event() << std::endl;
       art::ServiceHandle<cheat::BackTracker> bt;
       std::cout << "[McPfpMatch] Number of MCParticles matched to hits: " << trueParticlesToHits.size() << std::endl;
       for (const auto & iter : trueParticlesToHits) {
@@ -113,11 +118,13 @@ namespace ubxsec {
                   << " has " << (iter.second).size() << " hits ass." << std::endl;
         if (mc_truth->Origin() == 1) {
           lar_pandora::HitVector hits = (iter.second);
+          /*
           for (const auto & hit : hits){
             std::cout << "[McPfpMatch]   > Hit on plane " << hit->View() 
                       << " on wire " << hit->WireID() 
                       << " with time " << hit->PeakTime() << std::endl;
-          }     
+          } 
+      */    
         }        
       }
     }

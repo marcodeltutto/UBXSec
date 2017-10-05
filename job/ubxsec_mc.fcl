@@ -17,6 +17,7 @@
 #include "acpttagger.fcl"
 #include "recotruematcher.fcl"
 #include "cosmictaggerana.fcl"
+#include "geocosmictagger.fcl"
 
 #include "opticaldetectormodules_microboone.fcl"
 #include "ubflashfinder.fcl"
@@ -64,19 +65,23 @@ ubxsec_mc_reco:
 
   pandoraNu:                      @local::microboone_pandora
 
+  pandoraNuGeoCosmicTag:          @local::GeoCosmicTagger
+
   pandoraNucalo:                  @local::microboone_calomc
   pandoraNupid:                   @local::microboone_chi2pid
 }
 
 ubxsec_mc_flashmatch:
 {
-   RecoTrueMatcher      : @local::RecoTrueMatcher
+   RecoTrueMatcher:                @local::RecoTrueMatcher
 
-   TPCObjectMaker       : @local::TPCObjectMaker
+   TPCObjectMaker:                 @local::TPCObjectMaker
+ 
+   pandoraNuGeoCosmicTag:          @local::GeoCosmicTagger
 
-   NeutrinoMCFlash      : @local::NeutrinoMCFlash
-   NeutrinoFlashMatch   : @local::NeutrinoFlashMatch
-   #CosmicFlashMatch   : @local::CosmicFlashMatch
+   NeutrinoMCFlash:                @local::NeutrinoMCFlash
+   NeutrinoFlashMatch:             @local::NeutrinoFlashMatch
+   #CosmicFlashMatch:               @local::CosmicFlashMatch
 }
 
 ubxsec_mc_ana:
@@ -94,6 +99,7 @@ ubxsec_mc_producers: [ saturation,
                        pandoraCosmicACPTTagger,
                        pandoraCosmicHitRemoval,
                        pandoraNu,
+                       pandoraNuGeoCosmicTag,
                        pandoraNucalo,
                        pandoraNupid,
                        RecoTrueMatcher, 

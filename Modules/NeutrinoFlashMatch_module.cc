@@ -233,7 +233,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
   // Don't waste other time if there are no flashes in the beam spill
   if (nBeamFlashes == 0) {
-    std::cout << "Zero beam flashes in this event." << std::endl;
+    std::cout << "[NeutrinoFlashMatch] Zero beam flashes in this event." << std::endl;
     e.put(std::move(flashMatchTrackVector));
     e.put(std::move(assnOutFlashMatchTrack));
     e.put(std::move(assnOutFlashMatchPFParticle));
@@ -241,14 +241,17 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     return;
   }
 
-  // For now let's only consider cases where we have only 1 flash in the beam spill
+  // If more than one beam flash, take the one with more PEs
   if (nBeamFlashes > 1) {
-    std::cout << "More than one beam flashes in this event." << std::endl;
-    e.put(std::move(flashMatchTrackVector));
-    e.put(std::move(assnOutFlashMatchTrack));
-    e.put(std::move(assnOutFlashMatchPFParticle));
-    e.put(std::move(assnOutFlashMatchTPCObject));
-    return;
+    std::cout << "More than one beam flash in this event." << std::endl;
+    std::cout << "Taking beam flash with more PEs." << std::endl;
+
+    // Sort tracks by length
+    std::sort(beam_flashes.begin(), beam_flashes.end(),
+              [](::flashana::Flash_t a, ::flashana::Flash_t b) -> bool
+              {
+                return a.TotalPE() > b.TotalPE();
+              });
   }
 
 
@@ -298,9 +301,9 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     e.put(std::move(assnOutFlashMatchTPCObject));
     return;
   }
-  art::FindManyP<recob::Track>      tpcobjToTracks(tpcobj_h, e, _tpcobject_producer);
+  art::FindManyP<recob::Track>      tpcobjToTracks (tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<recob::Shower>     tpcobjToShowers(tpcobj_h, e, _tpcobject_producer);
-  art::FindManyP<recob::PFParticle> tpcobjToPFPs  (tpcobj_h, e, _tpcobject_producer);
+  art::FindManyP<recob::PFParticle> tpcobjToPFPs   (tpcobj_h, e, _tpcobject_producer);
 
   int n_objects = tpcobj_h->size();
 
@@ -323,7 +326,6 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
     // Get QCluster for this TPC Object
     flashana::QCluster_t qcluster;
-    //flashana::QCluster_t qcluster = this->GetQCluster(tpcObjPfp_v, pfp_to_spacept, spacept_to_hits);
     if (_use_showers_as_tracks) {
       qcluster = this->GetQCluster(tpcObjTrk_v, tpcObjSho_v);
     } else {

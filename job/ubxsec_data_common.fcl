@@ -30,9 +30,9 @@ services:
   BackTracker:             @local::microboone_backtracker
 }
 
-services.PmtGainService.PmtGainProvider.UseDB:               true
+#services.PmtGainService.PmtGainProvider.UseDB:               true
 services.ChannelStatusService.ChannelStatusProvider.UseDB:   false
-services.DetPedestalService.DetPedestalRetrievalAlg.UseDB:   false
+#services.DetPedestalService.DetPedestalRetrievalAlg.UseDB:   false
 
 services.DetectorPropertiesService.NumberTimeSamples:        6400
 services.DetectorPropertiesService.ReadOutWindowSize:        6400
@@ -40,7 +40,7 @@ services.DetectorClocksService.InheritClockConfig:           false
 services.DetectorClocksService.TriggerOffsetTPC:             -0.400e3
 services.DetectorClocksService.TrigModuleName:               "daq"
 
-services.Geometry.ForceUseFCLOnly:                           true
+#services.Geometry.ForceUseFCLOnly:                           true
 
 services.TimeTracker.printSummary:                           false
 services.TimeTracker.dbOutput:                               {}

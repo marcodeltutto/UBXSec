@@ -205,6 +205,12 @@ void FindDeadRegions::LoadBWires() {
 
     const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
 
+    /*
+    std::cout << "Just before chanFilt.Status(0)"<< std::endl;
+    chanFilt.Status(0);
+    std::cout << "Just after chanFilt.Status(0)"<< std::endl;
+    */
+
     for (unsigned int channel = 0; channel < 8256; channel++) {
 
       CSchannelVec.push_back(channel);

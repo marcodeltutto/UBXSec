@@ -28,6 +28,15 @@ BEGIN_PROLOG
 # Module configuration
 #
 
+UBXSecFiducialVolumeSettings: {
+  BorderXLow:   10
+  BorderXHigh:  10
+  BorderYLow:   20
+  BorderYHigh:  20
+  BorderZLow:   10
+  BorderZHigh:  10
+}
+
 UBXSec: {
   module_type:                  "UBXSec"
   PFParticleProducer:           "pandoraNu::UBXSec"
@@ -49,6 +58,8 @@ UBXSec: {
   MinimumHitRequirement:        3
 
   PECalib:                      @local::SPECalib
+
+  FiducialVolumeSettings:       @local::UBXSecFiducialVolumeSettings
 }
 
 

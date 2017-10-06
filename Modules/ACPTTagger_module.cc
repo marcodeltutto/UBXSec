@@ -120,7 +120,7 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
   _dz_resolution_c    = p.get<double>("DzResolutionCathode", 80);
 
   _pe_min             = p.get<double> ("PEMin", 0);
-  _debug              = p.get<bool>("Debug", true);
+  _debug              = p.get<bool>("Debug", false);
   _create_histo       = p.get<bool>("CreateHisto", false); 
 
   //_csvfile.open ("acpt.csv", std::ofstream::out | std::ofstream::trunc);

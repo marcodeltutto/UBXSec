@@ -13,7 +13,7 @@ GeoCosmicTagger: {
   TPCYBoundary:          20
   TPCZBoundary:          10
 
-  DebugMode:             true
+  DebugMode:             false
 }
 
 

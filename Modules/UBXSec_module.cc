@@ -56,6 +56,7 @@
 #include "larcoreobj/SummaryData/POTSummary.h"
 #include "lardataobj/AnalysisBase/ParticleID.h"
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
+#include "lardataobj/AnalysisBase/CosmicTag.h"
 
 // LArSoft include
 #include "uboone/UBFlashFinder/PECalib.h"
@@ -73,6 +74,7 @@
 #include "uboone/UBXSec/Algorithms/McPfpMatch.h"
 #include "uboone/UBXSec/Algorithms/FindDeadRegions.h"
 #include "uboone/UBXSec/Algorithms/MuonCandidateFinder.h"
+#include "uboone/UBXSec/Algorithms/FiducialVolume.h"
 
 // Root include
 #include "TString.h"
@@ -120,6 +122,7 @@ private:
 
   FindDeadRegions deadRegionsFinder;
   ubxsec::McPfpMatch mcpfpMatcher;
+  ::ubana::FiducialVolume _fiducial_volume;
   ::pmtana::PECalib _pecalib;
 
   // To be set via fcl parameters
@@ -137,6 +140,7 @@ private:
   std::string _potsum_instance;
   std::string _particle_id_producer;
   std::string _mc_ghost_producer;
+  std::string _geocosmictag_producer;
   bool _recursiveMatching = false;
   bool _debug = true;
   int _minimumHitRequirement; ///< Minimum number of hits in at least a plane for a track
@@ -144,6 +148,7 @@ private:
   double _beam_spill_start; 
   double _beam_spill_end;
   double _total_pe_cut;
+  double _geo_cosmic_score_cut;
 
   // Constants
   const simb::Origin_t NEUTRINO_ORIGIN = simb::kBeamNeutrino;
@@ -201,6 +206,7 @@ private:
   std::vector<int> _slc_npfp, _slc_ntrack, _slc_nshower;
   std::vector<bool> _slc_iscontained;
   std::vector<int> _slc_mult_pfp, _slc_mult_track, _slc_mult_shower, _slc_mult_track_tolerance;
+  std::vector<bool> _slc_geocosmictag;
 
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe, _beamfls_z;
@@ -241,6 +247,11 @@ private:
 
 UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
 
+  ::art::ServiceHandle<cheat::BackTracker> bt;
+  ::art::ServiceHandle<geo::Geometry> geo;
+  //auto const* geo = lar::providerFrom<geo::Geometry>();
+  //auto const& geo(*lar::providerFrom< geo::Geometry >());
+
   _pfp_producer                   = p.get<std::string>("PFParticleProducer");
   _hitfinderLabel                 = p.get<std::string>("HitProducer");
   _geantModuleLabel               = p.get<std::string>("GeantModule");
@@ -254,6 +265,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _potsum_instance                = p.get<std::string>("POTSummaryInstance");
   _particle_id_producer           = p.get<std::string>("ParticleIDProducer");
   _mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
+  _geocosmictag_producer          = p.get<std::string>("GeoCosmicTaggerProducer");
 
   _use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
   _minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
@@ -262,7 +274,16 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _beam_spill_end                 = p.get<double>("BeamSpillEnd",   4.8);
   _total_pe_cut                   = p.get<double>("TotalPECut",     50);
 
+  _geo_cosmic_score_cut           = p.get<double>("GeoCosmicScoreCut", 0.6);
+
   _pecalib.Configure(p.get<fhicl::ParameterSet>("PECalib"));
+
+  _fiducial_volume.Configure(p.get<fhicl::ParameterSet>("FiducialVolumeSettings"), 
+                             geo->DetHalfHeight(),
+                             2.*geo->DetHalfWidth(),
+                             geo->DetLength());
+
+  _fiducial_volume.PrintConfig();
 
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
@@ -346,6 +367,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _tree1->Branch("slc_mult_track",                 "std::vector<int>",    &_slc_mult_track);
   _tree1->Branch("slc_mult_shower",                "std::vector<int>",    &_slc_mult_shower);
   _tree1->Branch("slc_mult_track_tolerance",       "std::vector<int>",    &_slc_mult_track_tolerance);
+  _tree1->Branch("slc_geocosmictag",               "std::vector<bool>",   &_slc_geocosmictag);
 
   _tree1->Branch("nbeamfls",                   &_nbeamfls,                         "nbeamfls/I");
   _tree1->Branch("beamfls_time",               "std::vector<double>",              &_beamfls_time);
@@ -516,7 +538,7 @@ void UBXSec::analyze(art::Event const & e) {
       end[0] = mc_par->EndX();
       end[1] = mc_par->EndY();
       end[2] = mc_par->EndZ();
-      if ( (mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13) && UBXSecHelper::InFV(end) ){
+      if ( (mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13) && _fiducial_volume.InFV(end) ){
         std::cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Is stopping muon" << std::endl;
 
         lar_pandora::VertexVector          vertexVector;
@@ -635,7 +657,7 @@ void UBXSec::analyze(art::Event const & e) {
          double start[3] = {_mc_muon_start_x, _mc_muon_start_y, _mc_muon_start_z};
          double stop[3]  = {_mc_muon_end_x,   _mc_muon_end_y,   _mc_muon_end_z};
 
-         if (UBXSecHelper::InFV(start) && UBXSecHelper::InFV(stop))
+         if (_fiducial_volume.InFV(start) && _fiducial_volume.InFV(stop))
            _mc_muon_contained = 1;
        }  
      }
@@ -660,6 +682,7 @@ void UBXSec::analyze(art::Event const & e) {
   art::FindManyP<ubana::FlashMatch> tpcobjToFlashMatchAssns(tpcobj_h, e, _neutrino_flash_match_producer);
   art::FindManyP<recob::Track>      tpcobjToTrackAssns(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
+  art::FindManyP<anab::CosmicTag>   tpcobjToCosmicTagAssns(tpcobj_h, e, _geocosmictag_producer);
 
   // ACPT
   art::Handle<std::vector<anab::T0> > t0_h;
@@ -810,7 +833,7 @@ void UBXSec::analyze(art::Event const & e) {
       double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),
                                 mclist[iList]->GetNeutrino().Nu().Vy(),
                                 mclist[iList]->GetNeutrino().Nu().Vz()};
-      if (UBXSecHelper::InFV(truth_nu_vtx)) _fv = 1;
+      if (_fiducial_volume.InFV(truth_nu_vtx)) _fv = 1;
       else _fv = 0;
       _ccnc    = mclist[iList]->GetNeutrino().CCNC();
       _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
@@ -928,6 +951,7 @@ void UBXSec::analyze(art::Event const & e) {
   _slc_mult_track.resize(_nslices, -9999);
   _slc_mult_shower.resize(_nslices, -9999);
   _slc_mult_track_tolerance.resize(_nslices, -9999);
+  _slc_geocosmictag.resize(_nslices, false);
 
   std::cout << "[UBXSec] --- SAVING INFORMATION" << std::endl;
   _vtx_resolution = -9999;
@@ -962,9 +986,22 @@ void UBXSec::analyze(art::Event const & e) {
     _slc_nuvtx_x[slice] = reco_nu_vtx[0];
     _slc_nuvtx_y[slice] = reco_nu_vtx[1];
     _slc_nuvtx_z[slice] = reco_nu_vtx[2];
-    _slc_nuvtx_fv[slice] = (UBXSecHelper::InFV(reco_nu_vtx) ? 1 : 0);
-    std::cout << "[UBXSec] \t Reco vertex saved" << std::endl;
+    _slc_nuvtx_fv[slice] = (_fiducial_volume.InFV(reco_nu_vtx) ? 1 : 0);
+    std::cout << "[UBXSec] \t Reco vertex is " << (_slc_nuvtx_fv[slice]==1 ? "in" : "ouside") << " the FV." << std::endl;
 
+    // Through going?
+    _slc_geocosmictag[slice] = false;
+    std::vector<art::Ptr<anab::CosmicTag>> geo_cosmic_tags = tpcobjToCosmicTagAssns.at(slice);
+    if(geo_cosmic_tags.size() == 0 || geo_cosmic_tags.size() > 1) {
+      std::cout << "[UBXSec] \t More than one Geo Cosmic Tag match per tpcobj ?!" << std::endl;
+    } else {
+      auto ct = geo_cosmic_tags.at(0);
+      if (ct->CosmicScore() > _geo_cosmic_score_cut) {
+        std::cout << "[UBXSec] \t This slice has been tagged as through-going cosmic" << std::endl;
+        _slc_geocosmictag[slice] = true;
+      }
+    }
+    
     // Vertex resolution
     if (_slc_origin[slice] == ubana::kBeamNeutrino) {
       _vtx_resolution = sqrt( pow(_slc_nuvtx_y[slice]-_tvtx_y[0], 2) + pow(_slc_nuvtx_z[slice]-_tvtx_z[0], 2) );

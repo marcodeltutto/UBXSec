@@ -90,7 +90,7 @@ namespace ubxsec {
 
     bool _debug             = false;
     bool _verbose           = false;
-    bool _recursiveMatching = false;
+    bool _recursiveMatching = true;//false;
 
   };
 }

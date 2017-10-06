@@ -1,0 +1,21 @@
+
+BEGIN_PROLOG
+#
+# Module configuration
+#
+CosmicTaggerAna: {
+  module_type:            "CosmicTaggerAna"
+  PFParticleProducer:     "pandoraCosmic"
+  HitProducer:            "gaushit"
+  GeantModule:            "largeant"
+  SpacePointProducer:     "pandoraCosmic"
+  CosmicFlashTagProducer: "pandoraCosmicFlashTag"
+  CosmicGeoTagProducer:   "pandoraCosmicTrackPFPart"
+  CosmicACPTTagProducer:  "pandoraCosmicACPTTagger"
+  CosmicFlashTagScoreCut: 0.99
+  CosmicGeoTagScoreCut:   0.6
+  CosmicACPTTagScoreCut:  0.99 
+  DebugMode:              true
+}
+
+END_PROLOG

@@ -16,7 +16,14 @@
 #include "cosmicflashtagger.fcl"
 #include "acpttagger.fcl"
 #include "recotruematcher.fcl"
+#include "cosmictaggerana.fcl"
+#include "geocosmictagger.fcl"
 
+#include "opticaldetectormodules_microboone.fcl"
+#include "ubflashfinder.fcl"
+#include "correct_saturation.fcl"
+
+#include "fiducial_volume_settings.fcl"
 
 BEGIN_PROLOG
 #
@@ -24,30 +31,41 @@ BEGIN_PROLOG
 #
 
 UBXSec: {
-module_type:                  "UBXSec"
-PFParticleProducer:           "pandoraNu::UBXSec"
-HitProducer:                  "pandoraCosmicHitRemoval::UBXSec"
-GeantModule:                  "largeant"
-SpacePointProducer:           "pandoraNu::UBXSec"
-NeutrinoFlashMatchProducer:   "NeutrinoFlashMatch"
-CosmicFlashMatchProducer:     "CosmicFlashMatch"
-OpFlashBeamProducer:          "simpleFlashBeam"
-ACPTProducer:                 "pandoraCosmicT0Reco"
-TPCObjectProducer:            "TPCObjectMaker"
-POTSummaryProducer:           "generator"
-POTSummaryInstance:           ""
-ParticleIDProducer:           "pandoraNupid::UBXSec"
-MCGhostProducer:              "RecoTrueMatcher"
+  module_type:                  "UBXSec"
+  PFParticleProducer:           "pandoraNu::UBXSec"
+  HitProducer:                  "pandoraCosmicHitRemoval::UBXSec"
+  GeantModule:                  "largeant"
+  SpacePointProducer:           "pandoraNu::UBXSec"
+  NeutrinoFlashMatchProducer:   "NeutrinoFlashMatch"
+  CosmicFlashMatchProducer:     "CosmicFlashMatch"
+  OpFlashBeamProducer:          "simpleFlashBeam"
+  ACPTProducer:                 "pandoraCosmicT0Reco"
+  TPCObjectProducer:            "TPCObjectMaker"
+  POTSummaryProducer:           "generator"
+  POTSummaryInstance:           ""
+  ParticleIDProducer:           "pandoraNupid::UBXSec"
+  MCGhostProducer:              "RecoTrueMatcher"
+  GeoCosmicTaggerProducer:      "pandoraNuGeoCosmicTag"
 
-UseGENIEInfo:                 true
-MinimumHitRequirement:        3
+  UseGENIEInfo:                 true
+  MinimumHitRequirement:        3
 
-PECalib:                      @local::SPECalib
+  GeoCosmicScoreCut:            0.6
+  ToleranceTrackMultiplicity:   5.
+
+  PECalib:                      @local::SPECalib
+
+  FiducialVolumeSettings:       @local::UBXSecFiducialVolumeSettings
 }
 
 
 ubxsec_mc_reco:
 {
+
+  saturation:                     @local::correct_saturation_mc
+  ophitBeam:                      @local::microboone_ophit_saturation_beam
+  simpleFlashBeam:                @local::UBFlashBeamMC
+
   pandoraCosmicTrackPFPart:       @local::microboone_cosmicpfparticletagger
   pandoraCosmicFlashTag:          @local::microboone_cosmicpfpflashtagger
   pandoraCosmicACPTTagger:        @local::microboone_acpttagger 
@@ -55,32 +73,41 @@ ubxsec_mc_reco:
 
   pandoraNu:                      @local::microboone_pandora
 
+  pandoraNuGeoCosmicTag:          @local::GeoCosmicTagger
+
   pandoraNucalo:                  @local::microboone_calomc
   pandoraNupid:                   @local::microboone_chi2pid
 }
 
 ubxsec_mc_flashmatch:
 {
-   RecoTrueMatcher      : @local::RecoTrueMatcher
+   RecoTrueMatcher:                @local::RecoTrueMatcher
 
-   TPCObjectMaker       : @local::TPCObjectMaker
+   TPCObjectMaker:                 @local::TPCObjectMaker
+ 
+   pandoraNuGeoCosmicTag:          @local::GeoCosmicTagger
 
-   NeutrinoMCFlash      : @local::NeutrinoMCFlash
-   NeutrinoFlashMatch   : @local::NeutrinoFlashMatch
-   #CosmicFlashMatch   : @local::CosmicFlashMatch
+   NeutrinoMCFlash:                @local::NeutrinoMCFlash
+   NeutrinoFlashMatch:             @local::NeutrinoFlashMatch
+   #CosmicFlashMatch:               @local::CosmicFlashMatch
 }
 
 ubxsec_mc_ana:
 {
-   UBXSec   : @local::UBXSec
+   CosmicTaggerAna : @local::CosmicTaggerAna 
+   UBXSec          : @local::UBXSec
 }
 
 
-ubxsec_mc_producers: [ pandoraCosmicTrackPFPart,
+ubxsec_mc_producers: [ saturation, 
+                       ophitBeam,
+                       simpleFlashBeam,
+                       pandoraCosmicTrackPFPart,
                        pandoraCosmicFlashTag,
                        pandoraCosmicACPTTagger,
                        pandoraCosmicHitRemoval,
                        pandoraNu,
+                       pandoraNuGeoCosmicTag,
                        pandoraNucalo,
                        pandoraNupid,
                        RecoTrueMatcher, 
@@ -88,7 +115,8 @@ ubxsec_mc_producers: [ pandoraCosmicTrackPFPart,
                        NeutrinoMCFlash, 
                        NeutrinoFlashMatch ] 
 
-ubxsec_mc_analyzers: [ UBXSec ]
+ubxsec_mc_analyzers: [ CosmicTaggerAna,
+                       UBXSec ]
 
 
 
@@ -100,6 +128,9 @@ ubxsec_mc_reco.pandoraCosmicTrackPFPart.EndTickPadding:          75
 ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCXBoundary:            10
 ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCYBoundary:            20
 ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCZBoundary:            10
+ubxsec_data_reco.pandoraCosmicTrackPFPart.Debug:                 false
+
+ubxsec_data_reco.pandoraCosmicFlashTag.DebugMode:                false
 
 ubxsec_mc_reco.pandoraCosmicHitRemoval.CosmicProducerLabels:     ["pandoraCosmicTrackPFPart", "pandoraCosmicFlashTag", "pandoraCosmicACPTTagger" ]
 ubxsec_mc_reco.pandoraCosmicHitRemoval.TrackProducerLabels:      ["pandoraCosmic",            "pandoraCosmic",         "pandoraCosmicKHit"       ]

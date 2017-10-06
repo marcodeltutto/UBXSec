@@ -56,6 +56,7 @@
 #include "larcoreobj/SummaryData/POTSummary.h"
 #include "lardataobj/AnalysisBase/ParticleID.h"
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
+#include "lardataobj/AnalysisBase/CosmicTag.h"
 
 // LArSoft include
 #include "uboone/UBFlashFinder/PECalib.h"
@@ -73,6 +74,7 @@
 #include "uboone/UBXSec/Algorithms/McPfpMatch.h"
 #include "uboone/UBXSec/Algorithms/FindDeadRegions.h"
 #include "uboone/UBXSec/Algorithms/MuonCandidateFinder.h"
+#include "uboone/UBXSec/Algorithms/FiducialVolume.h"
 
 // Root include
 #include "TString.h"
@@ -120,6 +122,7 @@ private:
 
   FindDeadRegions deadRegionsFinder;
   ubxsec::McPfpMatch mcpfpMatcher;
+  ::ubana::FiducialVolume _fiducial_volume;
   ::pmtana::PECalib _pecalib;
 
   // To be set via fcl parameters
@@ -137,13 +140,15 @@ private:
   std::string _potsum_instance;
   std::string _particle_id_producer;
   std::string _mc_ghost_producer;
-  bool _recursiveMatching = false;
-  bool _debug = true;
-  int _minimumHitRequirement; ///< Minimum number of hits in at least a plane for a track
-  bool _use_genie_info; ///< Turn this off if looking at cosmic only files
-  double _beam_spill_start; 
-  double _beam_spill_end;
-  double _total_pe_cut;
+  std::string _geocosmictag_producer;
+  bool _debug = true;                   ///< Debug mode
+  int _minimumHitRequirement;           ///< Minimum number of hits in at least a plane for a track
+  bool _use_genie_info;                 ///< Turn this off if looking at cosmic only files
+  double _beam_spill_start;             ///< Start time of the beam spill (us) 
+  double _beam_spill_end;               ///< Start time of the beam spill (us) 
+  double _total_pe_cut;                 ///< PE cut to be applied to beam flash
+  double _geo_cosmic_score_cut;         ///< Cut on the score of the pandoraNu geo cosmic tagger
+  double _tolerance_track_multiplicity; ///< Tolerance to consider a track coming from the nu reco vertex
 
   // Constants
   const simb::Origin_t NEUTRINO_ORIGIN = simb::kBeamNeutrino;
@@ -168,11 +173,7 @@ private:
   int _fv, _ccnc, _nupdg;
   double _nu_e;
   bool _is_signal;
-  double _recon_muon_start_x, _recon_muon_start_y, _recon_muon_start_z;
-  double _recon_muon_end_x, _recon_muon_end_y, _recon_muon_end_z;
-  double _mc_muon_start_x, _mc_muon_start_y, _mc_muon_start_z;
-  double _mc_muon_end_x, _mc_muon_end_y, _mc_muon_end_z;
-  int _mc_muon_contained;
+  double _mc_muon_contained;
   double _vtx_resolution;
 
   int _nslices;
@@ -201,6 +202,7 @@ private:
   std::vector<int> _slc_npfp, _slc_ntrack, _slc_nshower;
   std::vector<bool> _slc_iscontained;
   std::vector<int> _slc_mult_pfp, _slc_mult_track, _slc_mult_shower, _slc_mult_track_tolerance;
+  std::vector<bool> _slc_geocosmictag;
 
   int _nbeamfls;
   std::vector<double> _beamfls_time, _beamfls_pe, _beamfls_z;
@@ -216,12 +218,14 @@ private:
   std::vector<double> _tvtx_x, _tvtx_y, _tvtx_z;
 
   double _pot;
-  
+ 
+  /* 
   TTree* _tree2;
   int _total_matches, _nmatch;
   std::vector<double> _hypo_spec, _beam_spec, _fixx_spec;
   double _score;
   int _is_muon;
+  */
 
   TH2F * _deadRegion2P;
   TH2F * _deadRegion3P;
@@ -235,11 +239,14 @@ private:
   double _sr_pot;
 
   std::ofstream _csvfile;
-
+  std::ofstream _run_subrun_list_file;
 };
 
 
 UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
+
+  ::art::ServiceHandle<cheat::BackTracker> bt;
+  ::art::ServiceHandle<geo::Geometry> geo;
 
   _pfp_producer                   = p.get<std::string>("PFParticleProducer");
   _hitfinderLabel                 = p.get<std::string>("HitProducer");
@@ -254,6 +261,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _potsum_instance                = p.get<std::string>("POTSummaryInstance");
   _particle_id_producer           = p.get<std::string>("ParticleIDProducer");
   _mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
+  _geocosmictag_producer          = p.get<std::string>("GeoCosmicTaggerProducer");
 
   _use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
   _minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
@@ -262,42 +270,41 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _beam_spill_end                 = p.get<double>("BeamSpillEnd",   4.8);
   _total_pe_cut                   = p.get<double>("TotalPECut",     50);
 
+  _geo_cosmic_score_cut           = p.get<double>("GeoCosmicScoreCut", 0.6);
+  _tolerance_track_multiplicity   = p.get<double>("ToleranceTrackMultiplicity", 5.);
+
   _pecalib.Configure(p.get<fhicl::ParameterSet>("PECalib"));
+
+  _fiducial_volume.Configure(p.get<fhicl::ParameterSet>("FiducialVolumeSettings"), 
+                             geo->DetHalfHeight(),
+                             2.*geo->DetHalfWidth(),
+                             geo->DetLength());
+
+  _fiducial_volume.PrintConfig();
 
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
-  _tree1->Branch("run",                  &_run,                   "run/I");
-  _tree1->Branch("subrun",               &_subrun,                "subrun/I");
-  _tree1->Branch("event",                &_event,                 "event/I");
-  _tree1->Branch("muon_is_reco",         &_muon_is_reco,          "muon_is_reco/I");
-  _tree1->Branch("muon_reco_pur",        &_muon_reco_pur,         "muon_reco_pur/D");
-  _tree1->Branch("muon_reco_eff",        &_muon_reco_eff,         "muon_reco_eff/D");
-  _tree1->Branch("true_muon_mom",        &_true_muon_mom,         "true_muon_mom/D");
-  _tree1->Branch("true_muon_mom_matched",&_true_muon_mom_matched, "true_muon_mom_matched/D");
-  _tree1->Branch("nPFPtagged",           &_nPFPtagged,            "nPFPtagged/I");
-  _tree1->Branch("muon_is_flash_tagged", &_muon_is_flash_tagged,  "muon_is_flash_tagged/I");
-  _tree1->Branch("muon_tag_score",       &_muon_tag_score,        "muon_tag_score/D");
-  _tree1->Branch("fm_score",             &_fm_score,              "fm_score/D");
-  _tree1->Branch("fv",                   &_fv,                    "fv/I");
-  _tree1->Branch("ccnc",                 &_ccnc,                  "ccnc/I");
-  _tree1->Branch("nupdg",                &_nupdg,                 "nupdg/I");
-  _tree1->Branch("is_signal",            &_is_signal,             "is_signal/O");
-  _tree1->Branch("nu_e",                 &_nu_e,                  "nu_e/D");
-  _tree1->Branch("recon_muon_start_x",   &_recon_muon_start_x,    "recon_muon_start_x/D");
-  _tree1->Branch("recon_muon_start_y",   &_recon_muon_start_y,    "recon_muon_start_y/D");
-  _tree1->Branch("recon_muon_start_z",   &_recon_muon_start_z,    "recon_muon_start_z/D");
-  _tree1->Branch("recon_muon_end_x",     &_recon_muon_end_x,      "recon_muon_end_x/D");
-  _tree1->Branch("recon_muon_end_y",     &_recon_muon_end_y,      "recon_muon_end_y/D");
-  _tree1->Branch("recon_muon_end_z",     &_recon_muon_end_z,      "recon_muon_end_z/D");
-  _tree1->Branch("mc_muon_start_x",      &_mc_muon_start_x,       "mc_muon_start_x/D");
-  _tree1->Branch("mc_muon_start_y",      &_mc_muon_start_y,       "mc_muon_start_y/D");
-  _tree1->Branch("mc_muon_start_z",      &_mc_muon_start_z,       "mc_muon_start_z/D");
-  _tree1->Branch("mc_muon_end_x",        &_mc_muon_end_x,         "mc_muon_end_x/D");
-  _tree1->Branch("mc_muon_end_y",        &_mc_muon_end_y,         "mc_muon_end_y/D");
-  _tree1->Branch("mc_muon_end_z",        &_mc_muon_end_z,         "mc_muon_end_z/D");
-  _tree1->Branch("mc_muon_contained",    &_mc_muon_contained,     "mc_muon_contained/I");
-  _tree1->Branch("is_swtriggered",       &_is_swtriggered,        "is_swtriggered/I");
-  _tree1->Branch("vtx_resolution",       &_vtx_resolution,        "vtx_resolution/D");
+
+  _tree1->Branch("run",                            &_run,                   "run/I");
+  _tree1->Branch("subrun",                         &_subrun,                "subrun/I");
+  _tree1->Branch("event",                          &_event,                 "event/I");
+  _tree1->Branch("muon_is_reco",                   &_muon_is_reco,          "muon_is_reco/I");
+  _tree1->Branch("muon_reco_pur",                  &_muon_reco_pur,         "muon_reco_pur/D");
+  _tree1->Branch("muon_reco_eff",                  &_muon_reco_eff,         "muon_reco_eff/D");
+  _tree1->Branch("true_muon_mom",                  &_true_muon_mom,         "true_muon_mom/D");
+  _tree1->Branch("true_muon_mom_matched",          &_true_muon_mom_matched, "true_muon_mom_matched/D");
+  _tree1->Branch("nPFPtagged",                     &_nPFPtagged,            "nPFPtagged/I");
+  _tree1->Branch("muon_is_flash_tagged",           &_muon_is_flash_tagged,  "muon_is_flash_tagged/I");
+  _tree1->Branch("muon_tag_score",                 &_muon_tag_score,        "muon_tag_score/D");
+  _tree1->Branch("fm_score",                       &_fm_score,              "fm_score/D");
+  _tree1->Branch("fv",                             &_fv,                    "fv/I");
+  _tree1->Branch("ccnc",                           &_ccnc,                  "ccnc/I");
+  _tree1->Branch("nupdg",                          &_nupdg,                 "nupdg/I");
+  _tree1->Branch("is_signal",                      &_is_signal,             "is_signal/O");
+  _tree1->Branch("nu_e",                           &_nu_e,                  "nu_e/D");
+  _tree1->Branch("mc_muon_contained",              &_mc_muon_contained,     "mc_muon_contained/O");
+  _tree1->Branch("is_swtriggered",                 &_is_swtriggered,        "is_swtriggered/I");
+  _tree1->Branch("vtx_resolution",                 &_vtx_resolution,        "vtx_resolution/D");
 
   _tree1->Branch("nslices",                        &_nslices,            "nslices/I");
   _tree1->Branch("slc_flsmatch_score",             "std::vector<double>", &_slc_flsmatch_score);
@@ -346,33 +353,35 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _tree1->Branch("slc_mult_track",                 "std::vector<int>",    &_slc_mult_track);
   _tree1->Branch("slc_mult_shower",                "std::vector<int>",    &_slc_mult_shower);
   _tree1->Branch("slc_mult_track_tolerance",       "std::vector<int>",    &_slc_mult_track_tolerance);
+  _tree1->Branch("slc_geocosmictag",               "std::vector<bool>",   &_slc_geocosmictag);
 
-  _tree1->Branch("nbeamfls",                   &_nbeamfls,                         "nbeamfls/I");
-  _tree1->Branch("beamfls_time",               "std::vector<double>",              &_beamfls_time);
-  _tree1->Branch("beamfls_pe",                 "std::vector<double>",              &_beamfls_pe);
-  _tree1->Branch("beamfls_z",                  "std::vector<double>",              &_beamfls_z);
-  _tree1->Branch("no_mcflash_but_op_activity", &_no_mcflash_but_op_activity,       "no_mcflash_but_op_activity/O");
-  _tree1->Branch("beamfls_spec",               "std::vector<std::vector<double>>", &_beamfls_spec);
-  _tree1->Branch("numc_flash_spec",            "std::vector<double>",              &_numc_flash_spec);
-  _tree1->Branch("slc_flshypo_xfixed_spec",    "std::vector<std::vector<double>>", &_slc_flshypo_xfixed_spec);
-  _tree1->Branch("slc_flshypo_spec",           "std::vector<std::vector<double>>", &_slc_flshypo_spec);
-  _tree1->Branch("nsignal",                    &_nsignal,                          "nsignal/I");
+  _tree1->Branch("nbeamfls",                       &_nbeamfls,                         "nbeamfls/I");
+  _tree1->Branch("beamfls_time",                   "std::vector<double>",              &_beamfls_time);
+  _tree1->Branch("beamfls_pe",                     "std::vector<double>",              &_beamfls_pe);
+  _tree1->Branch("beamfls_z",                      "std::vector<double>",              &_beamfls_z);
+  _tree1->Branch("no_mcflash_but_op_activity",     &_no_mcflash_but_op_activity,       "no_mcflash_but_op_activity/O");
+  _tree1->Branch("beamfls_spec",                   "std::vector<std::vector<double>>", &_beamfls_spec);
+  _tree1->Branch("numc_flash_spec",                "std::vector<double>",              &_numc_flash_spec);
+  _tree1->Branch("slc_flshypo_xfixed_spec",        "std::vector<std::vector<double>>", &_slc_flshypo_xfixed_spec);
+  _tree1->Branch("slc_flshypo_spec",               "std::vector<std::vector<double>>", &_slc_flshypo_spec);
+  _tree1->Branch("nsignal",                        &_nsignal,                          "nsignal/I");
 
-  _tree1->Branch("mctrk_start_x",        "std::vector<double>", &_mctrk_start_x);
-  _tree1->Branch("mctrk_start_y",        "std::vector<double>", &_mctrk_start_y);
-  _tree1->Branch("mctrk_start_z",        "std::vector<double>", &_mctrk_start_z);
-  _tree1->Branch("trk_start_x",          "std::vector<double>", &_trk_start_x);
-  _tree1->Branch("trk_start_y",          "std::vector<double>", &_trk_start_y);
-  _tree1->Branch("trk_start_z",          "std::vector<double>", &_trk_start_z);
-  _tree1->Branch("vtx_x",                "std::vector<double>", &_vtx_x);
-  _tree1->Branch("vtx_y",                "std::vector<double>", &_vtx_y);
-  _tree1->Branch("vtx_z",                "std::vector<double>", &_vtx_z);
-  _tree1->Branch("tvtx_x",               "std::vector<double>", &_tvtx_x);
-  _tree1->Branch("tvtx_y",               "std::vector<double>", &_tvtx_y);
-  _tree1->Branch("tvtx_z",               "std::vector<double>", &_tvtx_z);
+  _tree1->Branch("mctrk_start_x",                  "std::vector<double>", &_mctrk_start_x);
+  _tree1->Branch("mctrk_start_y",                  "std::vector<double>", &_mctrk_start_y);
+  _tree1->Branch("mctrk_start_z",                  "std::vector<double>", &_mctrk_start_z);
+  _tree1->Branch("trk_start_x",                    "std::vector<double>", &_trk_start_x);
+  _tree1->Branch("trk_start_y",                    "std::vector<double>", &_trk_start_y);
+  _tree1->Branch("trk_start_z",                    "std::vector<double>", &_trk_start_z);
+  _tree1->Branch("vtx_x",                          "std::vector<double>", &_vtx_x);
+  _tree1->Branch("vtx_y",                          "std::vector<double>", &_vtx_y);
+  _tree1->Branch("vtx_z",                          "std::vector<double>", &_vtx_z);
+  _tree1->Branch("tvtx_x",                         "std::vector<double>", &_tvtx_x);
+  _tree1->Branch("tvtx_y",                         "std::vector<double>", &_tvtx_y);
+  _tree1->Branch("tvtx_z",                         "std::vector<double>", &_tvtx_z);
 
-  _tree1->Branch("pot",                &_pot,                "pot/D");
+  _tree1->Branch("pot",                            &_pot,                "pot/D");
 
+  /*
   _tree2 = fs->make<TTree>("matchtree","");
   _tree2->Branch("run",                &_run,                "run/I");
   _tree2->Branch("subrun",             &_subrun,             "subrun/I");
@@ -385,6 +394,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
   _tree2->Branch("fixx_spec",          "std::vector<double>", &_fixx_spec);
   _tree2->Branch("is_muon",            &_is_muon,            "is_muon/I");
   _tree2->Branch("muon_is_reco",       &_muon_is_reco,       "muon_is_reco/I");
+  */
 
   _deadRegion2P = fs->make<TH2F>("deadRegion2P","deadRegion2P", 10350,0.0,1035.0,2300,-115.0,115.0);
   _deadRegion3P = fs->make<TH2F>("deadRegion3P","deadRegion3P", 10350,0.0,1035.0,2300,-115.0,115.0);
@@ -408,6 +418,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
 
   _csvfile.open ("pida_trklen.csv", std::ofstream::out | std::ofstream::trunc);
   _csvfile << "pida,trklen,y" << std::endl;
+
+  _run_subrun_list_file.open ("run_subrub_list.txt", std::ofstream::out | std::ofstream::trunc);
 }
 
 
@@ -461,193 +473,6 @@ void UBXSec::analyze(art::Event const & e) {
   //lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
   //lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
   lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, _spacepointLabel, recoParticlesToHits, recoHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
- 
-
-
-  // Do the MCParticle to PFParticle matching
-  lar_pandora::MCParticlesToPFParticles matchedMCToPFParticles;    // This is a map: MCParticle to matched PFParticle
-  lar_pandora::MCParticlesToHits        matchedParticleHits;
-  if (_is_mc) {
-    mcpfpMatcher.GetRecoToTrueMatches(matchedMCToPFParticles, matchedParticleHits);
-  }
-
-  std::cout << "[UBXSec] We have " << matchedMCToPFParticles.size() << " mc to pfp ass." << std::endl;
-
-
-  // *******************
-  // MC-PFP Match Study
-  // *******************
-
-  std::vector<art::Ptr<recob::PFParticle>> taggedPFP;
-  std::vector<double>                      taggedPFPscore;
-  std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP;
-  std::vector<art::Ptr<recob::PFParticle>> cosmicOriginPFP;
-  art::Ptr<recob::PFParticle>              muonPFP;
-  art::Ptr<simb::MCParticle>               muonMCParticle;
-  _muon_is_reco = 0;
-  _mc_muon_contained = 0;
-
-  if (_is_data) goto doanalysis;
-
-  neutrinoOriginPFP.clear(); 
-  cosmicOriginPFP.clear();
-
-  // Loop over true particle and find the cosmic related ones
-  for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedMCToPFParticles.begin(), iterEnd1 = matchedMCToPFParticles.end();
-      iter1 != iterEnd1; ++iter1) {
-
-    art::Ptr<simb::MCParticle>  mc_par = iter1->first;   // The MCParticle 
-    art::Ptr<recob::PFParticle> pf_par = iter1->second;  // The matched PFParticle
-
-    const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
-
-    if (!mc_truth) {
-      std::cerr << "[UBXSec] Problem with MCTruth pointer." << std::endl;
-      continue;
-    }
-
-    if (mc_truth->Origin() == COSMIC_ORIGIN) {
-
-      cosmicOriginPFP.emplace_back(pf_par);
-
-      double end[3];
-      end[0] = mc_par->EndX();
-      end[1] = mc_par->EndY();
-      end[2] = mc_par->EndZ();
-      if ( (mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13) && UBXSecHelper::InFV(end) ){
-        std::cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Is stopping muon" << std::endl;
-
-        lar_pandora::VertexVector          vertexVector;
-        lar_pandora::PFParticlesToVertices particlesToVertices;
-        lar_pandora::LArPandoraHelper::CollectVertices(e, _pfp_producer, vertexVector, particlesToVertices);
-
-        auto iter = particlesToVertices.find(pf_par);
-        if (iter != particlesToVertices.end()) {
-          lar_pandora::VertexVector vertex_v = particlesToVertices.find(pf_par)->second;
-          double xyz[3];
-          vertex_v[0]->XYZ(xyz);
-          std::cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM The PFP has vtx x="<<xyz[0]<<" y="<<xyz[1]<<" z="<<xyz[2] << std::endl;
-        } else {
-          std::cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM Can't find ass vertex" << std::endl;
-        }
-      }
-         
-    }
-  }
-
-  // Loop over true particle and find the neutrino related ones
-  for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedMCToPFParticles.begin(), iterEnd1 = matchedMCToPFParticles.end();
-             iter1 != iterEnd1; ++iter1) {
-
-     art::Ptr<simb::MCParticle>  mc_par = iter1->first;   // The MCParticle 
-     art::Ptr<recob::PFParticle> pf_par = iter1->second;  // The matched PFParticle
-
-     const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
-
-     if (!mc_truth) {
-       std::cerr << "[UBXSec] Problem with MCTruth pointer." << std::endl;
-       continue;
-     }
-
-     if (mc_truth->Origin() == NEUTRINO_ORIGIN) {
-       if (_debug) {
-         std::cout << "Neutrino related track found." << std::endl;
-         std::cout << "Process (0==CC, 1==NC) " << mc_truth->GetNeutrino().CCNC()         << std::endl;
-         std::cout << "Neutrino PDG           " << mc_truth->GetNeutrino().Nu().PdgCode() << std::endl;
-         std::cout << "Particle PDG  " << mc_par->PdgCode() << std::endl;
-         std::cout << "Particle Mass " << mc_par->Mass()    << std::endl;
-         std::cout << "Particle Proc " << mc_par->Process() << std::endl;
-         std::cout << "Particle Vx   " << mc_par->Vx()      << std::endl;
-         std::cout << "Particle Vy   " << mc_par->Vy()      << std::endl;
-         std::cout << "Particle Vz   " << mc_par->Vz()      << std::endl;
-         std::cout << "Particle T    " << mc_par->T()       << std::endl;
-         double timeCorrection = 343.75;
-         std::cout << "Remeber a time correction of " << timeCorrection << std::endl;
-         auto iter =  matchedParticleHits.find(mc_par);
-         std::cout << "Related hits: " << (iter->second).size() << std::endl;
-       }    
-       if (_debug) {
-         std::cout << "  The related PFP: " << std::endl;
-         std::cout << "  has ID: " << pf_par->Self() << std::endl;
-       }
-
-       neutrinoOriginPFP.emplace_back(pf_par);
-
-       // If we matched a muon
-       if (mc_par->PdgCode() == 13 && mc_par->Mother() == 0) {
-         muonMCParticle = mc_par;
-         muonPFP = pf_par;
-         _muon_is_reco = 1;
-
-
-         // Muon track puritity and efficiency
-         _muon_reco_pur = _muon_reco_eff = -9999;
-         auto iter = recoParticlesToHits.find(pf_par);
-         if (iter != recoParticlesToHits.end()) {
-           UBXSecHelper::GetTrackPurityAndEfficiency((*iter).second, _muon_reco_pur, _muon_reco_eff);
-         }
-         _true_muon_mom_matched = mc_par->P();
-         //std::cout << "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY efficiency: " << eff << "  purity "  << pur << std::endl;
-
-         lar_pandora::PFParticlesToTracks::const_iterator it =  pfParticleToTrackMap.find(pf_par);
-         if (it != pfParticleToTrackMap.end()) {
-
-           lar_pandora::TrackVector trk_v = it->second;
-           std::cout << "Track vector length is: " << trk_v.size() << std::endl;
-           art::Ptr<recob::Track>   trk   = trk_v[0];
-
-           std::cout << "Recon muon start x " << trk->Vertex().X() << std::endl;
-           std::cout << "Recon muon start y " << trk->Vertex().Y() << std::endl;
-           std::cout << "Recon muon start z " << trk->Vertex().Z() << std::endl;
-
-           _recon_muon_start_x = trk->Vertex().X();
-           _recon_muon_start_y = trk->Vertex().Y();
-           _recon_muon_start_z = trk->Vertex().Z();
-
-           std::cout << "Recon muon end x " << trk->End().X() << std::endl;
-           std::cout << "Recon muon end y " << trk->End().Y() << std::endl;
-           std::cout << "Recon muon end z " << trk->End().Z() << std::endl;
-
-           _recon_muon_end_x = trk->End().X();
-           _recon_muon_end_y = trk->End().Y();
-           _recon_muon_end_z = trk->End().Z();
-
-           std::cout << "MC muon start x " << mc_par->Vx() << std::endl;
-           std::cout << "MC muon start y " << mc_par->Vy() << std::endl;
-           std::cout << "MC muon start z " << mc_par->Vz() << std::endl;
-
-           _mc_muon_start_x = mc_par->Vx();
-           _mc_muon_start_y = mc_par->Vy();
-           _mc_muon_start_z = mc_par->Vz();
-
-           std::cout << "MC muon end x " << mc_par->EndX() << std::endl;
-           std::cout << "MC muon end y " << mc_par->EndY() << std::endl;
-           std::cout << "MC muon end z " << mc_par->EndZ() << std::endl;
-       
-           _mc_muon_end_x = mc_par->EndX();
-           _mc_muon_end_y = mc_par->EndY();
-           _mc_muon_end_z = mc_par->EndZ();
-         }
-
-
-         double start[3] = {_mc_muon_start_x, _mc_muon_start_y, _mc_muon_start_z};
-         double stop[3]  = {_mc_muon_end_x,   _mc_muon_end_y,   _mc_muon_end_z};
-
-         if (UBXSecHelper::InFV(start) && UBXSecHelper::InFV(stop))
-           _mc_muon_contained = 1;
-       }  
-     }
-  }
-  if (_debug) std::cout << "Neutrino related PFPs in this event: " << neutrinoOriginPFP.size() << std::endl;
-
-
-
-
-  // *******************
-  // Analysis
-  // *******************
-
-  doanalysis:
 
   // Get TPCObjects from the Event
   art::Handle<std::vector<ubana::TPCObject>> tpcobj_h;
@@ -658,6 +483,7 @@ void UBXSec::analyze(art::Event const & e) {
   art::FindManyP<ubana::FlashMatch> tpcobjToFlashMatchAssns(tpcobj_h, e, _neutrino_flash_match_producer);
   art::FindManyP<recob::Track>      tpcobjToTrackAssns(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
+  art::FindManyP<anab::CosmicTag>   tpcobjToCosmicTagAssns(tpcobj_h, e, _geocosmictag_producer);
 
   // ACPT
   art::Handle<std::vector<anab::T0> > t0_h;
@@ -808,7 +634,7 @@ void UBXSec::analyze(art::Event const & e) {
       double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),
                                 mclist[iList]->GetNeutrino().Nu().Vy(),
                                 mclist[iList]->GetNeutrino().Nu().Vz()};
-      if (UBXSecHelper::InFV(truth_nu_vtx)) _fv = 1;
+      if (_fiducial_volume.InFV(truth_nu_vtx)) _fv = 1;
       else _fv = 0;
       _ccnc    = mclist[iList]->GetNeutrino().CCNC();
       _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
@@ -926,6 +752,7 @@ void UBXSec::analyze(art::Event const & e) {
   _slc_mult_track.resize(_nslices, -9999);
   _slc_mult_shower.resize(_nslices, -9999);
   _slc_mult_track_tolerance.resize(_nslices, -9999);
+  _slc_geocosmictag.resize(_nslices, false);
 
   std::cout << "[UBXSec] --- SAVING INFORMATION" << std::endl;
   _vtx_resolution = -9999;
@@ -960,9 +787,22 @@ void UBXSec::analyze(art::Event const & e) {
     _slc_nuvtx_x[slice] = reco_nu_vtx[0];
     _slc_nuvtx_y[slice] = reco_nu_vtx[1];
     _slc_nuvtx_z[slice] = reco_nu_vtx[2];
-    _slc_nuvtx_fv[slice] = (UBXSecHelper::InFV(reco_nu_vtx) ? 1 : 0);
-    std::cout << "[UBXSec] \t Reco vertex saved" << std::endl;
+    _slc_nuvtx_fv[slice] = (_fiducial_volume.InFV(reco_nu_vtx) ? 1 : 0);
+    std::cout << "[UBXSec] \t Reco vertex is " << (_slc_nuvtx_fv[slice]==1 ? "in" : "ouside") << " the FV." << std::endl;
 
+    // Through-going?
+    _slc_geocosmictag[slice] = false;
+    std::vector<art::Ptr<anab::CosmicTag>> geo_cosmic_tags = tpcobjToCosmicTagAssns.at(slice);
+    if(geo_cosmic_tags.size() == 0 || geo_cosmic_tags.size() > 1) {
+      std::cout << "[UBXSec] \t More than one Geo Cosmic Tag match per tpcobj ?!" << std::endl;
+    } else {
+      auto ct = geo_cosmic_tags.at(0);
+      if (ct->CosmicScore() > _geo_cosmic_score_cut) {
+        std::cout << "[UBXSec] \t This slice has been tagged as through-going cosmic" << std::endl;
+        _slc_geocosmictag[slice] = true;
+      }
+    }
+    
     // Vertex resolution
     if (_slc_origin[slice] == ubana::kBeamNeutrino) {
       _vtx_resolution = sqrt( pow(_slc_nuvtx_y[slice]-_tvtx_y[0], 2) + pow(_slc_nuvtx_z[slice]-_tvtx_z[0], 2) );
@@ -974,7 +814,7 @@ void UBXSec::analyze(art::Event const & e) {
     _slc_mult_pfp[slice] = p;
     _slc_mult_track[slice] = t;
     _slc_mult_shower[slice] = s;
-    _slc_mult_track_tolerance[slice] = tpcobj.GetNTracksCloseToVertex(5.);
+    _slc_mult_track_tolerance[slice] = tpcobj.GetNTracksCloseToVertex(_tolerance_track_multiplicity);
 
     // Neutrino Flash match
     _slc_flsmatch_score[slice] = -9999;
@@ -1193,11 +1033,31 @@ void UBXSec::analyze(art::Event const & e) {
       if (mcghosts.size() == 0 || mcghosts.size() > 1 ) {
         std::cout << "[UBXSec] \t\t mcghosts is ether 0 or >1" << std::endl;
         continue;
-      } else {
-        mcpars = mcpar_from_mcghost.at(mcghosts[0].key());
-        pdg = mcpars[0]->PdgCode();
-        std::cout << "[UBXSec] \t\t MCPar has pdg " << pdg << std::endl;
       }
+
+      mcpars = mcpar_from_mcghost.at(mcghosts[0].key());
+      pdg = mcpars[0]->PdgCode();
+      std::cout << "[UBXSec] \t\t MCPar has pdg " << pdg << std::endl;
+      const auto mc_truth = bt->TrackIDToMCTruth(mcpars[0]->TrackId()); 
+      if (!mc_truth) {
+        std::cerr << "[UBXSec] Problem with MCTruth pointer." << std::endl;
+        continue;
+      }
+      if (mc_truth->Origin() == simb::kBeamNeutrino &&
+          mcpars[0]->PdgCode() == 13 && mcpars[0]->Mother() == 0) {
+
+        _muon_reco_pur = _muon_reco_eff = -9999;
+        auto iter = recoParticlesToHits.find(pfp);
+        if (iter != recoParticlesToHits.end()) {
+          UBXSecHelper::GetTrackPurityAndEfficiency((*iter).second, _muon_reco_pur, _muon_reco_eff);
+        }
+        _true_muon_mom_matched = mcpars[0]->P();
+
+       if (_fiducial_volume.InFV(mcpars[0]->Vx(), mcpars[0]->Vy(), mcpars[0]->Vz())  && _fiducial_volume.InFV(mcpars[0]->EndX(), mcpars[0]->EndY(), mcpars[0]->EndZ())) {
+         _mc_muon_contained = true;
+       }
+      } 
+      
 
       std::vector<art::Ptr<recob::Track>> tracks = tracks_from_pfp.at(pfp.key());
       std::cout << "[UBXSec] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;
@@ -1369,6 +1229,9 @@ void UBXSec::analyze(art::Event const & e) {
 void UBXSec::endSubRun(const art::SubRun& sr) {
 
   if (_debug) std::cout << "[UBXSec::endSubRun] Starts" << std::endl;
+
+  // Saving run and subrun number on file so that we can run Zarko's script easily
+  _run_subrun_list_file << sr.run() << " " << sr.subRun() << std::endl;
 
   _sr_run       = sr.run();
   _sr_subrun    = sr.subRun();

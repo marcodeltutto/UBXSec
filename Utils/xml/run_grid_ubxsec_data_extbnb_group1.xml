@@ -31,7 +31,7 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_01_2017Sep04_09_38.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_04_2017Oct05_11_30.tgz</local>
   </larsoft>
 
   <!-- Project stages -->
@@ -45,8 +45,8 @@
     <workdir>&PNFSpath;grid_workdir_ubxsec_data_extbnb_group1</workdir>
     <numjobs>620</numjobs>
     <datatier>ubana</datatier>
-    <memory>4000</memory>
-    <jobsub> --expected-lifetime=6h </jobsub>
+    <memory>6000</memory>
+    <jobsub> --expected-lifetime=12h </jobsub>
     <disk>80GB</disk>
   </stage>
 

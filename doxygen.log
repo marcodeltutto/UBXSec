@@ -134,7 +134,7 @@ Flushing cached template relations that have become invalid.../home/travis/build
 /home/travis/build/marcodeltutto/UBXSec/Modules/GeoCosmicTagger_module.cc:44: warning: Compound GeoCosmicTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:47: warning: Compound CosmicTrackHitTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FindDeadRegions.h:36: warning: Compound FindDeadRegions is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:49: warning: Compound RecoTrueMatcher is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:51: warning: Compound RecoTrueMatcher is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/CosmicTagToolInterface.h:43: warning: Compound ubana::CosmicTagToolInterface is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FindDeadRegions.h:25: warning: Compound BoundaryWire is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:40: warning: Compound CosmicTaggerAna is not documented.
@@ -292,12 +292,12 @@ Generating docs for compound McPfpMatch...
 Generating docs for compound NeutrinoFlashMatch...
 Generating docs for compound NeutrinoMCFlash...
 Generating docs for compound PhotonActivity...
-Generating docs for com/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:51: warning: Member RecoTrueMatcher(fhicl::ParameterSet const &p) (function) of class RecoTrueMatcher is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:56: warning: Member RecoTrueMatcher(RecoTrueMatcher const &)=delete (function) of class RecoTrueMatcher is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:57: warning: Member RecoTrueMatcher(RecoTrueMatcher &&)=delete (function) of class RecoTrueMatcher is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:58: warning: Member operator=(RecoTrueMatcher const &)=delete (function) of class RecoTrueMatcher is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:59: warning: Member operator=(RecoTrueMatcher &&)=delete (function) of class RecoTrueMatcher is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:62: warning: Member produce(art::Event &e) override (function) of class RecoTrueMatcher is not documented.
+Generating docs for com/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:53: warning: Member RecoTrueMatcher(fhicl::ParameterSet const &p) (function) of class RecoTrueMatcher is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:58: warning: Member RecoTrueMatcher(RecoTrueMatcher const &)=delete (function) of class RecoTrueMatcher is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:59: warning: Member RecoTrueMatcher(RecoTrueMatcher &&)=delete (function) of class RecoTrueMatcher is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:60: warning: Member operator=(RecoTrueMatcher const &)=delete (function) of class RecoTrueMatcher is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:61: warning: Member operator=(RecoTrueMatcher &&)=delete (function) of class RecoTrueMatcher is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:64: warning: Member produce(art::Event &e) override (function) of class RecoTrueMatcher is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:104: warning: Member UBXSec(fhicl::ParameterSet const &p) (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:109: warning: Member UBXSec(UBXSec const &)=delete (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:110: warning: Member UBXSec(UBXSec &&)=delete (function) of class UBXSec is not documented.
@@ -423,5 +423,5 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-lookup cache used 286/65536 hits=1230 misses=295
+lookup cache used 287/65536 hits=1234 misses=296
 finished...

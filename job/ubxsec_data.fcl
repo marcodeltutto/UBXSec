@@ -22,19 +22,12 @@
 #include "ubflashfinder.fcl"
 #include "correct_saturation.fcl"
 
+#include "fiducial_volume_settings.fcl"
+
 BEGIN_PROLOG
 #
 # Module configuration
 #
-
-UBXSecFiducialVolumeSettings: {
-  BorderXLow:   10
-  BorderXHigh:  10
-  BorderYLow:   20
-  BorderYHigh:  20
-  BorderZLow:   10
-  BorderZHigh:  10
-}
 
 UBXSec: {
   module_type:                  "UBXSec"
@@ -59,7 +52,10 @@ UBXSec: {
   
   UseGENIEInfo:                 true
   MinimumHitRequirement:        3
-  
+ 
+  GeoCosmicScoreCut:            0.6
+  ToleranceTrackMultiplicity:   5.
+ 
   PECalib:                      @local::SPECalib
 
   FiducialVolumeSettings:       @local::UBXSecFiducialVolumeSettings

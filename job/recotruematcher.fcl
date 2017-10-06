@@ -1,16 +1,20 @@
+#include "fiducial_volume_settings.fcl"
 
 BEGIN_PROLOG
 #
 # Module configuration
 #
 RecoTrueMatcher: {
-  module_type:           "RecoTrueMatcher"
-  PFParticleProducer:    "pandoraNu::UBXSec"
-  HitProducer:           "pandoraCosmicHitRemoval::UBXSec"
-  GeantModule:           "largeant"
-  SpacePointProducer:    "pandoraNu::UBXSec"
+  module_type:            "RecoTrueMatcher"
+  PFParticleProducer:     "pandoraNu::UBXSec"
+  HitProducer:            "pandoraCosmicHitRemoval::UBXSec"
+  GeantModule:            "largeant"
+  SpacePointProducer:     "pandoraNu::UBXSec"
 
-  DebugMode:             true 
+  DebugMode:              true 
+  Verbose:                true
+
+  FiducialVolumeSettings: @local::UBXSecFiducialVolumeSettings 
 }
 
 microboone_recotruematcher: @local::RecoTrueMatcher

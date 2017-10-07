@@ -13,7 +13,7 @@ Doxygen Documentation: https://marcodeltutto.github.io/UBXSec/documentation/html
 On uboonegpvm, from a fresh terminal session:
 
 ```
-export UBCODE_RELEASE=v06_26_01_01
+export UBCODE_RELEASE=v06_26_01_07
 export QUAL1=e10
 export QUAL2=prof
 

@@ -17,6 +17,7 @@
 #include "acpttagger.fcl"
 #include "recotruematcher.fcl"
 #include "geocosmictagger.fcl"
+#include "stoppingmuontagger.fcl"
 
 #include "opticaldetectormodules_microboone.fcl"
 #include "ubflashfinder.fcl"
@@ -88,6 +89,8 @@ ubxsec_data_flashmatch:
 
    pandoraNuGeoCosmicTag:         @local::GeoCosmicTagger
 
+   pandoraNuStoppingMuonTag:       @local::StoppingMuonTagger
+
    NeutrinoFlashMatch:            @local::NeutrinoFlashMatch
    #CosmicFlashMatch:              @local::CosmicFlashMatch
 }
@@ -111,6 +114,7 @@ ubxsec_data_producers: [ saturation,
                          RecoTrueMatcher,
                          TPCObjectMaker,
                          pandoraNuGeoCosmicTag,
+                         pandoraNuStoppingMuonTag,
                          NeutrinoFlashMatch ] 
 
 ubxsec_data_analyzers: [ UBXSec ]

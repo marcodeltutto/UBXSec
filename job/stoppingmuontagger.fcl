@@ -1,0 +1,14 @@
+#include "fiducial_volume_settings.fcl"
+
+BEGIN_PROLOG
+#
+# Module configuration
+#
+StoppingMuonTagger: {
+  module_type:             "StoppingMuonTagger"
+  TPCObjectProducer:       "TPCObjectMaker"
+
+  FiducialVolumeSettings:  @local::UBXSecFiducialVolumeSettings  
+}
+
+END_PROLOG

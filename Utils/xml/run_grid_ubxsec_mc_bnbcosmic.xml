@@ -38,7 +38,7 @@
 
   <stage name="ubxsec">
     <fcl>run_ubxsec_mc.fcl</fcl>
-    <inputlist>&PNFSpath;bnb_cosmic_files_mcc8.2.list</inputlist>
+    <inputdef>prodgenie_bnb_nu_cosmic_uboone_mcc8.3_reco2</inputdef>
     <defname>&name;_&tag;_ana</defname>
     <maxfilesperjob>1</maxfilesperjob>
     <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec</outdir>
@@ -46,7 +46,7 @@
     <numjobs>500</numjobs>
     <datatier>ubana</datatier>
     <memory>3000</memory>
-    <jobsub> --expected-lifetime=4h </jobsub>
+    <jobsub> --expected-lifetime=4h --mail_never --generate-email-summary </jobsub>
     <disk>30GB</disk>
   </stage>
 

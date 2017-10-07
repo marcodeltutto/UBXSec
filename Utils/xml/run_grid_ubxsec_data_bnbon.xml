@@ -39,14 +39,14 @@
 
   <stage name="ubxsec">
     <fcl>run_ubxsec_data_bnbon.fcl</fcl>
-    <inputdef>prod_reco2_bnb_v8_mcc8</inputdef>
+    <inputdef>prod_reco2_bnb_v9_mcc8</inputdef>
     <defname>&name;_&tag;_ana</defname>
     <maxfilesperjob>15</maxfilesperjob>
     <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_data_bnbon</outdir>
     <workdir>&PNFSpath;grid_workdir_ubxsec_data_bnbon</workdir>
     <numjobs>920</numjobs> 
     <datatier>ubana</datatier>
-    <jobsub> --expected-lifetime=12h </jobsub>
+    <jobsub> --expected-lifetime=12h --mail_never --generate-email-summary </jobsub>
     <memory>6000</memory>
     <disk>80GB</disk>
   </stage>

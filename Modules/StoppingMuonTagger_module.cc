@@ -96,6 +96,8 @@ void StoppingMuonTagger::produce(art::Event & e) {
   if (e.isRealData())
     return;
 
+  std::cout <<"[StoppingMuonTagger] Starts." << std::endl;
+
   // Get TPCObjects from the Event
   art::Handle<std::vector<ubana::TPCObject>> tpcobj_h;
   e.getByLabel(_tpcobject_producer, tpcobj_h);
@@ -128,6 +130,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
   }
 
+  std::cout <<"[StoppingMuonTagger] Ends." << std::endl;
 
 }
 

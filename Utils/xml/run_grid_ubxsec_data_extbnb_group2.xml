@@ -38,15 +38,15 @@
 
   <stage name="ubxsec">
     <fcl>run_ubxsec_data_extbnb.fcl</fcl>
-    <inputdef>mdeltutt_prod_reco2_extbnb_v8_mcc8_group2</inputdef>
-    <defname>&name;_&tag;_ana</defname>
+    <inputdef>mdeltutt_prod_reco2_extbnb_v9_mcc8_group2</inputdef>
+    <!-- <defname>&name;_&tag;_ana</defname> -->
     <maxfilesperjob>15</maxfilesperjob>
     <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_data_extbnb_group2</outdir>
     <workdir>&PNFSpath;grid_workdir_ubxsec_data_extbnb_group2</workdir>
     <numjobs>30</numjobs>
     <datatier>ubana</datatier>
     <memory>2000</memory>
-    <jobsub> --expected-lifetime=2h </jobsub>
+    <jobsub> --expected-lifetime=2h --mail_never --generate-email-summary </jobsub>
     <disk>10GB</disk>
   </stage>
 

@@ -101,9 +101,7 @@ void GeoCosmicTagger::produce(art::Event & e) {
   std::unique_ptr< std::vector< anab::CosmicTag>>                  cosmicTagVector        (new std::vector<anab::CosmicTag>);
   std::unique_ptr< art::Assns<anab::CosmicTag, ubana::TPCObject>>  assnOutCosmicTagTPCObj (new art::Assns<anab::CosmicTag,ubana::TPCObject>);
 
-  //auto const* detp = lar::providerFrom<detinfo::DetectorPropertiesService>();
   auto const* geo = lar::providerFrom<geo::Geometry>();
-  //auto const* ts = lar::providerFrom<detinfo::DetectorClocksService>();
 
   fDetHalfHeight = geo->DetHalfHeight();
   fDetWidth      = 2.*geo->DetHalfWidth();
@@ -149,7 +147,21 @@ void GeoCosmicTagger::produce(art::Event & e) {
     }
     std::cout << "[GeoCosmicTagger] This TPCObject (" << i << ") has " << sp_v.size() << " SpacePoints." << std::endl;
 
+    anab::CosmicTagID_t tag_id = anab::CosmicTagID_t::kNotTagged;
+    double cosmicScore = 0;
 
+    std::vector<art::Ptr<ubana::TPCObject>>  tpcobj_v;
+    tpcobj_v.resize(1);
+    tpcobj_v.at(0) = tpcobj;
+
+    if (sp_v.size() == 0) {
+      cosmicTagVector->emplace_back(endPt1, endPt2, cosmicScore, tag_id);
+      util::CreateAssn(*this, e, *cosmicTagVector, tpcobj_v, *assnOutCosmicTagTPCObj);
+ 
+      if (fDebug)  std::cout << "[GeoCosmicTagger]\t 0 spacepoints for this tpcobj" << std::endl;
+      if (fDebug)  std::cout << "[GeoCosmicTagger]\t cosmicScore assigned is " << cosmicScore << std::endl;
+      continue;
+    }
 
     // *************
     // Sort SpacePints by X position (anode-closer first)
@@ -208,9 +220,6 @@ void GeoCosmicTagger::produce(art::Event & e) {
       std::cout << "[GeoCosmicTagger]\t End Point 2 Z: " << trackEndPt2_Z << std::endl;
     }
 
-    anab::CosmicTagID_t tag_id = anab::CosmicTagID_t::kNotTagged;
-    double cosmicScore = 0;
-
     this->GetCosmicTag(trackEndPt1_X, trackEndPt2_X,
                        trackEndPt1_Y, trackEndPt2_Y,
                        trackEndPt1_Z, trackEndPt2_Z,
@@ -218,10 +227,6 @@ void GeoCosmicTagger::produce(art::Event & e) {
 
     if(fDebug) std::cout << "[GeoCosmicTagger]\t tag_id is " << tag_id << std::endl;
 
-
-    std::vector<art::Ptr<ubana::TPCObject>>  tpcobj_v;
-    tpcobj_v.resize(1);
-    tpcobj_v.at(0) = tpcobj;
 
     cosmicTagVector->emplace_back(endPt1, endPt2, cosmicScore, tag_id);
     util::CreateAssn(*this, e, *cosmicTagVector, tpcobj_v, *assnOutCosmicTagTPCObj);

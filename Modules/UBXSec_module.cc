@@ -57,6 +57,7 @@
 #include "lardataobj/AnalysisBase/ParticleID.h"
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
 #include "lardataobj/AnalysisBase/CosmicTag.h"
+#include "uboone/UBXSec/DataTypes/TPCObject.h"
 
 // LArSoft include
 #include "uboone/UBFlashFinder/PECalib.h"
@@ -71,7 +72,7 @@
 // Algorithms include
 #include "uboone/UBXSec/Algorithms/UBXSecHelper.h"
 #include "uboone/UBXSec/Algorithms/VertexCheck.h"
-#include "uboone/UBXSec/Algorithms/McPfpMatch.h"
+//#include "uboone/UBXSec/Algorithms/McPfpMatch.h"
 #include "uboone/UBXSec/Algorithms/FindDeadRegions.h"
 #include "uboone/UBXSec/Algorithms/MuonCandidateFinder.h"
 #include "uboone/UBXSec/Algorithms/FiducialVolume.h"
@@ -121,7 +122,7 @@ private:
   void PrintMC(std::vector<art::Ptr<simb::MCTruth>> mclist);
 
   FindDeadRegions deadRegionsFinder;
-  ubxsec::McPfpMatch mcpfpMatcher;
+  //ubxsec::McPfpMatch mcpfpMatcher;
   ::ubana::FiducialVolume _fiducial_volume;
   ::pmtana::PECalib _pecalib;
 
@@ -442,11 +443,13 @@ void UBXSec::analyze(art::Event const & e) {
     _use_genie_info = false;
   }
 
+  /*
   if (_is_data) {
     std::cout << "[UBXSec] Running on a real data file. No MC-PFP matching will be attempted." << std::endl;
   } else {
     mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
   }
+  */
 
   ::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
@@ -756,6 +759,7 @@ void UBXSec::analyze(art::Event const & e) {
 
   std::cout << "[UBXSec] --- SAVING INFORMATION" << std::endl;
   _vtx_resolution = -9999;
+ 
   for (unsigned int slice = 0; slice < tpcobj_h->size(); slice++){
     std::cout << "[UBXSec] >>> SLICE " << slice << std::endl;
 

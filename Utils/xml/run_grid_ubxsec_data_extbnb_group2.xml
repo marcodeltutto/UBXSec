@@ -3,7 +3,7 @@
 <!-- Production Project -->
 
 <!DOCTYPE project [
-<!ENTITY release "v06_26_01_06">
+<!ENTITY release "v06_26_01_07">
 <!ENTITY releasetag "e10:prof">
 <!ENTITY name "ubxsec_data_extbnb_group2">
 <!ENTITY tag "ubxsec">
@@ -31,7 +31,7 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_04_2017Oct06_19_30.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_05_2017Oct07_10_49.tgz</local>
   </larsoft>
 
   <!-- Project stages -->

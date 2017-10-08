@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////
 // Class:       UBXSec
-// Plugin Type: analyzer (art v2_05_00)
+// Plugin Type: producer 
 // File:        UBXSec_module.cc
 //
 // Generated at Fri Jan  27 09:44:39 2017 by Marco Del Tutto using cetskelgen

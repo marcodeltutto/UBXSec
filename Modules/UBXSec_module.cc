@@ -12,7 +12,7 @@
  *
  * \ingroup UBXSec
  *
- * \brief Art analyzer module
+ * \brief Art producer module
  * 
  *
  * \author $Author: Marco Del Tutto<marco.deltutto@physics.ox.ac.uk> $
@@ -28,7 +28,7 @@
  */
 
 // Art include
-#include "art/Framework/Core/EDAnalyzer.h"
+#include "art/Framework/Core/EDProducer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Handle.h"
@@ -100,7 +100,7 @@ namespace ubxsec {
 class UBXSec;
 
 
-class UBXSec : public art::EDAnalyzer {
+class UBXSec : public art::EDProducer {
 public:
   explicit UBXSec(fhicl::ParameterSet const & p);
   // The compiler-generated destructor is fine for non-base
@@ -113,8 +113,8 @@ public:
   UBXSec & operator = (UBXSec &&) = delete;
 
   // Required functions.
-  void analyze(art::Event const & e) override;
-  void endSubRun(const art::SubRun &sr) override;
+  void produce(art::Event & e) override;
+  void endSubRun(art::SubRun &sr) override;
 
 private:
 
@@ -244,7 +244,7 @@ private:
 };
 
 
-UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
+UBXSec::UBXSec(fhicl::ParameterSet const & p) {
 
   ::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
@@ -425,7 +425,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
 
 
 
-void UBXSec::analyze(art::Event const & e) {
+void UBXSec::produce(art::Event & e) {
 
   if(_debug) std::cout << "********** UBXSec starts" << std::endl;
   if(_debug) std::cout << "event: " << e.id().event() << std::endl;
@@ -1231,7 +1231,7 @@ void UBXSec::analyze(art::Event const & e) {
 
 
 
-void UBXSec::endSubRun(const art::SubRun& sr) {
+void UBXSec::endSubRun(art::SubRun& sr) {
 
   if (_debug) std::cout << "[UBXSec::endSubRun] Starts" << std::endl;
 

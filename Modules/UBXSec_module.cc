@@ -792,6 +792,7 @@ void UBXSec::analyze(art::Event const & e) {
     _slc_nuvtx_y[slice] = reco_nu_vtx[1];
     _slc_nuvtx_z[slice] = reco_nu_vtx[2];
     _slc_nuvtx_fv[slice] = (_fiducial_volume.InFV(reco_nu_vtx) ? 1 : 0);
+    std::cout << "[UBXSec] \t Reco vertex is " << _slc_nuvtx_x[slice] << ", " << _slc_nuvtx_y[slice] << ", " << _slc_nuvtx_z[slice] << std::endl; 
     std::cout << "[UBXSec] \t Reco vertex is " << (_slc_nuvtx_fv[slice]==1 ? "in" : "ouside") << " the FV." << std::endl;
 
     // Through-going?

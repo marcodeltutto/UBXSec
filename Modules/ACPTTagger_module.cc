@@ -23,6 +23,7 @@
 
 // data-products
 #include "lardataobj/RecoBase/Track.h"
+#include "lardataobj/RecoBase/SpacePoint.h"
 #include "lardataobj/RecoBase/OpFlash.h"
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "lardataobj/AnalysisBase/T0.h"
@@ -61,13 +62,17 @@ private:
   /// Claculates the (track reco time) - (flash time) from the _end specified point, that is the closest to the _value given
   bool GetClosestDtDz(TVector3 _end, double _value, double trk_z_center, std::vector<double> &_dt, std::vector<double> &_dz, bool fill_histo);
   /// Returns true if sign is positive, negative otherwise
-  bool GetSign(std::vector<TVector3> sorted_trk);
-  void SortTrackPoints(const recob::Track& track, std::vector<TVector3>& sorted_trk);
+  bool GetSign(std::vector<TVector3> sorted_points);
+  void SortTrackPoints(const recob::Track& track, std::vector<TVector3>& sorted_points);
+  void SortSpacePoints(std::vector<art::Ptr<recob::SpacePoint>> sp_v, std::vector<TVector3>& sorted_points);
 
   std::string _flash_producer;
   std::string _pfp_producer;
   std::string _track_producer;
+  std::string _spacepoint_producer;
   std::string _swtrigger_producer;
+
+  bool _use_spacepoints; ///< If true, uses spacepoints to get start and end point of PFP (default uses tracks)
 
   double _min_track_length;
 
@@ -104,24 +109,27 @@ private:
 
 ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
 
-  _flash_producer     = p.get<std::string>("FlashProducer", "simpleFlashCosmic");
-  _pfp_producer       = p.get<std::string>("PFPartProducer", "pandoraCosmic");
-  _track_producer     = p.get<std::string>("TrackProducer", "pandoraCosmic");
-  _swtrigger_producer = p.get<std::string>("SWTriggerProducer", "swtrigger");
+  _flash_producer      = p.get<std::string>("FlashProducer", "simpleFlashCosmic");
+  _pfp_producer        = p.get<std::string>("PFPartProducer", "pandoraCosmic");
+  _track_producer      = p.get<std::string>("TrackProducer", "pandoraCosmic");
+  _spacepoint_producer = p.get<std::string>("SpacePointProducer", "pandoraCosmic");
+  _swtrigger_producer  = p.get<std::string>("SWTriggerProducer", "swtrigger");
 
-  _min_track_length   = p.get<double>("MinTrackLength", 0.0);
+  _use_spacepoints     = p.get<bool>("UseSpacePoints", false);
 
-  _anodeTime          = p.get<double>("AnodeTime",   0.53);
-  _cathodeTime        = p.get<double>("CathodeTime", 2291);
+  _min_track_length    = p.get<double>("MinTrackLength", 0.0);
 
-  _dt_resolution_a    = p.get<double>("DtResolutionAnode", 5); 
-  _dz_resolution_a    = p.get<double>("DzResolutionAnode", 80);
-  _dt_resolution_c    = p.get<double>("DtResolutionCathode", 5);
-  _dz_resolution_c    = p.get<double>("DzResolutionCathode", 80);
+  _anodeTime           = p.get<double>("AnodeTime",   0.53);
+  _cathodeTime         = p.get<double>("CathodeTime", 2291);
 
-  _pe_min             = p.get<double> ("PEMin", 0);
-  _debug              = p.get<bool>("Debug", false);
-  _create_histo       = p.get<bool>("CreateHisto", false); 
+  _dt_resolution_a     = p.get<double>("DtResolutionAnode", 5); 
+  _dz_resolution_a     = p.get<double>("DzResolutionAnode", 80);
+  _dt_resolution_c     = p.get<double>("DtResolutionCathode", 5);
+  _dz_resolution_c     = p.get<double>("DzResolutionCathode", 80);
+
+  _pe_min              = p.get<double> ("PEMin", 0);
+  _debug               = p.get<bool>("Debug", false);
+  _create_histo        = p.get<bool>("CreateHisto", false); 
 
   //_csvfile.open ("acpt.csv", std::ofstream::out | std::ofstream::trunc);
   //_csvfile << "trk_x_up,trk_x_down,fls_time" << std::endl;
@@ -222,14 +230,20 @@ void ACPTTagger::produce(art::Event & e)
     return; //throw std::exception();
   }
 
+  std::vector<art::Ptr<recob::PFParticle> > PFPVec;
+  art::fill_ptr_vector(PFPVec, pfp_h);
+
   // grab tracks associated with PFParticles
   art::FindManyP<recob::Track> pfp_track_assn_v(pfp_h, e, _track_producer);
   if (_debug) {
     std::cout << "There are " << pfp_track_assn_v.size() << " pfpart -> track associations" << std::endl;
   }
 
-  std::vector<art::Ptr<recob::PFParticle> > PFPVec;
-  art::fill_ptr_vector(PFPVec, pfp_h);
+  // grab spacepoints associated with PFParticles
+  art::FindManyP<recob::SpacePoint> pfp_spacepoint_assn_v(pfp_h, e, _spacepoint_producer);
+  if (_debug) {
+    std::cout << "There are " << pfp_spacepoint_assn_v.size() << " pfpart -> spacepoint associations" << std::endl;
+  }
 
 
   // prepare a vector of optical flash times, if flash above some PE cut value
@@ -254,7 +268,7 @@ void ACPTTagger::produce(art::Event & e)
   } // for all flashes
 
   if (_debug) { 
-    std::cout << __PRETTY_FUNCTION__ << "Selected a total of " << _flash_times.size() << " OpFlashes" << std::endl; 
+    std::cout << __PRETTY_FUNCTION__ << " Selected a total of " << _flash_times.size() << " OpFlashes" << std::endl; 
   }
 
   auto const* _detp = lar::providerFrom<detinfo::DetectorPropertiesService>();
@@ -277,40 +291,56 @@ void ACPTTagger::produce(art::Event & e)
 
   for (size_t i = 0; i < PFPVec.size(); i++) {
 
+    if (_debug) {
+      std::cout << "[ACPTTagger] Looping through pfpart number " << i << std::endl;
+    }
+
     bool isCosmic = false;
     auto pfp = PFPVec.at(i);
 
     // grab associated tracks
     std::vector<art::Ptr<recob::Track>> track_v = pfp_track_assn_v.at(i);
 
-    if (_debug) {
-      std::cout << "[ACPTTagger] Looping through pfpart number " << i << std::endl;
-      //std::cout << "PFPart has " << track_v.size() << " tracks associated" << std::endl;
-    }
+    // grab associated spacepoints
+    std::vector<art::Ptr<recob::SpacePoint>> spacepoint_v = pfp_spacepoint_assn_v.at(i);
 
-    for (auto track : track_v) {
+    // will store sorted points for the object [assuming downwards going]
+    std::vector<TVector3> sorted_points;
 
-      if (track->Length() < _min_track_length) continue;
+    if (_use_spacepoints && spacepoint_v.size() < 2) continue;
 
-      // get sorted points for the track object [assuming downwards going]
-      std::vector<TVector3> sorted_trk;
-      this->SortTrackPoints(*track,sorted_trk);
+    if (_use_spacepoints)
+      this->SortSpacePoints(spacepoint_v, sorted_points);
 
-      _trk_len.emplace_back(track->Length());
-      _trk_x_up.emplace_back(sorted_trk[0].X());
-      _trk_x_down.emplace_back(sorted_trk[sorted_trk.size()-1].X());
+    size_t loop_max = track_v.size();
+    if (_use_spacepoints)
+      loop_max = 1; // do it only one time if using spacepoints
 
-      double z_center = sorted_trk[0].Z();
-      z_center += sorted_trk[sorted_trk.size()-1].Z();
+    for (size_t i = 0; i < loop_max; i ++) {
+
+      art::Ptr<recob::Track> track;
+
+      if (!_use_spacepoints) {
+        track = track_v.at(i);
+        if (track->Length() < _min_track_length) continue;
+        this->SortTrackPoints(*track,sorted_points);
+        _trk_len.emplace_back(track->Length());
+      }
+
+      _trk_x_up.emplace_back(sorted_points[0].X());
+      _trk_x_down.emplace_back(sorted_points[sorted_points.size()-1].X());
+
+      double z_center = sorted_points[0].Z();
+      z_center += sorted_points[sorted_points.size()-1].Z();
       z_center /= 2.;
       _trk_z_center.emplace_back(z_center);
 
-      this->GetClosestDtDz(sorted_trk[0],                   _anodeTime,   z_center, _dt_u_anode,   _dz_u_anode, true);
-      this->GetClosestDtDz(sorted_trk[sorted_trk.size()-1], _anodeTime,   z_center, _dt_d_anode,   _dz_d_anode, true);
-      this->GetClosestDtDz(sorted_trk[0],                   _cathodeTime, z_center, _dt_u_cathode, _dz_u_cathode, false);
-      this->GetClosestDtDz(sorted_trk[sorted_trk.size()-1], _cathodeTime, z_center, _dt_d_cathode, _dz_d_cathode, false);
+      this->GetClosestDtDz(sorted_points[0],                      _anodeTime,   z_center, _dt_u_anode,   _dz_u_anode,   true);
+      this->GetClosestDtDz(sorted_points[sorted_points.size()-1], _anodeTime,   z_center, _dt_d_anode,   _dz_d_anode,   true);
+      this->GetClosestDtDz(sorted_points[0],                      _cathodeTime, z_center, _dt_u_cathode, _dz_u_cathode, false);
+      this->GetClosestDtDz(sorted_points[sorted_points.size()-1], _cathodeTime, z_center, _dt_d_cathode, _dz_d_cathode, false);
 
-      bool sign = this->GetSign(sorted_trk);
+      bool sign = this->GetSign(sorted_points);
 
       // A
       if (_dt_u_anode.back() > _anodeTime - _dt_resolution_a && _dt_u_anode.back() < _anodeTime + _dt_resolution_a 
@@ -346,7 +376,7 @@ void ACPTTagger::produce(art::Event & e)
         if (isCosmic) std::cout << "Tagged!" << std::endl;
       }
       
-    } // Track loop
+    } // Track loop (just one iteration if using spacepoints)
 
     if (isCosmic) {
       float cosmicScore = 1;
@@ -401,12 +431,39 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_cente
 
 }
 
-void ACPTTagger::SortTrackPoints(const recob::Track& track, std::vector<TVector3>& sorted_trk)
-{
+void ACPTTagger::SortSpacePoints(std::vector<art::Ptr<recob::SpacePoint>> sp_v, std::vector<TVector3>& sorted_points) {
+
+  sorted_points.clear();
+
+  if (sp_v.size() < 2) 
+    return;
+
+  // Sort SpacePoints by y position
+  std::sort(sp_v.begin(), sp_v.end(),
+            [](art::Ptr<recob::SpacePoint> a, art::Ptr<recob::SpacePoint> b) -> bool
+            {
+              return a->XYZ()[1] > b->XYZ()[1];
+            });
+
+  // Just save start and end point
+  sorted_points.resize(2);
+  TVector3 pt1(sp_v.at(0)->XYZ()[0], 
+               sp_v.at(0)->XYZ()[1], 
+               sp_v.at(0)->XYZ()[2]);
+  TVector3 pt2(sp_v.at(sp_v.size()-1)->XYZ()[0], 
+               sp_v.at(sp_v.size()-1)->XYZ()[1], 
+               sp_v.at(sp_v.size()-1)->XYZ()[2]);
+  sorted_points.at(0) = std::move(pt1);
+  sorted_points.at(1) = std::move(pt2);
+  
+
+}
+
+void ACPTTagger::SortTrackPoints(const recob::Track& track, std::vector<TVector3>& sorted_points) {
 
   // vector to store 3D coordinates of                                                                                                                                           
   // ordered track                              
-  sorted_trk.clear();
+  sorted_points.clear();
 
   // take the reconstructed 3D track                                                                                                                                           
   // and assuming it is downwards                                                                                                    
@@ -426,21 +483,21 @@ void ACPTTagger::SortTrackPoints(const recob::Track& track, std::vector<TVector3
   // if points are ordered correctly                                                                                                                                       
   if (start.Y() > end.Y()){
     for (size_t i=0; i < N; i++)
-      sorted_trk.push_back( track.LocationAtPoint(i) );
+      sorted_points.push_back( track.LocationAtPoint(i) );
   }
 
   // otherwise flip order                                                                                                                                                 
   else {
     for (size_t i=0; i < N; i++)
-      sorted_trk.push_back( track.LocationAtPoint( N - i - 1) );
+      sorted_points.push_back( track.LocationAtPoint( N - i - 1) );
   }
 }
 
-bool ACPTTagger::GetSign(std::vector<TVector3> sorted_trk)
+bool ACPTTagger::GetSign(std::vector<TVector3> sorted_points)
 {
 
-  double t_down = sorted_trk[sorted_trk.size()-1].X();
-  double t_up = sorted_trk[0].X();
+  double t_down = sorted_points[sorted_points.size()-1].X();
+  double t_up = sorted_points[0].X();
 
   bool is_positive = (t_down - t_up) > 0.;
 

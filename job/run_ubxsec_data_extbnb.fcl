@@ -18,5 +18,5 @@ source.inputCommands: ["keep *_*_*_*"]
 physics.producers.NeutrinoFlashMatch.FlashVetoTimeStart: 3.65
 physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   5.25
 
-physics.analyzers.UBXSec.BeamSpillStart:                 3.65
-physics.analyzers.UBXSec.BeamSpillEnd:                   5.25
+physics.producers.UBXSec.BeamSpillStart:                 3.65
+physics.producers.UBXSec.BeamSpillEnd:                   5.25

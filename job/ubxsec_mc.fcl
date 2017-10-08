@@ -93,12 +93,13 @@ ubxsec_mc_flashmatch:
    NeutrinoMCFlash:                @local::NeutrinoMCFlash
    NeutrinoFlashMatch:             @local::NeutrinoFlashMatch
    #CosmicFlashMatch:               @local::CosmicFlashMatch
+
+   UBXSec:                         @local::UBXSec
 }
 
 ubxsec_mc_ana:
 {
    CosmicTaggerAna : @local::CosmicTaggerAna 
-   UBXSec          : @local::UBXSec
 }
 
 
@@ -117,10 +118,10 @@ ubxsec_mc_producers: [ saturation,
                        pandoraNuGeoCosmicTag,
                        pandoraNuStoppingMuonTag,
                        NeutrinoMCFlash, 
-                       NeutrinoFlashMatch ] 
+                       NeutrinoFlashMatch,
+                       UBXSec ] 
 
-ubxsec_mc_analyzers: [ CosmicTaggerAna,
-                       UBXSec ]
+ubxsec_mc_analyzers: [ CosmicTaggerAna ]
 
 
 

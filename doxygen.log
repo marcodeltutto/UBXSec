@@ -125,7 +125,7 @@ Building interface member list...
 Building member list...
 Searching fo/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:35: warning: Compound NeutrinoMCFlash is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/McPfpMatch.h:37: warning: Compound ubxsec::McPfpMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:44: warning: Compound ACPTTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:45: warning: Compound ACPTTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoFlashMatch_module.cc:57: warning: Compound NeutrinoFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:54: warning: Compound StoppingMuonTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicFlashMatch_module.cc:56: warning: Compound CosmicFlashMatch is not documented.
@@ -151,12 +151,12 @@ Searching fo/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_modu
 /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:54: warning: Member NEUTRINO_ORIGIN (variable) of group UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:55: warning: Member COSMIC_ORIGIN (variable) of group UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/TPCObjectMaker_module.cc:107: warning: argument '_pfp_producer' of command @param is not found in the argument list of ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PFParticlesToTracks pfParticleToTrackMap, lar_pandora::PFParticlesToShowers pfParticleToShowerMap, lar_pandora::PFParticlesToVertices pfParticleToVertexMap, std::vector< lar_pandora::PFParticleVector > &pfp_v_v, std::vector< lar_pandora::TrackVector > &track_v_v, std::vector< lar_pandora::ShowerVector > &shower_v_v, std::vector< int > &p_v, std::vector< int > &t_v, std::vector< int > &s_v)
-/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:46: warning: Member ACPTTagger(fhicl::ParameterSet const &p) (function) of class ACPTTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:51: warning: Member ACPTTagger(ACPTTagger const &)=delete (function) of class ACPTTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:52: warning: Member ACPTTagger(ACPTTagger &&)=delete (function) of class ACPTTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:53: warning: Member operator=(ACPTTagger const &)=delete (function) of class ACPTTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:54: warning: Member operator=(ACPTTagger &&)=delete (function) of class ACPTTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:57: warning: Member produce(art::Event &e) override (function) of class ACPTTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:47: warning: Member ACPTTagger(fhicl::ParameterSet const &p) (function) of class ACPTTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:52: warning: Member ACPTTagger(ACPTTagger const &)=delete (function) of class ACPTTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:53: warning: Member ACPTTagger(ACPTTagger &&)=delete (function) of class ACPTTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:54: warning: Member operator=(ACPTTagger const &)=delete (function) of class ACPTTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:55: warning: Member operator=(ACPTTagger &&)=delete (function) of class ACPTTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:58: warning: Member produce(art::Event &e) override (function) of class ACPTTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FindDeadRegions.h:26: warning: Member wire_num (variable) of class BoundaryWire is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FindDeadRegions.h:27: warning: Member y_start (variable) of class BoundaryWire is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FindDeadRegions.h:28: warning: Member z_start (variable) of class BoundaryWire is not documented.
@@ -433,5 +433,5 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-lookup cache used 291/65536 hits=1255 misses=301
+lookup cache used 291/65536 hits=1256 misses=301
 finished...

@@ -127,7 +127,7 @@ Searching fo/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_modu
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/McPfpMatch.h:37: warning: Compound ubxsec::McPfpMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/ACPTTagger_module.cc:45: warning: Compound ACPTTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoFlashMatch_module.cc:57: warning: Compound NeutrinoFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:54: warning: Compound StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:62: warning: Compound StoppingMuonTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicFlashMatch_module.cc:56: warning: Compound CosmicFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/TPCObjectFilter.cxx:28: warning: Compound ubana::two_points is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/GeoCosmicTagger_module.cc:44: warning: Compound GeoCosmicTagger is not documented.
@@ -297,12 +297,12 @@ Generating docs for compo/home/travis/build/marcodeltutto/UBXSec/Modules/Neutrin
 /home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:60: warning: Member operator=(RecoTrueMatcher const &)=delete (function) of class RecoTrueMatcher is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:61: warning: Member operator=(RecoTrueMatcher &&)=delete (function) of class RecoTrueMatcher is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/RecoTrueMatcher_module.cc:64: warning: Member produce(art::Event &e) override (function) of class RecoTrueMatcher is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:56: warning: Member StoppingMuonTagger(fhicl::ParameterSet const &p) (function) of class StoppingMuonTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:61: warning: Member StoppingMuonTagger(StoppingMuonTagger const &)=delete (function) of class StoppingMuonTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:62: warning: Member StoppingMuonTagger(StoppingMuonTagger &&)=delete (function) of class StoppingMuonTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:63: warning: Member operator=(StoppingMuonTagger const &)=delete (function) of class StoppingMuonTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:64: warning: Member operator=(StoppingMuonTagger &&)=delete (function) of class StoppingMuonTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:67: warning: Member produce(art::Event &e) override (function) of class StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:64: warning: Member StoppingMuonTagger(fhicl::ParameterSet const &p) (function) of class StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:69: warning: Member StoppingMuonTagger(StoppingMuonTagger const &)=delete (function) of class StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:70: warning: Member StoppingMuonTagger(StoppingMuonTagger &&)=delete (function) of class StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:71: warning: Member operator=(StoppingMuonTagger const &)=delete (function) of class StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:72: warning: Member operator=(StoppingMuonTagger &&)=delete (function) of class StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:75: warning: Member produce(art::Event &e) override (function) of class StoppingMuonTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:105: warning: Member UBXSec(fhicl::ParameterSet const &p) (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:110: warning: Member UBXSec(UBXSec const &)=delete (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:111: warning: Member UBXSec(UBXSec &&)=delete (function) of class UBXSec is not documented.

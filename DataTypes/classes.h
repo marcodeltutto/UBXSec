@@ -14,6 +14,8 @@
 
 #include "nusimdata/SimulationBase/MCParticle.h"
 
+#include "uboone/UBXSec/DataTypes/UBXSecEvent.h"
+
 #include <vector>
 
 template class art::Assns<anab::FlashMatch,recob::PFParticle>;
@@ -75,5 +77,6 @@ template class art::Wrapper<art::Assns<recob::PFParticle,ubana::MCGhost>>;
 template class art::Wrapper<art::Assns<ubana::MCGhost,recob::PFParticle>>;
 
 
-
+//template class UBXSecEvent;
+//template class std::vector<UBXSecEvent>;
 

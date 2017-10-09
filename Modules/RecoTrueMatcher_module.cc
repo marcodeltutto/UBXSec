@@ -143,8 +143,8 @@ void RecoTrueMatcher::produce(art::Event & e)
     art::Ptr<recob::PFParticle> pf_par = iter.second;  // The matched PFParticle 
 
     if(_debug) {
-      std::cout << "[RecoTrueMatching]\t PFP with ID " << pf_par->Self() << ", and PDG " << pf_par->PdgCode() << std::endl;
-      std::cout << "[RecoTrueMatching]\t\t ...matched to MCPAR with PDG " << mc_par->PdgCode() << std::endl;
+      std::cout << "[RecoTrueMatcher]\t PFP with ID " << pf_par->Self() << ", and PDG " << pf_par->PdgCode() << std::endl;
+      std::cout << "[RecoTrueMatcher]\t\t ...matched to MCPAR with PDG " << mc_par->PdgCode() << std::endl;
     }
 
     ubana::MCGhost mcGhost;

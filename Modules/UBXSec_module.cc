@@ -455,14 +455,14 @@ void UBXSec::produce(art::Event & e) {
     ubxsec_event->beamfls_z[n]    = flash.ZCenter();
 
     ubxsec_event->beamfls_spec[n].resize(32);
-    if (_debug) std::cout << "[UBXSec] Reco beam flash pe: " << std::endl;
+    //if (_debug) std::cout << "[UBXSec] Reco beam flash pe: " << std::endl;
     for (unsigned int i = 0; i < 32; i++) {
       unsigned int opdet = geo->OpDetFromOpChannel(i);
       ubxsec_event->beamfls_spec[n][opdet] = flash.PE(i);
       if (ubxsec_event->beamfls_time[n] > _beam_spill_start && ubxsec_event->beamfls_time[n] < _beam_spill_end) {
         if (flash.TotalPE() > _total_pe_cut) 
           ubxsec_event->candidate_flash_time = flash.Time();
-        if (_debug) std::cout << "\t PMT " << opdet << ": " << ubxsec_event->beamfls_spec[n][opdet] << std::endl;
+        //if (_debug) std::cout << "\t PMT " << opdet << ": " << ubxsec_event->beamfls_spec[n][opdet] << std::endl;
       }
     }
   }
@@ -1059,15 +1059,16 @@ void UBXSec::produce(art::Event & e) {
   // *********************
 
   _event_selection.SetEvent(ubxsec_event);
-  if (_debug) _event_selection.PrintConfig();
 
   size_t slice_index;
-  bool is_selected = _event_selection.IsSelected(slice_index);
+  std::string reason;
+  bool is_selected = _event_selection.IsSelected(slice_index, reason);
   if (_debug) std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Is Selected? " << (is_selected ? "YES" : "NO") << std::endl;
+  if (_debug) std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Failure Reason " << reason << std::endl;
 
   ::ubana::SelectionResult selection_result;
   selection_result.SetSelectionType("numu_cc_inclusive");
-
+  selection_result.SetFailureReason(reason);
 
   // *********************
   // Save Event Selection Output in the Event

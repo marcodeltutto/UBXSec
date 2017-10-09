@@ -24,7 +24,7 @@ namespace ubana {
     _beamSpillStarts          = pset.get< double > ( "BeamSpillStarts" );
     _beamSpillEnds            = pset.get< double > ( "BeamSpillEnds" );
 
-    _verbose                  = pset.get< double > ( "Verbose" );
+    _verbose                  = pset.get< bool > ( "Verbose" );
 
     _configured = true;
   }
@@ -53,13 +53,14 @@ namespace ubana {
 
   }
 
-  bool NuMuCCEventSelection::IsSelected() {
+  bool NuMuCCEventSelection::IsSelected(size_t & slice_index) {
     
     if (!_configured || !_event_is_set) {
       std::cout << "Call to NuMuCCEventSelection::IsSelected() without having done configuration or UBXSecEvent set" << std::endl;
       throw std::exception();
     }
 
+    slice_index = -1;
 
     // ************ 
     // Flashes
@@ -127,14 +128,19 @@ namespace ubana {
     
     if (_verbose) std::cout << "[NuMuCCEventSelection] Pass VertexCheck" << std::endl;
 
-    if(_ubxsec_event->slc_ntrack.at(scl_ll_max) >= _ntrack_cut) return false;
-    
+    if(_ubxsec_event->slc_ntrack.at(scl_ll_max) < _ntrack_cut) return false;
+   
+    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass NTrack Requirement" << std::endl; 
+
     if(!_ubxsec_event->slc_passed_min_track_quality.at(scl_ll_max)) return false;
+
+    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass Track Quality" << std::endl;
     
     if(!_ubxsec_event->slc_passed_min_vertex_quality.at(scl_ll_max)) return false;
     
-    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass Track/Vertex Quality" << std::endl;
+    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass Vertex Quality" << std::endl;
 
+    slice_index = scl_ll_max;
     return true;
 
   }

@@ -25,6 +25,7 @@
 #include "correct_saturation.fcl"
 
 #include "fiducial_volume_settings.fcl"
+#include "numucc_eventselection_settings.fcl"
 
 BEGIN_PROLOG
 #
@@ -61,6 +62,8 @@ UBXSec: {
   PECalib:                      @local::SPECalib
 
   FiducialVolumeSettings:       @local::UBXSecFiducialVolumeSettings
+
+  NuMuCCSelectionSettings:      @local::NuMuCCSelectionSettings
 
 }
 

@@ -1,0 +1,20 @@
+BEGIN_PROLOG
+
+NuMuCCSelectionSettings: {
+
+  DeltaXCutDown:         -100
+  DeltaXCutUp:           50
+  DeltaZCutDown:         -50
+  DeltaZCutUp:           50
+  FlsMatchScoreCut:      3e-4
+  VtxCheckAngleCutDown:  0.05
+  VtxCheckAngleCutUp:    2.9
+  NTrackCut:             1
+  PECut:                 50
+  BeamSpillStarts:       3.2
+  BeamSpillEnds:         4.8
+
+  Verbose:               true
+}
+
+END_PROLOG

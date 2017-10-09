@@ -1,0 +1,36 @@
+BEGIN_PROLOG
+#
+# Module configuration
+#
+
+UBXSec: {
+  module_type:                  "UBXSec"
+  PFParticleProducer:           "pandoraNu::UBXSec"
+  HitProducer:                  "pandoraCosmicHitRemoval::UBXSec"
+  GeantModule:                  "largeant"
+  SpacePointProducer:           "pandoraNu::UBXSec"
+  NeutrinoFlashMatchProducer:   "NeutrinoFlashMatch"
+  CosmicFlashMatchProducer:     "CosmicFlashMatch"
+  OpFlashBeamProducer:          "simpleFlashBeam"
+  ACPTProducer:                 "pandoraCosmicT0Reco"
+  TPCObjectProducer:            "TPCObjectMaker"
+  POTSummaryProducer:           "generator"
+  POTSummaryInstance:           ""
+  ParticleIDProducer:           "pandoraNupid::UBXSec"
+  MCGhostProducer:              "RecoTrueMatcher"
+  GeoCosmicTaggerProducer:      "pandoraNuGeoCosmicTag"
+
+  UseGENIEInfo:                 true
+  MinimumHitRequirement:        3
+
+  GeoCosmicScoreCut:            0.6
+  ToleranceTrackMultiplicity:   5.
+
+  PECalib:                      @local::SPECalib
+
+  FiducialVolumeSettings:       @local::UBXSecFiducialVolumeSettings
+
+  NuMuCCSelectionSettings:      @local::NuMuCCSelectionSettings
+}
+
+END_PROLOG

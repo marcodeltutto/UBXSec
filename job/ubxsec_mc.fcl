@@ -25,39 +25,14 @@
 #include "correct_saturation.fcl"
 
 #include "fiducial_volume_settings.fcl"
+#include "numucc_eventselection_settings.fcl"
+
+#include "ubxsec_settings.fcl"
 
 BEGIN_PROLOG
 #
 # Module configuration
 #
-
-UBXSec: {
-  module_type:                  "UBXSec"
-  PFParticleProducer:           "pandoraNu::UBXSec"
-  HitProducer:                  "pandoraCosmicHitRemoval::UBXSec"
-  GeantModule:                  "largeant"
-  SpacePointProducer:           "pandoraNu::UBXSec"
-  NeutrinoFlashMatchProducer:   "NeutrinoFlashMatch"
-  CosmicFlashMatchProducer:     "CosmicFlashMatch"
-  OpFlashBeamProducer:          "simpleFlashBeam"
-  ACPTProducer:                 "pandoraCosmicT0Reco"
-  TPCObjectProducer:            "TPCObjectMaker"
-  POTSummaryProducer:           "generator"
-  POTSummaryInstance:           ""
-  ParticleIDProducer:           "pandoraNupid::UBXSec"
-  MCGhostProducer:              "RecoTrueMatcher"
-  GeoCosmicTaggerProducer:      "pandoraNuGeoCosmicTag"
-
-  UseGENIEInfo:                 true
-  MinimumHitRequirement:        3
-
-  GeoCosmicScoreCut:            0.6
-  ToleranceTrackMultiplicity:   5.
-
-  PECalib:                      @local::SPECalib
-
-  FiducialVolumeSettings:       @local::UBXSecFiducialVolumeSettings
-}
 
 
 ubxsec_mc_reco:
@@ -93,12 +68,13 @@ ubxsec_mc_flashmatch:
    NeutrinoMCFlash:                @local::NeutrinoMCFlash
    NeutrinoFlashMatch:             @local::NeutrinoFlashMatch
    #CosmicFlashMatch:               @local::CosmicFlashMatch
+
+   UBXSec:                         @local::UBXSec
 }
 
 ubxsec_mc_ana:
 {
    CosmicTaggerAna : @local::CosmicTaggerAna 
-   UBXSec          : @local::UBXSec
 }
 
 
@@ -117,10 +93,10 @@ ubxsec_mc_producers: [ saturation,
                        pandoraNuGeoCosmicTag,
                        pandoraNuStoppingMuonTag,
                        NeutrinoMCFlash, 
-                       NeutrinoFlashMatch ] 
+                       NeutrinoFlashMatch,
+                       UBXSec ] 
 
-ubxsec_mc_analyzers: [ CosmicTaggerAna,
-                       UBXSec ]
+ubxsec_mc_analyzers: [ CosmicTaggerAna ]
 
 
 

@@ -16,6 +16,7 @@
 #include "cosmicflashtagger.fcl"
 #include "acpttagger.fcl"
 #include "recotruematcher.fcl"
+#include "cosmictaggerana.fcl"
 #include "geocosmictagger.fcl"
 #include "stoppingmuontagger.fcl"
 
@@ -24,44 +25,15 @@
 #include "correct_saturation.fcl"
 
 #include "fiducial_volume_settings.fcl"
+#include "numucc_eventselection_settings.fcl"
+
+#include "ubxsec_settings.fcl"
+
 
 BEGIN_PROLOG
 #
 # Module configuration
 #
-
-UBXSec: {
-  module_type:                  "UBXSec"
-  PFParticleProducer:           "pandoraNu::UBXSec"
-  HitProducer:                  "pandoraCosmicHitRemoval::UBXSec"
-  GeantModule:                  "largeant"
-  SpacePointProducer:           "pandoraNu::UBXSec"
-  NeutrinoFlashMatchProducer:   "NeutrinoFlashMatch"
-  CosmicFlashMatchProducer:     "CosmicFlashMatch"
-  OpFlashBeamProducer:          "simpleFlashBeam"
-  ACPTProducer:                 "pandoraCosmicT0Reco"
-  TPCObjectProducer:            "TPCObjectMaker"
-  POTSummaryProducer:           "beamdata"
-  POTSummaryInstance:           "bnbETOR860"
-  ParticleIDProducer:           "pandoraNupid::UBXSec"
-  MCGhostProducer:              "RecoTrueMatcher"
-  GeoCosmicTaggerProducer:      "pandoraNuGeoCosmicTag"
-  
-  BeamSpillStart:               3.30
-  BeamSpillEnd:                 4.90
-  TotalPECut:                   50
-  
-  UseGENIEInfo:                 true
-  MinimumHitRequirement:        3
- 
-  GeoCosmicScoreCut:            0.6
-  ToleranceTrackMultiplicity:   5.
- 
-  PECalib:                      @local::SPECalib
-
-  FiducialVolumeSettings:       @local::UBXSecFiducialVolumeSettings
-
-}
 
 
 ubxsec_data_reco:
@@ -93,11 +65,13 @@ ubxsec_data_flashmatch:
 
    NeutrinoFlashMatch:            @local::NeutrinoFlashMatch
    #CosmicFlashMatch:              @local::CosmicFlashMatch
+
+   UBXSec:                        @local::UBXSec
 }
 
 ubxsec_data_ana:
 {
-   UBXSec : @local::UBXSec
+   CosmicTaggerAna : @local::CosmicTaggerAna
 }
 
 
@@ -115,9 +89,10 @@ ubxsec_data_producers: [ saturation,
                          TPCObjectMaker,
                          pandoraNuGeoCosmicTag,
                          pandoraNuStoppingMuonTag,
-                         NeutrinoFlashMatch ] 
+                         NeutrinoFlashMatch,
+                         UBXSec ] 
 
-ubxsec_data_analyzers: [ UBXSec ]
+ubxsec_data_analyzers: [ CosmicTaggerAna ]
 
 
 # Set reco properties
@@ -155,7 +130,8 @@ ubxsec_data_reco.pandoraNupid.TrackModuleLabel:                    "pandoraNu::U
 ubxsec_data_flashmatch.NeutrinoFlashMatch.TrackModule:             "pandoraNu::UBXSec"
 
 # Set UBXSec properties
-ubxsec_data_ana.UBXSec.UseGENIEInfo:                               false
-
+ubxsec_data_reco.UBXSec.UseGENIEInfo:                               false
+ubxsec_data_reco.UBXSec.POTSummaryProducer:                         "beamdata"
+ubxsec_data_reco.UBXSec.POTSummaryInstance:                         "bnbETOR860"
 
 END_PROLOG

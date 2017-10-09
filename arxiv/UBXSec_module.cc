@@ -60,7 +60,6 @@
 #include "uboone/UBXSec/DataTypes/TPCObject.h"
 
 #include "uboone/UBXSec/DataTypes/UBXSecEvent.h"
-#include "uboone/UBXSec/DataTypes/SelectionResult.h"
 
 // LArSoft include
 #include "uboone/UBFlashFinder/PECalib.h"
@@ -79,7 +78,6 @@
 #include "uboone/UBXSec/Algorithms/FindDeadRegions.h"
 #include "uboone/UBXSec/Algorithms/MuonCandidateFinder.h"
 #include "uboone/UBXSec/Algorithms/FiducialVolume.h"
-#include "uboone/UBXSec/Algorithms/NuMuCCEventSelection.h"
 
 // Root include
 #include "TString.h"
@@ -128,7 +126,6 @@ private:
   FindDeadRegions deadRegionsFinder;
   //ubxsec::McPfpMatch mcpfpMatcher;
   ::ubana::FiducialVolume _fiducial_volume;
-  ::ubana::NuMuCCEventSelection _event_selection;
   ::pmtana::PECalib _pecalib;
 
   // To be set via fcl parameters
@@ -169,6 +166,66 @@ private:
   TTree* _tree1;
   UBXSecEvent *ubxsec_event = new UBXSecEvent();
  
+  /*
+  int _run, _subrun, _event;
+  int _muon_is_reco;
+  double _muon_reco_pur = -9999;
+  double _muon_reco_eff = -9999;
+  double _true_muon_mom = -9999;
+  double _true_muon_mom_matched = -9999;
+  int _nPFPtagged, _muon_is_flash_tagged;
+  double _muon_tag_score;
+  double _fm_score;
+  int _fv, _ccnc, _nupdg;
+  double _nu_e;
+  bool _is_signal;
+  double _mc_muon_contained;
+  double _vtx_resolution;
+
+  int _nslices;
+  std::vector<double> _slc_flsmatch_score, _slc_flsmatch_qllx, _slc_flsmatch_tpcx, _slc_flsmatch_t0, _slc_flsmatch_hypoz;
+  std::vector<double> _slc_flsmatch_xfixed_chi2, _slc_flsmatch_xfixed_ll;
+  std::vector<double> _slc_flsmatch_cosmic_score, _slc_flsmatch_cosmic_t0;
+  std::vector<double> _slc_nuvtx_x, _slc_nuvtx_y, _slc_nuvtx_z;
+  std::vector<int> _slc_nuvtx_fv;
+  std::vector<double> _slc_vtxcheck_angle;
+  std::vector<int> _slc_origin, _slc_origin_extra;
+  std::vector<int> _slc_nhits_u, _slc_nhits_v, _slc_nhits_w;
+  std::vector<double> _slc_longesttrack_length;
+  std::vector<double> _slc_longesttrack_phi, _slc_longesttrack_theta;
+  std::vector<bool> _slc_longesttrack_iscontained;
+  std::vector<bool> _slc_muoncandidate_exists;
+  std::vector<double> _slc_muoncandidate_length;
+  std::vector<double> _slc_muoncandidate_phi, _slc_muoncandidate_theta;
+  std::vector<int> _slc_acpt_outoftime;
+  std::vector<int> _slc_crosses_top_boundary;
+  std::vector<int> _slc_nuvtx_closetodeadregion_u, _slc_nuvtx_closetodeadregion_v, _slc_nuvtx_closetodeadregion_w;
+  std::vector<double> _slc_kalman_chi2;
+  std::vector<int> _slc_kalman_ndof;
+  std::vector<bool> _slc_passed_min_track_quality, _slc_passed_min_vertex_quality;
+  std::vector<double> _slc_n_intime_pe_closestpmt;
+  std::vector<double> _slc_maxdistance_vtxtrack;
+  std::vector<int> _slc_npfp, _slc_ntrack, _slc_nshower;
+  std::vector<bool> _slc_iscontained;
+  std::vector<int> _slc_mult_pfp, _slc_mult_track, _slc_mult_shower, _slc_mult_track_tolerance;
+  std::vector<bool> _slc_geocosmictag;
+
+  int _nbeamfls;
+  std::vector<double> _beamfls_time, _beamfls_pe, _beamfls_z;
+  bool _no_mcflash_but_op_activity; ///< is true if we don't have a neutrino MCFlash in the event, but there is a recon flash in the beam spill
+  std::vector<std::vector<double>> _beamfls_spec, _slc_flshypo_spec, _slc_flshypo_xfixed_spec;
+  std::vector<double> _numc_flash_spec;
+  int _nsignal;
+  int _is_swtriggered;
+
+  std::vector<double> _mctrk_start_x, _mctrk_start_y, _mctrk_start_z;
+  std::vector<double> _trk_start_x, _trk_start_y, _trk_start_z;
+  std::vector<double> _vtx_x, _vtx_y, _vtx_z;
+  std::vector<double> _tvtx_x, _tvtx_y, _tvtx_z;
+
+  double _pot;
+  */
+
   /* 
   TTree* _tree2;
   int _total_matches, _nmatch;
@@ -232,16 +289,108 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
 
   _fiducial_volume.PrintConfig();
 
-  _event_selection.Configure(p.get<fhicl::ParameterSet>("NuMuCCSelectionSettings"));
-
-  _event_selection.PrintConfig();
-
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
 
-  int bufsize    = 16000;
-  int splitlevel = 99;
-  _tree1->Branch("ubxsec_event_split", &ubxsec_event, bufsize, splitlevel);
+  _tree1->Branch("ubxsec_event_split", &ubxsec_event, 16000, 99);
+ /*
+  _tree1->Branch("run",                            &_run,                   "run/I");
+  _tree1->Branch("subrun",                         &_subrun,                "subrun/I");
+  _tree1->Branch("event",                          &_event,                 "event/I");
+  _tree1->Branch("muon_is_reco",                   &_muon_is_reco,          "muon_is_reco/I");
+  _tree1->Branch("muon_reco_pur",                  &_muon_reco_pur,         "muon_reco_pur/D");
+  _tree1->Branch("muon_reco_eff",                  &_muon_reco_eff,         "muon_reco_eff/D");
+  _tree1->Branch("true_muon_mom",                  &_true_muon_mom,         "true_muon_mom/D");
+  _tree1->Branch("true_muon_mom_matched",          &_true_muon_mom_matched, "true_muon_mom_matched/D");
+  _tree1->Branch("nPFPtagged",                     &_nPFPtagged,            "nPFPtagged/I");
+  _tree1->Branch("muon_is_flash_tagged",           &_muon_is_flash_tagged,  "muon_is_flash_tagged/I");
+  _tree1->Branch("muon_tag_score",                 &_muon_tag_score,        "muon_tag_score/D");
+  _tree1->Branch("fm_score",                       &_fm_score,              "fm_score/D");
+  _tree1->Branch("fv",                             &_fv,                    "fv/I");
+  _tree1->Branch("ccnc",                           &_ccnc,                  "ccnc/I");
+  _tree1->Branch("nupdg",                          &_nupdg,                 "nupdg/I");
+  _tree1->Branch("is_signal",                      &_is_signal,             "is_signal/O");
+  _tree1->Branch("nu_e",                           &_nu_e,                  "nu_e/D");
+  _tree1->Branch("mc_muon_contained",              &_mc_muon_contained,     "mc_muon_contained/O");
+  _tree1->Branch("is_swtriggered",                 &_is_swtriggered,        "is_swtriggered/I");
+  _tree1->Branch("vtx_resolution",                 &_vtx_resolution,        "vtx_resolution/D");
+
+  _tree1->Branch("nslices",                        &_nslices,            "nslices/I");
+  _tree1->Branch("slc_flsmatch_score",             "std::vector<double>", &_slc_flsmatch_score);
+  _tree1->Branch("slc_flsmatch_qllx",              "std::vector<double>", &_slc_flsmatch_qllx);
+  _tree1->Branch("slc_flsmatch_tpcx",              "std::vector<double>", &_slc_flsmatch_tpcx);
+  _tree1->Branch("slc_flsmatch_t0",                "std::vector<double>", &_slc_flsmatch_t0);
+  _tree1->Branch("slc_flsmatch_hypoz",             "std::vector<double>", &_slc_flsmatch_hypoz);
+  _tree1->Branch("slc_flsmatch_xfixed_chi2",       "std::vector<double>", &_slc_flsmatch_xfixed_chi2);
+  _tree1->Branch("slc_flsmatch_xfixed_ll",         "std::vector<double>", &_slc_flsmatch_xfixed_ll);
+  _tree1->Branch("slc_flsmatch_cosmic_score",      "std::vector<double>", &_slc_flsmatch_cosmic_score);
+  _tree1->Branch("slc_flsmatch_cosmic_t0",         "std::vector<double>", &_slc_flsmatch_cosmic_t0);
+  _tree1->Branch("slc_nuvtx_x",                    "std::vector<double>", &_slc_nuvtx_x);
+  _tree1->Branch("slc_nuvtx_y",                    "std::vector<double>", &_slc_nuvtx_y);
+  _tree1->Branch("slc_nuvtx_z",                    "std::vector<double>", &_slc_nuvtx_z);
+  _tree1->Branch("slc_nuvtx_fv",                   "std::vector<int>",    &_slc_nuvtx_fv);
+  _tree1->Branch("slc_vtxcheck_angle",             "std::vector<double>", &_slc_vtxcheck_angle);
+  _tree1->Branch("slc_origin",                     "std::vector<int>",    &_slc_origin);
+  _tree1->Branch("slc_origin_extra",               "std::vector<int>",    &_slc_origin_extra);
+  _tree1->Branch("slc_nhits_u",                    "std::vector<int>",    &_slc_nhits_u);
+  _tree1->Branch("slc_nhits_v",                    "std::vector<int>",    &_slc_nhits_v);
+  _tree1->Branch("slc_nhits_w",                    "std::vector<int>",    &_slc_nhits_w);
+  _tree1->Branch("slc_longesttrack_length",        "std::vector<double>", &_slc_longesttrack_length);
+  _tree1->Branch("slc_longesttrack_phi",           "std::vector<double>", &_slc_longesttrack_phi);
+  _tree1->Branch("slc_longesttrack_theta",         "std::vector<double>", &_slc_longesttrack_theta);
+  _tree1->Branch("slc_longesttrack_iscontained",   "std::vector<bool>",   &_slc_longesttrack_iscontained);
+  _tree1->Branch("slc_muoncandidate_exists",       "std::vector<bool>",   &_slc_muoncandidate_exists);
+  _tree1->Branch("slc_muoncandidate_length",       "std::vector<double>", &_slc_muoncandidate_length);
+  _tree1->Branch("slc_muoncandidate_phi"   ,       "std::vector<double>", &_slc_muoncandidate_phi);
+  _tree1->Branch("slc_muoncandidate_theta",        "std::vector<double>", &_slc_muoncandidate_theta);
+  _tree1->Branch("slc_acpt_outoftime",             "std::vector<int>",    &_slc_acpt_outoftime);
+  _tree1->Branch("slc_crosses_top_boundary",       "std::vector<int>",    &_slc_crosses_top_boundary);
+  _tree1->Branch("slc_nuvtx_closetodeadregion_u",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion_u);
+  _tree1->Branch("slc_nuvtx_closetodeadregion_v",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion_v);
+  _tree1->Branch("slc_nuvtx_closetodeadregion_w",  "std::vector<int>",    &_slc_nuvtx_closetodeadregion_w);
+  _tree1->Branch("slc_kalman_chi2",                "std::vector<double>", &_slc_kalman_chi2);
+  _tree1->Branch("slc_kalman_ndof",                "std::vector<int>",    &_slc_kalman_ndof);
+  _tree1->Branch("slc_passed_min_track_quality",   "std::vector<bool>",   &_slc_passed_min_track_quality);
+  _tree1->Branch("slc_passed_min_vertex_quality",  "std::vector<bool>",   &_slc_passed_min_vertex_quality);
+  _tree1->Branch("slc_n_intime_pe_closestpmt",     "std::vector<double>", &_slc_n_intime_pe_closestpmt);
+  _tree1->Branch("slc_maxdistance_vtxtrack",       "std::vector<double>", &_slc_maxdistance_vtxtrack);
+  _tree1->Branch("slc_npfp",                       "std::vector<int>",    &_slc_npfp);
+  _tree1->Branch("slc_ntrack",                     "std::vector<int>",    &_slc_ntrack);
+  _tree1->Branch("slc_nshower",                    "std::vector<int>",    &_slc_nshower);
+  _tree1->Branch("slc_iscontained",                "std::vector<bool>",   &_slc_iscontained);
+  _tree1->Branch("slc_mult_pfp",                   "std::vector<int>",    &_slc_mult_pfp);
+  _tree1->Branch("slc_mult_track",                 "std::vector<int>",    &_slc_mult_track);
+  _tree1->Branch("slc_mult_shower",                "std::vector<int>",    &_slc_mult_shower);
+  _tree1->Branch("slc_mult_track_tolerance",       "std::vector<int>",    &_slc_mult_track_tolerance);
+  _tree1->Branch("slc_geocosmictag",               "std::vector<bool>",   &_slc_geocosmictag);
+
+  _tree1->Branch("nbeamfls",                       &_nbeamfls,                         "nbeamfls/I");
+  _tree1->Branch("beamfls_time",                   "std::vector<double>",              &_beamfls_time);
+  _tree1->Branch("beamfls_pe",                     "std::vector<double>",              &_beamfls_pe);
+  _tree1->Branch("beamfls_z",                      "std::vector<double>",              &_beamfls_z);
+  _tree1->Branch("no_mcflash_but_op_activity",     &_no_mcflash_but_op_activity,       "no_mcflash_but_op_activity/O");
+  _tree1->Branch("beamfls_spec",                   "std::vector<std::vector<double>>", &_beamfls_spec);
+  _tree1->Branch("numc_flash_spec",                "std::vector<double>",              &_numc_flash_spec);
+  _tree1->Branch("slc_flshypo_xfixed_spec",        "std::vector<std::vector<double>>", &_slc_flshypo_xfixed_spec);
+  _tree1->Branch("slc_flshypo_spec",               "std::vector<std::vector<double>>", &_slc_flshypo_spec);
+  _tree1->Branch("nsignal",                        &_nsignal,                          "nsignal/I");
+
+  _tree1->Branch("mctrk_start_x",                  "std::vector<double>", &_mctrk_start_x);
+  _tree1->Branch("mctrk_start_y",                  "std::vector<double>", &_mctrk_start_y);
+  _tree1->Branch("mctrk_start_z",                  "std::vector<double>", &_mctrk_start_z);
+  _tree1->Branch("trk_start_x",                    "std::vector<double>", &_trk_start_x);
+  _tree1->Branch("trk_start_y",                    "std::vector<double>", &_trk_start_y);
+  _tree1->Branch("trk_start_z",                    "std::vector<double>", &_trk_start_z);
+  _tree1->Branch("vtx_x",                          "std::vector<double>", &_vtx_x);
+  _tree1->Branch("vtx_y",                          "std::vector<double>", &_vtx_y);
+  _tree1->Branch("vtx_z",                          "std::vector<double>", &_vtx_z);
+  _tree1->Branch("tvtx_x",                         "std::vector<double>", &_tvtx_x);
+  _tree1->Branch("tvtx_y",                         "std::vector<double>", &_tvtx_y);
+  _tree1->Branch("tvtx_z",                         "std::vector<double>", &_tvtx_z);
+
+  _tree1->Branch("pot",                            &_pot,                "pot/D");
+  */
+
 
   /*
   _tree2 = fs->make<TTree>("matchtree","");
@@ -282,13 +431,6 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _csvfile << "pida,trklen,y" << std::endl;
 
   _run_subrun_list_file.open ("run_subrub_list.txt", std::ofstream::out | std::ofstream::trunc);
-
-
-
-
-  produces<std::vector<ubana::SelectionResult>>();
-  produces<art::Assns<ubana::SelectionResult, ubana::TPCObject>>();
-
 }
 
 
@@ -298,15 +440,9 @@ void UBXSec::produce(art::Event & e) {
   if(_debug) std::cout << "********** UBXSec starts" << std::endl;
   if(_debug) std::cout << "event: " << e.id().event() << std::endl;
 
-
-  // Instantiate the output
-  std::unique_ptr< std::vector<ubana::SelectionResult>>                   selectionResultVector           (new std::vector<ubana::SelectionResult>);
-  std::unique_ptr< art::Assns<ubana::SelectionResult, ubana::TPCObject>>  assnOutSelectionResultTPCObject (new art::Assns<ubana::SelectionResult, ubana::TPCObject>);
-
-
-  ubxsec_event->run    = e.id().run();
-  ubxsec_event->subrun = e.id().subRun();
-  ubxsec_event->event  = e.id().event();
+  _run    = e.id().run();
+  _subrun = e.id().subRun();
+  _event  = e.id().event();
 
   _is_data = e.isRealData();
   _is_mc   = !_is_data;
@@ -442,27 +578,27 @@ void UBXSec::produce(art::Event & e) {
     std::cerr << "Don't have good flashes." << std::endl;
   }
 
-  ubxsec_event->nbeamfls = beamflash_h->size();
-  ubxsec_event->beamfls_pe.resize(ubxsec_event->nbeamfls);
-  ubxsec_event->beamfls_time.resize(ubxsec_event->nbeamfls);
-  ubxsec_event->beamfls_z.resize(ubxsec_event->nbeamfls);
-  ubxsec_event->beamfls_spec.resize(ubxsec_event->nbeamfls);
+  _nbeamfls = beamflash_h->size();
+  _beamfls_pe.resize(_nbeamfls);
+  _beamfls_time.resize(_nbeamfls);
+  _beamfls_z.resize(_nbeamfls);
+  _beamfls_spec.resize(_nbeamfls);
 
   for (size_t n = 0; n < beamflash_h->size(); n++) {
     auto const& flash = (*beamflash_h)[n];
-    ubxsec_event->beamfls_pe[n]   = flash.TotalPE();
-    ubxsec_event->beamfls_time[n] = flash.Time();
-    ubxsec_event->beamfls_z[n]    = flash.ZCenter();
+    _beamfls_pe[n]   = flash.TotalPE();
+    _beamfls_time[n] = flash.Time();
+    _beamfls_z[n]    = flash.ZCenter();
 
-    ubxsec_event->beamfls_spec[n].resize(32);
-    //if (_debug) std::cout << "[UBXSec] Reco beam flash pe: " << std::endl;
+    _beamfls_spec[n].resize(32);
+    if (_debug) std::cout << "[UBXSec] Reco beam flash pe: " << std::endl;
     for (unsigned int i = 0; i < 32; i++) {
       unsigned int opdet = geo->OpDetFromOpChannel(i);
-      ubxsec_event->beamfls_spec[n][opdet] = flash.PE(i);
-      if (ubxsec_event->beamfls_time[n] > _beam_spill_start && ubxsec_event->beamfls_time[n] < _beam_spill_end) {
+      _beamfls_spec[n][opdet] = flash.PE(i);
+      if (_beamfls_time[n] > _beam_spill_start && _beamfls_time[n] < _beam_spill_end) {
         if (flash.TotalPE() > _total_pe_cut) 
-          ubxsec_event->candidate_flash_time = flash.Time();
-        //if (_debug) std::cout << "\t PMT " << opdet << ": " << ubxsec_event->beamfls_spec[n][opdet] << std::endl;
+          _candidate_flash_time = flash.Time();
+        if (_debug) std::cout << "\t PMT " << opdet << ": " << _beamfls_spec[n][opdet] << std::endl;
       }
     }
   }
@@ -511,49 +647,49 @@ void UBXSec::produce(art::Event & e) {
       double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),
                                 mclist[iList]->GetNeutrino().Nu().Vy(),
                                 mclist[iList]->GetNeutrino().Nu().Vz()};
-      if (_fiducial_volume.InFV(truth_nu_vtx)) ubxsec_event->fv = 1;
-      else ubxsec_event->fv = 0;
-      ubxsec_event->ccnc    = mclist[iList]->GetNeutrino().CCNC();
-      ubxsec_event->nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
-      ubxsec_event->nu_e    = mclist[iList]->GetNeutrino().Nu().E();
+      if (_fiducial_volume.InFV(truth_nu_vtx)) _fv = 1;
+      else _fv = 0;
+      _ccnc    = mclist[iList]->GetNeutrino().CCNC();
+      _nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
+      _nu_e    = mclist[iList]->GetNeutrino().Nu().E();
 
-      ubxsec_event->tvtx_x.clear(); ubxsec_event->tvtx_x.clear(); ubxsec_event->tvtx_z.clear();
+      _tvtx_x.clear(); _tvtx_y.clear(); _tvtx_z.clear();
       for(size_t n = 0; n < mclist.size(); n++ ) {
-        ubxsec_event->tvtx_x.emplace_back(mclist[n]->GetNeutrino().Nu().Vx());
-        ubxsec_event->tvtx_y.emplace_back(mclist[n]->GetNeutrino().Nu().Vy());
-        ubxsec_event->tvtx_z.emplace_back(mclist[n]->GetNeutrino().Nu().Vz());
+        _tvtx_x.emplace_back(mclist[n]->GetNeutrino().Nu().Vx());
+        _tvtx_y.emplace_back(mclist[n]->GetNeutrino().Nu().Vy());
+        _tvtx_z.emplace_back(mclist[n]->GetNeutrino().Nu().Vz());
       }
 
-      ubxsec_event->nsignal = 0;
-      if(ubxsec_event->nupdg==14 && ubxsec_event->ccnc==0 && ubxsec_event->fv==1) ubxsec_event->nsignal=1; 
+      _nsignal = 0;
+      if(_nupdg==14 && _ccnc==0 && _fv==1) _nsignal=1; 
 
       // Also save muon momentum if is signal
-      ubxsec_event->true_muon_mom = -9999.;
-      if (ubxsec_event->nsignal == 1) {
+      _true_muon_mom = -9999.;
+      if (_nsignal == 1) {
         for (int p = 0; p < mclist[iList]->NParticles(); p++) {
           auto const & mcp = mclist[iList]->GetParticle(p);
           if (mcp.Mother() != 0) continue;
           if (mcp.PdgCode() != 13) continue;
-          ubxsec_event->true_muon_mom = mcp.P();
+          _true_muon_mom = mcp.P();
         }
       }
     } // neutrino origin
     else {
-      ubxsec_event->ccnc = -1;
-      ubxsec_event->nupdg = -1;
-      ubxsec_event->nu_e = -1;
-      ubxsec_event->true_muon_mom = -9999.;
+      _ccnc = -1;
+      _nupdg = -1;
+      _nu_e = -1;
+      _true_muon_mom = -9999.;
     }
   } else {
-    ubxsec_event->ccnc = -1;
-    ubxsec_event->nupdg = -1;
-    ubxsec_event->nu_e = -1;
-    ubxsec_event->true_muon_mom = -9999.;
+    _ccnc = -1;
+    _nupdg = -1;
+    _nu_e = -1;
+    _true_muon_mom = -9999.;
   }
 
-  ubxsec_event->is_signal = false;
-  if (ubxsec_event->ccnc == 0 && ubxsec_event->nupdg == 14 && ubxsec_event->fv == 1) {
-    ubxsec_event->is_signal = true;
+  _is_signal = false;
+  if (_ccnc == 0 && _nupdg == 14 && _fv == 1) {
+    _is_signal = true;
   }
 
   lar_pandora::PFParticlesToSpacePoints pfp_to_spacept;
@@ -580,32 +716,79 @@ void UBXSec::produce(art::Event & e) {
   }
 
 
-  ubxsec_event->nslices = tpcobj_h->size();
-  ubxsec_event->ResizeVectors(tpcobj_h->size());
-
+  _nslices = tpcobj_h->size();
+  _slc_flsmatch_score.resize(_nslices, -9999);
+  _slc_flsmatch_qllx.resize(_nslices, -9999);
+  _slc_flsmatch_tpcx.resize(_nslices, -9999);
+  _slc_flsmatch_t0.resize(_nslices, -9999);
+  _slc_flsmatch_hypoz.resize(_nslices, -9999);
+  _slc_flsmatch_xfixed_chi2.resize(_nslices, -9999);
+  _slc_flsmatch_xfixed_ll.resize(_nslices, -9999);
+  _slc_nuvtx_x.resize(_nslices);
+  _slc_nuvtx_y.resize(_nslices);
+  _slc_nuvtx_z.resize(_nslices);
+  _slc_nuvtx_fv.resize(_nslices);
+  _slc_vtxcheck_angle.resize(_nslices);
+  _slc_origin.resize(_nslices);
+  _slc_origin_extra.resize(_nslices);
+  _slc_flshypo_xfixed_spec.resize(_nslices);
+  _slc_flshypo_spec.resize(_nslices);
+  _slc_nhits_u.resize(_nslices, -9999);
+  _slc_nhits_v.resize(_nslices, -9999);
+  _slc_nhits_w.resize(_nslices, -9999);
+  _slc_flsmatch_cosmic_score.resize(_nslices, -9999);
+  _slc_flsmatch_cosmic_t0.resize(_nslices, -9999);
+  _slc_longesttrack_length.resize(_nslices, -9999);
+  _slc_longesttrack_phi.resize(_nslices, -9999);
+  _slc_longesttrack_theta.resize(_nslices, -9999);
+  _slc_longesttrack_iscontained.resize(_nslices, -9999);
+  _slc_muoncandidate_exists.resize(_nslices, -9999);
+  _slc_muoncandidate_length.resize(_nslices, -9999);
+  _slc_muoncandidate_phi.resize(_nslices, -9999);
+  _slc_muoncandidate_theta.resize(_nslices, -9999);
+  _slc_acpt_outoftime.resize(_nslices, -9999);
+  _slc_crosses_top_boundary.resize(_nslices, -9999);
+  _slc_nuvtx_closetodeadregion_u.resize(_nslices, -9999);
+  _slc_nuvtx_closetodeadregion_v.resize(_nslices, -9999);
+  _slc_nuvtx_closetodeadregion_w.resize(_nslices, -9999);  
+  _slc_kalman_chi2.resize(_nslices, -9999);
+  _slc_kalman_ndof.resize(_nslices, -9999);  
+  _slc_passed_min_track_quality.resize(_nslices, -9999);
+  _slc_passed_min_vertex_quality.resize(_nslices, -9999);
+  _slc_n_intime_pe_closestpmt.resize(_nslices, -9999);
+  _slc_maxdistance_vtxtrack.resize(_nslices, -9999);
+  _slc_npfp.resize(_nslices, -9999);
+  _slc_ntrack.resize(_nslices, -9999);
+  _slc_nshower.resize(_nslices, -9999);
+  _slc_iscontained.resize(_nslices, -9999);
+  _slc_mult_pfp.resize(_nslices, -9999);
+  _slc_mult_track.resize(_nslices, -9999);
+  _slc_mult_shower.resize(_nslices, -9999);
+  _slc_mult_track_tolerance.resize(_nslices, -9999);
+  _slc_geocosmictag.resize(_nslices, false);
 
   std::cout << "[UBXSec] --- SAVING INFORMATION" << std::endl;
-  ubxsec_event->vtx_resolution = -9999;
+  _vtx_resolution = -9999;
  
   for (unsigned int slice = 0; slice < tpcobj_h->size(); slice++){
     std::cout << "[UBXSec] >>> SLICE " << slice << std::endl;
 
     ubana::TPCObject tpcobj = (*tpcobj_h)[slice];
 
-    ubxsec_event->slc_npfp[slice]    = tpcobj.GetNPFP();
-    ubxsec_event->slc_ntrack[slice]  = tpcobj.GetNTracks();
-    ubxsec_event->slc_nshower[slice] = tpcobj.GetNShowers();
+    _slc_npfp[slice]    = tpcobj.GetNPFP();
+    _slc_ntrack[slice]  = tpcobj.GetNTracks();
+    _slc_nshower[slice] = tpcobj.GetNShowers();
 
     // Slice origin 
-    ubxsec_event->slc_origin[slice] = tpcobj.GetOrigin();
-    std::cout << "[UBXSec] \t Origin is " << ubxsec_event->slc_origin[slice] << std::endl;
+    _slc_origin[slice] = tpcobj.GetOrigin();
+    std::cout << "[UBXSec] \t Origin is " << _slc_origin[slice] << std::endl;
 
     // Slice origin extra
-    ubxsec_event->slc_origin_extra[slice] = tpcobj.GetOriginExtra();
-    std::cout << "[UBXSec] \t Origin extra is " << ubxsec_event->slc_origin_extra[slice] << std::endl;
+    _slc_origin_extra[slice] = tpcobj.GetOriginExtra();
+    std::cout << "[UBXSec] \t Origin extra is " << _slc_origin_extra[slice] << std::endl;
 
     // Containment
-    ubxsec_event->slc_iscontained[slice] = UBXSecHelper::TracksAreContained(tpcobj.GetTracks());
+    _slc_iscontained[slice] = UBXSecHelper::TracksAreContained(tpcobj.GetTracks());
 
     // Reco vertex
     double reco_nu_vtx_raw[3];
@@ -614,16 +797,16 @@ void UBXSec::produce(art::Event & e) {
 
     // X position correction
     double reco_nu_vtx[3];
-    UBXSecHelper::GetTimeCorrectedPoint(reco_nu_vtx_raw, reco_nu_vtx, ubxsec_event->candidate_flash_time, _drift_velocity);
-    ubxsec_event->slc_nuvtx_x[slice] = reco_nu_vtx[0];
-    ubxsec_event->slc_nuvtx_y[slice] = reco_nu_vtx[1];
-    ubxsec_event->slc_nuvtx_z[slice] = reco_nu_vtx[2];
-    ubxsec_event->slc_nuvtx_fv[slice] = (_fiducial_volume.InFV(reco_nu_vtx) ? 1 : 0);
-    std::cout << "[UBXSec] \t Reco vertex is " << ubxsec_event->slc_nuvtx_x[slice] << ", " << ubxsec_event->slc_nuvtx_y[slice] << ", " << ubxsec_event->slc_nuvtx_z[slice] << std::endl; 
-    std::cout << "[UBXSec] \t Reco vertex is " << (ubxsec_event->slc_nuvtx_fv[slice]==1 ? "in" : "ouside") << " the FV." << std::endl;
+    UBXSecHelper::GetTimeCorrectedPoint(reco_nu_vtx_raw, reco_nu_vtx, _candidate_flash_time, _drift_velocity);
+    _slc_nuvtx_x[slice] = reco_nu_vtx[0];
+    _slc_nuvtx_y[slice] = reco_nu_vtx[1];
+    _slc_nuvtx_z[slice] = reco_nu_vtx[2];
+    _slc_nuvtx_fv[slice] = (_fiducial_volume.InFV(reco_nu_vtx) ? 1 : 0);
+    std::cout << "[UBXSec] \t Reco vertex is " << _slc_nuvtx_x[slice] << ", " << _slc_nuvtx_y[slice] << ", " << _slc_nuvtx_z[slice] << std::endl; 
+    std::cout << "[UBXSec] \t Reco vertex is " << (_slc_nuvtx_fv[slice]==1 ? "in" : "ouside") << " the FV." << std::endl;
 
     // Through-going?
-    ubxsec_event->slc_geocosmictag[slice] = false;
+    _slc_geocosmictag[slice] = false;
     std::vector<art::Ptr<anab::CosmicTag>> geo_cosmic_tags = tpcobjToCosmicTagAssns.at(slice);
     if(geo_cosmic_tags.size() == 0 || geo_cosmic_tags.size() > 1) {
       std::cout << "[UBXSec] \t More than one Geo Cosmic Tag match per tpcobj ?!" << std::endl;
@@ -631,25 +814,25 @@ void UBXSec::produce(art::Event & e) {
       auto ct = geo_cosmic_tags.at(0);
       if (ct->CosmicScore() > _geo_cosmic_score_cut) {
         std::cout << "[UBXSec] \t This slice has been tagged as through-going cosmic" << std::endl;
-        ubxsec_event->slc_geocosmictag[slice] = true;
+        _slc_geocosmictag[slice] = true;
       }
     }
     
     // Vertex resolution
-    if (ubxsec_event->slc_origin[slice] == ubana::kBeamNeutrino) {
-      ubxsec_event->vtx_resolution = sqrt( pow(ubxsec_event->slc_nuvtx_y[slice]-ubxsec_event->tvtx_y[0], 2) + pow(ubxsec_event->slc_nuvtx_z[slice]-ubxsec_event->tvtx_z[0], 2) );
+    if (_slc_origin[slice] == ubana::kBeamNeutrino) {
+      _vtx_resolution = sqrt( pow(_slc_nuvtx_y[slice]-_tvtx_y[0], 2) + pow(_slc_nuvtx_z[slice]-_tvtx_z[0], 2) );
     } 
 
     // Multiplicity
     int p, t, s;
     tpcobj.GetMultiplicity(p, t, s);
-    ubxsec_event->slc_mult_pfp[slice] = p;
-    ubxsec_event->slc_mult_track[slice] = t;
-    ubxsec_event->slc_mult_shower[slice] = s;
-    ubxsec_event->slc_mult_track_tolerance[slice] = tpcobj.GetNTracksCloseToVertex(_tolerance_track_multiplicity);
+    _slc_mult_pfp[slice] = p;
+    _slc_mult_track[slice] = t;
+    _slc_mult_shower[slice] = s;
+    _slc_mult_track_tolerance[slice] = tpcobj.GetNTracksCloseToVertex(_tolerance_track_multiplicity);
 
     // Neutrino Flash match
-    ubxsec_event->slc_flsmatch_score[slice] = -9999;
+    _slc_flsmatch_score[slice] = -9999;
     std::vector<art::Ptr<ubana::FlashMatch>> pfpToFlashMatch_v = tpcobjToFlashMatchAssns.at(slice);
     if (pfpToFlashMatch_v.size() > 1) {
       std::cout << "[UBXSec] \t More than one flash match per nu pfp ?!" << std::endl;
@@ -657,23 +840,23 @@ void UBXSec::produce(art::Event & e) {
     } else if (pfpToFlashMatch_v.size() == 0){
       // do nothing
     } else {
-      ubxsec_event->slc_flsmatch_score[slice]       = pfpToFlashMatch_v[0]->GetScore(); 
-      ubxsec_event->slc_flsmatch_qllx[slice]        = pfpToFlashMatch_v[0]->GetEstimatedX();
-      ubxsec_event->slc_flsmatch_tpcx[slice]        = pfpToFlashMatch_v[0]->GetTPCX();
-      ubxsec_event->slc_flsmatch_t0[slice]          = pfpToFlashMatch_v[0]->GetT0();
-      ubxsec_event->slc_flsmatch_hypoz[slice]       = UBXSecHelper::GetFlashZCenter(pfpToFlashMatch_v[0]->GetHypoFlashSpec());
-      ubxsec_event->slc_flsmatch_xfixed_chi2[slice] = pfpToFlashMatch_v[0]->GetXFixedChi2();
-      ubxsec_event->slc_flsmatch_xfixed_ll[slice]   = pfpToFlashMatch_v[0]->GetXFixedLl();
-      ubxsec_event->slc_flshypo_xfixed_spec[slice]  = pfpToFlashMatch_v[0]->GetXFixedHypoFlashSpec();
-      ubxsec_event->slc_flshypo_spec[slice]         = pfpToFlashMatch_v[0]->GetHypoFlashSpec();
+      _slc_flsmatch_score[slice]       = pfpToFlashMatch_v[0]->GetScore(); 
+      _slc_flsmatch_qllx[slice]        = pfpToFlashMatch_v[0]->GetEstimatedX();
+      _slc_flsmatch_tpcx[slice]        = pfpToFlashMatch_v[0]->GetTPCX();
+      _slc_flsmatch_t0[slice]          = pfpToFlashMatch_v[0]->GetT0();
+      _slc_flsmatch_hypoz[slice]       = UBXSecHelper::GetFlashZCenter(pfpToFlashMatch_v[0]->GetHypoFlashSpec());
+      _slc_flsmatch_xfixed_chi2[slice] = pfpToFlashMatch_v[0]->GetXFixedChi2();
+      _slc_flsmatch_xfixed_ll[slice]   = pfpToFlashMatch_v[0]->GetXFixedLl();
+      _slc_flshypo_xfixed_spec[slice]  = pfpToFlashMatch_v[0]->GetXFixedHypoFlashSpec();
+      _slc_flshypo_spec[slice]         = pfpToFlashMatch_v[0]->GetHypoFlashSpec();
       //for (auto v : _slc_flshypo_spec[slice]) std::cout << "Hypo PE: " << v << std::endl;
 
-      std::cout << "[UBXSec] \t FM score:       " << ubxsec_event->slc_flsmatch_score[slice] << std::endl;
-      std::cout << "[UBXSec] \t qllx - tpcx is: " << ubxsec_event->slc_flsmatch_qllx[slice] - ubxsec_event->slc_flsmatch_tpcx[slice] << std::endl;
+      std::cout << "[UBXSec] \t FM score:       " << _slc_flsmatch_score[slice] << std::endl;
+      std::cout << "[UBXSec] \t qllx - tpcx is: " << _slc_flsmatch_qllx[slice] - _slc_flsmatch_tpcx[slice] << std::endl;
     }
 
     // Cosmic Flash Match
-    ubxsec_event->slc_flsmatch_cosmic_score[slice] = -9999;
+    _slc_flsmatch_cosmic_score[slice] = -9999;
     /*
     std::vector<art::Ptr<ubana::FlashMatch>> pfpToCosmicFlashMatch_v = pfpToCosmicFlashMatchAssns.at(NuPFP.key());
     if (pfpToCosmicFlashMatch_v.size() > 1) {
@@ -695,25 +878,25 @@ void UBXSec::produce(art::Event & e) {
     // Hits
     int nhits_u, nhits_v, nhits_w;
     UBXSecHelper::GetNumberOfHitsPerPlane(e, _pfp_producer, track_v_v[slice], nhits_u, nhits_v, nhits_w);
-    ubxsec_event->slc_nhits_u[slice] = nhits_u;
-    ubxsec_event->slc_nhits_v[slice] = nhits_v;
-    ubxsec_event->slc_nhits_w[slice] = nhits_w;
+    _slc_nhits_u[slice] = nhits_u;
+    _slc_nhits_v[slice] = nhits_v;
+    _slc_nhits_w[slice] = nhits_w;
 
     // Longest track and check boundary
     recob::Track lt;
     if (UBXSecHelper::GetLongestTrackFromTPCObj(track_v_v[slice], lt)){
-      ubxsec_event->slc_longesttrack_length[slice] = lt.Length();
-      ubxsec_event->slc_longesttrack_phi[slice]   = UBXSecHelper::GetCorrectedPhi(lt, tpcobj_nu_vtx);
-      ubxsec_event->slc_longesttrack_theta[slice] = UBXSecHelper::GetCorrectedCosTheta(lt, tpcobj_nu_vtx);
-      ubxsec_event->slc_longesttrack_iscontained[slice] = UBXSecHelper::TrackIsContained(lt);
+      _slc_longesttrack_length[slice] = lt.Length();
+      _slc_longesttrack_phi[slice]   = UBXSecHelper::GetCorrectedPhi(lt, tpcobj_nu_vtx);
+      _slc_longesttrack_theta[slice] = UBXSecHelper::GetCorrectedCosTheta(lt, tpcobj_nu_vtx);
+      _slc_longesttrack_iscontained[slice] = UBXSecHelper::TrackIsContained(lt);
       int vtx_ok;
-      ubxsec_event->slc_crosses_top_boundary[slice] = (UBXSecHelper::IsCrossingTopBoundary(lt, vtx_ok) ? 1 : 0);
+      _slc_crosses_top_boundary[slice] = (UBXSecHelper::IsCrossingTopBoundary(lt, vtx_ok) ? 1 : 0);
     } else {
-      ubxsec_event->slc_longesttrack_length[slice] = -9999;
+      _slc_longesttrack_length[slice] = -9999;
     }
 
     // ACPT
-    ubxsec_event->slc_acpt_outoftime[slice] = 0;
+    _slc_acpt_outoftime[slice] = 0;
     for (unsigned int t = 0; t < track_v_v[slice].size(); t++) {
       if(opfls_ptr_coll_v.at(track_v_v[slice][t].key()).size()>1) {
         std::cout << "[UBXSec] \t More than 1 association found (ACPT)!" << std::endl;
@@ -723,13 +906,13 @@ void UBXSec::produce(art::Event & e) {
       } else {
         art::Ptr<recob::OpFlash> flash_ptr = opfls_ptr_coll_v.at(track_v_v[slice][t].key()).at(0);
         if (flash_ptr->Time() < _beam_spill_start || flash_ptr->Time() > _beam_spill_end) {
-          ubxsec_event->slc_acpt_outoftime[slice] = 1;
+          _slc_acpt_outoftime[slice] = 1;
         }
       }
     }
 
     // Track quality
-    ubxsec_event->slc_kalman_chi2[slice] = -9999;
+    _slc_kalman_chi2[slice] = -9999;
     for (unsigned int t = 0; t < pfp_v_v[slice].size(); t++) {
       if(trk_kalman_v.at(pfp_v_v[slice][t].key()).size()>1) {
         std::cout << "[UBXSec] \t TQ more than one track per PFP, ntracks " << trk_kalman_v.at(pfp_v_v[slice][t].key()).size() << std::endl;
@@ -737,8 +920,8 @@ void UBXSec::produce(art::Event & e) {
         continue;
       } else {
         art::Ptr<recob::Track> trk_ptr = trk_kalman_v.at(pfp_v_v[slice][t].key()).at(0);
-        ubxsec_event->slc_kalman_chi2[slice] = trk_ptr->Chi2();
-        ubxsec_event->slc_kalman_ndof[slice] = trk_ptr->Ndof();
+        _slc_kalman_chi2[slice] = trk_ptr->Chi2();
+        _slc_kalman_ndof[slice] = trk_ptr->Ndof();
       }
     }
     bool goodTrack = false;
@@ -750,25 +933,25 @@ void UBXSec::produce(art::Event & e) {
         continue;
       }
     }
-    if (goodTrack) ubxsec_event->slc_passed_min_track_quality[slice] = true;
-    else ubxsec_event->slc_passed_min_track_quality[slice] = false;
+    if (goodTrack) _slc_passed_min_track_quality[slice] = true;
+    else _slc_passed_min_track_quality[slice] = false;
 
     // Vertex quality
     recob::Vertex slice_vtx = tpcobj.GetVertex();
     double slice_vtx_xyz[3];
     slice_vtx.XYZ(slice_vtx_xyz);
-    ubxsec_event->slc_passed_min_vertex_quality[slice] = true;
+    _slc_passed_min_vertex_quality[slice] = true;
     if (deadRegionsFinder.NearDeadReg2P(slice_vtx_xyz[1], slice_vtx_xyz[2], 5.0))
-      ubxsec_event->slc_passed_min_vertex_quality[slice] = false;
+      _slc_passed_min_vertex_quality[slice] = false;
 
     // Channel status
-    ubxsec_event->slc_nuvtx_closetodeadregion_u[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 0) ? 1 : 0);
-    ubxsec_event->slc_nuvtx_closetodeadregion_v[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 1) ? 1 : 0);
-    ubxsec_event->slc_nuvtx_closetodeadregion_w[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 2) ? 1 : 0);
+    _slc_nuvtx_closetodeadregion_u[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 0) ? 1 : 0);
+    _slc_nuvtx_closetodeadregion_v[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 1) ? 1 : 0);
+    _slc_nuvtx_closetodeadregion_w[slice] = (UBXSecHelper::PointIsCloseToDeadRegion(reco_nu_vtx, 2) ? 1 : 0);
 
     // Vertex check
     ubxsec::VertexCheck vtxCheck(track_v_v[slice], slice_vtx);
-    ubxsec_event->slc_vtxcheck_angle[slice] = vtxCheck.AngleBetweenLongestTracks();
+    _slc_vtxcheck_angle[slice] = vtxCheck.AngleBetweenLongestTracks();
     
     // OpHits
     std::vector<ubxsec::Hit3D_t> hit3d_v;
@@ -829,7 +1012,7 @@ void UBXSec::produce(art::Event & e) {
       }     
     } // end loop ophit
 
-    ubxsec_event->slc_n_intime_pe_closestpmt[slice] = n_intime_pe;
+    _slc_n_intime_pe_closestpmt[slice] = n_intime_pe;
 
 
     // Distance from recon nu vertex to thefar away track in TPCObject
@@ -842,15 +1025,15 @@ void UBXSec::produce(art::Event & e) {
     recob::Track candidate_track;
 
     if (muon_finder.GetCandidateTrack(candidate_track)) {
-      ubxsec_event->slc_muoncandidate_exists[slice] = true;
-      ubxsec_event->slc_muoncandidate_length[slice] = candidate_track.Length();
-      ubxsec_event->slc_muoncandidate_phi[slice]    = UBXSecHelper::GetCorrectedPhi(candidate_track, tpcobj_nu_vtx); 
-      ubxsec_event->slc_muoncandidate_theta[slice]  = UBXSecHelper::GetCorrectedCosTheta(candidate_track, tpcobj_nu_vtx);
+      _slc_muoncandidate_exists[slice] = true;
+      _slc_muoncandidate_length[slice] = candidate_track.Length();
+      _slc_muoncandidate_phi[slice]    = UBXSecHelper::GetCorrectedPhi(candidate_track, tpcobj_nu_vtx); 
+      _slc_muoncandidate_theta[slice]  = UBXSecHelper::GetCorrectedCosTheta(candidate_track, tpcobj_nu_vtx);
     } else {
-      ubxsec_event->slc_muoncandidate_exists[slice] = false;
-      ubxsec_event->slc_muoncandidate_length[slice] = -9999;
-      ubxsec_event->slc_muoncandidate_phi[slice]    = -9999;
-      ubxsec_event->slc_muoncandidate_theta[slice]  = -9999;
+      _slc_muoncandidate_exists[slice] = false;
+      _slc_muoncandidate_length[slice] = -9999;
+      _slc_muoncandidate_phi[slice]    = -9999;
+      _slc_muoncandidate_theta[slice]  = -9999;
     }
 
     // Particle ID
@@ -878,15 +1061,15 @@ void UBXSec::produce(art::Event & e) {
       if (mc_truth->Origin() == simb::kBeamNeutrino &&
           mcpars[0]->PdgCode() == 13 && mcpars[0]->Mother() == 0) {
 
-        ubxsec_event->muon_reco_pur = ubxsec_event->muon_reco_eff = -9999;
+        _muon_reco_pur = _muon_reco_eff = -9999;
         auto iter = recoParticlesToHits.find(pfp);
         if (iter != recoParticlesToHits.end()) {
-          UBXSecHelper::GetTrackPurityAndEfficiency((*iter).second, ubxsec_event->muon_reco_pur, ubxsec_event->muon_reco_eff);
+          UBXSecHelper::GetTrackPurityAndEfficiency((*iter).second, _muon_reco_pur, _muon_reco_eff);
         }
-        ubxsec_event->true_muon_mom_matched = mcpars[0]->P();
+        _true_muon_mom_matched = mcpars[0]->P();
 
        if (_fiducial_volume.InFV(mcpars[0]->Vx(), mcpars[0]->Vy(), mcpars[0]->Vz())  && _fiducial_volume.InFV(mcpars[0]->EndX(), mcpars[0]->EndY(), mcpars[0]->EndZ())) {
-         ubxsec_event->mc_muon_contained = true;
+         _mc_muon_contained = true;
        }
       } 
       
@@ -905,7 +1088,7 @@ void UBXSec::produce(art::Event & e) {
           int planenum = pid->PlaneID().Plane;
           if (planenum < 0 || planenum > 2) continue;
           std::cout << "[UBXSec] \t\t ParticleID PIDA is " << pid->PIDA() << ", plane is " << planenum << std::endl;
-          if (/*_is_signal && (ubxsec_event->slc_origin[slice] == 0 || ubxsec_event->slc_origin[slice] == 2) &&*/ planenum == 2) {
+          if (/*_is_signal && (_slc_origin[slice] == 0 || _slc_origin[slice] == 2) &&*/ planenum == 2) {
             if (pdg == 13) {
               _h_pida_muon->Fill(pid->PIDA());
               _h_pida_len_muon->Fill(pid->PIDA(), track->Length());
@@ -951,7 +1134,7 @@ void UBXSec::produce(art::Event & e) {
       if (softwareTriggerHandle->getNumberOfAlgorithms() == 1) {
         std::vector<std::string> algoNames = softwareTriggerHandle->getListOfAlgorithms();
         std::cout << "SW trigger name: " << algoNames[0] << std::endl;
-        ubxsec_event->is_swtriggered = (softwareTriggerHandle->passedAlgo(algoNames[0]) ? 1 : 0);
+        _is_swtriggered = (softwareTriggerHandle->passedAlgo(algoNames[0]) ? 1 : 0);
       }
     }
 
@@ -964,17 +1147,17 @@ void UBXSec::produce(art::Event & e) {
     } else {
 
       auto const& flash = (*nuMcflash_h)[0];
-      ubxsec_event->numc_flash_spec.resize(geo->NOpDets());
+      _numc_flash_spec.resize(geo->NOpDets());
       for (unsigned int i = 0; i < geo->NOpDets(); i++) {
         unsigned int opdet = geo->OpDetFromOpChannel(i);
-        ubxsec_event->numc_flash_spec[opdet] = flash.PE(i);
+        _numc_flash_spec[opdet] = flash.PE(i);
       }
     }
 
     // MCFlash vs op activity
     bool opActivityInBeamSpill = false;
     // Check if there are recon beam flashed in the beam spill window
-    for (auto reco_fls_time : ubxsec_event->beamfls_time) {
+    for (auto reco_fls_time : _beamfls_time) {
       if (reco_fls_time > _beam_spill_start && reco_fls_time < _beam_spill_end) {
          opActivityInBeamSpill = true;
        }
@@ -984,7 +1167,7 @@ void UBXSec::produce(art::Event & e) {
     } else if (nuMcflash_h->size() == 0) {
       if(opActivityInBeamSpill) {
         std::cout << "No MCFlash but optical activity in the beam spill." << std::endl;
-        ubxsec_event->no_mcflash_but_op_activity = true;
+        _no_mcflash_but_op_activity = true;
       }
     }
 
@@ -1041,70 +1224,15 @@ void UBXSec::produce(art::Event & e) {
 
   art::Handle< sumdata::POTSummary > potsum_h;
   if(e.getByLabel(_potsum_producer, potsum_h))
-    ubxsec_event->pot = potsum_h->totpot;
+    _pot = potsum_h->totpot;
   else
-    ubxsec_event->pot = 0.;
+    _pot = 0.;
 
  
 
 
   if(_debug) std::cout << "[UBXSec] Filling tree now." << std::endl;
   _tree1->Fill();
-
-
-
-
-  // *********************
-  // Event Selection
-  // *********************
-
-  _event_selection.SetEvent(ubxsec_event);
-
-  size_t slice_index;
-  std::string reason;
-  bool is_selected = _event_selection.IsSelected(slice_index, reason);
-  if (_debug) std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Is Selected? " << (is_selected ? "YES" : "NO") << std::endl;
-  if (_debug) std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Failure Reason " << reason << std::endl;
-
-  ::ubana::SelectionResult selection_result;
-  selection_result.SetSelectionType("numu_cc_inclusive");
-  selection_result.SetFailureReason(reason);
-
-  // *********************
-  // Save Event Selection Output in the Event
-  // *********************
-
-  if (!is_selected) {
-
-    selection_result.SetSelectionStatus(false);
-
-    selectionResultVector->emplace_back(std::move(selection_result));
-    //util::CreateAssn(*this, e, *selectionResultVector, tpcobj_v, *assnOutSelectionResultTPCObject);
-
-  } else {
-
-    selection_result.SetSelectionStatus(true);
-
-    // Grab the selected TPCObject
-    std::vector<art::Ptr<ubana::TPCObject>> tpcobj_v;
-    art::fill_ptr_vector(tpcobj_v, tpcobj_h);
-    art::Ptr<ubana::TPCObject> tpcobj = tpcobj_v.at(slice_index);
-
-    if (_debug) std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Selected TPCObject with index " << slice_index << std::endl;
- 
-    // Prepare the tpcobj output
-    std::vector<art::Ptr<ubana::TPCObject>>  out_tpcobj_v;
-    out_tpcobj_v.resize(1);
-    out_tpcobj_v.at(0) = tpcobj;
-
-    selectionResultVector->emplace_back(std::move(selection_result));
-    util::CreateAssn(*this, e, *selectionResultVector, out_tpcobj_v, *assnOutSelectionResultTPCObject);
-
-  }
-
-
-  e.put(std::move(selectionResultVector));
-  e.put(std::move(assnOutSelectionResultTPCObject));
 
   if(_debug) std::cout << "********** UBXSec ends" << std::endl;
 

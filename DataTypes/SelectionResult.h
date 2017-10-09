@@ -33,15 +33,18 @@ namespace ubana {
     SelectionResult();
     virtual ~SelectionResult();
 
-    void SetSelectionStatus(bool status)    {_selection_status = status;}
-    void SetSelectionType(std::string type) {_selection_type = type;}
+    void SetSelectionStatus(bool status)      {_selection_status = status;}
+    void SetSelectionType(std::string type)   {_selection_type = type;}
+    void SetFailureReason(std::string reason) {_failure_reason = reason;}
 
     std::string GetSelectionType()   {return _selection_type;}
     bool        GetSelectionStatus() {return _selection_status;}
+    std::string GetFailureReason()   {return _failure_reason;}
 
   private:
 
     std::string _selection_type;    ///< Event selection type (ccnumu, nue, ...)
+    std::string _failure_reason;    ///< Reason for selection failure
     bool        _selection_status;  ///< True if event selected
 
  };

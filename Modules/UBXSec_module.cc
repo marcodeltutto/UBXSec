@@ -60,6 +60,7 @@
 #include "uboone/UBXSec/DataTypes/TPCObject.h"
 
 #include "uboone/UBXSec/DataTypes/UBXSecEvent.h"
+#include "uboone/UBXSec/DataTypes/SelectionResult.h"
 
 // LArSoft include
 #include "uboone/UBFlashFinder/PECalib.h"
@@ -281,6 +282,13 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _csvfile << "pida,trklen,y" << std::endl;
 
   _run_subrun_list_file.open ("run_subrub_list.txt", std::ofstream::out | std::ofstream::trunc);
+
+
+
+
+  produces<std::vector<ubana::SelectionResult>>();
+  produces<art::Assns<ubana::SelectionResult, ubana::TPCObject>>();
+
 }
 
 
@@ -289,6 +297,12 @@ void UBXSec::produce(art::Event & e) {
 
   if(_debug) std::cout << "********** UBXSec starts" << std::endl;
   if(_debug) std::cout << "event: " << e.id().event() << std::endl;
+
+
+  // Instantiate the output
+  std::unique_ptr< std::vector<ubana::SelectionResult>>                   selectionResultVector           (new std::vector<ubana::SelectionResult>);
+  std::unique_ptr< art::Assns<ubana::SelectionResult, ubana::TPCObject>>  assnOutSelectionResultTPCObject (new art::Assns<ubana::SelectionResult, ubana::TPCObject>);
+
 
   ubxsec_event->run    = e.id().run();
   ubxsec_event->subrun = e.id().subRun();
@@ -1039,12 +1053,57 @@ void UBXSec::produce(art::Event & e) {
 
 
 
+
+  // *********************
+  // Event Selection
+  // *********************
+
   _event_selection.SetEvent(ubxsec_event);
-  _event_selection.PrintConfig();
-  std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Is Selected? " << (_event_selection.IsSelected() ? "YES" : "NO") << std::endl;
+  if (_debug) _event_selection.PrintConfig();
+
+  size_t slice_index;
+  bool is_selected = _event_selection.IsSelected(slice_index);
+  if (_debug) std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Is Selected? " << (is_selected ? "YES" : "NO") << std::endl;
+
+  ::ubana::SelectionResult selection_result;
+  selection_result.SetSelectionType("numu_cc_inclusive");
 
 
+  // *********************
+  // Save Event Selection Output in the Event
+  // *********************
 
+  if (!is_selected) {
+
+    selection_result.SetSelectionStatus(false);
+
+    selectionResultVector->emplace_back(std::move(selection_result));
+    //util::CreateAssn(*this, e, *selectionResultVector, tpcobj_v, *assnOutSelectionResultTPCObject);
+
+  } else {
+
+    selection_result.SetSelectionStatus(true);
+
+    // Grab the selected TPCObject
+    std::vector<art::Ptr<ubana::TPCObject>> tpcobj_v;
+    art::fill_ptr_vector(tpcobj_v, tpcobj_h);
+    art::Ptr<ubana::TPCObject> tpcobj = tpcobj_v.at(slice_index);
+
+    if (_debug) std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Selected TPCObject with index " << slice_index << std::endl;
+ 
+    // Prepare the tpcobj output
+    std::vector<art::Ptr<ubana::TPCObject>>  out_tpcobj_v;
+    out_tpcobj_v.resize(1);
+    out_tpcobj_v.at(0) = tpcobj;
+
+    selectionResultVector->emplace_back(std::move(selection_result));
+    util::CreateAssn(*this, e, *selectionResultVector, out_tpcobj_v, *assnOutSelectionResultTPCObject);
+
+  }
+
+
+  e.put(std::move(selectionResultVector));
+  e.put(std::move(assnOutSelectionResultTPCObject));
 
   if(_debug) std::cout << "********** UBXSec ends" << std::endl;
 

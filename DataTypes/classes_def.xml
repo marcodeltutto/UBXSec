@@ -94,5 +94,35 @@
   <class name="art::Wrapper<art::Assns<simb::MCParticle,ubana::MCGhost,void> >" />
   <class name="art::Wrapper<art::Assns<ubana::MCGhost,simb::MCParticle,void> >" />
 
+
+
+
+  <!-- support classes (e.g., elements of data product classes) -->
   <class name="UBXSecEvent"/>
-  </lcgdict>
+
+
+
+
+  <!-- support classes (e.g., elements of data product classes) -->
+  <class name="ubana::SelectionResult"/>
+  <class name="art::Wrapper<ubana::SelectionResult>"/>
+  <class name="std::vector<ubana::SelectionResult>"/>
+  <class name="art::Wrapper< std::vector<ubana::SelectionResult> >"/>
+
+  <!-- associations -->
+  <class name="art::Assns<ubana::TPCObject,ubana::SelectionResult,void>" />
+  <class name="art::Assns<ubana::SelectionResult,ubana::TPCObject,void>" />
+
+  <!-- art association wrappers -->
+  <class name="art::Wrapper<art::Assns<ubana::TPCObject,ubana::SelectionResult,void> >" />
+  <class name="art::Wrapper<art::Assns<ubana::SelectionResult,ubana::TPCObject,void> >" />
+
+
+
+
+
+</lcgdict>
+
+
+
+

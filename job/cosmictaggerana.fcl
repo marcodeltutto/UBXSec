@@ -15,7 +15,7 @@ CosmicTaggerAna: {
   CosmicFlashTagScoreCut: 0.99
   CosmicGeoTagScoreCut:   0.6
   CosmicACPTTagScoreCut:  0.99 
-  DebugMode:              true
+  DebugMode:              false
 }
 
 END_PROLOG

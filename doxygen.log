@@ -428,8 +428,10 @@ Generating docs for file /home/trav/home/travis/build/marcodeltutto/UBXSec/Algor
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/MCGhost.h:39: warning: Member GetMode() const  (function) of class ubana::MCGhost is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:36: warning: Member SetSelectionStatus(bool status) (function) of class ubana::SelectionResult is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:37: warning: Member SetSelectionType(std::string type) (function) of class ubana::SelectionResult is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:39: warning: Member GetSelectionType() (function) of class ubana::SelectionResult is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:40: warning: Member GetSelectionStatus() (function) of class ubana::SelectionResult is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:38: warning: Member SetFailureReason(std::string reason) (function) of class ubana::SelectionResult is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:40: warning: Member GetSelectionType() (function) of class ubana::SelectionResult is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:41: warning: Member GetSelectionStatus() (function) of class ubana::SelectionResult is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:42: warning: Member GetFailureReason() (function) of class ubana::SelectionResult is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:58: warning: Member SetTracks(std::vector< recob::Track >) (function) of class ubana::TPCObject is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:59: warning: Member SetPFPs(std::vector< recob::PFParticle >) (function) of class ubana::TPCObject is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:60: warning: Member SetVertex(recob::Vertex) (function) of class ubana::TPCObject is not documented.
@@ -557,5 +559,5 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-lookup cache used 412/65536 hits=1836 misses=427
+lookup cache used 415/65536 hits=1850 misses=430
 finished...

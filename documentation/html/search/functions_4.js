@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['getcandidatetrack',['GetCandidateTrack',['../classubana_1_1MuonCandidateFinder.html#a18a6c9dca75fd27b2079b68c00919bdd',1,'ubana::MuonCandidateFinder']]],
+  ['getcandidatetrack',['GetCandidateTrack',['../classubana_1_1MuonCandidateFinder.html#a8f852194c03bf0b3c04650850271c7d9',1,'ubana::MuonCandidateFinder']]],
   ['getclosestpmt',['GetClosestPMT',['../classUBXSecHelper.html#a88533a5a59d61351437a1fe2e54aff25',1,'UBXSecHelper']]],
   ['getcorrectedcostheta',['GetCorrectedCosTheta',['../classUBXSecHelper.html#aefae2cc8a7598aa54848247ad228371e',1,'UBXSecHelper']]],
   ['getcorrectedphi',['GetCorrectedPhi',['../classUBXSecHelper.html#a79b61783bfe19d8dcd33d6aba4c3e61a',1,'UBXSecHelper']]],

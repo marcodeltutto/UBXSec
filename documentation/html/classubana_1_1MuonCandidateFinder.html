@@ -115,34 +115,36 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1MuonCandidateFinder.html#ae5aaa85fb815cd30fe1048ea5cdd387d">PrintConfig</a> ()</td></tr>
 <tr class="memdesc:ae5aaa85fb815cd30fe1048ea5cdd387d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print the current configuration. <br/></td></tr>
 <tr class="separator:ae5aaa85fb815cd30fe1048ea5cdd387d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45e5b12b14e673ce7454cd4546189136"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45e5b12b14e673ce7454cd4546189136"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1MuonCandidateFinder.html#a45e5b12b14e673ce7454cd4546189136">SetTPCObject</a> (<a class="el" href="classubana_1_1TPCObject.html">ubana::TPCObject</a> theobject)</td></tr>
-<tr class="memdesc:a45e5b12b14e673ce7454cd4546189136"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the TPC object. <br/></td></tr>
-<tr class="separator:a45e5b12b14e673ce7454cd4546189136"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af61b1a598acd44cdc27c0ec3b00d99f8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af61b1a598acd44cdc27c0ec3b00d99f8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1MuonCandidateFinder.html#af61b1a598acd44cdc27c0ec3b00d99f8">SetTrackToPIDMap</a> (std::map&lt; recob::Track, anab::ParticleID &gt; themap)</td></tr>
-<tr class="memdesc:af61b1a598acd44cdc27c0ec3b00d99f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set map from tracks to PID for the TPC object. <br/></td></tr>
-<tr class="separator:af61b1a598acd44cdc27c0ec3b00d99f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18a6c9dca75fd27b2079b68c00919bdd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a18a6c9dca75fd27b2079b68c00919bdd"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1MuonCandidateFinder.html#a18a6c9dca75fd27b2079b68c00919bdd">GetCandidateTrack</a> (recob::Track &amp;)</td></tr>
-<tr class="memdesc:a18a6c9dca75fd27b2079b68c00919bdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the TPC object. <br/></td></tr>
-<tr class="separator:a18a6c9dca75fd27b2079b68c00919bdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1cdd1745117a85bbcfc1de5167c7e688"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1cdd1745117a85bbcfc1de5167c7e688"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1MuonCandidateFinder.html#a1cdd1745117a85bbcfc1de5167c7e688">SetTracks</a> (std::vector&lt; art::Ptr&lt; recob::Track &gt;&gt; thetracks)</td></tr>
+<tr class="memdesc:a1cdd1745117a85bbcfc1de5167c7e688"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the tracks. <br/></td></tr>
+<tr class="separator:a1cdd1745117a85bbcfc1de5167c7e688"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc3333300fec98b692ff12550c3d8d53"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc3333300fec98b692ff12550c3d8d53"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1MuonCandidateFinder.html#adc3333300fec98b692ff12550c3d8d53">SetTrackToPIDMap</a> (std::map&lt; art::Ptr&lt; recob::Track &gt;, art::Ptr&lt; anab::ParticleID &gt;&gt; themap)</td></tr>
+<tr class="memdesc:adc3333300fec98b692ff12550c3d8d53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set map from tracks to PID for the TPC object. <br/></td></tr>
+<tr class="separator:adc3333300fec98b692ff12550c3d8d53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f852194c03bf0b3c04650850271c7d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f852194c03bf0b3c04650850271c7d9"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1MuonCandidateFinder.html#a8f852194c03bf0b3c04650850271c7d9">GetCandidateTrack</a> (art::Ptr&lt; recob::Track &gt; &amp;)</td></tr>
+<tr class="memdesc:a8f852194c03bf0b3c04650850271c7d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the TPC object. <br/></td></tr>
+<tr class="separator:a8f852194c03bf0b3c04650850271c7d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:aa10954b71c8b977bf08e8a71f1423318"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa10954b71c8b977bf08e8a71f1423318"></a>
-<a class="el" href="classubana_1_1TPCObject.html">ubana::TPCObject</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_tpc_object</b></td></tr>
-<tr class="separator:aa10954b71c8b977bf08e8a71f1423318"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae033ae1668a0dfd8daf2218a8d8b5ff6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae033ae1668a0dfd8daf2218a8d8b5ff6"></a>
-std::map&lt; recob::Track, <br class="typebreak"/>
-anab::ParticleID &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_track_to_pid</b></td></tr>
-<tr class="separator:ae033ae1668a0dfd8daf2218a8d8b5ff6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a94b438c321cb362b6a54814c056e389f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a94b438c321cb362b6a54814c056e389f"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>_max_distance</b></td></tr>
-<tr class="separator:a94b438c321cb362b6a54814c056e389f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02badb1ac25eb1095a7f78afb5e36e1b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a02badb1ac25eb1095a7f78afb5e36e1b"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>_tpcobject_is_set</b></td></tr>
-<tr class="separator:a02badb1ac25eb1095a7f78afb5e36e1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7c96f8b784bcd81512e9c444806f740"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7c96f8b784bcd81512e9c444806f740"></a>
+std::vector&lt; art::Ptr<br class="typebreak"/>
+&lt; recob::Track &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_tracks</b></td></tr>
+<tr class="separator:aa7c96f8b784bcd81512e9c444806f740"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a673e9b7d68a2c3c734fd92ec6e0a87ee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a673e9b7d68a2c3c734fd92ec6e0a87ee"></a>
+std::map&lt; art::Ptr<br class="typebreak"/>
+&lt; recob::Track &gt;, art::Ptr<br class="typebreak"/>
+&lt; anab::ParticleID &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_track_to_pid</b></td></tr>
+<tr class="separator:a673e9b7d68a2c3c734fd92ec6e0a87ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f0eef92dcbab86d2470da30739be235"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4f0eef92dcbab86d2470da30739be235"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>_use_pida_cut</b></td></tr>
+<tr class="separator:a4f0eef92dcbab86d2470da30739be235"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7275929ef39e422785e7a6dd9d95f5eb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7275929ef39e422785e7a6dd9d95f5eb"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>_tracks_are_set</b></td></tr>
+<tr class="separator:a7275929ef39e422785e7a6dd9d95f5eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46cb4b649e6d2d9b2e6c7641a9fd548a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a46cb4b649e6d2d9b2e6c7641a9fd548a"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>_tracktopidmap_is_set</b></td></tr>
 <tr class="separator:a46cb4b649e6d2d9b2e6c7641a9fd548a"><td class="memSeparator" colspan="2">&#160;</td></tr>

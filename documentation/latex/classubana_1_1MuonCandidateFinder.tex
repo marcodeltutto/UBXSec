@@ -20,29 +20,31 @@
 \hypertarget{classubana_1_1MuonCandidateFinder_ae5aaa85fb815cd30fe1048ea5cdd387d}{void \hyperlink{classubana_1_1MuonCandidateFinder_ae5aaa85fb815cd30fe1048ea5cdd387d}{Print\-Config} ()}\label{classubana_1_1MuonCandidateFinder_ae5aaa85fb815cd30fe1048ea5cdd387d}
 
 \begin{DoxyCompactList}\small\item\em Print the current configuration. \end{DoxyCompactList}\item 
-\hypertarget{classubana_1_1MuonCandidateFinder_a45e5b12b14e673ce7454cd4546189136}{void \hyperlink{classubana_1_1MuonCandidateFinder_a45e5b12b14e673ce7454cd4546189136}{Set\-T\-P\-C\-Object} (\hyperlink{classubana_1_1TPCObject}{ubana\-::\-T\-P\-C\-Object} theobject)}\label{classubana_1_1MuonCandidateFinder_a45e5b12b14e673ce7454cd4546189136}
+\hypertarget{classubana_1_1MuonCandidateFinder_a1cdd1745117a85bbcfc1de5167c7e688}{void \hyperlink{classubana_1_1MuonCandidateFinder_a1cdd1745117a85bbcfc1de5167c7e688}{Set\-Tracks} (std\-::vector$<$ art\-::\-Ptr$<$ recob\-::\-Track $>$$>$ thetracks)}\label{classubana_1_1MuonCandidateFinder_a1cdd1745117a85bbcfc1de5167c7e688}
 
-\begin{DoxyCompactList}\small\item\em Set the T\-P\-C object. \end{DoxyCompactList}\item 
-\hypertarget{classubana_1_1MuonCandidateFinder_af61b1a598acd44cdc27c0ec3b00d99f8}{void \hyperlink{classubana_1_1MuonCandidateFinder_af61b1a598acd44cdc27c0ec3b00d99f8}{Set\-Track\-To\-P\-I\-D\-Map} (std\-::map$<$ recob\-::\-Track, anab\-::\-Particle\-I\-D $>$ themap)}\label{classubana_1_1MuonCandidateFinder_af61b1a598acd44cdc27c0ec3b00d99f8}
+\begin{DoxyCompactList}\small\item\em Set the tracks. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_adc3333300fec98b692ff12550c3d8d53}{void \hyperlink{classubana_1_1MuonCandidateFinder_adc3333300fec98b692ff12550c3d8d53}{Set\-Track\-To\-P\-I\-D\-Map} (std\-::map$<$ art\-::\-Ptr$<$ recob\-::\-Track $>$, art\-::\-Ptr$<$ anab\-::\-Particle\-I\-D $>$$>$ themap)}\label{classubana_1_1MuonCandidateFinder_adc3333300fec98b692ff12550c3d8d53}
 
 \begin{DoxyCompactList}\small\item\em Set map from tracks to P\-I\-D for the T\-P\-C object. \end{DoxyCompactList}\item 
-\hypertarget{classubana_1_1MuonCandidateFinder_a18a6c9dca75fd27b2079b68c00919bdd}{bool \hyperlink{classubana_1_1MuonCandidateFinder_a18a6c9dca75fd27b2079b68c00919bdd}{Get\-Candidate\-Track} (recob\-::\-Track \&)}\label{classubana_1_1MuonCandidateFinder_a18a6c9dca75fd27b2079b68c00919bdd}
+\hypertarget{classubana_1_1MuonCandidateFinder_a8f852194c03bf0b3c04650850271c7d9}{bool \hyperlink{classubana_1_1MuonCandidateFinder_a8f852194c03bf0b3c04650850271c7d9}{Get\-Candidate\-Track} (art\-::\-Ptr$<$ recob\-::\-Track $>$ \&)}\label{classubana_1_1MuonCandidateFinder_a8f852194c03bf0b3c04650850271c7d9}
 
 \begin{DoxyCompactList}\small\item\em Sets the T\-P\-C object. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classubana_1_1MuonCandidateFinder_aa10954b71c8b977bf08e8a71f1423318}{\hyperlink{classubana_1_1TPCObject}{ubana\-::\-T\-P\-C\-Object} {\bfseries \-\_\-tpc\-\_\-object}}\label{classubana_1_1MuonCandidateFinder_aa10954b71c8b977bf08e8a71f1423318}
+\hypertarget{classubana_1_1MuonCandidateFinder_aa7c96f8b784bcd81512e9c444806f740}{std\-::vector$<$ art\-::\-Ptr\\*
+$<$ recob\-::\-Track $>$ $>$ {\bfseries \-\_\-tracks}}\label{classubana_1_1MuonCandidateFinder_aa7c96f8b784bcd81512e9c444806f740}
 
 \item 
-\hypertarget{classubana_1_1MuonCandidateFinder_ae033ae1668a0dfd8daf2218a8d8b5ff6}{std\-::map$<$ recob\-::\-Track, \\*
-anab\-::\-Particle\-I\-D $>$ {\bfseries \-\_\-track\-\_\-to\-\_\-pid}}\label{classubana_1_1MuonCandidateFinder_ae033ae1668a0dfd8daf2218a8d8b5ff6}
+\hypertarget{classubana_1_1MuonCandidateFinder_a673e9b7d68a2c3c734fd92ec6e0a87ee}{std\-::map$<$ art\-::\-Ptr\\*
+$<$ recob\-::\-Track $>$, art\-::\-Ptr\\*
+$<$ anab\-::\-Particle\-I\-D $>$ $>$ {\bfseries \-\_\-track\-\_\-to\-\_\-pid}}\label{classubana_1_1MuonCandidateFinder_a673e9b7d68a2c3c734fd92ec6e0a87ee}
 
 \item 
-\hypertarget{classubana_1_1MuonCandidateFinder_a94b438c321cb362b6a54814c056e389f}{double {\bfseries \-\_\-max\-\_\-distance}}\label{classubana_1_1MuonCandidateFinder_a94b438c321cb362b6a54814c056e389f}
+\hypertarget{classubana_1_1MuonCandidateFinder_a4f0eef92dcbab86d2470da30739be235}{bool {\bfseries \-\_\-use\-\_\-pida\-\_\-cut}}\label{classubana_1_1MuonCandidateFinder_a4f0eef92dcbab86d2470da30739be235}
 
 \item 
-\hypertarget{classubana_1_1MuonCandidateFinder_a02badb1ac25eb1095a7f78afb5e36e1b}{bool {\bfseries \-\_\-tpcobject\-\_\-is\-\_\-set}}\label{classubana_1_1MuonCandidateFinder_a02badb1ac25eb1095a7f78afb5e36e1b}
+\hypertarget{classubana_1_1MuonCandidateFinder_a7275929ef39e422785e7a6dd9d95f5eb}{bool {\bfseries \-\_\-tracks\-\_\-are\-\_\-set}}\label{classubana_1_1MuonCandidateFinder_a7275929ef39e422785e7a6dd9d95f5eb}
 
 \item 
 \hypertarget{classubana_1_1MuonCandidateFinder_a46cb4b649e6d2d9b2e6c7641a9fd548a}{bool {\bfseries \-\_\-tracktopidmap\-\_\-is\-\_\-set}}\label{classubana_1_1MuonCandidateFinder_a46cb4b649e6d2d9b2e6c7641a9fd548a}

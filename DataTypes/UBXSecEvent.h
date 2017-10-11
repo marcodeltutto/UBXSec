@@ -37,7 +37,7 @@ class UBXSecEvent /*: public TObject*/{
   Int_t           run;
   Int_t           subrun;
   Int_t           event;
-  Int_t           muon_is_reco;
+  Bool_t          muon_is_reco;
   Double_t        muon_reco_pur;
   Double_t        muon_reco_eff;
   Double_t        true_muon_mom;
@@ -116,6 +116,9 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_muoncandidate_length;
   vector<double>   slc_muoncandidate_phi;
   vector<double>   slc_muoncandidate_theta;
+  vector<double>   slc_muoncandidate_mom_range;
+  vector<double>   slc_muoncandidate_mom_mcs;
+  vector<bool>     slc_muoncandidate_contained;
   Int_t            nbeamfls;
   vector<double>   beamfls_time;
   vector<double>   beamfls_pe;

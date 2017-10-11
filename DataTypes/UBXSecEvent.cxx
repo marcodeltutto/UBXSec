@@ -21,14 +21,6 @@ UBXSecEvent::~UBXSecEvent()
 
 void UBXSecEvent::Init()
 {
-  // The Init() function is called when the selector needs to initialize
-  // a new tree or chain. Typically here the branch addresses and branch
-  // pointers of the tree will be set.
-  // It is normally not necessary to make changes to the generated
-  // code, but the routine can be extended by the user if needed.
-  // Init() will be called many times when running on PROOF
-  // (once per file to be processed).
-  
   
   run = _default_value;
   subrun = _default_value;
@@ -160,6 +152,9 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_muoncandidate_length.resize(vsize, _default_value);
   slc_muoncandidate_phi.resize(vsize, _default_value);
   slc_muoncandidate_theta.resize(vsize, _default_value);
+  slc_muoncandidate_mom_range.resize(vsize, _default_value);
+  slc_muoncandidate_mom_mcs.resize(vsize, _default_value);
+  slc_muoncandidate_contained.resize(vsize, _default_value);
   slc_acpt_outoftime.resize(vsize, _default_value);
   slc_crosses_top_boundary.resize(vsize, _default_value);
   slc_nuvtx_closetodeadregion_u.resize(vsize, _default_value);

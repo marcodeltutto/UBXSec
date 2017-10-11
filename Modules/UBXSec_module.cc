@@ -81,6 +81,8 @@
 #include "uboone/UBXSec/Algorithms/FiducialVolume.h"
 #include "uboone/UBXSec/Algorithms/NuMuCCEventSelection.h"
 
+#include "larreco/RecoAlg/TrackMomentumCalculator.h"
+
 // Root include
 #include "TString.h"
 #include "TTree.h"
@@ -130,6 +132,7 @@ private:
   ::ubana::FiducialVolume _fiducial_volume;
   ::ubana::NuMuCCEventSelection _event_selection;
   ::pmtana::PECalib _pecalib;
+  ::trkf::TrackMomentumCalculator _trk_mom_calculator;
 
   // To be set via fcl parameters
   std::string _hitfinderLabel;
@@ -155,6 +158,7 @@ private:
   double _total_pe_cut;                 ///< PE cut to be applied to beam flash
   double _geo_cosmic_score_cut;         ///< Cut on the score of the pandoraNu geo cosmic tagger
   double _tolerance_track_multiplicity; ///< Tolerance to consider a track coming from the nu reco vertex
+  double _min_track_len;                ///< Min track length for momentum calculation
 
   // Constants
   const simb::Origin_t NEUTRINO_ORIGIN = simb::kBeamNeutrino;
@@ -223,6 +227,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _geo_cosmic_score_cut           = p.get<double>("GeoCosmicScoreCut", 0.6);
   _tolerance_track_multiplicity   = p.get<double>("ToleranceTrackMultiplicity", 5.);
 
+  _min_track_len                  = p.get<double>("MinTrackLength", 5.);
+
   _pecalib.Configure(p.get<fhicl::ParameterSet>("PECalib"));
 
   _fiducial_volume.Configure(p.get<fhicl::ParameterSet>("FiducialVolumeSettings"), 
@@ -235,6 +241,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _event_selection.Configure(p.get<fhicl::ParameterSet>("NuMuCCSelectionSettings"));
 
   _event_selection.PrintConfig();
+
+  _trk_mom_calculator.SetMinLength(_min_track_len);
 
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
@@ -304,6 +312,10 @@ void UBXSec::produce(art::Event & e) {
   std::unique_ptr< art::Assns<ubana::SelectionResult, ubana::TPCObject>>  assnOutSelectionResultTPCObject (new art::Assns<ubana::SelectionResult, ubana::TPCObject>);
 
 
+  // Initialize the UBXSecEvent
+  ubxsec_event->Init();
+
+
   ubxsec_event->run    = e.id().run();
   ubxsec_event->subrun = e.id().subRun();
   ubxsec_event->event  = e.id().event();
@@ -316,14 +328,6 @@ void UBXSec::produce(art::Event & e) {
     std::cout << " _use_genie_info will be switched to false." << std::endl;
     _use_genie_info = false;
   }
-
-  /*
-  if (_is_data) {
-    std::cout << "[UBXSec] Running on a real data file. No MC-PFP matching will be attempted." << std::endl;
-  } else {
-    mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
-  }
-  */
 
   ::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
@@ -402,16 +406,16 @@ void UBXSec::produce(art::Event & e) {
   art::FindManyP<recob::Track> trk_kalman_v(pfp_h, e, "pandoraNuKalmanTrack");
 
   // Get PID information
-  art::FindMany<anab::ParticleID> particleids_from_track (track_h, e, _particle_id_producer);
+  art::FindManyP<anab::ParticleID> particleids_from_track (track_h, e, _particle_id_producer);
   if (!particleids_from_track.isValid()) {
     std::cout << "[UBXSec] anab::ParticleID is not valid." << std::endl;
   }
   std::cout << "[UBXSec] Numeber of particleids_from_track " << particleids_from_track.size() << std::endl;
 
   // Fill a std::map Track->ParticleID
-  std::map<recob::Track, anab::ParticleID> track_to_pid_map;
+  std::map<art::Ptr<recob::Track>, art::Ptr<anab::ParticleID>> track_to_pid_map;
   for (auto track : track_p_v) {
-    std::vector<const anab::ParticleID*> pids = particleids_from_track.at(track.key());
+    std::vector<art::Ptr<anab::ParticleID>> pids = particleids_from_track.at(track.key());
 
     if(pids.size() == 0) 
       continue;
@@ -420,7 +424,7 @@ void UBXSec::produce(art::Event & e) {
       if (!pid->PlaneID().isValid) continue;
       int planenum = pid->PlaneID().Plane;
       if (planenum != 2) continue;
-      track_to_pid_map[(*track)] = (*pid);
+      track_to_pid_map[track] = pid;
       continue;
     }
   }
@@ -467,32 +471,6 @@ void UBXSec::produce(art::Event & e) {
     }
   }
 
-  // Check if golden
-  /*
-  bool is_golden = false;
-  for (auto const & mctrk : (*mctrk_h)) {
-    if (mctrk.Origin() == NEUTRINO_ORIGIN && mctrk.PdgCode() == 14) {
-      std::cout << "PPPPPPProcess is " << mctrk.Process() << std::endl;
-      for (size_t pt = 0; pt < mctrk.NumberTrajectoryPoints(); pt++){
-        float ptNearDeadRegion = 0;
-        if (NearDeadReg2P( mctrk.Vy(pt), mctrk.Vz(pt), 0.6) {
-          ptNearDeadRegion++;
-        }
-      } // loop over trj points
-      if (ptNearDeadRegion/(float)mctrk.NumberTrajectoryPoints() > 0.05) {
-        is_golden = false; 
-        break;
-      } 
-      double start[3] = {mctrk.Vx(),   mctrk.Vy(),   mctrk.Vz()};
-      double end[3]   = {mctrk.EndX(), mctrk.EndY(), mctrk.EndZ()};
-      if (UBXSecHelper::InFV(start) && UBXSecHelper::InFV(end)) {
-        is_golden = true;
-        break;
-      }
-    }
-  }
-  std::cout << "       is good track? " << is_golden << std::endl;
-  */
 
   // Check if truth nu is in FV
   // Collecting GENIE particles
@@ -513,6 +491,7 @@ void UBXSec::produce(art::Event & e) {
                                 mclist[iList]->GetNeutrino().Nu().Vz()};
       if (_fiducial_volume.InFV(truth_nu_vtx)) ubxsec_event->fv = 1;
       else ubxsec_event->fv = 0;
+
       ubxsec_event->ccnc    = mclist[iList]->GetNeutrino().CCNC();
       ubxsec_event->nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
       ubxsec_event->nu_e    = mclist[iList]->GetNeutrino().Nu().E();
@@ -585,7 +564,7 @@ void UBXSec::produce(art::Event & e) {
 
 
   std::cout << "[UBXSec] --- SAVING INFORMATION" << std::endl;
-  ubxsec_event->vtx_resolution = -9999;
+  //ubxsec_event->vtx_resolution = -9999;
  
   for (unsigned int slice = 0; slice < tpcobj_h->size(); slice++){
     std::cout << "[UBXSec] >>> SLICE " << slice << std::endl;
@@ -671,26 +650,6 @@ void UBXSec::produce(art::Event & e) {
       std::cout << "[UBXSec] \t FM score:       " << ubxsec_event->slc_flsmatch_score[slice] << std::endl;
       std::cout << "[UBXSec] \t qllx - tpcx is: " << ubxsec_event->slc_flsmatch_qllx[slice] - ubxsec_event->slc_flsmatch_tpcx[slice] << std::endl;
     }
-
-    // Cosmic Flash Match
-    ubxsec_event->slc_flsmatch_cosmic_score[slice] = -9999;
-    /*
-    std::vector<art::Ptr<ubana::FlashMatch>> pfpToCosmicFlashMatch_v = pfpToCosmicFlashMatchAssns.at(NuPFP.key());
-    if (pfpToCosmicFlashMatch_v.size() > 1) {
-      std::cout << "    More than one flash match per nu pfp!" << std::endl;
-      continue;
-    } else if (pfpToCosmicFlashMatch_v.size() == 0){
-      std::cout << "    PFP to flash match ass for cosmic is zero." << std::endl;
-      //continue;
-    } else if (pfpToCosmicFlashMatch_v.size() == 1){
-      //std::cout << "pfpToCosmicFlashMatch_v[0]->GetScore() is " << pfpToCosmicFlashMatch_v[0]->GetScore() << std::endl;
-      //std::cout << "pfpToCosmicFlashMatch_v[0]->GetT0() is " << pfpToCosmicFlashMatch_v[0]->GetT0() << std::endl;
-      _slc_flsmatch_cosmic_score[slice] = pfpToCosmicFlashMatch_v[0]->GetScore();
-      _slc_flsmatch_cosmic_t0[slice]    = pfpToCosmicFlashMatch_v[0]->GetT0();
-    } else {
-      std::cout << "    I don't know what fucking case this is." << std::endl;
-    }
-    */
 
     // Hits
     int nhits_u, nhits_v, nhits_w;
@@ -837,20 +796,36 @@ void UBXSec::produce(art::Event & e) {
 
     // Muon Candidate
     ubana::MuonCandidateFinder muon_finder;
-    muon_finder.SetTPCObject(tpcobj);
+    muon_finder.SetTracks(track_v_v[slice]);
     muon_finder.SetTrackToPIDMap(track_to_pid_map);
-    recob::Track candidate_track;
+    art::Ptr<recob::Track> candidate_track;
 
     if (muon_finder.GetCandidateTrack(candidate_track)) {
-      ubxsec_event->slc_muoncandidate_exists[slice] = true;
-      ubxsec_event->slc_muoncandidate_length[slice] = candidate_track.Length();
-      ubxsec_event->slc_muoncandidate_phi[slice]    = UBXSecHelper::GetCorrectedPhi(candidate_track, tpcobj_nu_vtx); 
-      ubxsec_event->slc_muoncandidate_theta[slice]  = UBXSecHelper::GetCorrectedCosTheta(candidate_track, tpcobj_nu_vtx);
+
+      bool fully_contained = _fiducial_volume.InFV(candidate_track->Vertex(), candidate_track->End());
+
+      ubxsec_event->slc_muoncandidate_exists[slice]    = true;
+      ubxsec_event->slc_muoncandidate_length[slice]    = candidate_track->Length();
+      ubxsec_event->slc_muoncandidate_phi[slice]       = UBXSecHelper::GetCorrectedPhi((*candidate_track), tpcobj_nu_vtx); 
+      ubxsec_event->slc_muoncandidate_theta[slice]     = UBXSecHelper::GetCorrectedCosTheta((*candidate_track), tpcobj_nu_vtx);
+      ubxsec_event->slc_muoncandidate_mom_range[slice] = _trk_mom_calculator.GetTrackMomentum(candidate_track->Length(), 13);
+      ubxsec_event->slc_muoncandidate_mom_mcs[slice]   = _trk_mom_calculator.GetMomentumMultiScatterLLHD(candidate_track);
+      ubxsec_event->slc_muoncandidate_contained[slice] = fully_contained;
+
+      if (_debug) std::cout << "[UBXSec] \t Muon Candidate Found" << std::endl;
+      if (_debug) std::cout << "[UBXSec] \t \t Length:          " << ubxsec_event->slc_muoncandidate_length[slice] << std::endl;
+      if (_debug) std::cout << "[UBXSec] \t \t Mom by Range:    " << ubxsec_event->slc_muoncandidate_mom_range[slice] << std::endl;
+      if (_debug) std::cout << "[UBXSec] \t \t Fully Contained? " << (ubxsec_event->slc_muoncandidate_contained[slice] ? "YES" : "NO") << std::endl;
+
     } else {
+
       ubxsec_event->slc_muoncandidate_exists[slice] = false;
       ubxsec_event->slc_muoncandidate_length[slice] = -9999;
       ubxsec_event->slc_muoncandidate_phi[slice]    = -9999;
       ubxsec_event->slc_muoncandidate_theta[slice]  = -9999;
+      ubxsec_event->slc_muoncandidate_mom_range[slice] = -9999;
+      ubxsec_event->slc_muoncandidate_mom_mcs[slice]  = -9999;
+
     }
 
     // Particle ID
@@ -878,14 +853,16 @@ void UBXSec::produce(art::Event & e) {
       if (mc_truth->Origin() == simb::kBeamNeutrino &&
           mcpars[0]->PdgCode() == 13 && mcpars[0]->Mother() == 0) {
 
-        ubxsec_event->muon_reco_pur = ubxsec_event->muon_reco_eff = -9999;
+        ubxsec_event->muon_is_reco = true;
+        //ubxsec_event->muon_reco_pur = ubxsec_event->muon_reco_eff = -9999;
         auto iter = recoParticlesToHits.find(pfp);
         if (iter != recoParticlesToHits.end()) {
           UBXSecHelper::GetTrackPurityAndEfficiency((*iter).second, ubxsec_event->muon_reco_pur, ubxsec_event->muon_reco_eff);
         }
         ubxsec_event->true_muon_mom_matched = mcpars[0]->P();
 
-       if (_fiducial_volume.InFV(mcpars[0]->Vx(), mcpars[0]->Vy(), mcpars[0]->Vz())  && _fiducial_volume.InFV(mcpars[0]->EndX(), mcpars[0]->EndY(), mcpars[0]->EndZ())) {
+       if (_fiducial_volume.InFV(mcpars[0]->Vx(), mcpars[0]->Vy(), mcpars[0]->Vz()) && 
+           _fiducial_volume.InFV(mcpars[0]->EndX(), mcpars[0]->EndY(), mcpars[0]->EndZ())) {
          ubxsec_event->mc_muon_contained = true;
        }
       } 
@@ -895,7 +872,7 @@ void UBXSec::produce(art::Event & e) {
       std::cout << "[UBXSec] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;
       for (auto track : tracks) {
 
-        std::vector<const anab::ParticleID*> pids = particleids_from_track.at(track.key());
+        std::vector<art::Ptr<anab::ParticleID>> pids = particleids_from_track.at(track.key());
         if(pids.size() == 0) std::cout << "[UBXSec] \t\t Zero ParticleID" << std::endl;
         if(pids.size() > 1) {
           std::cout << "[UBXSec] \t\t ParticleID vector is bigger than 1. Only one saved." << std::endl;

@@ -25,7 +25,7 @@
   <os>SL5,SL6</os>
 
   <!-- Batch resources -->
-  <resource>DEDICATED,OPPORTUNISTIC</resource>
+  <resource>DEDICATED,OPPORTUNISTIC,OFFSITE</resource>
 
   <!-- Larsoft information -->
   <larsoft>
@@ -46,7 +46,7 @@
     <numjobs>620</numjobs>
     <datatier>ubana</datatier>
     <memory>6000</memory>
-    <jobsub> --expected-lifetime=12h --mail_never --generate-email-summary </jobsub>
+    <jobsub> --expected-lifetime=24h --mail_never --generate-email-summary </jobsub>
     <disk>80GB</disk>
   </stage>
 

@@ -47,6 +47,18 @@ namespace ubana {
 
   }
 
+  bool FiducialVolume::InFV(TVector3 x) {
+
+    return this->InFV(x.X(), x.Y(), x.Z());
+
+  }
+
+  bool FiducialVolume::InFV(TVector3 x1, TVector3 x2) {
+
+    return (this->InFV(x1.X(), x1.Y(), x1.Z()) && this->InFV(x2.X(), x2.Y(), x2.Z()));
+
+  }
+
   bool FiducialVolume::InFV(double x, double y, double z) {
 
     // Construct a vector

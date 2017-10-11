@@ -26,7 +26,7 @@
   <os>SL5,SL6</os>
 
   <!-- Batch resources -->
-  <resource>DEDICATED,OPPORTUNISTIC</resource>
+  <resource>DEDICATED,OPPORTUNISTIC,OFFSITE</resource>
 
   <!-- Larsoft information -->
   <larsoft>
@@ -46,7 +46,7 @@
     <workdir>&PNFSpath;grid_workdir_ubxsec_data_bnbon</workdir>
     <numjobs>920</numjobs> 
     <datatier>ubana</datatier>
-    <jobsub> --expected-lifetime=12h --mail_never --generate-email-summary </jobsub>
+    <jobsub> --expected-lifetime=24h --mail_never --generate-email-summary </jobsub>
     <memory>6000</memory>
     <disk>80GB</disk>
   </stage>

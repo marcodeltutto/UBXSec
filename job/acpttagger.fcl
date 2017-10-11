@@ -8,7 +8,10 @@ ACPTTagger: {
   FlashProducer:         "simpleFlashCosmic"
   PFPartProducer:        "pandoraCosmic"
   TrackProducer:         "pandoraCosmicKHit"
+  SpacePoint:            "pandoraCosmic"
   SWTriggerProducer:     "swtrigger"
+
+  UseSpacePoints:        true
 
   AnodeTime:             0.53
   CathodeTime:           2291

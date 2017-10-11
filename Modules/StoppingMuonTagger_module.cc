@@ -28,6 +28,7 @@
 #include "lardataobj/RecoBase/OpHit.h"
 #include "lardataobj/RecoBase/OpFlash.h"
 #include "lardataobj/RecoBase/Track.h"
+#include "lardataobj/RecoBase/Shower.h"
 #include "lardataobj/RecoBase/Cluster.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/SpacePoint.h"
@@ -46,6 +47,13 @@
 
 //Algorithms include
 #include "uboone/UBXSec/Algorithms/FiducialVolume.h"
+
+// Root include
+#include "TString.h"
+#include "TTree.h"
+#include "TH2F.h"
+#include "TH1D.h"
+#include "TH2D.h"
 
 
 class StoppingMuonTagger;
@@ -73,6 +81,10 @@ private:
   ::ubana::FiducialVolume _fiducial_volume;
 
   std::string _tpcobject_producer;
+
+
+  TH1D * _h_nstopmu;
+  TH1D * _h_stopmu_type;
 };
 
 
@@ -88,6 +100,10 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p) {
 
   _tpcobject_producer             = p.get<std::string>("TPCObjectProducer", "TPCObjectMaker");
 
+
+  art::ServiceHandle<art::TFileService> fs;
+  _h_nstopmu = fs->make<TH1D>("h_nstopmu", ";Stopping Muons Per Event;", 10, 0, 10);
+  _h_stopmu_type = fs->make<TH1D>("h_stopmu_type", "Stopping Muon Chategories;;", 10, 0, 10);
 }
 
 void StoppingMuonTagger::produce(art::Event & e) {
@@ -107,10 +123,13 @@ void StoppingMuonTagger::produce(art::Event & e) {
   //art::FindManyP<ubana::FlashMatch> tpcobjToFlashMatchAssns(tpcobj_h, e, _neutrino_flash_match_producer);
   art::FindManyP<recob::Track>      tpcobjToTrackAssns(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
+  art::FindManyP<recob::Shower>     tpcobjToShowerAssns(tpcobj_h, e, _tpcobject_producer);
   //art::FindManyP<anab::CosmicTag>   tpcobjToCosmicTagAssns(tpcobj_h, e, _geocosmictag_producer);
 
   std::vector<art::Ptr<ubana::TPCObject>> tpcobj_v;
   art::fill_ptr_vector(tpcobj_v, tpcobj_h);
+
+  int n_stopmu = 0;
 
   for (size_t i = 0; i < tpcobj_v.size(); i++) {
 
@@ -120,15 +139,34 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     if (tpcobj->GetOriginExtra() != ubana::TPCObjectOriginExtra::kStoppingMuon) continue;
 
-    std::cout << "[StoppingMuonTagger] Find TPCObject representing a stopping cosmic muon." << std::endl;
+    std::cout << "[StoppingMuonTagger] Found TPCObject representing a stopping cosmic muon." << std::endl;
+    n_stopmu++;
 
-    std::vector<art::Ptr<recob::Track>>      tracks = tpcobjToTrackAssns.at(tpcobj.key());
-    std::vector<art::Ptr<recob::PFParticle>> pfps   = tpcobjToPFPAssns.at(tpcobj.key());
+    std::vector<art::Ptr<recob::Track>>      tracks  = tpcobjToTrackAssns.at(tpcobj.key());
+    std::vector<art::Ptr<recob::PFParticle>> pfps    = tpcobjToPFPAssns.at(tpcobj.key());
+    std::vector<art::Ptr<recob::Shower>>     showers = tpcobjToShowerAssns.at(tpcobj.key());
 
-    std::cout <<"[StoppingMuonTagger]\t Number of tracks for this TPCObject: " << tracks.size() << std::endl;
-    std::cout <<"[StoppingMuonTagger]\t Number of PFPs for this TPCObject:   " << tracks.size() << std::endl;
+    if (tracks.size() == 1 && showers.size() == 0)          // One track - bin 0
+      _h_stopmu_type->Fill(0);
+    else if (tracks.size() == 0 && showers.size() == 1)     // One shower - bin 1
+      _h_stopmu_type->Fill(1);
+    else if (tracks.size() == 1 && showers.size() == 1)     // One track One shower - bin 2
+      _h_stopmu_type->Fill(2);
+    else if (tracks.size() == 2 && showers.size() == 0)     // Two track Zero shower - bin 3
+      _h_stopmu_type->Fill(3);
+    else if (tracks.size() == 0 && showers.size() == 2)     // Zero track Two shower - bin 4
+      _h_stopmu_type->Fill(4);
+    else                                                    // Others
+      _h_stopmu_type->Fill(5);
+
+
+    std::cout <<"[StoppingMuonTagger]\t Number of tracks for this TPCObject:  " << tracks.size()  << std::endl;
+    std::cout <<"[StoppingMuonTagger]\t Number of showers for this TPCObject: " << showers.size() << std::endl;
+    std::cout <<"[StoppingMuonTagger]\t Number of PFPs for this TPCObject:    " << pfps.size()    << std::endl;
 
   }
+
+  _h_nstopmu->Fill(n_stopmu);
 
   std::cout <<"[StoppingMuonTagger] Ends." << std::endl;
 

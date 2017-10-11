@@ -23,6 +23,7 @@ art_make( BASENAME_ONLY
                    larevt_CalibrationDBI_IOVData
                    larevt_CalibrationDBI_Providers
                    larsim_MCCheater_BackTracker_service
+                   larreco_RecoAlg
                    #Simulation
 		   #Utilities
 		   #TimeService_service
@@ -73,6 +74,7 @@ art_make( BASENAME_ONLY
                    uboone_UBFlashFinder
 
                    uboone_RawData
+                   larreco_RecoAlg
                    SignalShapingServiceMicroBooNE_service
                    larevt_CalibrationDBI_IOVData
                    larevt_CalibrationDBI_Providers

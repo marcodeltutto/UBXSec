@@ -50,6 +50,12 @@ namespace ubana{
     /// Returns true if the point is in the FV 
     bool InFV(double* x);
 
+    /// Returns true if the point is in the FV
+    bool InFV(TVector3 x);
+
+    /// Returns true if BOTH points are in the FV
+    bool InFV(TVector3 x1, TVector3 x2);
+
   protected:
 
     double _det_half_height;

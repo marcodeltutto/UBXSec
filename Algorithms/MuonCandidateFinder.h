@@ -47,22 +47,23 @@ namespace ubana{
     /// Print the current configuration
     void PrintConfig();
 
-    /// Set the TPC object
-    void SetTPCObject(ubana::TPCObject theobject) {_tpc_object = theobject; _tpcobject_is_set = true;}
+    /// Set the tracks 
+    void SetTracks(std::vector<art::Ptr<recob::Track>> thetracks) {_tracks = thetracks; _tracks_are_set = true;}
 
     /// Set map from tracks to PID for the TPC object
-    void SetTrackToPIDMap(std::map<recob::Track,anab::ParticleID> themap) {_track_to_pid = themap; _tracktopidmap_is_set = true;} 
+    void SetTrackToPIDMap(std::map<art::Ptr<recob::Track>,art::Ptr<anab::ParticleID>> themap) {_track_to_pid = themap; _tracktopidmap_is_set = true;} 
 
     /// Sets the TPC object
-    bool GetCandidateTrack(recob::Track &);
+    bool GetCandidateTrack(art::Ptr<recob::Track> &);
     
   protected:
 
-    ubana::TPCObject _tpc_object;
-    std::map<recob::Track,anab::ParticleID> _track_to_pid;
+    std::vector<art::Ptr<recob::Track>> _tracks;
+    std::map<art::Ptr<recob::Track>,art::Ptr<anab::ParticleID>> _track_to_pid;
 
-    double _max_distance;
-    bool _tpcobject_is_set;
+    bool _use_pida_cut;
+
+    bool _tracks_are_set;
     bool _tracktopidmap_is_set;
   };
 }

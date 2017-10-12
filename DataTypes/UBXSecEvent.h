@@ -46,7 +46,7 @@ class UBXSecEvent /*: public TObject*/{
   Int_t           muon_is_flash_tagged; ///< Not used
   Double_t        muon_tag_score; ///< Not used
   Double_t        fm_score; ///< Not used
-  Int_t           fv; /// Is 1 if the true neutrino vertex is in the fiducial volume
+  Int_t           fv; ///< Is 1 if the true neutrino vertex is in the fiducial volume
   Int_t           ccnc; ///< Is 0 if CC, 1 if NC
   Int_t           nupdg; ///< Neutrino flavour (pdg code)
   Bool_t          is_signal; ///< Is trues if the event is a true numu cc in FV

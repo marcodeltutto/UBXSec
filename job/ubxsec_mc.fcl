@@ -38,9 +38,9 @@ BEGIN_PROLOG
 ubxsec_mc_reco:
 {
 
-  saturation:                     @local::correct_saturation_mc
-  ophitBeam:                      @local::microboone_ophit_saturation_beam
-  simpleFlashBeam:                @local::UBFlashBeamMC
+  saturationTest:                 @local::correct_saturation_mc
+  ophitBeamTest:                  @local::microboone_ophit_saturation_beam
+  simpleFlashBeamTest:            @local::UBFlashBeamMC
 
   pandoraCosmicTrackPFPart:       @local::microboone_cosmicpfparticletagger
   pandoraCosmicFlashTag:          @local::microboone_cosmicpfpflashtagger
@@ -78,9 +78,9 @@ ubxsec_mc_ana:
 }
 
 
-ubxsec_mc_producers: [ #saturation, 
-                       #ophitBeam,
-                       #simpleFlashBeam,
+ubxsec_mc_producers: [ saturationTest, 
+                       ophitBeamTest,
+                       simpleFlashBeamTest,
                        pandoraCosmicTrackPFPart,
                        pandoraCosmicFlashTag,
                        pandoraCosmicACPTTagger,

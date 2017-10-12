@@ -306,7 +306,6 @@ Generating docs for file /home/trav/home/travis/build/marcodeltutto/UBXSec/Algor
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:123: warning: Member endSubRun(art::SubRun &sr) override (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:154: warning: Member Init() (function) of class UBXSecEvent is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:155: warning: Member ResizeVectors(int) (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:49: warning: Member fv (variable) of class UBXSecEvent is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:71: warning: Member GetRecoToTrueMatches(art::Event const &e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits) (function) of class UBXSecHelper is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:242: warning: argument 'track' of command @param is not found in the argument list of UBXSecHelper::GetCorrectedCosTheta(recob::Track t, recob::Vertex tpcobj_nu_vtx)
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:242: warning: The following parameters of UBXSecHelper::GetCorrectedCosTheta(recob::Track t, recob::Vertex tpcobj_nu_vtx) are not documented:
@@ -346,9 +345,6 @@ Generating docs for file /home/trav/home/travis/build/marcodeltutto/UBXSec/Algor
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:36: warning: Member SetSelectionStatus(bool status) (function) of class ubana::SelectionResult is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:37: warning: Member SetSelectionType(std::string type) (function) of class ubana::SelectionResult is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:38: warning: Member SetFailureReason(std::string reason) (function) of class ubana::SelectionResult is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:40: warning: Member GetSelectionType() (function) of class ubana::SelectionResult is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:41: warning: Member GetSelectionStatus() (function) of class ubana::SelectionResult is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/SelectionResult.h:42: warning: Member GetFailureReason() (function) of class ubana::SelectionResult is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:58: warning: Member SetTracks(std::vector< recob::Track >) (function) of class ubana::TPCObject is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:59: warning: Member SetPFPs(std::vector< recob::PFParticle >) (function) of class ubana::TPCObject is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/TPCObject.h:60: warning: Member SetVertex(recob::Vertex) (function) of class ubana::TPCObject is not documented.
@@ -476,5 +472,5 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-lookup cache used 333/65536 hits=1447 misses=346
+lookup cache used 330/65536 hits=1433 misses=343
 finished...

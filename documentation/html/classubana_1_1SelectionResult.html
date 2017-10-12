@@ -94,7 +94,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>Data product to store a flash matching results.  
+<p>Data product to store the event selection results.  
  <a href="classubana_1_1SelectionResult.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="SelectionResult_8h_source.html">SelectionResult.h</a>&gt;</code></p>
@@ -111,17 +111,20 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SetSelectionType</b> 
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SetFailureReason</b> (std::string reason)</td></tr>
 <tr class="separator:ab7053b38033e245ffa2c9ad3c6a4b3dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1b21a0690e27bd01ad9ac20afa2d161"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1b21a0690e27bd01ad9ac20afa2d161"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetSelectionType</b> ()</td></tr>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1SelectionResult.html#ac1b21a0690e27bd01ad9ac20afa2d161">GetSelectionType</a> ()</td></tr>
+<tr class="memdesc:ac1b21a0690e27bd01ad9ac20afa2d161"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the type of event selection run (numu cc inclusive / ccpi0 / others...) <br/></td></tr>
 <tr class="separator:ac1b21a0690e27bd01ad9ac20afa2d161"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a45390dcb4c138003158a76ac94a8a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2a45390dcb4c138003158a76ac94a8a8"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetSelectionStatus</b> ()</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1SelectionResult.html#a2a45390dcb4c138003158a76ac94a8a8">GetSelectionStatus</a> ()</td></tr>
+<tr class="memdesc:a2a45390dcb4c138003158a76ac94a8a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the status of the selection (true is event passed, flase otherwise) <br/></td></tr>
 <tr class="separator:a2a45390dcb4c138003158a76ac94a8a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b944eb143cb58faad70480c0600bb36"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b944eb143cb58faad70480c0600bb36"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetFailureReason</b> ()</td></tr>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1SelectionResult.html#a8b944eb143cb58faad70480c0600bb36">GetFailureReason</a> ()</td></tr>
+<tr class="memdesc:a8b944eb143cb58faad70480c0600bb36"><td class="mdescLeft">&#160;</td><td class="mdescRight">If <a class="el" href="classubana_1_1SelectionResult.html#a2a45390dcb4c138003158a76ac94a8a8" title="Returns the status of the selection (true is event passed, flase otherwise) ">GetSelectionStatus()</a> returns false, it returns a string containing the reason for the failure. <br/></td></tr>
 <tr class="separator:a8b944eb143cb58faad70480c0600bb36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Data product to store a flash matching results. </p>
+<div class="textblock"><p>Data product to store the event selection results. </p>
 <dl class="section author"><dt>Author</dt><dd></dd></dl>
 <dl class="section rcs"><dt>Author:</dt><dd>Marco Del Tutto<a href="#" onclick="location.href='mai'+'lto:'+'mar'+'co'+'.de'+'lt'+'utt'+'o@'+'phy'+'si'+'cs.'+'ox'+'.ac'+'.u'+'k'; return false;">marco<span style="display: none;">.nosp@m.</span>.del<span style="display: none;">.nosp@m.</span>tutto<span style="display: none;">.nosp@m.</span>@phy<span style="display: none;">.nosp@m.</span>sics.<span style="display: none;">.nosp@m.</span>ox.a<span style="display: none;">.nosp@m.</span>c.uk</a> </dd></dl>
 <dl class="section version"><dt>Version</dt><dd></dd></dl>

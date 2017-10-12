@@ -78,9 +78,9 @@ ubxsec_mc_ana:
 }
 
 
-ubxsec_mc_producers: [ saturation, 
-                       ophitBeam,
-                       simpleFlashBeam,
+ubxsec_mc_producers: [ #saturation, 
+                       #ophitBeam,
+                       #simpleFlashBeam,
                        pandoraCosmicTrackPFPart,
                        pandoraCosmicFlashTag,
                        pandoraCosmicACPTTagger,

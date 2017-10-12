@@ -3,7 +3,7 @@
  *
  * \ingroup UBXSec
  *
- * \brief Data product to store a flash matching results
+ * \brief Data product to store the event selection results
  * 
  *
  * \author $Author: Marco Del Tutto<marco.deltutto@physics.ox.ac.uk> $
@@ -37,8 +37,13 @@ namespace ubana {
     void SetSelectionType(std::string type)   {_selection_type = type;}
     void SetFailureReason(std::string reason) {_failure_reason = reason;}
 
+    /// Returns the type of event selection run (numu cc inclusive / ccpi0 / others...)
     std::string GetSelectionType()   {return _selection_type;}
+
+    /// Returns the status of the selection (true is event passed, flase otherwise)
     bool        GetSelectionStatus() {return _selection_status;}
+
+    /// If GetSelectionStatus() returns false, it returns a string containing the reason for the failure
     std::string GetFailureReason()   {return _failure_reason;}
 
   private:

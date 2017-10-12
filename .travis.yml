@@ -2,9 +2,14 @@
 sudo: false
 
 # Blacklist
+#branches:
+#  except:
+#    - gh-pages
+
+# Safelist
 branches:
-  except:
-    - gh-pages
+  only:
+    - master
 
 # Environment variables
 env:

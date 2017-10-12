@@ -2,11 +2,9 @@
 
 [![Build Status](https://travis-ci.org/marcodeltutto/UBXSec.svg?branch=master)](https://travis-ci.org/marcodeltutto/UBXSec)
 
-Go to the develop branch for the latest code.
-
 Wiki Page: https://github.com/marcodeltutto/UBXSec/wiki
 
-Doxygen Documentation: https://marcodeltutto.github.io/UBXSec/documentation/html/index.html
+Doxygen Documentation: https://marcodeltutto.github.io/UBXSec/documentation/html/annotated.html 
 
 ## How to install
 

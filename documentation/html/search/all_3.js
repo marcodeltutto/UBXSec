@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['candidate_5fflash_5ftime',['candidate_flash_time',['../classUBXSecEvent.html#a84ab9cf932fabd0e1d9762ac07c75407',1,'UBXSecEvent']]],
+  ['ccnc',['ccnc',['../classUBXSecEvent.html#a6a55ef25451d4a8206055d588b052caf',1,'UBXSecEvent']]],
   ['clear',['Clear',['../classubxsec_1_1ACPTAlgo.html#a749010492996f04d6c67a614647f7fe8',1,'ubxsec::ACPTAlgo::Clear()'],['../classubxsec_1_1VertexCheck.html#abb5969f8c850d1191248bddd91ec49d1',1,'ubxsec::VertexCheck::Clear()']]],
   ['collectpfp',['CollectPFP',['../group__UBXSec.html#ga9572bb5f180624d28ed9055591d633eb',1,'ubana::TPCObjectMaker']]],
   ['collecttracksandpfp',['CollectTracksAndPFP',['../classUBXSecHelper.html#ab441342f0c71741e353f323a26f27728',1,'UBXSecHelper']]],
@@ -9,7 +11,7 @@ var searchData=
   ['cosmictagbyhitintegral',['CosmicTagByHitIntegral',['../classCosmicTagByHitIntegral.html',1,'CosmicTagByHitIntegral'],['../classubana_1_1CosmicTagByHitIntegral.html#ae58970463cfcb6fa697e19073da6a91c',1,'ubana::CosmicTagByHitIntegral::CosmicTagByHitIntegral(fhicl::ParameterSet const &amp;ps)'],['../classubana_1_1CosmicTagByHitIntegral.html#ad51d5460821d3a81262f8515a8e08487',1,'ubana::CosmicTagByHitIntegral::CosmicTagByHitIntegral()']]],
   ['cosmictagbyhitintegral',['CosmicTagByHitIntegral',['../classubana_1_1CosmicTagByHitIntegral.html',1,'ubana']]],
   ['cosmictaggerana',['CosmicTaggerAna',['../classCosmicTaggerAna.html',1,'']]],
-  ['cosmictagtoolinterface',['CosmicTagToolInterface',['../classubana_1_1CosmicTagToolInterface.html',1,'ubana']]],
   ['cosmictagtoolinterface',['CosmicTagToolInterface',['../classCosmicTagToolInterface.html',1,'']]],
+  ['cosmictagtoolinterface',['CosmicTagToolInterface',['../classubana_1_1CosmicTagToolInterface.html',1,'ubana']]],
   ['cosmictrackhittagger',['CosmicTrackHitTagger',['../classCosmicTrackHitTagger.html',1,'']]]
 ];

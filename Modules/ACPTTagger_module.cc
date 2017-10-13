@@ -104,6 +104,11 @@ private:
   std::vector<double> _trk_x_up, _trk_x_down, _trk_len, _trk_z_center;
   std::vector<double> _dt_u_anode, _dz_u_anode, _dt_d_anode, _dz_d_anode;
   std::vector<double> _dt_u_cathode, _dz_u_cathode, _dt_d_cathode, _dz_d_cathode;
+
+  TTree* _tree2;
+  double _tree2_dt;
+  double _tree2_flstime;
+  double _tree2_tracktime;
 };
 
 
@@ -165,6 +170,14 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
     _tree1->Branch("dz_u_cathode",  "std::vector<double>", &_dz_u_cathode);
     _tree1->Branch("dt_d_cathode",  "std::vector<double>", &_dt_d_cathode);
     _tree1->Branch("dz_d_cathode",  "std::vector<double>", &_dz_d_cathode);
+ 
+    _tree2 = fs->make<TTree>("tree2","");
+    _tree1->Branch("run",             &_run,                 "run/I");
+    _tree1->Branch("subrun",          &_subrun,              "subrun/I");
+    _tree1->Branch("event",           &_event,               "event/I");
+    _tree1->Branch("tree2_dt",        &_tree2_dt,            "tree2_dt/D");
+    _tree1->Branch("tree2_flstime",   &_tree2_flstime,       "tree2_flstime/D");
+    _tree1->Branch("tree2_tracktime", &_tree2_tracktime,     "tree2_tracktime/D");
   }
 
   produces< std::vector<anab::CosmicTag>>();
@@ -418,6 +431,12 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_cente
       _h_diff->Fill(diff);
       _h_diff_a->Fill(diff);
       _h_diff_c->Fill(diff);
+    }
+    if (_debug && fill_histo) {
+      _tree2_dt = diff;
+      _tree2_flstime = _flash_times[theflash];
+      _tree2_tracktime = _end.X() / _drift_vel;
+      _tree2->Fill();
     }
 
   } // flash loop

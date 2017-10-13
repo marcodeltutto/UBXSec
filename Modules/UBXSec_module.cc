@@ -193,6 +193,9 @@ private:
   TH2D* _h_mom_true_mcs_contained; ///< 2D histogram of true muon momentum VS reconstructed (using MCS) (contained tracks)
   TH2D* _h_mom_true_mcs_uncontained; ///< 2D histogram of true muon momentum VS reconstructed (using MCS) (uncontained tracks)
   TH2D* _h_mom_true_range_contained; ///< 2D histogram of true muon momentum VS reconstructed (using Length) (contained tracks)
+  TH2D* _h_mom_range_mcs_contained;  ///< 2D histogram of reconstructed (using MCS) muon momentum VS reconstructed (using Length) (contained tracks)
+
+  TH1D* _h_mcs_cosmic_track_direction; ///< Track direction from cosmic origin TPCObjects as given by mcs (0: downward, 1: upward)
   
   TTree* _sr_tree;
   int _sr_run, _sr_subrun; 
@@ -287,10 +290,13 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _h_pida_len_pion = fs->make<TH2D>("h_pida_len_pion", "Pion tracks;PIDa [MeV/cm^{1.42}];Track length [cm];", 50, 0, 20, 100, 0, 700);
   _h_pida_len_kaon = fs->make<TH2D>("h_pida_len_kaon", "Kaon tracks;PIDa [MeV/cm^{1.42}];Track length [cm];", 50, 0, 20, 100, 0, 700);
 
-  _h_mom_true_mcs = fs->make<TH2D>("h_mom_true_mcs", ";True Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 4, 50, 0, 4);
-  _h_mom_true_mcs_contained = fs->make<TH2D>("h_mom_true_mcs_contained", "Contained;True Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 4, 50, 0, 4);
-  _h_mom_true_mcs_uncontained = fs->make<TH2D>("h_mom_true_mcs_uncontained", "Uncontained;True Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 4, 50, 0, 4);
-  _h_mom_true_range_contained = fs->make<TH2D>("h_mom_true_range_contained", "Contained;True Muon Momentum [GeV];Reconstructed (via Length) Muon Momentum [GeV];", 80, 0, 4, 50, 0, 4);
+  _h_mom_true_mcs = fs->make<TH2D>("h_mom_true_mcs", ";True Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
+  _h_mom_true_mcs_contained = fs->make<TH2D>("h_mom_true_mcs_contained", "Contained;True Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
+  _h_mom_true_mcs_uncontained = fs->make<TH2D>("h_mom_true_mcs_uncontained", "Uncontained;True Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
+  _h_mom_true_range_contained = fs->make<TH2D>("h_mom_true_range_contained", "Contained;True Muon Momentum [GeV];Reconstructed (via Length) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
+  _h_mom_range_mcs_contained = fs->make<TH2D>("h_mom_range_mcs", "Contained;Reconstructed (via Length) Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
+
+  _h_mcs_cosmic_track_direction = fs->make<TH1D>("h_mcs_cosmic_track_direction", "0: down, 1: up;;", 2, 0, 2);
 
   _sr_tree = fs->make<TTree>("pottree","");
   _sr_tree->Branch("run",                &_sr_run,                "run/I");
@@ -835,7 +841,9 @@ void UBXSec::produce(art::Event & e) {
     muon_finder.SetTrackToPIDMap(track_to_pid_map);
     art::Ptr<recob::Track> candidate_track;
 
-    if (muon_finder.GetCandidateTrack(candidate_track)) {
+    bool muon_cand_exists = muon_finder.GetCandidateTrack(candidate_track);
+
+    if (muon_cand_exists) {
 
       bool fully_contained = _fiducial_volume.InFV(candidate_track->Vertex(), candidate_track->End());
 
@@ -863,6 +871,8 @@ void UBXSec::produce(art::Event & e) {
               _h_mom_true_range_contained->Fill(ubxsec_event->slc_muoncandidate_mom_range[slice], mcpar->P());
             } else {
               _h_mom_true_mcs_uncontained->Fill(ubxsec_event->slc_muoncandidate_mom_mcs[slice], mcpar->P());
+              _h_mom_range_mcs_contained->Fill(ubxsec_event->slc_muoncandidate_mom_range[slice],
+                                               ubxsec_event->slc_muoncandidate_mom_mcs[slice]);
             }
           }
         }
@@ -961,7 +971,22 @@ void UBXSec::produce(art::Event & e) {
         }
       }
     }
-  
+ 
+
+
+    // MCS - Track direction, study cosmic direction
+    // Take the muon candidate track for a TPCObject
+    // with cosmic origin, and check the track direction
+    // (up/down) from MCS result
+    if (muon_cand_exists && tpcobj.GetOrigin() == ubana::kCosmicRay) {
+      bool best_fwd = mcsfitresult_v.at(candidate_track.key())->isBestFwd();
+      bool down_track = candidate_track->Vertex().Y() > candidate_track->End().Y();
+      if(down_track && best_fwd)
+        _h_mcs_cosmic_track_direction->Fill(0);
+      else
+        _h_mcs_cosmic_track_direction->Fill(1);
+    }
+
     std::cout << "[UBXSec] --- SLICE INFORMATION SAVED" << std::endl;
   } // slice loop
 

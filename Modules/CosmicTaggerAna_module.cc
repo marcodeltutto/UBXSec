@@ -245,6 +245,7 @@ void CosmicTaggerAna::analyze(art::Event const & e)
      art::Ptr<recob::PFParticle> pf_par = iter1->second;  // The matched PFParticle
 
      const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
+     if (!mc_truth) continue;  
      if (mc_truth->Origin() == NEUTRINO_ORIGIN) {
        if (_debug) {
          std::cout << "Neutrino related track found." << std::endl;

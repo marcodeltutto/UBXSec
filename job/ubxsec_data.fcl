@@ -24,6 +24,8 @@
 #include "ubflashfinder.fcl"
 #include "correct_saturation.fcl"
 
+#include "mcsfitproducer.fcl"
+
 #include "fiducial_volume_settings.fcl"
 #include "numucc_eventselection_settings.fcl"
 
@@ -51,6 +53,8 @@ ubxsec_data_reco:
 
   pandoraNucalo:                  @local::microboone_calomc
   pandoraNupid:                   @local::microboone_chi2pid
+
+  pandoraNuMCSMu:                 @local::mcsfitproducer
 }
 
 ubxsec_data_flashmatch:
@@ -85,6 +89,7 @@ ubxsec_data_producers: [ saturationTest,
                          pandoraNu,
                          pandoraNucalo,
                          pandoraNupid,
+                         pandoraNuMCSMu,
                          RecoTrueMatcher,
                          TPCObjectMaker,
                          pandoraNuGeoCosmicTag,
@@ -125,6 +130,8 @@ ubxsec_data_reco.pandoraNucalo.SpacePointModuleLabel:              "pandoraNu::U
 
 ubxsec_data_reco.pandoraNupid.CalorimetryModuleLabel:              "pandoraNucalo::UBXSec"
 ubxsec_data_reco.pandoraNupid.TrackModuleLabel:                    "pandoraNu::UBXSec"
+
+ubxsec_data_reco.pandoraNuMCSMu.inputs.inputLabel:                 "pandoraNu::UBXSec"
 
 # Set FlashMatching properties
 ubxsec_data_flashmatch.NeutrinoFlashMatch.TrackModule:             "pandoraNu::UBXSec"

@@ -2,7 +2,7 @@
 
 process_name: UBXSec
 
-services.TFileService.fileName: "ubxsec_output_mc.root"
+services.TFileService.fileName: "ubxsec_output_mc_bnbcosmic.root"
 
 physics.reco:          [ @sequence::ubxsec_mc_producers ]
 physics.trigger_paths: [ reco ]

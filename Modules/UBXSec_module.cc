@@ -186,16 +186,24 @@ private:
   TH2F * _deadRegion2P;
   TH2F * _deadRegion3P;
   
+  // PIDA related variables
   TH1D * _h_pida_proton,     * _h_pida_muon,     * _h_pida_pion,     * _h_pida_kaon;
   TH2D * _h_pida_len_proton, * _h_pida_len_muon, * _h_pida_len_pion, * _h_pida_len_kaon;
 
+  // Momentum Related Variables
   TH2D* _h_mom_true_mcs; ///< 2D histogram of true muon momentum VS reconstructed (using MCS)
   TH2D* _h_mom_true_mcs_contained; ///< 2D histogram of true muon momentum VS reconstructed (using MCS) (contained tracks)
   TH2D* _h_mom_true_mcs_uncontained; ///< 2D histogram of true muon momentum VS reconstructed (using MCS) (uncontained tracks)
   TH2D* _h_mom_true_range_contained; ///< 2D histogram of true muon momentum VS reconstructed (using Length) (contained tracks)
   TH2D* _h_mom_range_mcs_contained;  ///< 2D histogram of reconstructed (using MCS) muon momentum VS reconstructed (using Length) (contained tracks)
-
   TH1D* _h_mcs_cosmic_track_direction; ///< Track direction from cosmic origin TPCObjects as given by mcs (0: downward, 1: upward)
+  TH2D* _h_mcs_cosmic_track_direction_deltall; /// Track direction from cosmic origin TPCObjects as given by mcs (0: downward, 1: upward) VS delta LL from MCS fit
+  TTree* _mom_tree_contained;
+  int _run, _subrun, _event;
+  double _mom_true_contained;
+  double _mom_mcs_contained;
+  double _mom_range_contained;
+
   
   TTree* _sr_tree;
   int _sr_run, _sr_subrun; 
@@ -294,9 +302,18 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _h_mom_true_mcs_contained = fs->make<TH2D>("h_mom_true_mcs_contained", "Contained;True Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
   _h_mom_true_mcs_uncontained = fs->make<TH2D>("h_mom_true_mcs_uncontained", "Uncontained;True Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
   _h_mom_true_range_contained = fs->make<TH2D>("h_mom_true_range_contained", "Contained;True Muon Momentum [GeV];Reconstructed (via Length) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
-  _h_mom_range_mcs_contained = fs->make<TH2D>("h_mom_range_mcs", "Contained;Reconstructed (via Length) Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
+  _h_mom_range_mcs_contained = fs->make<TH2D>("h_mom_range_mcs_contained", "Contained;Reconstructed (via Length) Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
 
   _h_mcs_cosmic_track_direction = fs->make<TH1D>("h_mcs_cosmic_track_direction", "0: down, 1: up;;", 2, 0, 2);
+  _h_mcs_cosmic_track_direction_deltall = fs->make<TH2D>("h_mcs_cosmic_track_direction_deltall", ";0: down, 1: up;(FWD - BWD) LL;", 2, 0, 1, 100, -10, 10);
+
+  _mom_tree_contained = fs->make<TTree>("momentumtree","");
+  _mom_tree_contained->Branch("run",                &_run,                 "run/I");
+  _mom_tree_contained->Branch("subrun",             &_subrun,              "subrun/I");
+  _mom_tree_contained->Branch("event",              &_event,               "event/I");
+  _mom_tree_contained->Branch("mom_true_contained", &_mom_true_contained,  "mom_true_contained/D");
+  _mom_tree_contained->Branch("mom_mcs_contained",  &_mom_mcs_contained,   "mom_mcs_contained/D");
+  _mom_tree_contained->Branch("mom_mcs_contained",  &_mom_range_contained, "mom_range_contained/D");
 
   _sr_tree = fs->make<TTree>("pottree","");
   _sr_tree->Branch("run",                &_sr_run,                "run/I");
@@ -335,9 +352,9 @@ void UBXSec::produce(art::Event & e) {
   ubxsec_event->Init();
 
 
-  ubxsec_event->run    = e.id().run();
-  ubxsec_event->subrun = e.id().subRun();
-  ubxsec_event->event  = e.id().event();
+  _run = ubxsec_event->run    = e.id().run();
+  _subrun = ubxsec_event->subrun = e.id().subRun();
+  _event = ubxsec_event->event  = e.id().event();
 
   _is_data = e.isRealData();
   _is_mc   = !_is_data;
@@ -867,12 +884,16 @@ void UBXSec::produce(art::Event & e) {
           if (mc_truth->Origin() == simb::kBeamNeutrino && mcpar->PdgCode() == 13 && mcpar->Mother() == 0) {
             _h_mom_true_mcs->Fill(ubxsec_event->slc_muoncandidate_mom_mcs[slice], mcpar->P());
             if (fully_contained) {
+              _mom_true_contained = mcpar->P();
+              _mom_mcs_contained = ubxsec_event->slc_muoncandidate_mom_mcs[slice];
+              _mom_range_contained = ubxsec_event->slc_muoncandidate_mom_range[slice];
+              _mom_tree_contained->Fill();
               _h_mom_true_mcs_contained->Fill(ubxsec_event->slc_muoncandidate_mom_mcs[slice], mcpar->P());
               _h_mom_true_range_contained->Fill(ubxsec_event->slc_muoncandidate_mom_range[slice], mcpar->P());
-            } else {
-              _h_mom_true_mcs_uncontained->Fill(ubxsec_event->slc_muoncandidate_mom_mcs[slice], mcpar->P());
               _h_mom_range_mcs_contained->Fill(ubxsec_event->slc_muoncandidate_mom_range[slice],
                                                ubxsec_event->slc_muoncandidate_mom_mcs[slice]);
+            } else {
+              _h_mom_true_mcs_uncontained->Fill(ubxsec_event->slc_muoncandidate_mom_mcs[slice], mcpar->P());
             }
           }
         }
@@ -981,10 +1002,20 @@ void UBXSec::produce(art::Event & e) {
     if (muon_cand_exists && tpcobj.GetOrigin() == ubana::kCosmicRay) {
       bool best_fwd = mcsfitresult_v.at(candidate_track.key())->isBestFwd();
       bool down_track = candidate_track->Vertex().Y() > candidate_track->End().Y();
-      if(down_track && best_fwd)
+      double deltall = mcsfitresult_v.at(candidate_track.key())->deltaLogLikelihood();
+      if (down_track && best_fwd) {               // Track is reco going down and mcs agrees (true for cosmic)
         _h_mcs_cosmic_track_direction->Fill(0);
-      else
+        _h_mcs_cosmic_track_direction_deltall->Fill(0., deltall);
+      } else if (!down_track && best_fwd) {       // Track is reco going up and mcs agrees
         _h_mcs_cosmic_track_direction->Fill(1);
+        _h_mcs_cosmic_track_direction_deltall->Fill(1., deltall);
+      } else if (down_track && !best_fwd) {       // Track is reco going down and mcs disagrees
+        _h_mcs_cosmic_track_direction->Fill(1);
+        _h_mcs_cosmic_track_direction_deltall->Fill(1., deltall);
+      } else if (!down_track && !best_fwd) {      // Track is reco going up and mcs disagrees (true for cosmic)
+        _h_mcs_cosmic_track_direction->Fill(0);
+        _h_mcs_cosmic_track_direction_deltall->Fill(0., deltall);
+      }
     }
 
     std::cout << "[UBXSec] --- SLICE INFORMATION SAVED" << std::endl;

@@ -308,12 +308,12 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _h_mcs_cosmic_track_direction_deltall = fs->make<TH2D>("h_mcs_cosmic_track_direction_deltall", ";0: down, 1: up;(FWD - BWD) LL;", 2, 0, 2, 100, -1, 1);
 
   _mom_tree_contained = fs->make<TTree>("momentumtree","");
-  _mom_tree_contained->Branch("run",                &_run,                 "run/I");
-  _mom_tree_contained->Branch("subrun",             &_subrun,              "subrun/I");
-  _mom_tree_contained->Branch("event",              &_event,               "event/I");
-  _mom_tree_contained->Branch("mom_true_contained", &_mom_true_contained,  "mom_true_contained/D");
-  _mom_tree_contained->Branch("mom_mcs_contained",  &_mom_mcs_contained,   "mom_mcs_contained/D");
-  _mom_tree_contained->Branch("mom_mcs_contained",  &_mom_range_contained, "mom_range_contained/D");
+  _mom_tree_contained->Branch("run",                 &_run,                 "run/I");
+  _mom_tree_contained->Branch("subrun",              &_subrun,              "subrun/I");
+  _mom_tree_contained->Branch("event",               &_event,               "event/I");
+  _mom_tree_contained->Branch("mom_true_contained",  &_mom_true_contained,  "mom_true_contained/D");
+  _mom_tree_contained->Branch("mom_mcs_contained",   &_mom_mcs_contained,   "mom_mcs_contained/D");
+  _mom_tree_contained->Branch("mom_range_contained", &_mom_range_contained, "mom_range_contained/D");
 
   _sr_tree = fs->make<TTree>("pottree","");
   _sr_tree->Branch("run",                &_sr_run,                "run/I");

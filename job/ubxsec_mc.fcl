@@ -24,6 +24,8 @@
 #include "ubflashfinder.fcl"
 #include "correct_saturation.fcl"
 
+#include "mcsfitproducer.fcl"
+
 #include "fiducial_volume_settings.fcl"
 #include "numucc_eventselection_settings.fcl"
 
@@ -38,9 +40,9 @@ BEGIN_PROLOG
 ubxsec_mc_reco:
 {
 
-  saturation:                     @local::correct_saturation_mc
-  ophitBeam:                      @local::microboone_ophit_saturation_beam
-  simpleFlashBeam:                @local::UBFlashBeamMC
+  saturationTest:                 @local::correct_saturation_mc
+  ophitBeamTest:                  @local::microboone_ophit_saturation_beam
+  simpleFlashBeamTest:            @local::UBFlashBeamMC
 
   pandoraCosmicTrackPFPart:       @local::microboone_cosmicpfparticletagger
   pandoraCosmicFlashTag:          @local::microboone_cosmicpfpflashtagger
@@ -53,6 +55,8 @@ ubxsec_mc_reco:
 
   pandoraNucalo:                  @local::microboone_calomc
   pandoraNupid:                   @local::microboone_chi2pid
+
+  pandoraNuMCSMu:                 @local::mcsfitproducer
 }
 
 ubxsec_mc_flashmatch:
@@ -78,9 +82,9 @@ ubxsec_mc_ana:
 }
 
 
-ubxsec_mc_producers: [ #saturation, 
-                       #ophitBeam,
-                       #simpleFlashBeam,
+ubxsec_mc_producers: [ saturationTest, 
+                       ophitBeamTest,
+                       simpleFlashBeamTest,
                        pandoraCosmicTrackPFPart,
                        pandoraCosmicFlashTag,
                        pandoraCosmicACPTTagger,
@@ -88,6 +92,7 @@ ubxsec_mc_producers: [ #saturation,
                        pandoraNu,
                        pandoraNucalo,
                        pandoraNupid,
+                       pandoraNuMCSMu,
                        RecoTrueMatcher, 
                        TPCObjectMaker,
                        pandoraNuGeoCosmicTag,
@@ -128,6 +133,8 @@ ubxsec_mc_reco.pandoraNucalo.SpacePointModuleLabel:              "pandoraNu::UBX
 
 ubxsec_mc_reco.pandoraNupid.CalorimetryModuleLabel:              "pandoraNucalo::UBXSec"
 ubxsec_mc_reco.pandoraNupid.TrackModuleLabel:                    "pandoraNu::UBXSec"
+
+ubxsec_mc_reco.pandoraNuMCSMu.inputs.inputLabel:                 "pandoraNu::UBXSec"
 
 # Set FlashMatching properties
 ubxsec_mc_flashmatch.NeutrinoFlashMatch.TrackModule:             "pandoraNu::UBXSec"

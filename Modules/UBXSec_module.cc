@@ -50,6 +50,7 @@
 #include "lardataobj/RecoBase/Cluster.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/SpacePoint.h"
+#include "lardataobj/RecoBase/MCSFitResult.h"
 #include "uboone/UBXSec/DataTypes/FlashMatch.h"
 #include "uboone/UBXSec/DataTypes/MCGhost.h"
 #include "lardataobj/AnalysisBase/T0.h"
@@ -150,6 +151,7 @@ private:
   std::string _particle_id_producer;
   std::string _mc_ghost_producer;
   std::string _geocosmictag_producer;
+  std::string _mcsfitresult_producer;
   bool _debug = true;                   ///< Debug mode
   int _minimumHitRequirement;           ///< Minimum number of hits in at least a plane for a track
   bool _use_genie_info;                 ///< Turn this off if looking at cosmic only files
@@ -184,9 +186,25 @@ private:
   TH2F * _deadRegion2P;
   TH2F * _deadRegion3P;
   
+  // PIDA related variables
   TH1D * _h_pida_proton,     * _h_pida_muon,     * _h_pida_pion,     * _h_pida_kaon;
   TH2D * _h_pida_len_proton, * _h_pida_len_muon, * _h_pida_len_pion, * _h_pida_len_kaon;
 
+  // Momentum Related Variables
+  TH2D* _h_mom_true_mcs; ///< 2D histogram of true muon momentum VS reconstructed (using MCS)
+  TH2D* _h_mom_true_mcs_contained; ///< 2D histogram of true muon momentum VS reconstructed (using MCS) (contained tracks)
+  TH2D* _h_mom_true_mcs_uncontained; ///< 2D histogram of true muon momentum VS reconstructed (using MCS) (uncontained tracks)
+  TH2D* _h_mom_true_range_contained; ///< 2D histogram of true muon momentum VS reconstructed (using Length) (contained tracks)
+  TH2D* _h_mom_range_mcs_contained;  ///< 2D histogram of reconstructed (using MCS) muon momentum VS reconstructed (using Length) (contained tracks)
+  TH1D* _h_mcs_cosmic_track_direction; ///< Track direction from cosmic origin TPCObjects as given by mcs (0: downward, 1: upward)
+  TH2D* _h_mcs_cosmic_track_direction_deltall; /// Track direction from cosmic origin TPCObjects as given by mcs (0: downward, 1: upward) VS delta LL from MCS fit
+  TTree* _mom_tree_contained;
+  int _run, _subrun, _event;
+  double _mom_true_contained;
+  double _mom_mcs_contained;
+  double _mom_range_contained;
+
+  
   TTree* _sr_tree;
   int _sr_run, _sr_subrun; 
   double _sr_begintime, _sr_endtime;
@@ -216,6 +234,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _particle_id_producer           = p.get<std::string>("ParticleIDProducer");
   _mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
   _geocosmictag_producer          = p.get<std::string>("GeoCosmicTaggerProducer");
+  _mcsfitresult_producer          = p.get<std::string>("MCSFitResultProducer");
 
   _use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
   _minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
@@ -279,6 +298,23 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _h_pida_len_pion = fs->make<TH2D>("h_pida_len_pion", "Pion tracks;PIDa [MeV/cm^{1.42}];Track length [cm];", 50, 0, 20, 100, 0, 700);
   _h_pida_len_kaon = fs->make<TH2D>("h_pida_len_kaon", "Kaon tracks;PIDa [MeV/cm^{1.42}];Track length [cm];", 50, 0, 20, 100, 0, 700);
 
+  _h_mom_true_mcs = fs->make<TH2D>("h_mom_true_mcs", ";True Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
+  _h_mom_true_mcs_contained = fs->make<TH2D>("h_mom_true_mcs_contained", "Contained;True Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
+  _h_mom_true_mcs_uncontained = fs->make<TH2D>("h_mom_true_mcs_uncontained", "Uncontained;True Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
+  _h_mom_true_range_contained = fs->make<TH2D>("h_mom_true_range_contained", "Contained;True Muon Momentum [GeV];Reconstructed (via Length) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
+  _h_mom_range_mcs_contained = fs->make<TH2D>("h_mom_range_mcs_contained", "Contained;Reconstructed (via Length) Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
+
+  _h_mcs_cosmic_track_direction = fs->make<TH1D>("h_mcs_cosmic_track_direction", "0: down, 1: up;;", 2, 0, 2);
+  _h_mcs_cosmic_track_direction_deltall = fs->make<TH2D>("h_mcs_cosmic_track_direction_deltall", ";0: down, 1: up;(FWD - BWD) LL;", 2, 0, 2, 100, -1, 1);
+
+  _mom_tree_contained = fs->make<TTree>("momentumtree","");
+  _mom_tree_contained->Branch("run",                 &_run,                 "run/I");
+  _mom_tree_contained->Branch("subrun",              &_subrun,              "subrun/I");
+  _mom_tree_contained->Branch("event",               &_event,               "event/I");
+  _mom_tree_contained->Branch("mom_true_contained",  &_mom_true_contained,  "mom_true_contained/D");
+  _mom_tree_contained->Branch("mom_mcs_contained",   &_mom_mcs_contained,   "mom_mcs_contained/D");
+  _mom_tree_contained->Branch("mom_range_contained", &_mom_range_contained, "mom_range_contained/D");
+
   _sr_tree = fs->make<TTree>("pottree","");
   _sr_tree->Branch("run",                &_sr_run,                "run/I");
   _sr_tree->Branch("subrun",             &_sr_subrun,             "subrun/I");
@@ -316,9 +352,9 @@ void UBXSec::produce(art::Event & e) {
   ubxsec_event->Init();
 
 
-  ubxsec_event->run    = e.id().run();
-  ubxsec_event->subrun = e.id().subRun();
-  ubxsec_event->event  = e.id().event();
+  _run = ubxsec_event->run    = e.id().run();
+  _subrun = ubxsec_event->subrun = e.id().subRun();
+  _event = ubxsec_event->event  = e.id().event();
 
   _is_data = e.isRealData();
   _is_mc   = !_is_data;
@@ -389,7 +425,8 @@ void UBXSec::produce(art::Event & e) {
   std::vector<art::Ptr<recob::Track>> track_p_v;
   art::fill_ptr_vector(track_p_v, track_h);
   art::FindManyP<recob::OpFlash> opfls_ptr_coll_v(track_h, e, _acpt_producer);
-  
+  art::FindManyP<recob::PFParticle> pfp_from_track(track_h, e, _pfp_producer);
+
   // Get PFP
   art::Handle<std::vector<recob::PFParticle> > pfp_h;
   e.getByLabel(_pfp_producer,pfp_h);
@@ -439,6 +476,26 @@ void UBXSec::produce(art::Event & e) {
   art::FindManyP<ubana::MCGhost>   mcghost_from_pfp   (pfp_h,   e, _mc_ghost_producer);
   art::FindManyP<simb::MCParticle> mcpar_from_mcghost (ghost_h, e, _mc_ghost_producer); 
 
+  // Get MCSFitResult
+  art::Handle<std::vector<recob::MCSFitResult> > mcsfitresult_h;
+  e.getByLabel(_mcsfitresult_producer,mcsfitresult_h);
+  if(!mcsfitresult_h.isValid()){
+    std::cout << "[UBXSec] MCSFitResult product " << _mcsfitresult_producer << " not found..." << std::endl;
+    //throw std::exception();
+  } 
+  std::vector<art::Ptr<recob::MCSFitResult>> mcsfitresult_v;
+  art::fill_ptr_vector(mcsfitresult_v, mcsfitresult_h);
+
+  /*
+  std::cout << "mcsfitresult_v.at(0)->fwdLogLikelihood(): " << mcsfitresult_v.at(0)->fwdLogLikelihood() << std::endl;
+  std::cout << "mcsfitresult_v.at(0)->fwdMomentum(): " << mcsfitresult_v.at(0)->fwdMomentum() << std::endl;
+  std::cout << "mcsfitresult_v.at(0)->bwdLogLikelihood(): " << mcsfitresult_v.at(0)->bwdLogLikelihood() << std::endl;
+  std::cout << "mcsfitresult_v.at(0)->bwdMomentum(): " << mcsfitresult_v.at(0)->bwdMomentum() << std::endl;
+  std::cout << "mcsfitresult_v.at(0)->bestMomentum(): " << mcsfitresult_v.at(0)->bestMomentum() << std::endl;
+  std::cout << "mcsfitresult_v.at(0)->bestLogLikelihood(): " << mcsfitresult_v.at(0)->bestLogLikelihood() << std::endl;
+  std::cout << "mcsfitresult_v.at(0)->deltaLogLikelihood(): " << mcsfitresult_v.at(0)->deltaLogLikelihood() << std::endl;  
+  */
+
   // Flashes
   ::art::Handle<std::vector<recob::OpFlash>> beamflash_h;
   e.getByLabel(_opflash_producer_beam,beamflash_h);
@@ -459,6 +516,7 @@ void UBXSec::produce(art::Event & e) {
     ubxsec_event->beamfls_z[n]    = flash.ZCenter();
 
     ubxsec_event->beamfls_spec[n].resize(32);
+    ubxsec_event->candidate_flash_time = 0.;
     //if (_debug) std::cout << "[UBXSec] Reco beam flash pe: " << std::endl;
     for (unsigned int i = 0; i < 32; i++) {
       unsigned int opdet = geo->OpDetFromOpChannel(i);
@@ -800,7 +858,9 @@ void UBXSec::produce(art::Event & e) {
     muon_finder.SetTrackToPIDMap(track_to_pid_map);
     art::Ptr<recob::Track> candidate_track;
 
-    if (muon_finder.GetCandidateTrack(candidate_track)) {
+    bool muon_cand_exists = muon_finder.GetCandidateTrack(candidate_track);
+
+    if (muon_cand_exists) {
 
       bool fully_contained = _fiducial_volume.InFV(candidate_track->Vertex(), candidate_track->End());
 
@@ -809,12 +869,42 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_muoncandidate_phi[slice]       = UBXSecHelper::GetCorrectedPhi((*candidate_track), tpcobj_nu_vtx); 
       ubxsec_event->slc_muoncandidate_theta[slice]     = UBXSecHelper::GetCorrectedCosTheta((*candidate_track), tpcobj_nu_vtx);
       ubxsec_event->slc_muoncandidate_mom_range[slice] = _trk_mom_calculator.GetTrackMomentum(candidate_track->Length(), 13);
-      ubxsec_event->slc_muoncandidate_mom_mcs[slice]   = _trk_mom_calculator.GetMomentumMultiScatterLLHD(candidate_track);
+      //ubxsec_event->slc_muoncandidate_mom_mcs[slice]   = _trk_mom_calculator.GetMomentumMultiScatterLLHD(candidate_track);
+      ubxsec_event->slc_muoncandidate_mom_mcs[slice]   = mcsfitresult_v.at(candidate_track.key())->bestMomentum();
       ubxsec_event->slc_muoncandidate_contained[slice] = fully_contained;
+
+      // Get the related PFP
+      art::Ptr<recob::PFParticle> candidate_pfp = pfp_from_track.at(candidate_track.key()).at(0);
+      const auto mcghosts = mcghost_from_pfp.at(candidate_pfp.key());
+      if (mcghosts.size() > 0) {
+        art::Ptr<simb::MCParticle> mcpar = mcpar_from_mcghost.at(mcghost_from_pfp.at(candidate_pfp.key()).at(0).key()).at(0);
+        //art::Ptr<simb::MCParticle> mcpar = mcpar_from_mcghost.at(mcghost.key()).at(0);
+        const auto mc_truth = bt->TrackIDToMCTruth(mcpar->TrackId());
+        if (mc_truth) {
+          if (mc_truth->Origin() == simb::kBeamNeutrino && mcpar->PdgCode() == 13 && mcpar->Mother() == 0) {
+            _h_mom_true_mcs->Fill(ubxsec_event->slc_muoncandidate_mom_mcs[slice], mcpar->P());
+            if (fully_contained) {
+              _mom_true_contained = mcpar->P();
+              _mom_mcs_contained = ubxsec_event->slc_muoncandidate_mom_mcs[slice];
+              _mom_range_contained = ubxsec_event->slc_muoncandidate_mom_range[slice];
+              _mom_tree_contained->Fill();
+              _h_mom_true_mcs_contained->Fill(ubxsec_event->slc_muoncandidate_mom_mcs[slice], mcpar->P());
+              _h_mom_true_range_contained->Fill(ubxsec_event->slc_muoncandidate_mom_range[slice], mcpar->P());
+              _h_mom_range_mcs_contained->Fill(ubxsec_event->slc_muoncandidate_mom_range[slice],
+                                               ubxsec_event->slc_muoncandidate_mom_mcs[slice]);
+            } else {
+              _h_mom_true_mcs_uncontained->Fill(ubxsec_event->slc_muoncandidate_mom_mcs[slice], mcpar->P());
+            }
+          }
+        }
+        //std::cout << ">>>>>>>>>>>>>>>>>>>>> MCP has pdg " << mcpar->PdgCode() << std::endl;
+      }
+ 
 
       if (_debug) std::cout << "[UBXSec] \t Muon Candidate Found" << std::endl;
       if (_debug) std::cout << "[UBXSec] \t \t Length:          " << ubxsec_event->slc_muoncandidate_length[slice] << std::endl;
       if (_debug) std::cout << "[UBXSec] \t \t Mom by Range:    " << ubxsec_event->slc_muoncandidate_mom_range[slice] << std::endl;
+      if (_debug) std::cout << "[UBXSec] \t \t Mom by MCS:      " << ubxsec_event->slc_muoncandidate_mom_mcs[slice] << std::endl;
       if (_debug) std::cout << "[UBXSec] \t \t Fully Contained? " << (ubxsec_event->slc_muoncandidate_contained[slice] ? "YES" : "NO") << std::endl;
 
     } else {
@@ -902,7 +992,32 @@ void UBXSec::produce(art::Event & e) {
         }
       }
     }
-  
+ 
+
+
+    // MCS - Track direction, study cosmic direction
+    // Take the muon candidate track for a TPCObject
+    // with cosmic origin, and check the track direction
+    // (up/down) from MCS result
+    if (muon_cand_exists && tpcobj.GetOrigin() == ubana::kCosmicRay) {
+      bool best_fwd = mcsfitresult_v.at(candidate_track.key())->isBestFwd();
+      bool down_track = candidate_track->Vertex().Y() > candidate_track->End().Y();
+      double deltall = mcsfitresult_v.at(candidate_track.key())->deltaLogLikelihood();
+      if (down_track && best_fwd) {               // Track is reco going down and mcs agrees (true for cosmic)
+        _h_mcs_cosmic_track_direction->Fill(0);
+        _h_mcs_cosmic_track_direction_deltall->Fill(0., deltall);
+      } else if (!down_track && best_fwd) {       // Track is reco going up and mcs agrees
+        _h_mcs_cosmic_track_direction->Fill(1);
+        _h_mcs_cosmic_track_direction_deltall->Fill(1., deltall);
+      } else if (down_track && !best_fwd) {       // Track is reco going down and mcs disagrees
+        _h_mcs_cosmic_track_direction->Fill(1);
+        _h_mcs_cosmic_track_direction_deltall->Fill(1., deltall);
+      } else if (!down_track && !best_fwd) {      // Track is reco going up and mcs disagrees (true for cosmic)
+        _h_mcs_cosmic_track_direction->Fill(0);
+        _h_mcs_cosmic_track_direction_deltall->Fill(0., deltall);
+      }
+    }
+
     std::cout << "[UBXSec] --- SLICE INFORMATION SAVED" << std::endl;
   } // slice loop
 

@@ -8,7 +8,7 @@ ACPTTagger: {
   FlashProducer:         "simpleFlashCosmic"
   PFPartProducer:        "pandoraCosmic"
   TrackProducer:         "pandoraCosmicKHit"
-  SpacePoint:            "pandoraCosmic"
+  SpacePointProducer:    "pandoraCosmic"
   SWTriggerProducer:     "swtrigger"
 
   UseSpacePoints:        true

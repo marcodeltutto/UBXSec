@@ -24,6 +24,8 @@
 #include "ubflashfinder.fcl"
 #include "correct_saturation.fcl"
 
+#include "mcsfitproducer.fcl"
+
 #include "fiducial_volume_settings.fcl"
 #include "numucc_eventselection_settings.fcl"
 
@@ -38,9 +40,9 @@ BEGIN_PROLOG
 
 ubxsec_data_reco:
 {
-  saturation:                     @local::correct_saturation
-  ophitBeam:                      @local::microboone_ophit_saturation_beam
-  simpleFlashBeam:                @local::UBFlashBeam
+  saturationTest:                 @local::correct_saturation
+  ophitBeamTest:                  @local::microboone_ophit_saturation_beam
+  simpleFlashBeamTest:            @local::UBFlashBeam
 
   pandoraCosmicTrackPFPart:       @local::microboone_cosmicpfparticletagger
   pandoraCosmicFlashTag:          @local::microboone_cosmicpfpflashtagger
@@ -51,6 +53,8 @@ ubxsec_data_reco:
 
   pandoraNucalo:                  @local::microboone_calomc
   pandoraNupid:                   @local::microboone_chi2pid
+
+  pandoraNuMCSMu:                 @local::mcsfitproducer
 }
 
 ubxsec_data_flashmatch:
@@ -75,9 +79,9 @@ ubxsec_data_ana:
 }
 
 
-ubxsec_data_producers: [ #saturation,
-                         #ophitBeam,
-                         #simpleFlashBeam,
+ubxsec_data_producers: [ saturationTest,
+                         ophitBeamTest,
+                         simpleFlashBeamTest,
                          pandoraCosmicTrackPFPart,
                          pandoraCosmicFlashTag,
                          pandoraCosmicACPTTagger,
@@ -85,6 +89,7 @@ ubxsec_data_producers: [ #saturation,
                          pandoraNu,
                          pandoraNucalo,
                          pandoraNupid,
+                         pandoraNuMCSMu,
                          RecoTrueMatcher,
                          TPCObjectMaker,
                          pandoraNuGeoCosmicTag,
@@ -125,6 +130,8 @@ ubxsec_data_reco.pandoraNucalo.SpacePointModuleLabel:              "pandoraNu::U
 
 ubxsec_data_reco.pandoraNupid.CalorimetryModuleLabel:              "pandoraNucalo::UBXSec"
 ubxsec_data_reco.pandoraNupid.TrackModuleLabel:                    "pandoraNu::UBXSec"
+
+ubxsec_data_reco.pandoraNuMCSMu.inputs.inputLabel:                 "pandoraNu::UBXSec"
 
 # Set FlashMatching properties
 ubxsec_data_flashmatch.NeutrinoFlashMatch.TrackModule:             "pandoraNu::UBXSec"

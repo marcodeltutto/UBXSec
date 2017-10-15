@@ -2,8 +2,8 @@ var searchData=
 [
   ['mc_5fmuon_5fcontained',['mc_muon_contained',['../classUBXSecEvent.html#a350303f94db8bcfdbc2e517713d7ebf9',1,'UBXSecEvent']]],
   ['mcghost',['MCGhost',['../classubana_1_1MCGhost.html',1,'ubana']]],
-  ['mcpfpmatch',['McPfpMatch',['../classMcPfpMatch.html',1,'McPfpMatch'],['../classubxsec_1_1McPfpMatch.html#aea3e9923fdf8855d5798015b36f2d516',1,'ubxsec::McPfpMatch::McPfpMatch()']]],
-  ['mcpfpmatch',['McPfpMatch',['../classubxsec_1_1McPfpMatch.html',1,'ubxsec']]],
+  ['mcpfpmatch',['McPfpMatch',['../classMcPfpMatch.html',1,'McPfpMatch'],['../classubana_1_1McPfpMatch.html#aea3e9923fdf8855d5798015b36f2d516',1,'ubana::McPfpMatch::McPfpMatch()']]],
+  ['mcpfpmatch',['McPfpMatch',['../classubana_1_1McPfpMatch.html',1,'ubana']]],
   ['muon_5fis_5fflash_5ftagged',['muon_is_flash_tagged',['../classUBXSecEvent.html#a33857278922a2779d3daaf30624a2462',1,'UBXSecEvent']]],
   ['muon_5fis_5freco',['muon_is_reco',['../classUBXSecEvent.html#a429e2c8750cdd32b073548b73c5ebd68',1,'UBXSecEvent']]],
   ['muon_5freco_5feff',['muon_reco_eff',['../classUBXSecEvent.html#aa713bc31919706a03a5a11034dcbda7c',1,'UBXSecEvent']]],

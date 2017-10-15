@@ -15,6 +15,7 @@
  * Contact: marco.deltutto@physics.ox.ac.uk
  *
  * Created on: Friday, February 03, 2017 at 17:24:25
+ * Heavily updated on: Friday 14, 2017 at 16:52:41
  *
  */
 
@@ -27,12 +28,11 @@
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 #include "uboone/UBXSec/DataTypes/UBXSecFMWKInterface.h"
 
-typedef std::map< art::Ptr<recob::PFParticle>, unsigned int > RecoParticleToNMatchedHits;
-typedef std::map< art::Ptr<simb::MCParticle>,  RecoParticleToNMatchedHits > ParticleMatchingMap;
-typedef std::set< art::Ptr<recob::PFParticle> > PFParticleSet;
-typedef std::set< art::Ptr<simb::MCParticle> >  MCParticleSet;
+namespace lar_pandora { 
+  typedef std::map<art::Ptr<recob::PFParticle>, art::Ptr<simb::MCParticle>> PFParticlesToMCParticles;
+}
 
-namespace ubxsec {
+namespace ubana {
 
   class McPfpMatch {
   
@@ -48,49 +48,36 @@ namespace ubxsec {
     void _Configure_(const Config_t &pset);
      
     /// Configure function parameters
-    void Configure(art::Event const & e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel);
+     /**
+     *  @brief Configure function parameters (call this function first)
+     *
+     *  @param e the art::Event
+     *  @param _pfp_producer the PFParticle producer label
+     *  @param _spacepoint_producer the SpacePoint producer label
+     *  @param _hitfinder_producer the Hit producer label
+     *  @param _geant_producer The Geant4 producer label
+     */
+    void Configure(art::Event const & e, std::string _pfp_producer, std::string _spacepoint_producer, std::string _hitfinder_producer, std::string _geant_producer);
   
      /**
      *  @brief Returns matching between true and reconstructed particles
      *
      *  @param matchedParticles the output matches between reconstructed and true particles
-     *  @param matchedHits the output matches between reconstructed particles and hits
      */  
-    void GetRecoToTrueMatches(lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits);
+    void GetRecoToTrueMatches(lar_pandora::PFParticlesToMCParticles & matchedParticles);
   
 
   protected:
 
-    /**
-     *  @brief Perform matching between true and reconstructed particles
-     *
-     *  @param recoParticlesToHits the mapping from reconstructed particles to hits
-     *  @param trueHitsToParticles the mapping from hits to true particles
-     *  @param matchedParticles the output matches between reconstructed and true particles
-     *  @param matchedHits the output matches between reconstructed particles and hits
-     */
-    void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits);
-
-    /**
-     *  @brief Perform matching between true and reconstructed particles
-     *
-     *  @param recoParticlesToHits the mapping from reconstructed particles to hits
-     *  @param trueHitsToParticles the mapping from hits to true particles
-     *  @param matchedParticles the output matches between reconstructed and true particles
-     *  @param matchedHits the output matches between reconstructed particles and hits
-     *  @param recoVeto the veto list for reconstructed particles
-     *  @param trueVeto the veto list for true particles
-     */
-    void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits, PFParticleSet &recoVeto, MCParticleSet &trueVeto, bool _recursiveMatching);
-
-    lar_pandora::HitsToMCParticles _trueHitsToParticles; ///< A map from recon hits to MCParticles
-    lar_pandora::PFParticlesToHits _recoParticlesToHits; ///< A map from PFParticles to recon hits
+    lar_pandora::HitsToMCParticles _hit_to_mcps_map; ///< A map from recon hits to MCParticles
+    lar_pandora::PFParticlesToHits _pfp_to_hits_map; ///< A map from PFParticles to recon hits
 
   private:
 
-    bool _debug             = false;
-    bool _verbose           = false;
-    bool _recursiveMatching = true;//false;
+    bool _configured = false;
+
+    bool _debug      = false;
+    bool _verbose    = false;
 
   };
 }

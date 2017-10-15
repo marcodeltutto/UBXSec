@@ -65,7 +65,7 @@ public:
 
 private:
 
-  ubxsec::McPfpMatch _mcpfpMatcher;
+  ubana::McPfpMatch _mcpfpMatcher;
   ::ubana::FiducialVolume _fiducial_volume;
 
   std::string _pfp_producer;
@@ -77,7 +77,7 @@ private:
   bool _debug;
   bool _verbose;
 
-  void PrintInfo(lar_pandora::MCParticlesToPFParticles);
+  void PrintInfo(lar_pandora::PFParticlesToMCParticles matched_pfp_to_mcp_map);
 };
 
 
@@ -127,20 +127,19 @@ void RecoTrueMatcher::produce(art::Event & e)
     
   _mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
 
-  lar_pandora::MCParticlesToPFParticles matchedMCToPFParticles;    // This is a map: MCParticle to matched PFParticle
-  lar_pandora::MCParticlesToHits        matchedParticleHits;
+  lar_pandora::PFParticlesToMCParticles matched_pfp_to_mcp_map;    // This is a map: PFParticle to matched MCParticle
 
-  _mcpfpMatcher.GetRecoToTrueMatches(matchedMCToPFParticles, matchedParticleHits);
+  _mcpfpMatcher.GetRecoToTrueMatches(matched_pfp_to_mcp_map);
 
   if (_verbose)
-    this->PrintInfo(matchedMCToPFParticles);
+    this->PrintInfo(matched_pfp_to_mcp_map);
 
-  std::cout << "[RecoTrueMatcher] Generating " << matchedMCToPFParticles.size() << " MCGhosts." << std::endl;
+  std::cout << "[RecoTrueMatcher] Generating " << matched_pfp_to_mcp_map.size() << " MCGhosts." << std::endl;
 
-  for (auto const& iter : matchedMCToPFParticles) {
+  for (auto const& iter : matched_pfp_to_mcp_map) {
 
-    art::Ptr<simb::MCParticle>  mc_par = iter.first;   // The MCParticle 
-    art::Ptr<recob::PFParticle> pf_par = iter.second;  // The matched PFParticle 
+    art::Ptr<recob::PFParticle> pf_par = iter.first;    // The PFParticle 
+    art::Ptr<simb::MCParticle>  mc_par = iter.second;   // The matched MCParticle 
 
     if(_debug) {
       std::cout << "[RecoTrueMatcher]\t PFP with ID " << pf_par->Self() << ", and PDG " << pf_par->PdgCode() << std::endl;
@@ -165,16 +164,16 @@ void RecoTrueMatcher::produce(art::Event & e)
 
 
 
-void RecoTrueMatcher::PrintInfo(lar_pandora::MCParticlesToPFParticles matchedMCToPFParticles) {
+void RecoTrueMatcher::PrintInfo(lar_pandora::PFParticlesToMCParticles matched_pfp_to_mcp_map) {
 
   std::cout << "[RecoTrueMatcher] ~~~~~~~~~~ Printing Additional Info" << std::endl;
 
   ::art::ServiceHandle<cheat::BackTracker> bt;
 
-  for (auto iter : matchedMCToPFParticles) {
+  for (auto iter : matched_pfp_to_mcp_map) {
 
-    art::Ptr<simb::MCParticle>  mc_par = iter.first;   // The MCParticle 
-    art::Ptr<recob::PFParticle> pf_par = iter.second;  // The matched PFParticle
+    art::Ptr<recob::PFParticle> pf_par = iter.first;    // The PFParticle 
+    art::Ptr<simb::MCParticle>  mc_par = iter.second;   // The matched MCParticle
 
     const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
 
@@ -227,7 +226,6 @@ void RecoTrueMatcher::PrintInfo(lar_pandora::MCParticlesToPFParticles matchedMCT
       std::cout << "[RecoTrueMatcher] Particle T    " << mc_par->T()       << std::endl;
       double timeCorrection = 343.75;
       std::cout << "[RecoTrueMatcher] Remeber a time correction of " << timeCorrection << std::endl;
-       //auto iter =  matchedParticleHits.find(mc_par);
        //std::cout << "Related hits: " << (iter->second).size() << std::endl;
        
        

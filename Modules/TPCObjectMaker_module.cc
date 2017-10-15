@@ -128,7 +128,7 @@ public:
 
 private:
 
-  ubxsec::McPfpMatch mcpfpMatcher;
+  ubana::McPfpMatch mcpfpMatcher;
   ubana::TPCObjectFilter *_tpcobj_filter;
 
   bool _is_mc;
@@ -218,10 +218,9 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
 
   // Do the MCParticle to PFParticle matching
 
-  lar_pandora::MCParticlesToPFParticles matchedParticles;    // This is a map: MCParticle to matched PFParticle
-  lar_pandora::MCParticlesToHits        matchedParticleHits;
+  lar_pandora::PFParticlesToMCParticles matched_pfp_to_mcp_maps;    // This is a map: MCParticle to matched PFParticle
   if (_is_mc) {
-    mcpfpMatcher.GetRecoToTrueMatches(matchedParticles, matchedParticleHits);
+    mcpfpMatcher.GetRecoToTrueMatches(matched_pfp_to_mcp_maps);
   }
 
 
@@ -243,11 +242,11 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
 
   if (!_is_mc) goto constructobjects;
 
-  for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
+  for (lar_pandora::PFParticlesToMCParticles::const_iterator iter1 = matched_pfp_to_mcp_maps.begin(), iterEnd1 = matched_pfp_to_mcp_maps.end();
       iter1 != iterEnd1; ++iter1) {
 
-    art::Ptr<simb::MCParticle>  mc_par = iter1->first;   // The MCParticle 
-    art::Ptr<recob::PFParticle> pf_par = iter1->second;  // The matched PFParticle
+    art::Ptr<recob::PFParticle> pf_par = iter1->first;    // The PFParticle 
+    art::Ptr<simb::MCParticle>  mc_par = iter1->second;   // The matched MCParticle 
 
     const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
 

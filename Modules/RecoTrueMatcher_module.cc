@@ -65,7 +65,7 @@ public:
 
 private:
 
-  ubxsec::McPfpMatch mcpfpMatcher;
+  ubxsec::McPfpMatch _mcpfpMatcher;
   ::ubana::FiducialVolume _fiducial_volume;
 
   std::string _pfp_producer;
@@ -125,12 +125,12 @@ void RecoTrueMatcher::produce(art::Event & e)
     return;
   } 
     
-  mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+  _mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
 
   lar_pandora::MCParticlesToPFParticles matchedMCToPFParticles;    // This is a map: MCParticle to matched PFParticle
   lar_pandora::MCParticlesToHits        matchedParticleHits;
 
-  mcpfpMatcher.GetRecoToTrueMatches(matchedMCToPFParticles, matchedParticleHits);
+  _mcpfpMatcher.GetRecoToTrueMatches(matchedMCToPFParticles, matchedParticleHits);
 
   if (_verbose)
     this->PrintInfo(matchedMCToPFParticles);

@@ -74,7 +74,13 @@ namespace ubana {
 
     lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
     lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
-    lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, _spacepoint_producer, pfp_to_hits_map, recoHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
+    lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e, 
+                                                          _pfp_producer, 
+                                                          _spacepoint_producer, 
+                                                          pfp_to_hits_map, 
+                                                          recoHitsToParticles, 
+                                                          lar_pandora::LArPandoraHelper::kUseDaughters, // Consider daughters as independent pfps
+                                                          true); // Use clusters to go from pfp to hits
 
     if (_verbose) {
       std::cout << "[McPfpMatch] RecoNeutrinos: " << recoNeutrinoVector.size() << std::endl;
@@ -91,7 +97,12 @@ namespace ubana {
     if (!e.isRealData()) {
       lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geant_producer, trueParticleVector);
       lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geant_producer, truthToParticles, particlesToTruth);
-      lar_pandora::LArPandoraHelper::BuildMCParticleHitMaps(e, _geant_producer, hitVector, trueParticlesToHits, hit_to_mcps_map, lar_pandora::LArPandoraHelper::kAddDaughters);
+      lar_pandora::LArPandoraHelper::BuildMCParticleHitMaps(e, 
+                                                            _geant_producer, 
+                                                            hitVector, 
+                                                            trueParticlesToHits, 
+                                                            hit_to_mcps_map, 
+                                                            lar_pandora::LArPandoraHelper::kUseDaughters); // Consider daughters as independent mcps
     }
 
     if (_verbose) {
@@ -103,7 +114,7 @@ namespace ubana {
     _hit_to_mcps_map = hit_to_mcps_map;
     _pfp_to_hits_map = pfp_to_hits_map;
 
-    if (_debug) { // yes, don't do it
+    if (_debug) { 
       std::cout << "[McPfpMatch] This is event " << e.id().event() << std::endl;
       art::ServiceHandle<cheat::BackTracker> bt;
       std::cout << "[McPfpMatch] Number of MCParticles matched to hits: " << trueParticlesToHits.size() << std::endl;
@@ -142,9 +153,13 @@ namespace ubana {
 
       // The PFParticle
       const art::Ptr<recob::PFParticle> recoParticle = iter1.first;
-  
+ 
+      if (_debug) std::cout << "[McPfpMatch::GetRecoToTrueMatches] Looking at PFP with ID " << recoParticle->Self() << std::endl;
+
       // The PFParticle's hits
       const lar_pandora::HitVector &hitVector = iter1.second;
+
+      if (_debug) std::cout << "[McPfpMatch::GetRecoToTrueMatches] \t This PFP has " << hitVector.size() << " hits." << std::endl;
   
       lar_pandora::MCParticlesToHits truthContributionMap;
   
@@ -158,7 +173,9 @@ namespace ubana {
   
         // If exists, get the MCParticle
         const art::Ptr<simb::MCParticle> trueParticle = iter3->second;
-  
+
+        if (_debug) std::cout << "[McPfpMatch::GetRecoToTrueMatches] \t Found a hit shared with MCParticle with PDG " << trueParticle->PdgCode() << std::endl;
+
         // This map will contain all the true particles that match some or all of the hits of the reco particle
         truthContributionMap[trueParticle].push_back(hit);
       }
@@ -175,11 +192,12 @@ namespace ubana {
         }
       }
  
-
       if (truthContributionMap.end() != mIter)
       {
         const art::Ptr<simb::MCParticle> trueParticle = mIter->first;
   
+        if (_debug) std::cout << "[McPfpMatch::GetRecoToTrueMatches] \t >>> Match found with MCParticle with PDG " << trueParticle->PdgCode() << std::endl;
+
         // Emplace into the output map
         matchedParticles[recoParticle] = trueParticle;
       }

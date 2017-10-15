@@ -305,7 +305,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _h_mom_range_mcs_contained = fs->make<TH2D>("h_mom_range_mcs_contained", "Contained;Reconstructed (via Length) Muon Momentum [GeV];Reconstructed (via MCS) Muon Momentum [GeV];", 80, 0, 2, 80, 0, 2);
 
   _h_mcs_cosmic_track_direction = fs->make<TH1D>("h_mcs_cosmic_track_direction", "0: down, 1: up;;", 2, 0, 2);
-  _h_mcs_cosmic_track_direction_deltall = fs->make<TH2D>("h_mcs_cosmic_track_direction_deltall", ";0: down, 1: up;(FWD - BWD) LL;", 2, 0, 1, 100, -10, 10);
+  _h_mcs_cosmic_track_direction_deltall = fs->make<TH2D>("h_mcs_cosmic_track_direction_deltall", ";0: down, 1: up;(FWD - BWD) LL;", 2, 0, 2, 100, -1, 1);
 
   _mom_tree_contained = fs->make<TTree>("momentumtree","");
   _mom_tree_contained->Branch("run",                &_run,                 "run/I");

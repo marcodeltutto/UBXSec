@@ -108,7 +108,8 @@ private:
   int _run, _subrun, _event;
   int _ccnc, _pdg, _fv;
   double _nu_e;
-  int _nPFP;
+  int _n_pfp;                ///< Number of PFP
+  int _n_pfp_primary;        ///< Number of primary PFP
   int _n_pfp_flash_tagged;   ///< Number of PFP tagged by the Flash Tagger algo
   int _nu_pfp_flash_tagged;  ///< Number of neutrino origin PFP tagged by the Flash Tagger algo 
   int _n_pfp_geo_tagged;     ///< Number of PFP tagged by the Geo Tagger algo
@@ -140,14 +141,15 @@ CosmicTaggerAna::CosmicTaggerAna(fhicl::ParameterSet const & p)
   
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
-  _tree1->Branch("run",    &_run,    "run/I");
-  _tree1->Branch("subrun", &_subrun, "subrun/I");
-  _tree1->Branch("event",  &_event,  "event/I");
-  _tree1->Branch("ccnc",   &_ccnc,   "ccnc/I");
-  _tree1->Branch("pdg",    &_pdg,    "pdg/I");
-  _tree1->Branch("nu_e",   &_nu_e,   "nu_e/D");
-  _tree1->Branch("fv",     &_fv,     "fv/I");
-  _tree1->Branch("nPFP",   &_nPFP,   "nPFP/I");
+  _tree1->Branch("run",                  &_run,                  "run/I");
+  _tree1->Branch("subrun",               &_subrun,               "subrun/I");
+  _tree1->Branch("event",                &_event,                "event/I");
+  _tree1->Branch("ccnc",                 &_ccnc,                 "ccnc/I");
+  _tree1->Branch("pdg",                  &_pdg,                  "pdg/I");
+  _tree1->Branch("nu_e",                 &_nu_e,                 "nu_e/D");
+  _tree1->Branch("fv",                   &_fv,                   "fv/I");
+  _tree1->Branch("n_pfp",                &_n_pfp,                "n_pfp/I");
+  _tree1->Branch("n_pfp_primary",        &_n_pfp_primary,        "n_pfp_primary/I");
   _tree1->Branch("n_pfp_flash_tagged",   &_n_pfp_flash_tagged,   "n_pfp_flash_tagged/I");
   _tree1->Branch("n_pfp_geo_tagged",     &_n_pfp_geo_tagged,     "n_pfp_geo_tagged/I");
   _tree1->Branch("nu_pfp_flash_tagged",  &_nu_pfp_flash_tagged,  "nu_pfp_flash_tagged/I");
@@ -199,7 +201,12 @@ void CosmicTaggerAna::analyze(art::Event const & e)
   if (_debug)
     std::cout << "  RecoParticles: " << recoParticleVector.size() << std::endl;
 
-  _nPFP = recoParticleVector.size();
+  _n_pfp = recoParticleVector.size();
+
+  for (int i = 0; i < _n_pfp; i++) {
+    if (!recoParticleVector.at(i)->IsPrimary()) continue;
+    _n_pfp_primary++;
+  }
 
   // --- Collect MCParticles and match True Particles to Hits
   lar_pandora::MCParticleVector     trueParticleVector;

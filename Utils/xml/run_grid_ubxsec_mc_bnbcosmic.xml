@@ -31,14 +31,15 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Oct14_12_08.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Oct15_13_35.tgz</local>
   </larsoft>
 
   <!-- Project stages -->
 
   <stage name="ubxsec">
     <fcl>run_ubxsec_mc_bnbcosmic.fcl</fcl>
-    <inputdef>prodgenie_bnb_nu_cosmic_uboone_mcc8.3_reco2</inputdef>
+    <!--<inputdef>prodgenie_bnb_nu_cosmic_uboone_mcc8.3_reco2</inputdef>-->
+    <inputlist>&PNFSpath;bnb_cosmic_files_mcc8.3.list</inputlist>
     <defname>&name;_&tag;_ana</defname>
     <maxfilesperjob>1</maxfilesperjob>
     <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_mc_bnbcosmic</outdir>

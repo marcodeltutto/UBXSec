@@ -30,6 +30,8 @@ void UBXSecEvent::Init()
   muon_reco_eff = _default_value;
   true_muon_mom = _default_value;
   true_muon_mom_matched = _default_value;
+  n_pfp = _default_value;
+  n_pfp_primary = _default_value;
   nPFPtagged = _default_value;
   muon_is_flash_tagged = _default_value;
   muon_tag_score = _default_value;

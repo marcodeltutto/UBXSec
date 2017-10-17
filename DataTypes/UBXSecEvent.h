@@ -42,6 +42,8 @@ class UBXSecEvent /*: public TObject*/{
   Double_t        muon_reco_eff; ///< If reco, stores the reco muon efficiency
   Double_t        true_muon_mom; ///< If exists, stores the true muon momentum
   Double_t        true_muon_mom_matched; ///< True momentum of the MCP matched to the muon PFP
+  Int_t           n_pfp; ///< Number of PFP in the event
+  Int_t           n_pfp_primary; ///< Number of primary PFP in the event
   Int_t           nPFPtagged; ///< Not used
   Int_t           muon_is_flash_tagged; ///< Not used
   Double_t        muon_tag_score; ///< Not used

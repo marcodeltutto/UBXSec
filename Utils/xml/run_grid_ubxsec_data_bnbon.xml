@@ -5,7 +5,7 @@
 <!DOCTYPE project [
 <!ENTITY release "v06_26_01_07">
 <!ENTITY releasetag "e10:prof">
-<!ENTITY name "ubxsec_data_bnbon">
+<!ENTITY name "ubxsec_v2.0.1_data_bnbon">
 <!ENTITY tag "ubxsec">
 <!ENTITY file_type "data">
 <!ENTITY run_type "physics">
@@ -32,7 +32,7 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_05_2017Oct07_10_49.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_05_2017Oct17_09_12.tgz</local>
   </larsoft>
 
   <!-- Project stages -->

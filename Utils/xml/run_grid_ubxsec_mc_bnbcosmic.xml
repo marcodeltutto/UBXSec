@@ -5,7 +5,7 @@
 <!DOCTYPE project [
 <!ENTITY release "v06_26_01_07">
 <!ENTITY releasetag "e10:prof">
-<!ENTITY name "ubxsec_mc_bnbcosmic">
+<!ENTITY name "ubxsec_v2.0.1_mc_bnbcosmic">
 <!ENTITY tag "ubxsec">
 <!ENTITY file_type "mc">
 <!ENTITY run_type "physics">
@@ -31,7 +31,7 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Oct15_13_35.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Oct17_09_12.tgz</local>
   </larsoft>
 
   <!-- Project stages -->

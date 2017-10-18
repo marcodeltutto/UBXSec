@@ -44,8 +44,8 @@ for jentry in xrange( entriesPOT ):
   file.write(" ")
   file.write("%d" % chainPOT.subrun)
   file.write("\n")
-print "Accumulated POT: ", '{:e}'.format(float(TotalPOT))
-print "Nominal POT:     ", '{:e}'.format(float(NominalPOT))
+#print "Accumulated POT: ", '{:e}'.format(float(TotalPOT))
+#print "Nominal POT:     ", '{:e}'.format(float(NominalPOT))
 
 file.close()
 

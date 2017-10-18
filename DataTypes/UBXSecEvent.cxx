@@ -41,7 +41,7 @@ void UBXSecEvent::Init()
   nupdg = _default_value;
   is_signal = _default_value;
   nu_e = _default_value;
-  
+  lep_costheta = _default_value; 
   
   
   mc_muon_contained = _default_value;

@@ -581,9 +581,10 @@ void UBXSec::produce(art::Event & e) {
       if (_fiducial_volume.InFV(truth_nu_vtx)) ubxsec_event->fv = 1;
       else ubxsec_event->fv = 0;
 
-      ubxsec_event->ccnc    = mclist[iList]->GetNeutrino().CCNC();
-      ubxsec_event->nupdg   = mclist[iList]->GetNeutrino().Nu().PdgCode();
-      ubxsec_event->nu_e    = mclist[iList]->GetNeutrino().Nu().E();
+      ubxsec_event->ccnc            = mclist[iList]->GetNeutrino().CCNC();
+      ubxsec_event->nupdg           = mclist[iList]->GetNeutrino().Nu().PdgCode();
+      ubxsec_event->nu_e            = mclist[iList]->GetNeutrino().Nu().E();
+      ubxsec_event->lep_costheta    = mclist[iList]->GetNeutrino().Lepton().Pz() / mclist[iList]->GetNeutrino().Lepton().P();
 
       ubxsec_event->tvtx_x.clear(); ubxsec_event->tvtx_x.clear(); ubxsec_event->tvtx_z.clear();
       for(size_t n = 0; n < mclist.size(); n++ ) {
@@ -610,12 +611,14 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->ccnc = -1;
       ubxsec_event->nupdg = -1;
       ubxsec_event->nu_e = -1;
+      ubxsec_event->lep_costheta = -9999.;
       ubxsec_event->true_muon_mom = -9999.;
     }
   } else {
     ubxsec_event->ccnc = -1;
     ubxsec_event->nupdg = -1;
     ubxsec_event->nu_e = -1;
+    ubxsec_event->lep_costheta = -9999.;
     ubxsec_event->true_muon_mom = -9999.;
   }
 

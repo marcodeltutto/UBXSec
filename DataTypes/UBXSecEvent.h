@@ -53,6 +53,7 @@ class UBXSecEvent /*: public TObject*/{
   Int_t           nupdg; ///< Neutrino flavour (pdg code)
   Bool_t          is_signal; ///< Is trues if the event is a true numu cc in FV
   Double_t        nu_e; ///< Stores the true neutrino energy
+  Double_t        lep_costheta; ///< Lepton true cosThata angle at start
   /*
    Double_t        recon_muon_start_x;
    Double_t        recon_muon_start_y;

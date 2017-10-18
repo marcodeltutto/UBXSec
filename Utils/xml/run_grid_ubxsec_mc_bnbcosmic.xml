@@ -19,7 +19,7 @@
   <group>uboone</group>
 
   <!-- Project size -->
-  <numevents>25000</numevents>
+  <numevents>50000</numevents>
 
   <!-- Operating System -->
   <os>SL5,SL6</os>
@@ -41,14 +41,14 @@
     <!--<inputdef>prodgenie_bnb_nu_cosmic_uboone_mcc8.3_reco2</inputdef>-->
     <inputlist>&PNFSpath;bnb_cosmic_files_mcc8.3.list</inputlist>
     <defname>&name;_&tag;_ana</defname>
-    <maxfilesperjob>1</maxfilesperjob>
+    <maxfilesperjob>2</maxfilesperjob>
     <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_mc_bnbcosmic</outdir>
     <workdir>&PNFSpath;grid_workdir_ubxsec_mc_bnbcosmic</workdir>
     <numjobs>500</numjobs>
     <datatier>ubana</datatier>
     <memory>3000</memory>
-    <jobsub> --expected-lifetime=4h --mail_never --generate-email-summary </jobsub>
-    <disk>30GB</disk>
+    <jobsub> --expected-lifetime=8h -q --generate-email-summary </jobsub>
+    <disk>60GB</disk>
   </stage>
 
   <!-- file type -->

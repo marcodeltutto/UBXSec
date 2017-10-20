@@ -19,7 +19,7 @@
   <group>uboone</group>
 
   <!-- Project size -->
-  <numevents>25000</numevents>
+  <numevents>75000</numevents>
 
   <!-- Operating System -->
   <os>SL5,SL6</os>
@@ -31,7 +31,7 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Oct17_09_12.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Oct20_18_28.tgz</local>
   </larsoft>
 
   <!-- Project stages -->
@@ -40,14 +40,14 @@
     <fcl>run_ubxsec_mc_intimecosmic.fcl</fcl>
     <inputdef>prodcosmics_corsika_cmc_uboone_intime_mcc8.3_reco2</inputdef>
     <defname>&name;_&tag;_ana</defname>
-    <maxfilesperjob>1</maxfilesperjob>
+    <maxfilesperjob>3</maxfilesperjob>
     <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_mc_intimecosmic</outdir>
     <workdir>&PNFSpath;grid_workdir_ubxsec_mc_intimecosmic</workdir>
     <numjobs>500</numjobs>
     <datatier>ubana</datatier>
-    <memory>3000</memory>
-    <jobsub> --expected-lifetime=4h --mail_never --generate-email-summary </jobsub>
-    <disk>30GB</disk>
+    <memory>4000</memory>
+    <jobsub> --expected-lifetime=6h --mail_never --generate-email-summary </jobsub>
+    <disk>50GB</disk>
   </stage>
 
   <!-- file type -->

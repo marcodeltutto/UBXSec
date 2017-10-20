@@ -208,8 +208,8 @@ private:
   double _mom_mcs_uncontained;
   TTree *_mcs_cosmic_track_direction_tree;
   double _mcs_cosmic_track_direction;
-  double _mcs_cosmic_track_fwdll;
-  double _mcs_cosmic_track_bwdll;
+  double _mcs_cosmic_track_downll;
+  double _mcs_cosmic_track_upll;
   
   TTree* _sr_tree;
   int _sr_run, _sr_subrun; 
@@ -334,8 +334,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _mcs_cosmic_track_direction_tree->Branch("subrun",              &_subrun,              "subrun/I");
   _mcs_cosmic_track_direction_tree->Branch("event",               &_event,               "event/I");
   _mcs_cosmic_track_direction_tree->Branch("mcs_cosmic_track_direction",  &_mcs_cosmic_track_direction,  "mcs_cosmic_track_direction/D");
-  _mcs_cosmic_track_direction_tree->Branch("mcs_cosmic_track_fwdll",      &_mcs_cosmic_track_fwdll,      "mcs_cosmic_track_fwdll/D");
-  _mcs_cosmic_track_direction_tree->Branch("mcs_cosmic_track_bwdll",      &_mcs_cosmic_track_bwdll,      "mcs_cosmic_track_bwdll/D");
+  _mcs_cosmic_track_direction_tree->Branch("mcs_cosmic_track_downll",     &_mcs_cosmic_track_downll,     "mcs_cosmic_track_downll/D");
+  _mcs_cosmic_track_direction_tree->Branch("mcs_cosmic_track_upll",       &_mcs_cosmic_track_upll,       "mcs_cosmic_track_upll/D");
 
 
 
@@ -1047,30 +1047,36 @@ void UBXSec::produce(art::Event & e) {
     if (muon_cand_exists && tpcobj.GetOrigin() == ubana::kCosmicRay) {
       bool best_fwd = mcsfitresult_v.at(candidate_track.key())->isBestFwd();
       bool down_track = candidate_track->Vertex().Y() > candidate_track->End().Y();
-      double deltall = mcsfitresult_v.at(candidate_track.key())->deltaLogLikelihood();
-      _mcs_cosmic_track_fwdll = mcsfitresult_v.at(candidate_track.key())->fwdLogLikelihood();
-      _mcs_cosmic_track_bwdll = mcsfitresult_v.at(candidate_track.key())->bwdLogLikelihood();
-      double ratioll = _mcs_cosmic_track_fwdll / _mcs_cosmic_track_bwdll;  
+      //double deltall = mcsfitresult_v.at(candidate_track.key())->deltaLogLikelihood();
+      //double ratioll = _mcs_cosmic_track_fwdll / _mcs_cosmic_track_bwdll;  
       if (down_track && best_fwd) {               // Track is reco going down and mcs agrees (true for cosmic)
         _h_mcs_cosmic_track_direction->Fill(0);
-        _h_mcs_cosmic_track_direction_deltall->Fill(0., deltall);
-        _h_mcs_cosmic_track_direction_ratioll->Fill(0., ratioll);
+        //_h_mcs_cosmic_track_direction_deltall->Fill(0., deltall);
+        //_h_mcs_cosmic_track_direction_ratioll->Fill(0., ratioll);
         _mcs_cosmic_track_direction = 0;
+        _mcs_cosmic_track_downll = mcsfitresult_v.at(candidate_track.key())->fwdLogLikelihood();
+        _mcs_cosmic_track_upll = mcsfitresult_v.at(candidate_track.key())->bwdLogLikelihood();
       } else if (!down_track && best_fwd) {       // Track is reco going up and mcs agrees
         _h_mcs_cosmic_track_direction->Fill(1);
-        _h_mcs_cosmic_track_direction_deltall->Fill(1., deltall);
-        _h_mcs_cosmic_track_direction_ratioll->Fill(1., ratioll);
+        //_h_mcs_cosmic_track_direction_deltall->Fill(1., deltall);
+        //_h_mcs_cosmic_track_direction_ratioll->Fill(1., ratioll);
         _mcs_cosmic_track_direction = 1;
+        _mcs_cosmic_track_downll = mcsfitresult_v.at(candidate_track.key())->bwdLogLikelihood();
+        _mcs_cosmic_track_upll = mcsfitresult_v.at(candidate_track.key())->fwdLogLikelihood();
       } else if (down_track && !best_fwd) {       // Track is reco going down and mcs disagrees
         _h_mcs_cosmic_track_direction->Fill(1);
-        _h_mcs_cosmic_track_direction_deltall->Fill(1., deltall);
-        _h_mcs_cosmic_track_direction_ratioll->Fill(1., ratioll);
+        //_h_mcs_cosmic_track_direction_deltall->Fill(1., deltall);
+        //_h_mcs_cosmic_track_direction_ratioll->Fill(1., ratioll);
         _mcs_cosmic_track_direction = 1;
+        _mcs_cosmic_track_downll = mcsfitresult_v.at(candidate_track.key())->fwdLogLikelihood();
+        _mcs_cosmic_track_upll = mcsfitresult_v.at(candidate_track.key())->bwdLogLikelihood();
       } else if (!down_track && !best_fwd) {      // Track is reco going up and mcs disagrees (true for cosmic)
         _h_mcs_cosmic_track_direction->Fill(0);
-        _h_mcs_cosmic_track_direction_deltall->Fill(0., deltall);
-        _h_mcs_cosmic_track_direction_ratioll->Fill(0., ratioll);
+        //_h_mcs_cosmic_track_direction_deltall->Fill(0., deltall);
+        //_h_mcs_cosmic_track_direction_ratioll->Fill(0., ratioll);
         _mcs_cosmic_track_direction = 0;
+        _mcs_cosmic_track_downll = mcsfitresult_v.at(candidate_track.key())->bwdLogLikelihood();
+        _mcs_cosmic_track_upll = mcsfitresult_v.at(candidate_track.key())->fwdLogLikelihood();
       }
       _mcs_cosmic_track_direction_tree->Fill();
     }

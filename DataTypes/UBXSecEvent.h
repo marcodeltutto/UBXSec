@@ -43,7 +43,8 @@ class UBXSecEvent /*: public TObject*/{
   Double_t        true_muon_mom; ///< If exists, stores the true muon momentum
   Double_t        true_muon_mom_matched; ///< True momentum of the MCP matched to the muon PFP
   Int_t           n_pfp; ///< Number of PFP in the event
-  Int_t           n_pfp_primary; ///< Number of primary PFP in the event
+  Int_t           n_pfp_primary; ///< Number of primary PFP in the event (neutrino PFP)
+  Int_t           n_primary_cosmic_pfp; ///< Number of primary PFP in the event from pandoraCosmic (primaries before the removal)
   Int_t           nPFPtagged; ///< Not used
   Int_t           muon_is_flash_tagged; ///< Not used
   Double_t        muon_tag_score; ///< Not used
@@ -54,6 +55,7 @@ class UBXSecEvent /*: public TObject*/{
   Bool_t          is_signal; ///< Is trues if the event is a true numu cc in FV
   Double_t        nu_e; ///< Stores the true neutrino energy
   Double_t        lep_costheta; ///< Lepton true cosThata angle at start
+  Int_t           genie_mult; ///< Number of stable GENIE final state particles
   /*
    Double_t        recon_muon_start_x;
    Double_t        recon_muon_start_y;
@@ -121,7 +123,10 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_muoncandidate_theta; ///< Cos(theta) for the muon candidate in the TPCObject
   vector<double>   slc_muoncandidate_mom_range; ///< Momentum (by range) of the muon candidate in the TPCObject
   vector<double>   slc_muoncandidate_mom_mcs; ///< Momentum (by MCS) of the muon candidate in the TPCObject
+  vector<double>   slc_muoncandidate_mcs_ll; ///< -LL of the MCS fit
   vector<bool>     slc_muoncandidate_contained; ///< Is true if the muon candidate in the TPCObject is fully contained
+  vector<double>   slc_muoncandidate_dqdx_trunc; /// dqdx truncated mean for the muon candidate
+  vector<int>      slc_muoncandidate_truepdg; ///< True pdg code of the candated muon track
   Int_t            nbeamfls; ///< Number of beam flashes in the event
   vector<double>   beamfls_time; ///< Time of the beam flash
   vector<double>   beamfls_pe; ///< PE of the beam flash

@@ -25,13 +25,14 @@ void UBXSecEvent::Init()
   run = _default_value;
   subrun = _default_value;
   event = _default_value;
-  muon_is_reco = _default_value;
+  muon_is_reco = false;
   muon_reco_pur = _default_value;
   muon_reco_eff = _default_value;
   true_muon_mom = _default_value;
   true_muon_mom_matched = _default_value;
   n_pfp = _default_value;
   n_pfp_primary = _default_value;
+  n_primary_cosmic_pfp = _default_value;
   nPFPtagged = _default_value;
   muon_is_flash_tagged = _default_value;
   muon_tag_score = _default_value;
@@ -39,10 +40,11 @@ void UBXSecEvent::Init()
   fv = _default_value;
   ccnc = _default_value;
   nupdg = _default_value;
-  is_signal = _default_value;
+  is_signal = false;
   nu_e = _default_value;
   lep_costheta = _default_value; 
-  
+  genie_mult = _default_value;
+
   
   mc_muon_contained = _default_value;
   is_swtriggered = _default_value;
@@ -52,7 +54,9 @@ void UBXSecEvent::Init()
   
   nsignal = _default_value;
   pot = _default_value;
-  
+ 
+  no_mcflash_but_op_activity = false;
+
   ResizeVectors(0);
 
 
@@ -156,7 +160,10 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_muoncandidate_theta.resize(vsize, _default_value);
   slc_muoncandidate_mom_range.resize(vsize, _default_value);
   slc_muoncandidate_mom_mcs.resize(vsize, _default_value);
+  slc_muoncandidate_mcs_ll.resize(vsize, _default_value);
   slc_muoncandidate_contained.resize(vsize, _default_value);
+  slc_muoncandidate_dqdx_trunc.resize(vsize, _default_value);
+  slc_muoncandidate_truepdg.resize(vsize, _default_value);
   slc_acpt_outoftime.resize(vsize, _default_value);
   slc_crosses_top_boundary.resize(vsize, _default_value);
   slc_nuvtx_closetodeadregion_u.resize(vsize, _default_value);

@@ -31,7 +31,7 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Oct20_18_28.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Oct22_20_00.tgz</local>
   </larsoft>
 
   <!-- Project stages -->
@@ -46,7 +46,7 @@
     <numjobs>500</numjobs>
     <datatier>ubana</datatier>
     <memory>4000</memory>
-    <jobsub> --expected-lifetime=6h --mail_never --generate-email-summary </jobsub>
+    <jobsub> --expected-lifetime=12h --mail_never --generate-email-summary </jobsub>
     <disk>50GB</disk>
   </stage>
 

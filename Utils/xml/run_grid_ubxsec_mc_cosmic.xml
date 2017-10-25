@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+
+<!-- Production Project -->
+
+<!DOCTYPE project [
+<!ENTITY release "v06_26_01_07">
+<!ENTITY releasetag "e10:prof">
+<!ENTITY name "ubxsec_v2.0.1_mc_cosmic">
+<!ENTITY tag "ubxsec">
+<!ENTITY file_type "mc">
+<!ENTITY run_type "physics">
+<!ENTITY PNFSpath "/pnfs/uboone/persistent/users/mdeltutt/">
+]>
+
+
+<project name="&name;">
+
+  <!-- Group -->
+  <group>uboone</group>
+
+  <!-- Project size -->
+  <numevents>1016900</numevents>
+
+  <!-- Operating System -->
+  <os>SL5,SL6</os>
+
+  <!-- Batch resources -->
+  <resource>DEDICATED,OPPORTUNISTIC</resource>
+
+  <!-- Larsoft information -->
+  <larsoft>
+    <tag>&release;</tag>
+    <qual>&releasetag;</qual>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Oct23_15_46.tgz</local>
+  </larsoft>
+
+  <!-- Project stages -->
+
+  <stage name="ubxsec">
+    <fcl>run_ubxsec_mc_cosmic.fcl</fcl>
+    <inputdef>prodcosmics_corsika_cmc_uboone_mcc8.3_reco2</inputdef>
+    <defname>&name;_&tag;_ana</defname>
+    <maxfilesperjob>10</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_mc_cosmic</outdir>
+    <workdir>&PNFSpath;grid_workdir_ubxsec_mc_cosmic</workdir>
+    <numjobs>2000</numjobs>
+    <datatier>ubana</datatier>
+    <memory>6000</memory>
+    <jobsub> --expected-lifetime=24h --mail_never --generate-email-summary </jobsub>
+    <disk>180GB</disk>
+  </stage>
+
+  <!-- file type -->
+  <filetype>&file_type;</filetype>
+
+  <!-- run type -->
+  <runtype>&run_type;</runtype>
+
+</project>

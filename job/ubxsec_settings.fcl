@@ -19,7 +19,9 @@ UBXSec: {
   ParticleIDProducer:           "pandoraNupid::UBXSec"
   MCGhostProducer:              "RecoTrueMatcher"
   GeoCosmicTaggerProducer:      "pandoraNuGeoCosmicTag"
-  MCSFitResultProducer:         "pandoraNuMCSMu"
+  MCSFitResultMuProducer:       "pandoraNuMCSMu"
+  MCSFitResultPiProducer:       "pandoraNuMCSPi"
+  CalorimetryProducer:          "pandoraNucalo"
 
   UseGENIEInfo:                 true
   MinimumHitRequirement:        3

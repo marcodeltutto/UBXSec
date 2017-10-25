@@ -1,0 +1,10 @@
+
+BEGIN_PROLOG
+#
+# Module configuration
+#
+InTimeStudy: {
+  module_type:              "InTimeStudy"
+  MCTruthProduct:           "generator" 
+}
+END_PROLOG

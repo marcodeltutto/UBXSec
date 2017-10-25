@@ -95,6 +95,8 @@ private:
   const std::vector<float> endPt2 = {-9999., -9999., -9999.};
 
   TH1D *_h_diff, *_h_diff_a, *_h_diff_c;
+  TH1D *_h_dt_u_anode, *_h_dt_d_anode, *_h_dt_u_cathode, *_h_dt_d_cathode;
+  TH1D *_h_dz_u_anode, *_h_dz_d_anode, *_h_dz_u_cathode, *_h_dz_d_cathode;
 
   //std::ofstream _csvfile;
   TTree* _tree1;
@@ -144,7 +146,16 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
   if (_create_histo) {
     _h_diff   = fs->make<TH1D>("h_diff",  ";Reco time - Flash time;Events", 200, -6000, 6000);
     _h_diff_a = fs->make<TH1D>("h_diff_a",";Reco time - Flash time;Events", 100, -20, 20);
-    _h_diff_c = fs->make<TH1D>("h_diff_c",";Reco time - Flash time;Events", 200, 2200, 3000);
+    _h_diff_c = fs->make<TH1D>("h_diff_c",";Reco time - Flash time;Events", 300, 2200, 3000);
+ 
+    _h_dt_u_anode   = fs->make<TH1D>("h_dt_u_anode",   ";Reco time - Flash time [#mus];Events", 200, -20, 20);
+    _h_dt_d_anode   = fs->make<TH1D>("h_dt_d_anode",   ";Reco time - Flash time [#mus];Events", 200, -20, 20);
+    _h_dt_u_cathode = fs->make<TH1D>("h_dt_u_cathode", ";Reco time - Flash time [#mus];Events", 300, 2200, 3000);
+    _h_dt_d_cathode = fs->make<TH1D>("h_dt_d_cathode", ";Reco time - Flash time [#mus];Events", 300, 2200, 3000);
+    _h_dz_u_anode   = fs->make<TH1D>("h_dz_u_anode",   ";Track Z - Flash Z [cm];Events", 200, -200, 200);
+    _h_dz_d_anode   = fs->make<TH1D>("h_dz_d_anode",   ";Track Z - Flash Z [cm];Events", 200, -200, 200);
+    _h_dz_u_cathode = fs->make<TH1D>("h_dz_u_cathode", ";Track Z - Flash Z [cm];Events", 200, -200, 200);
+    _h_dz_d_cathode = fs->make<TH1D>("h_dz_d_cathode", ";Track Z - Flash Z [cm];Events", 200, -200, 200);
   }
 
   if (_debug) {
@@ -375,7 +386,18 @@ void ACPTTagger::produce(art::Event & e)
        && _dz_d_cathode.back() > -_dz_resolution_a && _dz_d_cathode.back() < _dz_resolution_a
        && sign) isCosmic = true;
 
-      
+      if (_create_histo) {
+        _h_dt_u_anode->Fill(_dt_u_anode.back());
+        _h_dt_d_anode->Fill(_dt_d_anode.back());
+        _h_dt_u_cathode->Fill(_dt_u_cathode.back());
+        _h_dt_d_cathode->Fill(_dt_d_cathode.back());
+        
+        _h_dz_u_anode->Fill(_dz_u_anode.back());
+        _h_dz_d_anode->Fill(_dz_d_anode.back());
+        _h_dz_u_cathode->Fill(_dz_u_cathode.back());
+        _h_dz_d_cathode->Fill(_dz_d_cathode.back());
+      }
+
       if (_debug) {
 
         std::cout << "_dt_u_anode " << _dt_u_anode.back() << std::endl;

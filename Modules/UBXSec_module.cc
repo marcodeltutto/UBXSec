@@ -56,6 +56,7 @@
 #include "lardataobj/AnalysisBase/T0.h"
 #include "larcoreobj/SummaryData/POTSummary.h"
 #include "lardataobj/AnalysisBase/ParticleID.h"
+#include "lardataobj/AnalysisBase/Calorimetry.h"
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
 #include "lardataobj/AnalysisBase/CosmicTag.h"
 #include "uboone/UBXSec/DataTypes/TPCObject.h"
@@ -151,7 +152,9 @@ private:
   std::string _particle_id_producer;
   std::string _mc_ghost_producer;
   std::string _geocosmictag_producer;
-  std::string _mcsfitresult_producer;
+  std::string _mcsfitresult_mu_producer;
+  std::string _mcsfitresult_pi_producer;
+  std::string _calorimetry_producer;
   bool _debug = true;                   ///< Debug mode
   int _minimumHitRequirement;           ///< Minimum number of hits in at least a plane for a track
   bool _use_genie_info;                 ///< Turn this off if looking at cosmic only files
@@ -210,7 +213,13 @@ private:
   double _mcs_cosmic_track_direction;
   double _mcs_cosmic_track_downll;
   double _mcs_cosmic_track_upll;
-  
+  TTree *_mom_cosmic_tree;
+  double _mom_cosmic_true;
+  double _mom_cosmic_mcs;
+  double _mom_cosmic_mcs_downforced;
+  double _mom_cosmic_range;
+  bool _mom_cosmic_down;
+
   TTree* _sr_tree;
   int _sr_run, _sr_subrun; 
   double _sr_begintime, _sr_endtime;
@@ -240,7 +249,9 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _particle_id_producer           = p.get<std::string>("ParticleIDProducer");
   _mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
   _geocosmictag_producer          = p.get<std::string>("GeoCosmicTaggerProducer");
-  _mcsfitresult_producer          = p.get<std::string>("MCSFitResultProducer");
+  _mcsfitresult_mu_producer       = p.get<std::string>("MCSFitResultMuProducer");
+  _mcsfitresult_pi_producer       = p.get<std::string>("MCSFitResultPiProducer");
+  _calorimetry_producer           = p.get<std::string>("CalorimetryProducer");
 
   _use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
   _minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
@@ -337,7 +348,15 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _mcs_cosmic_track_direction_tree->Branch("mcs_cosmic_track_downll",     &_mcs_cosmic_track_downll,     "mcs_cosmic_track_downll/D");
   _mcs_cosmic_track_direction_tree->Branch("mcs_cosmic_track_upll",       &_mcs_cosmic_track_upll,       "mcs_cosmic_track_upll/D");
 
-
+  _mom_cosmic_tree = fs->make<TTree>("mom_cosmic_tree","");
+  _mom_cosmic_tree->Branch("run",                       &_run,                       "run/I");
+  _mom_cosmic_tree->Branch("subrun",                    &_subrun,                    "subrun/I");
+  _mom_cosmic_tree->Branch("event",                     &_event,                     "event/I");
+  _mom_cosmic_tree->Branch("mom_cosmic_true",           &_mom_cosmic_true,           "mom_cosmic_true/D");
+  _mom_cosmic_tree->Branch("mom_cosmic_mcs",            &_mom_cosmic_mcs,            "mom_cosmic_mcs/D");
+  _mom_cosmic_tree->Branch("mom_cosmic_mcs_downforced", &_mom_cosmic_mcs_downforced, "mom_cosmic_mcs_downforced/D");
+  _mom_cosmic_tree->Branch("mom_cosmic_range",          &_mom_cosmic_range,          "mom_cosmic_range/D");
+  _mom_cosmic_tree->Branch("mom_cosmic_down",           &_mom_cosmic_down,           "mom_cosmic_down/O");
 
   _sr_tree = fs->make<TTree>("pottree","");
   _sr_tree->Branch("run",                &_sr_run,                "run/I");
@@ -450,6 +469,7 @@ void UBXSec::produce(art::Event & e) {
   art::fill_ptr_vector(track_p_v, track_h);
   art::FindManyP<recob::OpFlash> opfls_ptr_coll_v(track_h, e, _acpt_producer);
   art::FindManyP<recob::PFParticle> pfp_from_track(track_h, e, _pfp_producer);
+  art::FindManyP<anab::Calorimetry> calos_from_track(track_h, e, _calorimetry_producer);
 
   // Get PFP
   art::Handle<std::vector<recob::PFParticle> > pfp_h;
@@ -507,25 +527,50 @@ void UBXSec::produce(art::Event & e) {
   art::FindManyP<ubana::MCGhost>   mcghost_from_pfp   (pfp_h,   e, _mc_ghost_producer);
   art::FindManyP<simb::MCParticle> mcpar_from_mcghost (ghost_h, e, _mc_ghost_producer); 
 
-  // Get MCSFitResult
-  art::Handle<std::vector<recob::MCSFitResult> > mcsfitresult_h;
-  e.getByLabel(_mcsfitresult_producer,mcsfitresult_h);
-  if(!mcsfitresult_h.isValid()){
-    std::cout << "[UBXSec] MCSFitResult product " << _mcsfitresult_producer << " not found..." << std::endl;
+  // Get MCSFitResult - Muon
+  art::Handle<std::vector<recob::MCSFitResult> > mcsfitresult_mu_h;
+  e.getByLabel(_mcsfitresult_mu_producer,mcsfitresult_mu_h);
+  if(!mcsfitresult_mu_h.isValid()){
+    std::cout << "[UBXSec] MCSFitResult product " << _mcsfitresult_mu_producer << " not found..." << std::endl;
     //throw std::exception();
   } 
-  std::vector<art::Ptr<recob::MCSFitResult>> mcsfitresult_v;
-  art::fill_ptr_vector(mcsfitresult_v, mcsfitresult_h);
+  std::vector<art::Ptr<recob::MCSFitResult>> mcsfitresult_mu_v;
+  art::fill_ptr_vector(mcsfitresult_mu_v, mcsfitresult_mu_h);
+
+  // Get MCSFitResult - Pi
+  art::Handle<std::vector<recob::MCSFitResult> > mcsfitresult_pi_h;
+  e.getByLabel(_mcsfitresult_pi_producer,mcsfitresult_pi_h);
+  if(!mcsfitresult_pi_h.isValid()){
+    std::cout << "[UBXSec] MCSFitResult product " << _mcsfitresult_pi_producer << " not found..." << std::endl;
+    //throw std::exception();
+  }
+  std::vector<art::Ptr<recob::MCSFitResult>> mcsfitresult_pi_v;
+  art::fill_ptr_vector(mcsfitresult_pi_v, mcsfitresult_pi_h);
 
   /*
-  std::cout << "mcsfitresult_v.at(0)->fwdLogLikelihood(): " << mcsfitresult_v.at(0)->fwdLogLikelihood() << std::endl;
-  std::cout << "mcsfitresult_v.at(0)->fwdMomentum(): " << mcsfitresult_v.at(0)->fwdMomentum() << std::endl;
-  std::cout << "mcsfitresult_v.at(0)->bwdLogLikelihood(): " << mcsfitresult_v.at(0)->bwdLogLikelihood() << std::endl;
-  std::cout << "mcsfitresult_v.at(0)->bwdMomentum(): " << mcsfitresult_v.at(0)->bwdMomentum() << std::endl;
-  std::cout << "mcsfitresult_v.at(0)->bestMomentum(): " << mcsfitresult_v.at(0)->bestMomentum() << std::endl;
-  std::cout << "mcsfitresult_v.at(0)->bestLogLikelihood(): " << mcsfitresult_v.at(0)->bestLogLikelihood() << std::endl;
-  std::cout << "mcsfitresult_v.at(0)->deltaLogLikelihood(): " << mcsfitresult_v.at(0)->deltaLogLikelihood() << std::endl;  
+  std::cout << "mcsfitresult_mu_v.at(0)->fwdLogLikelihood(): " << mcsfitresult_mu_v.at(0)->fwdLogLikelihood() << std::endl;
+  std::cout << "mcsfitresult_mu_v.at(0)->fwdMomentum(): " << mcsfitresult_mu_v.at(0)->fwdMomentum() << std::endl;
+  std::cout << "mcsfitresult_mu_v.at(0)->bwdLogLikelihood(): " << mcsfitresult_mu_v.at(0)->bwdLogLikelihood() << std::endl;
+  std::cout << "mcsfitresult_mu_v.at(0)->bwdMomentum(): " << mcsfitresult_mu_v.at(0)->bwdMomentum() << std::endl;
+  std::cout << "mcsfitresult_mu_v.at(0)->bestMomentum(): " << mcsfitresult_mu_v.at(0)->bestMomentum() << std::endl;
+  std::cout << "mcsfitresult_mu_v.at(0)->bestLogLikelihood(): " << mcsfitresult_mu_v.at(0)->bestLogLikelihood() << std::endl;
+  std::cout << "mcsfitresult_mu_v.at(0)->deltaLogLikelihood(): " << mcsfitresult_mu_v.at(0)->deltaLogLikelihood() << std::endl;  
   */
+
+  // pandoraCosmic PFPs (for cosmic removal studies)
+  art::Handle<std::vector<recob::PFParticle>> pfp_cosmic_h;
+  e.getByLabel("pandoraCosmic",pfp_cosmic_h);
+  if(pfp_cosmic_h.isValid()){
+    std::vector<art::Ptr<recob::PFParticle>> pfp_cosmic_v;
+    art::fill_ptr_vector(pfp_cosmic_v, pfp_cosmic_h);
+    ubxsec_event->n_primary_cosmic_pfp = 0;
+    for (auto p : pfp_cosmic_v) {
+      if (!p->IsPrimary()) continue;
+      ubxsec_event->n_primary_cosmic_pfp++;
+    }
+  } else {
+    std::cout << "[UBXSec] pandoraCosmic PFP product not found..." << std::endl;
+  }
 
   // Flashes
   ::art::Handle<std::vector<recob::OpFlash>> beamflash_h;
@@ -548,13 +593,17 @@ void UBXSec::produce(art::Event & e) {
 
     ubxsec_event->beamfls_spec[n].resize(32);
     ubxsec_event->candidate_flash_time = 0.;
+    double min_pe = -1;
     //if (_debug) std::cout << "[UBXSec] Reco beam flash pe: " << std::endl;
     for (unsigned int i = 0; i < 32; i++) {
       unsigned int opdet = geo->OpDetFromOpChannel(i);
       ubxsec_event->beamfls_spec[n][opdet] = flash.PE(i);
       if (ubxsec_event->beamfls_time[n] > _beam_spill_start && ubxsec_event->beamfls_time[n] < _beam_spill_end) {
-        if (flash.TotalPE() > _total_pe_cut) 
+        // Find largest flash above threshold
+        if (flash.TotalPE() > _total_pe_cut && flash.TotalPE() > min_pe) { 
           ubxsec_event->candidate_flash_time = flash.Time();
+          min_pe = flash.TotalPE();
+        }
         //if (_debug) std::cout << "\t PMT " << opdet << ": " << ubxsec_event->beamfls_spec[n][opdet] << std::endl;
       }
     }
@@ -581,10 +630,18 @@ void UBXSec::produce(art::Event & e) {
       if (_fiducial_volume.InFV(truth_nu_vtx)) ubxsec_event->fv = 1;
       else ubxsec_event->fv = 0;
 
+      int n_genie_particles = 0;
+      for (int p = 0; p < mclist[iList]->NParticles(); p++) {
+        const simb::MCParticle mc_par = mclist[iList]->GetParticle(p);
+        if (mc_par.StatusCode() != 1) continue;
+        n_genie_particles ++;
+      }
+
       ubxsec_event->ccnc            = mclist[iList]->GetNeutrino().CCNC();
       ubxsec_event->nupdg           = mclist[iList]->GetNeutrino().Nu().PdgCode();
       ubxsec_event->nu_e            = mclist[iList]->GetNeutrino().Nu().E();
       ubxsec_event->lep_costheta    = mclist[iList]->GetNeutrino().Lepton().Pz() / mclist[iList]->GetNeutrino().Lepton().P();
+      ubxsec_event->genie_mult      = n_genie_particles;
 
       ubxsec_event->tvtx_x.clear(); ubxsec_event->tvtx_x.clear(); ubxsec_event->tvtx_z.clear();
       for(size_t n = 0; n < mclist.size(); n++ ) {
@@ -910,18 +967,28 @@ void UBXSec::produce(art::Event & e) {
       TVector3 temp(reco_nu_vtx[0], reco_nu_vtx[1], reco_nu_vtx[2]);
       bool track_direction_correct = (candidate_track->Vertex() - temp).Mag() < (candidate_track->End() - temp).Mag();
       if (track_direction_correct) {
-        ubxsec_event->slc_muoncandidate_mom_mcs[slice]   = mcsfitresult_v.at(candidate_track.key())->fwdMomentum();
+        ubxsec_event->slc_muoncandidate_mom_mcs[slice] = mcsfitresult_mu_v.at(candidate_track.key())->fwdMomentum();
+        ubxsec_event->slc_muoncandidate_mcs_ll[slice]  = mcsfitresult_mu_v.at(candidate_track.key())->fwdLogLikelihood();
+        ubxsec_event->slc_muoncandidate_mom_mcs_pi[slice] = mcsfitresult_pi_v.at(candidate_track.key())->fwdMomentum();
       } else {
-        ubxsec_event->slc_muoncandidate_mom_mcs[slice]   = mcsfitresult_v.at(candidate_track.key())->bwdMomentum();
+        ubxsec_event->slc_muoncandidate_mom_mcs[slice] = mcsfitresult_mu_v.at(candidate_track.key())->bwdMomentum();
+        ubxsec_event->slc_muoncandidate_mcs_ll[slice]  = mcsfitresult_mu_v.at(candidate_track.key())->bwdLogLikelihood();
+        ubxsec_event->slc_muoncandidate_mom_mcs_pi[slice] = mcsfitresult_pi_v.at(candidate_track.key())->bwdMomentum();
       }
+      // Also see if the track is recon going downwards (for cosmic studies)
+      bool track_going_down = candidate_track->Vertex().Y() > candidate_track->End().Y();
+
+      // Look at calorimetry for the muon candidate
+      std::vector<art::Ptr<anab::Calorimetry>> calos = calos_from_track.at(candidate_track.key());
+      ubxsec_event->slc_muoncandidate_dqdx_trunc[slice] = UBXSecHelper::GetDqDxTruncatedMean(calos);
 
       // Get the related PFP
       art::Ptr<recob::PFParticle> candidate_pfp = pfp_from_track.at(candidate_track.key()).at(0);
       const auto mcghosts = mcghost_from_pfp.at(candidate_pfp.key());
       if (mcghosts.size() > 0) {
         art::Ptr<simb::MCParticle> mcpar = mcpar_from_mcghost.at(mcghost_from_pfp.at(candidate_pfp.key()).at(0).key()).at(0);
-        //art::Ptr<simb::MCParticle> mcpar = mcpar_from_mcghost.at(mcghost.key()).at(0);
         const auto mc_truth = bt->TrackIDToMCTruth(mcpar->TrackId());
+        ubxsec_event->slc_muoncandidate_truepdg[slice] = mcpar->PdgCode();
         if (mc_truth) {
           if (mc_truth->Origin() == simb::kBeamNeutrino && mcpar->PdgCode() == 13 && mcpar->Mother() == 0) {
             _h_mom_true_mcs->Fill(mcpar->P(), ubxsec_event->slc_muoncandidate_mom_mcs[slice]);
@@ -941,6 +1008,15 @@ void UBXSec::produce(art::Event & e) {
               _h_mom_true_mcs_uncontained->Fill(mcpar->P(), ubxsec_event->slc_muoncandidate_mom_mcs[slice]);
             }
           }
+          if (mc_truth->Origin() == simb::kCosmicRay && (mcpar->PdgCode() == 13 || mcpar->PdgCode() == -13)) {
+            _mom_cosmic_true = mcpar->P();
+            _mom_cosmic_mcs = ubxsec_event->slc_muoncandidate_mom_mcs[slice];
+            _mom_cosmic_mcs_downforced = track_going_down ?   mcsfitresult_mu_v.at(candidate_track.key())->fwdMomentum() 
+                                                            : mcsfitresult_mu_v.at(candidate_track.key())->bwdMomentum(); 
+            _mom_cosmic_range = ubxsec_event->slc_muoncandidate_mom_range[slice];
+            _mom_cosmic_down = track_going_down;
+            _mom_cosmic_tree->Fill();
+          }
         }
         //std::cout << ">>>>>>>>>>>>>>>>>>>>> MCP has pdg " << mcpar->PdgCode() << std::endl;
       }
@@ -954,12 +1030,12 @@ void UBXSec::produce(art::Event & e) {
 
     } else {
 
-      ubxsec_event->slc_muoncandidate_exists[slice] = false;
-      ubxsec_event->slc_muoncandidate_length[slice] = -9999;
-      ubxsec_event->slc_muoncandidate_phi[slice]    = -9999;
-      ubxsec_event->slc_muoncandidate_theta[slice]  = -9999;
+      ubxsec_event->slc_muoncandidate_exists[slice]    = false;
+      ubxsec_event->slc_muoncandidate_length[slice]    = -9999;
+      ubxsec_event->slc_muoncandidate_phi[slice]       = -9999;
+      ubxsec_event->slc_muoncandidate_theta[slice]     = -9999;
       ubxsec_event->slc_muoncandidate_mom_range[slice] = -9999;
-      ubxsec_event->slc_muoncandidate_mom_mcs[slice]  = -9999;
+      ubxsec_event->slc_muoncandidate_mom_mcs[slice]   = -9999;
 
     }
 
@@ -996,10 +1072,10 @@ void UBXSec::produce(art::Event & e) {
         }
         ubxsec_event->true_muon_mom_matched = mcpars[0]->P();
 
-       if (_fiducial_volume.InFV(mcpars[0]->Vx(), mcpars[0]->Vy(), mcpars[0]->Vz()) && 
-           _fiducial_volume.InFV(mcpars[0]->EndX(), mcpars[0]->EndY(), mcpars[0]->EndZ())) {
-         ubxsec_event->mc_muon_contained = true;
-       }
+        if (_fiducial_volume.InFV(mcpars[0]->Vx(), mcpars[0]->Vy(), mcpars[0]->Vz()) && 
+          _fiducial_volume.InFV(mcpars[0]->EndX(), mcpars[0]->EndY(), mcpars[0]->EndZ())) {
+          ubxsec_event->mc_muon_contained = true;
+        }
       } 
       
 
@@ -1045,38 +1121,38 @@ void UBXSec::produce(art::Event & e) {
     // with cosmic origin, and check the track direction
     // (up/down) from MCS result
     if (muon_cand_exists && tpcobj.GetOrigin() == ubana::kCosmicRay) {
-      bool best_fwd = mcsfitresult_v.at(candidate_track.key())->isBestFwd();
+      bool best_fwd = mcsfitresult_mu_v.at(candidate_track.key())->isBestFwd();
       bool down_track = candidate_track->Vertex().Y() > candidate_track->End().Y();
-      //double deltall = mcsfitresult_v.at(candidate_track.key())->deltaLogLikelihood();
+      //double deltall = mcsfitresult_mu_v.at(candidate_track.key())->deltaLogLikelihood();
       //double ratioll = _mcs_cosmic_track_fwdll / _mcs_cosmic_track_bwdll;  
       if (down_track && best_fwd) {               // Track is reco going down and mcs agrees (true for cosmic)
         _h_mcs_cosmic_track_direction->Fill(0);
         //_h_mcs_cosmic_track_direction_deltall->Fill(0., deltall);
         //_h_mcs_cosmic_track_direction_ratioll->Fill(0., ratioll);
         _mcs_cosmic_track_direction = 0;
-        _mcs_cosmic_track_downll = mcsfitresult_v.at(candidate_track.key())->fwdLogLikelihood();
-        _mcs_cosmic_track_upll = mcsfitresult_v.at(candidate_track.key())->bwdLogLikelihood();
+        _mcs_cosmic_track_downll = mcsfitresult_mu_v.at(candidate_track.key())->fwdLogLikelihood();
+        _mcs_cosmic_track_upll = mcsfitresult_mu_v.at(candidate_track.key())->bwdLogLikelihood();
       } else if (!down_track && best_fwd) {       // Track is reco going up and mcs agrees
         _h_mcs_cosmic_track_direction->Fill(1);
         //_h_mcs_cosmic_track_direction_deltall->Fill(1., deltall);
         //_h_mcs_cosmic_track_direction_ratioll->Fill(1., ratioll);
         _mcs_cosmic_track_direction = 1;
-        _mcs_cosmic_track_downll = mcsfitresult_v.at(candidate_track.key())->bwdLogLikelihood();
-        _mcs_cosmic_track_upll = mcsfitresult_v.at(candidate_track.key())->fwdLogLikelihood();
+        _mcs_cosmic_track_downll = mcsfitresult_mu_v.at(candidate_track.key())->bwdLogLikelihood();
+        _mcs_cosmic_track_upll = mcsfitresult_mu_v.at(candidate_track.key())->fwdLogLikelihood();
       } else if (down_track && !best_fwd) {       // Track is reco going down and mcs disagrees
         _h_mcs_cosmic_track_direction->Fill(1);
         //_h_mcs_cosmic_track_direction_deltall->Fill(1., deltall);
         //_h_mcs_cosmic_track_direction_ratioll->Fill(1., ratioll);
-        _mcs_cosmic_track_direction = 1;
-        _mcs_cosmic_track_downll = mcsfitresult_v.at(candidate_track.key())->fwdLogLikelihood();
-        _mcs_cosmic_track_upll = mcsfitresult_v.at(candidate_track.key())->bwdLogLikelihood();
+        _mcs_cosmic_track_direction = 2;
+        _mcs_cosmic_track_downll = mcsfitresult_mu_v.at(candidate_track.key())->fwdLogLikelihood();
+        _mcs_cosmic_track_upll = mcsfitresult_mu_v.at(candidate_track.key())->bwdLogLikelihood();
       } else if (!down_track && !best_fwd) {      // Track is reco going up and mcs disagrees (true for cosmic)
         _h_mcs_cosmic_track_direction->Fill(0);
         //_h_mcs_cosmic_track_direction_deltall->Fill(0., deltall);
         //_h_mcs_cosmic_track_direction_ratioll->Fill(0., ratioll);
-        _mcs_cosmic_track_direction = 0;
-        _mcs_cosmic_track_downll = mcsfitresult_v.at(candidate_track.key())->bwdLogLikelihood();
-        _mcs_cosmic_track_upll = mcsfitresult_v.at(candidate_track.key())->fwdLogLikelihood();
+        _mcs_cosmic_track_direction = 3;
+        _mcs_cosmic_track_downll = mcsfitresult_mu_v.at(candidate_track.key())->bwdLogLikelihood();
+        _mcs_cosmic_track_upll = mcsfitresult_mu_v.at(candidate_track.key())->fwdLogLikelihood();
       }
       _mcs_cosmic_track_direction_tree->Fill();
     }

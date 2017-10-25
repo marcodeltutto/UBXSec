@@ -1049,6 +1049,97 @@ void UBXSecHelper::GetTimeCorrectedPoint(double * point_raw, double * point_corr
 
 }
 
+//_________________________________________________________________________________
+double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry>> calos) {
 
+  double result = -1;
+  double n = 1.;
 
+  for (auto c : calos) {
+    if (!c) continue;
+    if (!c->PlaneID().isValid) continue;
+    int planenum = c->PlaneID().Plane;
+    if (planenum != 2) continue;
+   
+    std::vector<double> dqdx_v = c->dQdx(); 
+
+    double median = GetMedian(dqdx_v);
+    double std    = std::sqrt(GetVariance(dqdx_v));
+
+    std::vector<double> dqdx_v_trimmed;
+    dqdx_v_trimmed.clear();
+
+    for (auto q : dqdx_v) {
+      if (q > median - n * std && 
+          q < median + n * std) {
+        dqdx_v_trimmed.emplace_back(q);
+      }
+    }
+
+    result = GetMean(dqdx_v_trimmed);
+  }
+
+  return result;
+}
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetMean(std::vector<double> dqdx_v) {
+
+  double mean = -1;
+  size_t size = dqdx_v.size();
+
+  if (size == 0)
+    return mean;
+
+  double sum = 0;
+
+  for (auto v : dqdx_v) {
+    sum += v;
+  }
+
+  mean = sum/(double)size;
+
+  return mean;
+}
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetMedian(std::vector<double> dqdx_v) {
+
+  double median = -1;
+  size_t size = dqdx_v.size();
+  std::sort(dqdx_v.begin(), dqdx_v.end());
+  if (size % 2 == 0){
+    median = (dqdx_v[size/2 - 1] + dqdx_v[size/2]) / 2;
+  }
+  else{
+    median = dqdx_v[size/2];
+  }
+
+  return median;
+}
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetVariance(std::vector<double> dqdx_v) {
+
+  double variance = -1;
+
+  double sum = 0;
+  double sum2 = 0;
+  size_t size = dqdx_v.size();
+
+  if (size == 0)
+    return variance;
+
+  for (auto value : dqdx_v) {
+
+    sum  += value;
+    sum2 += value*value;
+
+  }  
+
+  variance = sum2/(double)size - (sum/(double)size)*(sum/(double)size);
+
+  return variance;
+
+}
 

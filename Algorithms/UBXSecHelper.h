@@ -25,6 +25,7 @@
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 #include "uboone/UBXSec/DataTypes/TPCObject.h"
+#include "lardataobj/AnalysisBase/Calorimetry.h"
 
 typedef std::map< art::Ptr<recob::PFParticle>, unsigned int > RecoParticleToNMatchedHits;
 typedef std::map< art::Ptr<simb::MCParticle>,  RecoParticleToNMatchedHits > ParticleMatchingMap;
@@ -273,6 +274,16 @@ class UBXSecHelper {
    *  @param interaction_time The interaction time (usually from flash)
    *  @param drift_velocity The drift velocity */
   static void GetTimeCorrectedPoint(double * point_raw, double * point_corrected, double interaction_time, double drift_velocity);
+
+  static double GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry>> calos);
+
+  static double GetMean(std::vector<double>);
+
+  static double GetMedian(std::vector<double>);
+
+  static double GetVariance(std::vector<double>);
+
 };
+
 
 #endif //  UBXSECHELPER_H

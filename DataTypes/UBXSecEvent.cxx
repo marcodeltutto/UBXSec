@@ -43,6 +43,7 @@ void UBXSecEvent::Init()
   is_signal = false;
   nu_e = _default_value;
   lep_costheta = _default_value; 
+  lep_phi = _default_value;
   genie_mult = _default_value;
 
   
@@ -59,76 +60,10 @@ void UBXSecEvent::Init()
 
   ResizeVectors(0);
 
-
-  // Set object pointer
-  /*
-   slc_flsmatch_score = 0;
-   slc_flsmatch_qllx = 0;
-   slc_flsmatch_tpcx = 0;
-   slc_flsmatch_t0 = 0;
-   slc_flsmatch_hypoz = 0;
-   slc_flsmatch_xfixed_chi2 = 0;
-   slc_flsmatch_xfixed_ll = 0;
-   slc_flsmatch_cosmic_score = 0;
-   slc_flsmatch_cosmic_t0 = 0;
-   slc_nuvtx_x = 0;
-   slc_nuvtx_y = 0;
-   slc_nuvtx_z = 0;
-   slc_nuvtx_fv = 0;
-   slc_vtxcheck_angle = 0;
-   slc_origin = 0;
-   slc_origin_extra = 0;
-   slc_nhits_u = 0;
-   slc_nhits_v = 0;
-   slc_nhits_w = 0;
-   slc_longesttrack_length = 0;
-   slc_longesttrack_phi = 0;
-   slc_longesttrack_theta = 0;
-   slc_longesttrack_iscontained = 0;
-   slc_acpt_outoftime = 0;
-   slc_crosses_top_boundary = 0;
-   slc_nuvtx_closetodeadregion_u = 0;
-   slc_nuvtx_closetodeadregion_v = 0;
-   slc_nuvtx_closetodeadregion_w = 0;
-   slc_kalman_chi2 = 0;
-   slc_kalman_ndof = 0;
-   slc_passed_min_track_quality = 0;
-   slc_passed_min_vertex_quality = 0;
-   slc_n_intime_pe_closestpmt = 0;
-   slc_maxdistance_vtxtrack = 0;
-   slc_npfp = 0;
-   slc_ntrack = 0;
-   slc_nshower = 0;
-   slc_iscontained = 0;
-   slc_mult_pfp = 0;
-   slc_mult_track = 0;
-   slc_mult_shower = 0;
-   slc_mult_track_tolerance = 0;
-   beamfls_time = 0;
-   beamfls_pe = 0;
-   beamfls_z = 0;
-   beamfls_spec = 0;
-   numc_flash_spec = 0;
-   slc_flshypo_xfixed_spec = 0;
-   slc_flshypo_spec = 0;
-   */
-  /*
-   mctrk_start_x = 0;
-   mctrk_start_y = 0;
-   mctrk_start_z = 0;
-   trk_start_x = 0;
-   trk_start_y = 0;
-   trk_start_z = 0;
-   vtx_x = 0;
-   vtx_y = 0;
-   vtx_z = 0;
-   tvtx_x = 0;
-   tvtx_y = 0;
-   tvtx_z = 0;
-   */
 }
 
 void UBXSecEvent::ResizeVectors(int vsize) {
+
   slc_flsmatch_score.resize(vsize, _default_value);
   slc_flsmatch_qllx.resize(vsize, _default_value);
   slc_flsmatch_tpcx.resize(vsize, _default_value);
@@ -187,5 +122,6 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_geocosmictag.resize(vsize, false);
 
 }
+
 #endif
 

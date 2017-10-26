@@ -846,6 +846,25 @@ bool UBXSecHelper::TrackIsContained(recob::Track track){
   return true;
 }
 
+//_________________________________________________________________________________
+double UBXSecHelper::GetPhi(double px, double py, double pz) {
+
+  TVector3 dir(px,py,pz);
+ 
+  // We are in the plane Z = 0 
+  dir.SetZ(0);
+  TVector3 phi_versor (1, 0, 0);  
+
+  double phi = phi_versor.Angle(dir);
+
+  // Just convention
+  if (dir.Y() < 0)
+    phi = -phi;
+
+  return phi;
+
+}
+
 
 //_________________________________________________________________________________
 double UBXSecHelper::GetCorrectedPhi(recob::Track t, recob::Vertex tpcobj_nu_vtx) {

@@ -235,6 +235,14 @@ class UBXSecHelper {
   /**
    *  @brief Returns the value of the phi angle for the track considering the nu vertex
    *
+   *  @param px  
+   *  @param py 
+   *  @param pz */
+  static double GetPhi(double px, double py, double pz);
+
+  /**
+   *  @brief Returns the value of the phi angle for the track considering the nu vertex
+   *
    *  @param t the recob::Track 
    *  @param tpcobj_nu_vtx the recob::Vertex neutrino vertex */
   static double GetCorrectedPhi(recob::Track t, recob::Vertex tpcobj_nu_vtx);

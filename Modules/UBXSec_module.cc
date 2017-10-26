@@ -641,6 +641,9 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->nupdg           = mclist[iList]->GetNeutrino().Nu().PdgCode();
       ubxsec_event->nu_e            = mclist[iList]->GetNeutrino().Nu().E();
       ubxsec_event->lep_costheta    = mclist[iList]->GetNeutrino().Lepton().Pz() / mclist[iList]->GetNeutrino().Lepton().P();
+      ubxsec_event->lep_phi         = UBXSecHelper::GetPhi(mclist[iList]->GetNeutrino().Lepton().Px(), 
+                                                           mclist[iList]->GetNeutrino().Lepton().Py(),
+                                                           mclist[iList]->GetNeutrino().Lepton().Pz()); 
       ubxsec_event->genie_mult      = n_genie_particles;
 
       ubxsec_event->tvtx_x.clear(); ubxsec_event->tvtx_x.clear(); ubxsec_event->tvtx_z.clear();

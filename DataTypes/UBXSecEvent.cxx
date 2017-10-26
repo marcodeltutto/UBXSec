@@ -160,6 +160,7 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_muoncandidate_theta.resize(vsize, _default_value);
   slc_muoncandidate_mom_range.resize(vsize, _default_value);
   slc_muoncandidate_mom_mcs.resize(vsize, _default_value);
+  slc_muoncandidate_mom_mcs_pi.resize(vsize, _default_value); 
   slc_muoncandidate_mcs_ll.resize(vsize, _default_value);
   slc_muoncandidate_contained.resize(vsize, _default_value);
   slc_muoncandidate_dqdx_trunc.resize(vsize, _default_value);

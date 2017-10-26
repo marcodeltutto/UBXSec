@@ -123,6 +123,7 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_muoncandidate_theta; ///< Cos(theta) for the muon candidate in the TPCObject
   vector<double>   slc_muoncandidate_mom_range; ///< Momentum (by range) of the muon candidate in the TPCObject
   vector<double>   slc_muoncandidate_mom_mcs; ///< Momentum (by MCS) of the muon candidate in the TPCObject
+  vector<double>   slc_muoncandidate_mom_mcs_pi; ///<  Momentum (by MCS) of the muon candidate in the TPCObject (using pion hypo)
   vector<double>   slc_muoncandidate_mcs_ll; ///< -LL of the MCS fit
   vector<bool>     slc_muoncandidate_contained; ///< Is true if the muon candidate in the TPCObject is fully contained
   vector<double>   slc_muoncandidate_dqdx_trunc; /// dqdx truncated mean for the muon candidate

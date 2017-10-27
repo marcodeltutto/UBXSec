@@ -407,10 +407,14 @@ void NeutrinoFlashMatch::produce(art::Event & e)
       if(pt.x < _tpc_xmin[_matchid]) _tpc_xmin[_matchid] = pt.x;
     }
 
+    // X correction
+    _tpc_xmin[_matchid] = _tpc_xmin[_matchid] - _t0[_matchid] * 0.1114359;
+
     ubana::FlashMatch fm;
     fm.SetScore               ( _score[_matchid] );
     fm.SetTPCX                ( _tpc_xmin[_matchid] );
     fm.SetEstimatedX          ( _qll_xmin[_matchid] );
+    fm.SetT0                  ( _t0[_matchid] );
     fm.SetHypoFlashSpec       ( _hypo_flash_spec[_matchid] );
     fm.SetRecoFlashSpec       ( _beam_flash_spec );
     //fm.SetMCFlashSpec         ( _numc_flash_spec );

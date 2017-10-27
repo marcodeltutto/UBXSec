@@ -91,6 +91,8 @@
 #include "TH2F.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include <TDatabasePDG.h>
+#include <TParticlePDG.h>
 
 #include <fstream>
 
@@ -135,6 +137,9 @@ private:
   ::ubana::NuMuCCEventSelection _event_selection;
   ::pmtana::PECalib _pecalib;
   ::trkf::TrackMomentumCalculator _trk_mom_calculator;
+
+  // Database to understand particle pdg
+  const TDatabasePDG* _database_pdg;
 
   // To be set via fcl parameters
   std::string _hitfinderLabel;
@@ -263,7 +268,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _geo_cosmic_score_cut           = p.get<double>("GeoCosmicScoreCut", 0.6);
   _tolerance_track_multiplicity   = p.get<double>("ToleranceTrackMultiplicity", 5.);
 
-  _min_track_len                  = p.get<double>("MinTrackLength", 5.);
+  _min_track_len                  = p.get<double>("MinTrackLength", 0.1);
 
   _pecalib.Configure(p.get<fhicl::ParameterSet>("PECalib"));
 
@@ -279,6 +284,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _event_selection.PrintConfig();
 
   _trk_mom_calculator.SetMinLength(_min_track_len);
+
+  _database_pdg = new TDatabasePDG;
 
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
@@ -631,10 +638,14 @@ void UBXSec::produce(art::Event & e) {
       else ubxsec_event->fv = 0;
 
       int n_genie_particles = 0;
+      int n_genie_particles_charged = 0;
       for (int p = 0; p < mclist[iList]->NParticles(); p++) {
         const simb::MCParticle mc_par = mclist[iList]->GetParticle(p);
         if (mc_par.StatusCode() != 1) continue;
         n_genie_particles ++;
+        const TParticlePDG* par_pdg = _database_pdg->GetParticle(mc_par.PdgCode());
+        if (par_pdg->Charge() == 0) continue;
+        n_genie_particles_charged ++;
       }
 
       ubxsec_event->ccnc            = mclist[iList]->GetNeutrino().CCNC();
@@ -645,6 +656,7 @@ void UBXSec::produce(art::Event & e) {
                                                            mclist[iList]->GetNeutrino().Lepton().Py(),
                                                            mclist[iList]->GetNeutrino().Lepton().Pz()); 
       ubxsec_event->genie_mult      = n_genie_particles;
+      ubxsec_event->genie_mult_ch   = n_genie_particles_charged;
 
       ubxsec_event->tvtx_x.clear(); ubxsec_event->tvtx_x.clear(); ubxsec_event->tvtx_z.clear();
       for(size_t n = 0; n < mclist.size(); n++ ) {

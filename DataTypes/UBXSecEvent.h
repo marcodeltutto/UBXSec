@@ -57,6 +57,7 @@ class UBXSecEvent /*: public TObject*/{
   Double_t        lep_costheta; ///< Lepton true cosThata angle at start
   Double_t        lep_phi; ///< Lepton true Phi angle at start
   Int_t           genie_mult; ///< Number of stable GENIE final state particles
+  Int_t           genie_mult_ch; ///< Number of stable charged GENIE final state particles
 
   Int_t           mc_muon_contained; ///< Is 1 if the true mc muon is fully contained
   Int_t           is_swtriggered; ///< Is true if the event passed the software trigger

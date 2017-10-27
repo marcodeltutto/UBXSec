@@ -45,7 +45,7 @@ void UBXSecEvent::Init()
   lep_costheta = _default_value; 
   lep_phi = _default_value;
   genie_mult = _default_value;
-
+  genie_mult_ch = _default_value;
   
   mc_muon_contained = _default_value;
   is_swtriggered = _default_value;

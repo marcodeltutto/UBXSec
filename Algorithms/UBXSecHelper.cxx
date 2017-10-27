@@ -1071,7 +1071,7 @@ void UBXSecHelper::GetTimeCorrectedPoint(double * point_raw, double * point_corr
 //_________________________________________________________________________________
 double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry>> calos) {
 
-  double result = -1;
+  double result = -9999;
   double n = 1.;
 
   for (auto c : calos) {
@@ -1082,8 +1082,18 @@ double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry
    
     std::vector<double> dqdx_v = c->dQdx(); 
 
+    if (dqdx_v.size() == 0)
+      return result;
+
+    for (auto q : dqdx_v) {
+      std::cout << "dqdx before trim: " << q << std::endl;
+    }
+
     double median = GetMedian(dqdx_v);
-    double std    = std::sqrt(GetVariance(dqdx_v));
+    double std    = GetSTD(dqdx_v);
+
+    std::cout << "median " << median << std::endl;
+    std::cout << "std    " << std << std::endl;
 
     std::vector<double> dqdx_v_trimmed;
     dqdx_v_trimmed.clear();
@@ -1092,6 +1102,7 @@ double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry
       if (q > median - n * std && 
           q < median + n * std) {
         dqdx_v_trimmed.emplace_back(q);
+        std::cout << "dqdx after trim: " << q << std::endl;
       }
     }
 
@@ -1104,7 +1115,7 @@ double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry
 //_________________________________________________________________________________
 double UBXSecHelper::GetMean(std::vector<double> dqdx_v) {
 
-  double mean = -1;
+  double mean = -9999;
   size_t size = dqdx_v.size();
 
   if (size == 0)
@@ -1124,8 +1135,12 @@ double UBXSecHelper::GetMean(std::vector<double> dqdx_v) {
 //_________________________________________________________________________________
 double UBXSecHelper::GetMedian(std::vector<double> dqdx_v) {
 
-  double median = -1;
+  double median = -9999;
   size_t size = dqdx_v.size();
+
+  if (size == 0)
+    return median;
+
   std::sort(dqdx_v.begin(), dqdx_v.end());
   if (size % 2 == 0){
     median = (dqdx_v[size/2 - 1] + dqdx_v[size/2]) / 2;
@@ -1161,4 +1176,20 @@ double UBXSecHelper::GetVariance(std::vector<double> dqdx_v) {
   return variance;
 
 }
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetSTD(std::vector<double> dqdx_v) {
+
+  if (dqdx_v.size() == 0)
+    return -9999;
+
+  double variance = GetVariance(dqdx_v);
+  if (variance > 0)
+    return std::sqrt(variance);
+  else 
+    return -9999;
+
+}
+
+
 

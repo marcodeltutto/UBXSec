@@ -291,6 +291,7 @@ class UBXSecHelper {
 
   static double GetVariance(std::vector<double>);
 
+  static double GetSTD(std::vector<double>);
 };
 
 

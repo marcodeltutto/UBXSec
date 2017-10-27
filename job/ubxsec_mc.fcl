@@ -57,6 +57,7 @@ ubxsec_mc_reco:
   pandoraNupid:                   @local::microboone_chi2pid
 
   pandoraNuMCSMu:                 @local::mcsfitproducer
+  pandoraNuMCSPi:                 @local::mcsfitproducer
 }
 
 ubxsec_mc_flashmatch:
@@ -93,6 +94,7 @@ ubxsec_mc_producers: [ saturationTest,
                        pandoraNucalo,
                        pandoraNupid,
                        pandoraNuMCSMu,
+                       pandoraNuMCSPi,
                        RecoTrueMatcher, 
                        TPCObjectMaker,
                        pandoraNuGeoCosmicTag,
@@ -113,14 +115,14 @@ ubxsec_mc_reco.pandoraCosmicTrackPFPart.EndTickPadding:          75
 ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCXBoundary:            10
 ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCYBoundary:            20
 ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCZBoundary:            10
-ubxsec_data_reco.pandoraCosmicTrackPFPart.Debug:                 false
+ubxsec_mc_reco.pandoraCosmicTrackPFPart.Debug:                   false
 
-ubxsec_data_reco.pandoraCosmicFlashTag.DebugMode:                false
+ubxsec_mc_reco.pandoraCosmicFlashTag.DebugMode:                  false
 
-ubxsec_mc_reco.pandoraCosmicHitRemoval.CosmicProducerLabels:     ["pandoraCosmicTrackPFPart", "pandoraCosmicFlashTag", "pandoraCosmicACPTTagger" ]
-ubxsec_mc_reco.pandoraCosmicHitRemoval.TrackProducerLabels:      ["pandoraCosmic",            "pandoraCosmic",         "pandoraCosmicKHit"       ]
-ubxsec_mc_reco.pandoraCosmicHitRemoval.AssnProducerLabels:       ["pandoraCosmic",            "pandoraCosmic",         "pandoraCosmicKHit"       ]
-ubxsec_mc_reco.pandoraCosmicHitRemoval.CosmicTagThresholds:      [0.6,                        0.99,                    0.99                      ]
+ubxsec_mc_reco.pandoraCosmicHitRemoval.CosmicProducerLabels:     ["pandoraCosmicTrackPFPart::UBXSec", "pandoraCosmicFlashTag::UBXSec", "pandoraCosmicACPTTagger::UBXSec" ]
+ubxsec_mc_reco.pandoraCosmicHitRemoval.TrackProducerLabels:      ["pandoraCosmic",                    "pandoraCosmic",                 "pandoraCosmicKHit"               ]
+ubxsec_mc_reco.pandoraCosmicHitRemoval.AssnProducerLabels:       ["pandoraCosmic",                    "pandoraCosmic",                 "pandoraCosmicKHit"               ]
+ubxsec_mc_reco.pandoraCosmicHitRemoval.CosmicTagThresholds:      [0.6,                                0.99,                            0.99                              ]
 ubxsec_mc_reco.pandoraCosmicHitRemoval.PFParticleProducerLabel:  "pandoraCosmic"
 ubxsec_mc_reco.pandoraCosmicHitRemoval.EndTickPadding:           75
 
@@ -130,11 +132,15 @@ ubxsec_mc_reco.pandoraNu.ConfigFile:                             "PandoraSetting
 
 ubxsec_mc_reco.pandoraNucalo.TrackModuleLabel:                   "pandoraNu::UBXSec"
 ubxsec_mc_reco.pandoraNucalo.SpacePointModuleLabel:              "pandoraNu::UBXSec"
+ubxsec_mc_reco.pandoraNucalo.Flip_dQdx:                          false
 
 ubxsec_mc_reco.pandoraNupid.CalorimetryModuleLabel:              "pandoraNucalo::UBXSec"
 ubxsec_mc_reco.pandoraNupid.TrackModuleLabel:                    "pandoraNu::UBXSec"
 
 ubxsec_mc_reco.pandoraNuMCSMu.inputs.inputLabel:                 "pandoraNu::UBXSec"
+
+ubxsec_mc_reco.pandoraNuMCSPi.inputs.inputLabel:                 "pandoraNu::UBXSec"
+ubxsec_mc_reco.pandoraNuMCSPi.fitter.pIdHypothesis:              211
 
 # Set FlashMatching properties
 ubxsec_mc_flashmatch.NeutrinoFlashMatch.TrackModule:             "pandoraNu::UBXSec"

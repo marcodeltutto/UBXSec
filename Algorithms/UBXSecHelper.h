@@ -25,6 +25,7 @@
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 #include "uboone/UBXSec/DataTypes/TPCObject.h"
+#include "lardataobj/AnalysisBase/Calorimetry.h"
 
 typedef std::map< art::Ptr<recob::PFParticle>, unsigned int > RecoParticleToNMatchedHits;
 typedef std::map< art::Ptr<simb::MCParticle>,  RecoParticleToNMatchedHits > ParticleMatchingMap;
@@ -234,6 +235,14 @@ class UBXSecHelper {
   /**
    *  @brief Returns the value of the phi angle for the track considering the nu vertex
    *
+   *  @param px  
+   *  @param py 
+   *  @param pz */
+  static double GetPhi(double px, double py, double pz);
+
+  /**
+   *  @brief Returns the value of the phi angle for the track considering the nu vertex
+   *
    *  @param t the recob::Track 
    *  @param tpcobj_nu_vtx the recob::Vertex neutrino vertex */
   static double GetCorrectedPhi(recob::Track t, recob::Vertex tpcobj_nu_vtx);
@@ -273,6 +282,17 @@ class UBXSecHelper {
    *  @param interaction_time The interaction time (usually from flash)
    *  @param drift_velocity The drift velocity */
   static void GetTimeCorrectedPoint(double * point_raw, double * point_corrected, double interaction_time, double drift_velocity);
+
+  static double GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry>> calos);
+
+  static double GetMean(std::vector<double>);
+
+  static double GetMedian(std::vector<double>);
+
+  static double GetVariance(std::vector<double>);
+
+  static double GetSTD(std::vector<double>);
 };
+
 
 #endif //  UBXSECHELPER_H

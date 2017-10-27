@@ -59,6 +59,7 @@ art_make( BASENAME_ONLY
 		   ${ROOT_XMLIO}
 		   ${ROOT_GDML}
 		   ${ROOT_BASIC_LIB_LIST}
+                   ${ROOT_EG}
 
           MODULE_LIBRARIES
                    uboonecode_uboone_UBXSec_Algorithms 
@@ -104,7 +105,8 @@ art_make( BASENAME_ONLY
 		   ${ROOT_XMLIO}
 		   ${ROOT_GDML}
 		   ${ROOT_BASIC_LIB_LIST}
-		)
+                   ${ROOT_EG}
+                   )
 
 install_headers()
 install_fhicl()

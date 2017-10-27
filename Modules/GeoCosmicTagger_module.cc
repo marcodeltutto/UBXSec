@@ -82,7 +82,7 @@ private:
 GeoCosmicTagger::GeoCosmicTagger(fhicl::ParameterSet const & p) {
 
   _track_producer                 = p.get<std::string>("TrackProducer");
-  _pfp_producer                 = p.get<std::string>("PFParticleProducer");
+  _pfp_producer                   = p.get<std::string>("PFParticleProducer");
   _tpcobject_producer             = p.get<std::string>("TPCObjectProducer");
 
   fTPCXBoundary = p.get< float >("TPCXBoundary", 5);
@@ -90,6 +90,12 @@ GeoCosmicTagger::GeoCosmicTagger(fhicl::ParameterSet const & p) {
   fTPCZBoundary = p.get< float >("TPCZBoundary", 5);
 
   fDebug = p.get< bool >("DebugMode", true);
+
+  if (fDebug) {
+    std::cout << "[GeoCosmicTagger] fTPCXBoundary " << fTPCXBoundary << std::endl;
+    std::cout << "[GeoCosmicTagger] fTPCYBoundary " << fTPCYBoundary << std::endl;
+    std::cout << "[GeoCosmicTagger] fTPCZBoundary " << fTPCZBoundary << std::endl;
+  }
 
   produces< std::vector<anab::CosmicTag>>();
   produces< art::Assns<anab::CosmicTag,   ubana::TPCObject>>();
@@ -145,7 +151,7 @@ void GeoCosmicTagger::produce(art::Event & e) {
         sp_v.push_back(*sp);
       }
     }
-    std::cout << "[GeoCosmicTagger] This TPCObject (" << i << ") has " << sp_v.size() << " SpacePoints." << std::endl;
+    if (fDebug) std::cout << "[GeoCosmicTagger] This TPCObject (" << i << ") has " << sp_v.size() << " SpacePoints." << std::endl;
 
     anab::CosmicTagID_t tag_id = anab::CosmicTagID_t::kNotTagged;
     double cosmicScore = 0;
@@ -166,7 +172,7 @@ void GeoCosmicTagger::produce(art::Event & e) {
     // *************
     // Sort SpacePints by X position (anode-closer first)
     // *************
-    std::sort(sp_v.begin(), sp_v.end(),
+/*    std::sort(sp_v.begin(), sp_v.end(),
               [](recob::SpacePoint a, recob::SpacePoint b) -> bool
               {
                 const double* xyz_a = a.XYZ();
@@ -181,7 +187,7 @@ void GeoCosmicTagger::produce(art::Event & e) {
       std::cout << "[GeoCosmicTagger]\t End Point 1 X: " << trackEndPt1_X << std::endl;
       std::cout << "[GeoCosmicTagger]\t End Point 2 X: " << trackEndPt2_X << std::endl;
     }
-
+*/
     // *************
     // Sort SpacePints by Y position (higher first)
     // *************
@@ -196,22 +202,34 @@ void GeoCosmicTagger::produce(art::Event & e) {
     double trackEndPt1_Y = sp_v.at(0).XYZ()[1];
     double trackEndPt2_Y = sp_v.at(sp_v.size()-1).XYZ()[1];
 
+    //for (auto s : sp_v) {
+      //std::cout << "[GeoCosmicTagger]\t\t y sp: " << s.XYZ()[1]  << std::endl;
+    //}
+
     if (fDebug) {
       std::cout << "[GeoCosmicTagger]\t End Point 1 Y: " << trackEndPt1_Y << std::endl;
       std::cout << "[GeoCosmicTagger]\t End Point 2 Y: " << trackEndPt2_Y << std::endl;
     }
 
+    double trackEndPt1_X = sp_v.at(0).XYZ()[0];
+    double trackEndPt2_X = sp_v.at(sp_v.size()-1).XYZ()[0];
+
+    if (fDebug) {
+      std::cout << "[GeoCosmicTagger]\t End Point 1 X: " << trackEndPt1_X << std::endl;
+      std::cout << "[GeoCosmicTagger]\t End Point 2 X: " << trackEndPt2_X << std::endl;
+    }
+
     // *************
     // Sort SpacePints by Z position (upstream first)
     // *************
-    std::sort(sp_v.begin(), sp_v.end(),
+/*    std::sort(sp_v.begin(), sp_v.end(),
               [](recob::SpacePoint a, recob::SpacePoint b) -> bool
               {
                 const double* xyz_a = a.XYZ();
                 const double* xyz_b = b.XYZ();
                 return xyz_a[2] < xyz_b[2];
               });
-
+*/
     double trackEndPt1_Z = sp_v.at(0).XYZ()[2];
     double trackEndPt2_Z = sp_v.at(sp_v.size()-1).XYZ()[2];
 

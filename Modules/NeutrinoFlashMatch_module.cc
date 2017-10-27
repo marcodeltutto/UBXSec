@@ -170,6 +170,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 {
 
   if(_debug) std::cout << "[NeutrinoFlashMatch] NeutrinoFlashMatch starts." << std::endl;
+  if(_debug) std::cout << "[NeutrinoFlashMatch] Using time range [" << _flash_trange_start << ", " << _flash_trange_end << "]" << std::endl;
 
   // Instantiate the output
   std::unique_ptr< std::vector<ubana::FlashMatch>>                   flashMatchTrackVector      (new std::vector<ubana::FlashMatch>);

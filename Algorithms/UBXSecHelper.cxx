@@ -846,6 +846,25 @@ bool UBXSecHelper::TrackIsContained(recob::Track track){
   return true;
 }
 
+//_________________________________________________________________________________
+double UBXSecHelper::GetPhi(double px, double py, double pz) {
+
+  TVector3 dir(px,py,pz);
+ 
+  // We are in the plane Z = 0 
+  dir.SetZ(0);
+  TVector3 phi_versor (1, 0, 0);  
+
+  double phi = phi_versor.Angle(dir);
+
+  // Just convention
+  if (dir.Y() < 0)
+    phi = -phi;
+
+  return phi;
+
+}
+
 
 //_________________________________________________________________________________
 double UBXSecHelper::GetCorrectedPhi(recob::Track t, recob::Vertex tpcobj_nu_vtx) {
@@ -1049,6 +1068,128 @@ void UBXSecHelper::GetTimeCorrectedPoint(double * point_raw, double * point_corr
 
 }
 
+//_________________________________________________________________________________
+double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry>> calos) {
+
+  double result = -9999;
+  double n = 1.;
+
+  for (auto c : calos) {
+    if (!c) continue;
+    if (!c->PlaneID().isValid) continue;
+    int planenum = c->PlaneID().Plane;
+    if (planenum != 2) continue;
+   
+    std::vector<double> dqdx_v = c->dQdx(); 
+
+    if (dqdx_v.size() == 0)
+      return result;
+
+    for (auto q : dqdx_v) {
+      std::cout << "dqdx before trim: " << q << std::endl;
+    }
+
+    double median = GetMedian(dqdx_v);
+    double std    = GetSTD(dqdx_v);
+
+    std::cout << "median " << median << std::endl;
+    std::cout << "std    " << std << std::endl;
+
+    std::vector<double> dqdx_v_trimmed;
+    dqdx_v_trimmed.clear();
+
+    for (auto q : dqdx_v) {
+      if (q > median - n * std && 
+          q < median + n * std) {
+        dqdx_v_trimmed.emplace_back(q);
+        std::cout << "dqdx after trim: " << q << std::endl;
+      }
+    }
+
+    result = GetMean(dqdx_v_trimmed);
+  }
+
+  return result;
+}
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetMean(std::vector<double> dqdx_v) {
+
+  double mean = -9999;
+  size_t size = dqdx_v.size();
+
+  if (size == 0)
+    return mean;
+
+  double sum = 0;
+
+  for (auto v : dqdx_v) {
+    sum += v;
+  }
+
+  mean = sum/(double)size;
+
+  return mean;
+}
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetMedian(std::vector<double> dqdx_v) {
+
+  double median = -9999;
+  size_t size = dqdx_v.size();
+
+  if (size == 0)
+    return median;
+
+  std::sort(dqdx_v.begin(), dqdx_v.end());
+  if (size % 2 == 0){
+    median = (dqdx_v[size/2 - 1] + dqdx_v[size/2]) / 2;
+  }
+  else{
+    median = dqdx_v[size/2];
+  }
+
+  return median;
+}
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetVariance(std::vector<double> dqdx_v) {
+
+  double variance = -1;
+
+  double sum = 0;
+  double sum2 = 0;
+  size_t size = dqdx_v.size();
+
+  if (size == 0)
+    return variance;
+
+  for (auto value : dqdx_v) {
+
+    sum  += value;
+    sum2 += value*value;
+
+  }  
+
+  variance = sum2/(double)size - (sum/(double)size)*(sum/(double)size);
+
+  return variance;
+
+}
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetSTD(std::vector<double> dqdx_v) {
+
+  if (dqdx_v.size() == 0)
+    return -9999;
+
+  double variance = GetVariance(dqdx_v);
+  if (variance > 0)
+    return std::sqrt(variance);
+  else 
+    return -9999;
+
+}
 
 
 

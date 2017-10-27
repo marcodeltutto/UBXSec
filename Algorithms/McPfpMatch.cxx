@@ -79,7 +79,7 @@ namespace ubana {
                                                           _spacepoint_producer, 
                                                           pfp_to_hits_map, 
                                                           recoHitsToParticles, 
-                                                          lar_pandora::LArPandoraHelper::kUseDaughters, // Consider daughters as independent pfps
+                                                          lar_pandora::LArPandoraHelper::kAddDaughters,
                                                           true); // Use clusters to go from pfp to hits
 
     if (_verbose) {
@@ -102,7 +102,7 @@ namespace ubana {
                                                             hitVector, 
                                                             trueParticlesToHits, 
                                                             hit_to_mcps_map, 
-                                                            lar_pandora::LArPandoraHelper::kUseDaughters); // Consider daughters as independent mcps
+                                                            lar_pandora::LArPandoraHelper::kAddDaughters); // Consider daughters as independent mcps
     }
 
     if (_verbose) {

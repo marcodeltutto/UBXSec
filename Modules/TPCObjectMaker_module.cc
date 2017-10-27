@@ -410,11 +410,15 @@ void ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfPartic
     if(lar_pandora::LArPandoraHelper::IsNeutrino(particle)) {
       if (_debug) std::cout << "[TPCObjectMaker] \t Creating TPC Object " << track_v_v.size() << std::endl;
 
+      if (_debug) std::cout << "[TPCObjectMaker] \t PFP " << particle->Self() << " is the neutrino PFP." << std::endl;
+      if (_debug) std::cout << "[TPCObjectMaker] \t The neutrino PFP " << (particle->IsPrimary() ? "is" : "is not") << " a primary" << std::endl;
+
       lar_pandora::TrackVector track_v;
       lar_pandora::ShowerVector shower_v;
       lar_pandora::PFParticleVector pfp_v;
       int p, t, s;
 
+      if (_debug) std::cout << "[TPCObjectMaker] \t Before filtering..." << std::endl;
 
       // Collect PFPs for this TPC object
       this->CollectPFP(pfParticleList, particle, pfp_v);
@@ -424,6 +428,7 @@ void ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfPartic
                                     track_v, shower_v);                                 // output
 
       // If filtering is on, filter the PFP for this TPC object
+      if (_debug) std::cout << "[TPCObjectMaker] \t After filtering..." << std::endl;
       lar_pandora::PFParticleVector filtered_pfp_v;
       if(_tpcobj_filter && _do_filter) {
 
@@ -507,6 +512,8 @@ void ubana::TPCObjectMaker::CollectTracksAndShowers(lar_pandora::PFParticlesToTr
 
   // Loop over the PFPs
   for (auto pfp : pfp_v) {
+
+    if (_debug) std::cout << "[TPCObjectMaker] \t PFP " << pfp->Self() << " which " << (pfp->IsPrimary() ? "is" : "is not") << " a primary" << std::endl;
 
     auto iter1 = pfParticleToTrackMap.find(pfp);
     if (iter1 != pfParticleToTrackMap.end()) {

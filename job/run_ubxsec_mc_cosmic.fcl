@@ -1,12 +1,12 @@
-#include "ubxsec_data_common.fcl"
+#include "ubxsec_mc_common.fcl"
 
 process_name: UBXSec
 
-services.TFileService.fileName: "ubxsec_output_data.root"
+services.TFileService.fileName: "ubxsec_output_mc_cosmic.root"
 
-physics.reco:          [ @sequence::ubxsec_data_producers ]
+physics.reco:          [ @sequence::ubxsec_mc_producers ]
 physics.trigger_paths: [ reco ]
-physics.ana:           [ @sequence::ubxsec_data_analyzers ]
+physics.ana:           [ @sequence::ubxsec_mc_analyzers ]
 physics.stream1:       [ out1 ]
 physics.end_paths:     [ ana, stream1 ]
 

@@ -19,13 +19,17 @@ UBXSec: {
   ParticleIDProducer:           "pandoraNupid::UBXSec"
   MCGhostProducer:              "RecoTrueMatcher"
   GeoCosmicTaggerProducer:      "pandoraNuGeoCosmicTag"
-  MCSFitResultProducer:         "pandoraNuMCSMu"
+  MCSFitResultMuProducer:       "pandoraNuMCSMu"
+  MCSFitResultPiProducer:       "pandoraNuMCSPi"
+  CalorimetryProducer:          "pandoraNucalo"
 
   UseGENIEInfo:                 true
   MinimumHitRequirement:        3
 
   GeoCosmicScoreCut:            0.6
   ToleranceTrackMultiplicity:   5.
+
+  MinTrackLength:               0.1
 
   PECalib:                      @local::SPECalib
 

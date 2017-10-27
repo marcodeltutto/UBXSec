@@ -42,6 +42,9 @@ class UBXSecEvent /*: public TObject*/{
   Double_t        muon_reco_eff; ///< If reco, stores the reco muon efficiency
   Double_t        true_muon_mom; ///< If exists, stores the true muon momentum
   Double_t        true_muon_mom_matched; ///< True momentum of the MCP matched to the muon PFP
+  Int_t           n_pfp; ///< Number of PFP in the event
+  Int_t           n_pfp_primary; ///< Number of primary PFP in the event (neutrino PFP)
+  Int_t           n_primary_cosmic_pfp; ///< Number of primary PFP in the event from pandoraCosmic (primaries before the removal)
   Int_t           nPFPtagged; ///< Not used
   Int_t           muon_is_flash_tagged; ///< Not used
   Double_t        muon_tag_score; ///< Not used
@@ -51,20 +54,11 @@ class UBXSecEvent /*: public TObject*/{
   Int_t           nupdg; ///< Neutrino flavour (pdg code)
   Bool_t          is_signal; ///< Is trues if the event is a true numu cc in FV
   Double_t        nu_e; ///< Stores the true neutrino energy
-  /*
-   Double_t        recon_muon_start_x;
-   Double_t        recon_muon_start_y;
-   Double_t        recon_muon_start_z;
-   Double_t        recon_muon_end_x;
-   Double_t        recon_muon_end_y;
-   Double_t        recon_muon_end_z;
-   Double_t        mc_muon_start_x;
-   Double_t        mc_muon_start_y;
-   Double_t        mc_muon_start_z;
-   Double_t        mc_muon_end_x;
-   Double_t        mc_muon_end_y;
-   Double_t        mc_muon_end_z;
-   */
+  Double_t        lep_costheta; ///< Lepton true cosThata angle at start
+  Double_t        lep_phi; ///< Lepton true Phi angle at start
+  Int_t           genie_mult; ///< Number of stable GENIE final state particles
+  Int_t           genie_mult_ch; ///< Number of stable charged GENIE final state particles
+
   Int_t           mc_muon_contained; ///< Is 1 if the true mc muon is fully contained
   Int_t           is_swtriggered; ///< Is true if the event passed the software trigger
   Double_t        vtx_resolution; ///< Stores the vertex resolution
@@ -118,7 +112,11 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_muoncandidate_theta; ///< Cos(theta) for the muon candidate in the TPCObject
   vector<double>   slc_muoncandidate_mom_range; ///< Momentum (by range) of the muon candidate in the TPCObject
   vector<double>   slc_muoncandidate_mom_mcs; ///< Momentum (by MCS) of the muon candidate in the TPCObject
+  vector<double>   slc_muoncandidate_mom_mcs_pi; ///<  Momentum (by MCS) of the muon candidate in the TPCObject (using pion hypo)
+  vector<double>   slc_muoncandidate_mcs_ll; ///< -LL of the MCS fit
   vector<bool>     slc_muoncandidate_contained; ///< Is true if the muon candidate in the TPCObject is fully contained
+  vector<double>   slc_muoncandidate_dqdx_trunc; /// dqdx truncated mean for the muon candidate
+  vector<int>      slc_muoncandidate_truepdg; ///< True pdg code of the candated muon track
   Int_t            nbeamfls; ///< Number of beam flashes in the event
   vector<double>   beamfls_time; ///< Time of the beam flash
   vector<double>   beamfls_pe; ///< PE of the beam flash
@@ -130,20 +128,10 @@ class UBXSecEvent /*: public TObject*/{
   vector<vector<double> > slc_flshypo_xfixed_spec; ///< Not used
   vector<vector<double> > slc_flshypo_spec; ///< PE per PMT of the hypothesis flash for the TPCObjetc
   Int_t           nsignal; ///< Not used
-  /*
-   vector<double>   mctrk_start_x;
-   vector<double>   mctrk_start_y;
-   vector<double>   mctrk_start_z;
-   vector<double>   trk_start_x;
-   vector<double>   trk_start_y;
-   vector<double>   trk_start_z;
-   vector<double>   vtx_x;
-   vector<double>   vtx_y;
-   vector<double>   vtx_z;
-   */
-   vector<double>   tvtx_x; ///< True neutrino vertex X (cm)
-   vector<double>   tvtx_y; ///< True neutrino vertex Y (cm)
-   vector<double>   tvtx_z; ///< True neutrino vertex Z (cm)
+
+  vector<double>   tvtx_x; ///< True neutrino vertex X (cm)
+  vector<double>   tvtx_y; ///< True neutrino vertex Y (cm)
+  vector<double>   tvtx_z; ///< True neutrino vertex Z (cm)
   
   Double_t        pot; ///< Not used
  
@@ -154,7 +142,6 @@ class UBXSecEvent /*: public TObject*/{
   void Init();
   void ResizeVectors(int); 
 
-  //ClassDef(UBXSecEvent,1)  //Event Header
 };
 
 #endif

@@ -51,7 +51,7 @@ ubxsec_data_reco:
 
   pandoraNu:                      @local::microboone_pandora  
 
-  pandoraNucalo:                  @local::microboone_calomc
+  pandoraNucalo:                  @local::microboone_calodata
   pandoraNupid:                   @local::microboone_chi2pid
 
   pandoraNuMCSMu:                 @local::mcsfitproducer
@@ -66,7 +66,7 @@ ubxsec_data_flashmatch:
 
    pandoraNuGeoCosmicTag:         @local::GeoCosmicTagger
 
-   pandoraNuStoppingMuonTag:       @local::StoppingMuonTagger
+   pandoraNuStoppingMuonTag:      @local::StoppingMuonTagger
 
    NeutrinoFlashMatch:            @local::NeutrinoFlashMatch
    #CosmicFlashMatch:              @local::CosmicFlashMatch
@@ -129,6 +129,7 @@ ubxsec_data_reco.pandoraNu.ConfigFile:                             "PandoraSetti
 
 ubxsec_data_reco.pandoraNucalo.TrackModuleLabel:                   "pandoraNu::UBXSec"
 ubxsec_data_reco.pandoraNucalo.SpacePointModuleLabel:              "pandoraNu::UBXSec"
+ubxsec_data_reco.pandoraNucalo.Flip_dQdx:                          false
 
 ubxsec_data_reco.pandoraNupid.CalorimetryModuleLabel:              "pandoraNucalo::UBXSec"
 ubxsec_data_reco.pandoraNupid.TrackModuleLabel:                    "pandoraNu::UBXSec"

@@ -29,6 +29,8 @@ UBXSec: {
   GeoCosmicScoreCut:            0.6
   ToleranceTrackMultiplicity:   5.
 
+  MinTrackLength:               0.1
+
   PECalib:                      @local::SPECalib
 
   FiducialVolumeSettings:       @local::UBXSecFiducialVolumeSettings

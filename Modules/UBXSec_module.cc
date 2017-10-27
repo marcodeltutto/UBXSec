@@ -646,6 +646,7 @@ void UBXSec::produce(art::Event & e) {
         if (mc_par.StatusCode() != 1) continue;
         n_genie_particles ++;
         const TParticlePDG* par_pdg = _database_pdg->GetParticle(mc_par.PdgCode());
+        if (!par_pdg) continue;
         if (par_pdg->Charge() == 0) continue;
         n_genie_particles_charged ++;
       }

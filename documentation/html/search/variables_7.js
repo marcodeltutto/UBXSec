@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['keep_5ftrack',['keep_track',['../classubxsec_1_1ACPTAlgo.html#a8b260c612412c091693f6db963ae933a',1,'ubxsec::ACPTAlgo::keep_track()'],['../classubxsec_1_1VertexCheck.html#a6046f472792f70321896604580b758e6',1,'ubxsec::VertexCheck::keep_track()']]]
+  ['is_5fsignal',['is_signal',['../classUBXSecEvent.html#a2cc7d9f302e0d413ece8af96b35fcff0',1,'UBXSecEvent']]],
+  ['is_5fswtriggered',['is_swtriggered',['../classUBXSecEvent.html#aedee1ade9f68dfb32fba0b943125f52d',1,'UBXSecEvent']]]
 ];

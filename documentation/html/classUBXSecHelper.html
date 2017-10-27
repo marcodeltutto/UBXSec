@@ -167,6 +167,9 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <tr class="memitem:aa0349c7d405ec64cd1b0c7ed3d54a56e"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#aa0349c7d405ec64cd1b0c7ed3d54a56e">TrackIsContained</a> (recob::Track track)</td></tr>
 <tr class="memdesc:aa0349c7d405ec64cd1b0c7ed3d54a56e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the track passed is fully contained.  <a href="#aa0349c7d405ec64cd1b0c7ed3d54a56e">More...</a><br/></td></tr>
 <tr class="separator:aa0349c7d405ec64cd1b0c7ed3d54a56e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a572a710a1ee1387e9d85712df4587111"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a572a710a1ee1387e9d85712df4587111">GetPhi</a> (double px, double py, double pz)</td></tr>
+<tr class="memdesc:a572a710a1ee1387e9d85712df4587111"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the phi angle for the track considering the nu vertex.  <a href="#a572a710a1ee1387e9d85712df4587111">More...</a><br/></td></tr>
+<tr class="separator:a572a710a1ee1387e9d85712df4587111"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79b61783bfe19d8dcd33d6aba4c3e61a"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a79b61783bfe19d8dcd33d6aba4c3e61a">GetCorrectedPhi</a> (recob::Track t, recob::Vertex tpcobj_nu_vtx)</td></tr>
 <tr class="memdesc:a79b61783bfe19d8dcd33d6aba4c3e61a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the phi angle for the track considering the nu vertex.  <a href="#a79b61783bfe19d8dcd33d6aba4c3e61a">More...</a><br/></td></tr>
 <tr class="separator:a79b61783bfe19d8dcd33d6aba4c3e61a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -185,6 +188,21 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <tr class="memitem:a44a38546ab8f9a473f0957af008219d4"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a44a38546ab8f9a473f0957af008219d4">GetTimeCorrectedPoint</a> (double *point_raw, double *point_corrected, double interaction_time, double drift_velocity)</td></tr>
 <tr class="memdesc:a44a38546ab8f9a473f0957af008219d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes a dimension 3 array, interaction time and drift velocity, and returns a corrected point (shifting in x)  <a href="#a44a38546ab8f9a473f0957af008219d4">More...</a><br/></td></tr>
 <tr class="separator:a44a38546ab8f9a473f0957af008219d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1510ec3db42854ce3b6fb6c70b3bdb59"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1510ec3db42854ce3b6fb6c70b3bdb59"></a>
+static double&#160;</td><td class="memItemRight" valign="bottom"><b>GetDqDxTruncatedMean</b> (std::vector&lt; art::Ptr&lt; anab::Calorimetry &gt;&gt; calos)</td></tr>
+<tr class="separator:a1510ec3db42854ce3b6fb6c70b3bdb59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b30d498de5b4468a717f6223e6d43a0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b30d498de5b4468a717f6223e6d43a0"></a>
+static double&#160;</td><td class="memItemRight" valign="bottom"><b>GetMean</b> (std::vector&lt; double &gt;)</td></tr>
+<tr class="separator:a7b30d498de5b4468a717f6223e6d43a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69277b565e667891e4fe820f7beca6cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69277b565e667891e4fe820f7beca6cf"></a>
+static double&#160;</td><td class="memItemRight" valign="bottom"><b>GetMedian</b> (std::vector&lt; double &gt;)</td></tr>
+<tr class="separator:a69277b565e667891e4fe820f7beca6cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9aa3a755a90de77e5b61412c04206b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab9aa3a755a90de77e5b61412c04206b2"></a>
+static double&#160;</td><td class="memItemRight" valign="bottom"><b>GetVariance</b> (std::vector&lt; double &gt;)</td></tr>
+<tr class="separator:ab9aa3a755a90de77e5b61412c04206b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea63fece97a7aaefb3956eb312a844a0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aea63fece97a7aaefb3956eb312a844a0"></a>
+static double&#160;</td><td class="memItemRight" valign="bottom"><b>GetSTD</b> (std::vector&lt; double &gt;)</td></tr>
+<tr class="separator:aea63fece97a7aaefb3956eb312a844a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An helper class for <a class="el" href="classUBXSec.html" title="Art producer module. ">UBXSec</a>. </p>
@@ -665,6 +683,56 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
     <tr><td class="paramname">_particleLabel</td><td>the PFP procuder module </td></tr>
     <tr><td class="paramname">pfp_v</td><td>the TPC object (vector of PFP) </td></tr>
     <tr><td class="paramname">reco_nu_vtx</td><td>output, the nu vertex (recob::Vertex) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a572a710a1ee1387e9d85712df4587111"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double UBXSecHelper::GetPhi </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>px</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>py</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>pz</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the value of the phi angle for the track considering the nu vertex. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">px</td><td></td></tr>
+    <tr><td class="paramname">py</td><td></td></tr>
+    <tr><td class="paramname">pz</td><td></td></tr>
   </table>
   </dd>
 </dl>

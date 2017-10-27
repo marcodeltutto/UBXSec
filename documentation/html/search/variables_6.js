@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['is_5fsignal',['is_signal',['../classUBXSecEvent.html#a2cc7d9f302e0d413ece8af96b35fcff0',1,'UBXSecEvent']]],
-  ['is_5fswtriggered',['is_swtriggered',['../classUBXSecEvent.html#aedee1ade9f68dfb32fba0b943125f52d',1,'UBXSecEvent']]]
+  ['genie_5fmult',['genie_mult',['../classUBXSecEvent.html#a767300e775e92348238668ef99dfdbc8',1,'UBXSecEvent']]],
+  ['genie_5fmult_5fch',['genie_mult_ch',['../classUBXSecEvent.html#a6a73137488dc2af0dc6abd5868fbbe4d',1,'UBXSecEvent']]]
 ];

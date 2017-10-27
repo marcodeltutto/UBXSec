@@ -1,7 +1,21 @@
 var searchData=
 [
-  ['photonactivity',['PhotonActivity',['../classPhotonActivity.html',1,'']]],
-  ['pointisclosetodeadregion',['PointIsCloseToDeadRegion',['../classUBXSecHelper.html#a7df598dfbdfdb620737fd69297e67faf',1,'UBXSecHelper']]],
-  ['pot',['pot',['../classUBXSecEvent.html#ad783d4eedd7be14db4d5b7b9cb2d144a',1,'UBXSecEvent']]],
-  ['printconfig',['PrintConfig',['../classubxsec_1_1ACPTAlgo.html#a4069f6b2f59846bf708455900a5476b6',1,'ubxsec::ACPTAlgo::PrintConfig()'],['../classubana_1_1FiducialVolume.html#a852522fe049681771c7ca9d66f8f8049',1,'ubana::FiducialVolume::PrintConfig()'],['../classubana_1_1MuonCandidateFinder.html#ae5aaa85fb815cd30fe1048ea5cdd387d',1,'ubana::MuonCandidateFinder::PrintConfig()'],['../classubana_1_1NuMuCCEventSelection.html#a25fadae27bbb94bcdd86a11564c47be9',1,'ubana::NuMuCCEventSelection::PrintConfig()'],['../classubana_1_1TPCObjectFilter.html#a542681a3872f6662e58e83330dddfe8c',1,'ubana::TPCObjectFilter::PrintConfig()'],['../classubxsec_1_1VertexCheck.html#acafba79c33116018ac9bc55b52b4c95d',1,'ubxsec::VertexCheck::PrintConfig()']]]
+  ['n_5fpfp',['n_pfp',['../classUBXSecEvent.html#a966e90da255666b555c301b83385e923',1,'UBXSecEvent']]],
+  ['n_5fpfp_5fprimary',['n_pfp_primary',['../classUBXSecEvent.html#a8b42a4c5da11c709d44d6f51933d7687',1,'UBXSecEvent']]],
+  ['n_5fprimary_5fcosmic_5fpfp',['n_primary_cosmic_pfp',['../classUBXSecEvent.html#ae57001de3cd8374785329521c3ce5d5e',1,'UBXSecEvent']]],
+  ['nbeamfls',['nbeamfls',['../classUBXSecEvent.html#a2bf72740213db9d50d45c603eb3c549e',1,'UBXSecEvent']]],
+  ['neardeadreg2p',['NearDeadReg2P',['../classFindDeadRegions.html#a7a884dc4685e66734b98afea9a2c6c21',1,'FindDeadRegions']]],
+  ['neardeadreg3p',['NearDeadReg3P',['../classFindDeadRegions.html#a2ef76eca81785361bf95c17e8e1a7574',1,'FindDeadRegions']]],
+  ['neutrinoflashmatch',['NeutrinoFlashMatch',['../classNeutrinoFlashMatch.html',1,'']]],
+  ['neutrinomcflash',['NeutrinoMCFlash',['../classNeutrinoMCFlash.html',1,'']]],
+  ['no_5fmcflash_5fbut_5fop_5factivity',['no_mcflash_but_op_activity',['../classUBXSecEvent.html#a04fd3fd872cbe4f19ea0c438214ee854',1,'UBXSecEvent']]],
+  ['npfptagged',['nPFPtagged',['../classUBXSecEvent.html#a64e18b32773515202fcb167d1818133b',1,'UBXSecEvent']]],
+  ['nsignal',['nsignal',['../classUBXSecEvent.html#a6aff7f0ac0e26d4b80b117cb5797f1ab',1,'UBXSecEvent']]],
+  ['nslices',['nslices',['../classUBXSecEvent.html#abcf4435958fac040ad4e3c85802eea27',1,'UBXSecEvent']]],
+  ['nu_5fe',['nu_e',['../classUBXSecEvent.html#a715a5f6d8143a633109ed48fb87e0bbd',1,'UBXSecEvent']]],
+  ['numc_5fflash_5fspec',['numc_flash_spec',['../classUBXSecEvent.html#aa51dba44fd0d9dcfbeb4c455b73debbd',1,'UBXSecEvent']]],
+  ['numucceventselection',['NuMuCCEventSelection',['../classubana_1_1NuMuCCEventSelection.html#a8c96431500a98d4493a70dc715f3d00d',1,'ubana::NuMuCCEventSelection']]],
+  ['numucceventselection',['NuMuCCEventSelection',['../classubana_1_1NuMuCCEventSelection.html',1,'ubana']]],
+  ['numucceventselection_2eh',['NuMuCCEventSelection.h',['../NuMuCCEventSelection_8h.html',1,'']]],
+  ['nupdg',['nupdg',['../classUBXSecEvent.html#a61f5c298a7cebb0c5286b4ed4c7a0627',1,'UBXSecEvent']]]
 ];

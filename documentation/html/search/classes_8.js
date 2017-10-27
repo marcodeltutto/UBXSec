@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['neutrinoflashmatch',['NeutrinoFlashMatch',['../classNeutrinoFlashMatch.html',1,'']]],
-  ['neutrinomcflash',['NeutrinoMCFlash',['../classNeutrinoMCFlash.html',1,'']]],
-  ['numucceventselection',['NuMuCCEventSelection',['../classubana_1_1NuMuCCEventSelection.html',1,'ubana']]]
+  ['mcghost',['MCGhost',['../classubana_1_1MCGhost.html',1,'ubana']]],
+  ['mcpfpmatch',['McPfpMatch',['../classMcPfpMatch.html',1,'']]],
+  ['mcpfpmatch',['McPfpMatch',['../classubana_1_1McPfpMatch.html',1,'ubana']]],
+  ['muoncandidatefinder',['MuonCandidateFinder',['../classubana_1_1MuonCandidateFinder.html',1,'ubana']]]
 ];

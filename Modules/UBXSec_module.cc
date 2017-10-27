@@ -488,6 +488,8 @@ void UBXSec::produce(art::Event & e) {
   if(pfp_h->empty()) {
     std::cout << "[UBXSec] PFP " << _pfp_producer << " is empty." << std::endl;
   }
+  std::vector<art::Ptr<recob::PFParticle>> pfp_v;
+  art::fill_ptr_vector(pfp_v, pfp_h);
   art::FindManyP<recob::Track> tracks_from_pfp(pfp_h, e, _pfp_producer);
 
   ubxsec_event->n_pfp = ubxsec_event->n_pfp_primary = 0;
@@ -714,6 +716,21 @@ void UBXSec::produce(art::Event & e) {
     std::cout << "[UBXSec] Cannot locate OpHits." << std::endl;
   }
 
+
+  // Check if the muon is reconstructed
+  for (auto p : pfp_v) {
+    auto mcghosts = mcghost_from_pfp.at(p.key());
+    if (mcghosts.size() > 0) {
+      art::Ptr<simb::MCParticle> mcpar = mcpar_from_mcghost.at(mcghosts.at(0).key()).at(0);
+      const auto mc_truth = bt->TrackIDToMCTruth(mcpar->TrackId());
+      if (mc_truth) {
+        if (mc_truth->Origin() == simb::kBeamNeutrino 
+            && mcpar->PdgCode() == 13 && mcpar->Mother() == 0) {
+          ubxsec_event->muon_is_reco = true;
+        }
+      }
+    }
+  }
  
   std::vector<lar_pandora::TrackVector     > track_v_v;
   std::vector<lar_pandora::PFParticleVector> pfp_v_v;
@@ -1079,7 +1096,7 @@ void UBXSec::produce(art::Event & e) {
       if (mc_truth->Origin() == simb::kBeamNeutrino &&
           mcpars[0]->PdgCode() == 13 && mcpars[0]->Mother() == 0) {
 
-        ubxsec_event->muon_is_reco = true;
+        //ubxsec_event->muon_is_reco = true;
         //ubxsec_event->muon_reco_pur = ubxsec_event->muon_reco_eff = -9999;
         auto iter = recoParticlesToHits.find(pfp);
         if (iter != recoParticlesToHits.end()) {

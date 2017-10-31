@@ -6,6 +6,7 @@ var searchData=
   ['settracks',['SetTracks',['../classubana_1_1MuonCandidateFinder.html#a1cdd1745117a85bbcfc1de5167c7e688',1,'ubana::MuonCandidateFinder']]],
   ['settracktopidmap',['SetTrackToPIDMap',['../classubana_1_1MuonCandidateFinder.html#adc3333300fec98b692ff12550c3d8d53',1,'ubana::MuonCandidateFinder']]],
   ['setvtx',['SetVtx',['../classubxsec_1_1ACPTAlgo.html#ad1a4982ef30c3b8395eb346ae155c50e',1,'ubxsec::ACPTAlgo::SetVtx()'],['../classubxsec_1_1VertexCheck.html#aa7ba14f2c0dc87099769e11a78a7e156',1,'ubxsec::VertexCheck::SetVtx()']]],
+  ['simpleana',['SimpleAna',['../classSimpleAna.html',1,'']]],
   ['slc_5facpt_5foutoftime',['slc_acpt_outoftime',['../classUBXSecEvent.html#afd52675b8ca60af2941105f9739909a4',1,'UBXSecEvent']]],
   ['slc_5fcrosses_5ftop_5fboundary',['slc_crosses_top_boundary',['../classUBXSecEvent.html#ae7aee5c97b811d2e867cab5ec4fa1ffd',1,'UBXSecEvent']]],
   ['slc_5fflshypo_5fspec',['slc_flshypo_spec',['../classUBXSecEvent.html#aa82aa9b73994eae31d0f7ab0f47f23fa',1,'UBXSecEvent']]],

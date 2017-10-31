@@ -3,6 +3,8 @@ var searchData=
   ['n_5fpfp',['n_pfp',['../classUBXSecEvent.html#a966e90da255666b555c301b83385e923',1,'UBXSecEvent']]],
   ['n_5fpfp_5fprimary',['n_pfp_primary',['../classUBXSecEvent.html#a8b42a4c5da11c709d44d6f51933d7687',1,'UBXSecEvent']]],
   ['n_5fprimary_5fcosmic_5fpfp',['n_primary_cosmic_pfp',['../classUBXSecEvent.html#ae57001de3cd8374785329521c3ce5d5e',1,'UBXSecEvent']]],
+  ['n_5ftpcobj_5fcosmic_5forigin',['n_tpcobj_cosmic_origin',['../classUBXSecEvent.html#a64e81de34497d79043b873862c28fd87',1,'UBXSecEvent']]],
+  ['n_5ftpcobj_5fnu_5forigin',['n_tpcobj_nu_origin',['../classUBXSecEvent.html#a0ae9b16a767089e072f0b82da7e071d4',1,'UBXSecEvent']]],
   ['nbeamfls',['nbeamfls',['../classUBXSecEvent.html#a2bf72740213db9d50d45c603eb3c549e',1,'UBXSecEvent']]],
   ['neardeadreg2p',['NearDeadReg2P',['../classFindDeadRegions.html#a7a884dc4685e66734b98afea9a2c6c21',1,'FindDeadRegions']]],
   ['neardeadreg3p',['NearDeadReg3P',['../classFindDeadRegions.html#a2ef76eca81785361bf95c17e8e1a7574',1,'FindDeadRegions']]],

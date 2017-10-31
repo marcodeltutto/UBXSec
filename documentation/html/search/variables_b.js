@@ -3,6 +3,8 @@ var searchData=
   ['n_5fpfp',['n_pfp',['../classUBXSecEvent.html#a966e90da255666b555c301b83385e923',1,'UBXSecEvent']]],
   ['n_5fpfp_5fprimary',['n_pfp_primary',['../classUBXSecEvent.html#a8b42a4c5da11c709d44d6f51933d7687',1,'UBXSecEvent']]],
   ['n_5fprimary_5fcosmic_5fpfp',['n_primary_cosmic_pfp',['../classUBXSecEvent.html#ae57001de3cd8374785329521c3ce5d5e',1,'UBXSecEvent']]],
+  ['n_5ftpcobj_5fcosmic_5forigin',['n_tpcobj_cosmic_origin',['../classUBXSecEvent.html#a64e81de34497d79043b873862c28fd87',1,'UBXSecEvent']]],
+  ['n_5ftpcobj_5fnu_5forigin',['n_tpcobj_nu_origin',['../classUBXSecEvent.html#a0ae9b16a767089e072f0b82da7e071d4',1,'UBXSecEvent']]],
   ['nbeamfls',['nbeamfls',['../classUBXSecEvent.html#a2bf72740213db9d50d45c603eb3c549e',1,'UBXSecEvent']]],
   ['no_5fmcflash_5fbut_5fop_5factivity',['no_mcflash_but_op_activity',['../classUBXSecEvent.html#a04fd3fd872cbe4f19ea0c438214ee854',1,'UBXSecEvent']]],
   ['npfptagged',['nPFPtagged',['../classUBXSecEvent.html#a64e18b32773515202fcb167d1818133b',1,'UBXSecEvent']]],

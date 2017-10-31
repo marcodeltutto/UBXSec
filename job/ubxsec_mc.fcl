@@ -50,6 +50,7 @@ ubxsec_mc_reco:
   pandoraCosmicHitRemoval:        @local::microboone_crhitremoval
 
   pandoraNu:                      @local::microboone_pandora
+  pandoraNuAll:                   @local::microboone_pandora
 
   pandoraNuGeoCosmicTag:          @local::GeoCosmicTagger
 
@@ -75,11 +76,14 @@ ubxsec_mc_flashmatch:
    #CosmicFlashMatch:               @local::CosmicFlashMatch
 
    UBXSec:                         @local::UBXSec
+
 }
 
 ubxsec_mc_ana:
 {
-   CosmicTaggerAna : @local::CosmicTaggerAna 
+   SimpleAna:                      { module_type: SimpleAna }
+
+   CosmicTaggerAna :               @local::CosmicTaggerAna 
 }
 
 
@@ -91,6 +95,7 @@ ubxsec_mc_producers: [ saturationTest,
                        pandoraCosmicACPTTagger,
                        pandoraCosmicHitRemoval,
                        pandoraNu,
+                       pandoraNuAll,
                        pandoraNucalo,
                        pandoraNupid,
                        pandoraNuMCSMu,
@@ -103,7 +108,7 @@ ubxsec_mc_producers: [ saturationTest,
                        NeutrinoFlashMatch,
                        UBXSec ] 
 
-ubxsec_mc_analyzers: [ CosmicTaggerAna ]
+ubxsec_mc_analyzers: [ SimpleAna, CosmicTaggerAna ]
 
 
 
@@ -129,6 +134,10 @@ ubxsec_mc_reco.pandoraCosmicHitRemoval.EndTickPadding:           75
 ubxsec_mc_reco.pandoraNu.GeantModuleLabel:                       "largeant"
 ubxsec_mc_reco.pandoraNu.HitFinderModuleLabel:                   "pandoraCosmicHitRemoval::UBXSec"
 ubxsec_mc_reco.pandoraNu.ConfigFile:                             "PandoraSettings_MicroBooNE_Neutrino.xml"
+
+ubxsec_mc_reco.pandoraNuAll.GeantModuleLabel:                    "largeant"
+ubxsec_mc_reco.pandoraNuAll.HitFinderModuleLabel:                "gaushit"
+ubxsec_mc_reco.pandoraNuAll.ConfigFile:                          "PandoraSettings_MicroBooNE_Neutrino.xml"
 
 ubxsec_mc_reco.pandoraNucalo.TrackModuleLabel:                   "pandoraNu::UBXSec"
 ubxsec_mc_reco.pandoraNucalo.SpacePointModuleLabel:              "pandoraNu::UBXSec"

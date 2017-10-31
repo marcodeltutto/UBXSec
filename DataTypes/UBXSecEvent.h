@@ -62,6 +62,8 @@ class UBXSecEvent /*: public TObject*/{
   Int_t           mc_muon_contained; ///< Is 1 if the true mc muon is fully contained
   Int_t           is_swtriggered; ///< Is true if the event passed the software trigger
   Double_t        vtx_resolution; ///< Stores the vertex resolution
+  Int_t           n_tpcobj_nu_origin; ///< Number of TPCObjects with neutrino origin in the event
+  Int_t           n_tpcobj_cosmic_origin; ///< Number of TPCObjects with cosmic origin in the event
   Int_t           nslices; ///< Stores the number of TPCObjects in the event
   vector<double>   slc_flsmatch_score; ///< Flash matching score (-9999 means failed to match)
   vector<double>   slc_flsmatch_qllx; ///< Estimated X position given by flash matching

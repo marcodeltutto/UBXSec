@@ -747,7 +747,10 @@ void UBXSec::produce(art::Event & e) {
 
   std::cout << "[UBXSec] --- SAVING INFORMATION" << std::endl;
   //ubxsec_event->vtx_resolution = -9999;
- 
+
+  ubxsec_event->n_tpcobj_nu_origin = 0;
+  ubxsec_event->n_tpcobj_cosmic_origin = 0;
+
   for (unsigned int slice = 0; slice < tpcobj_h->size(); slice++){
     std::cout << "[UBXSec] >>> SLICE " << slice << std::endl;
 
@@ -760,6 +763,11 @@ void UBXSec::produce(art::Event & e) {
     // Slice origin 
     ubxsec_event->slc_origin[slice] = tpcobj.GetOrigin();
     std::cout << "[UBXSec] \t Origin is " << ubxsec_event->slc_origin[slice] << std::endl;
+
+    if (tpcobj.GetOrigin() == ubana::kBeamNeutrino || tpcobj.GetOrigin() == ubana::kMixed)
+      ubxsec_event->n_tpcobj_nu_origin ++;
+    else 
+      ubxsec_event->n_tpcobj_cosmic_origin ++;
 
     // Slice origin extra
     ubxsec_event->slc_origin_extra[slice] = tpcobj.GetOriginExtra();

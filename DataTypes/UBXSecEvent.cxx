@@ -50,8 +50,10 @@ void UBXSecEvent::Init()
   mc_muon_contained = _default_value;
   is_swtriggered = _default_value;
   vtx_resolution = _default_value;
+
   nslices = _default_value;
-  
+  n_tpcobj_nu_origin = _default_value;
+  n_tpcobj_cosmic_origin = _default_value;
   
   nsignal = _default_value;
   pot = _default_value;

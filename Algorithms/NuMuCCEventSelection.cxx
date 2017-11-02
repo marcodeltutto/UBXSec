@@ -133,12 +133,12 @@ namespace ubana {
     if (_verbose) std::cout << "[NuMuCCEventSelection] Pass FlashMatching DeltaX" << std::endl;
 
     // DeltaZ
-    if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) > _deltax_cut_up) {
+    if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) > _deltaz_cut_up) {
       reason = "fail_flash_match_deltaz_up";
       return false;
     }
-    if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) < _deltax_cut_down) {
-      reason = "fail_flash_match_deltax_down";
+    if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) < _deltaz_cut_down) {
+      reason = "fail_flash_match_deltaz_down";
       return false;
     }
     if (_verbose) std::cout << "[NuMuCCEventSelection] Pass FlashMatching DeltaZ" << std::endl;

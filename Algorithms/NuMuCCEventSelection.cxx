@@ -54,7 +54,9 @@ namespace ubana {
   }
 
   bool NuMuCCEventSelection::IsSelected(size_t & slice_index, std::map<std::string,bool> & failure_map) {
-    
+   
+    if (_verbose) std::cout << "[NuMuCCEventSelection] Starts. " << std::endl;
+
     if (!_configured || !_event_is_set) {
       std::cout << "Call to NuMuCCEventSelection::IsSelected() without having done configuration or having set the UBXSecEvent" << std::endl;
       throw std::exception();
@@ -98,6 +100,7 @@ namespace ubana {
       failure_map["beam_spill_flash"] = true;
     }
     
+    if (_verbose) std::cout << "[NuMuCCEventSelection] 1" << std::endl;
 
     // *******************************
     // Find slice with maximum score
@@ -116,6 +119,21 @@ namespace ubana {
     if (scl_ll_max == -1) {
       reason = "fail_flash_match";
       failure_map["flash_match"] = false;
+
+      failure_map["flash_match_deltax_up"] = false;
+      failure_map["flash_match_deltax_down"] = false;
+      failure_map["flash_match_deltaz_up"] = false;
+      failure_map["flash_match_deltaz_down"] = false;
+      failure_map["fiducial_volume"] = false;
+      failure_map["vertex_check_up"] = false;
+      failure_map["vertex_check_down"] = false;
+      failure_map["ntrack"] = false;
+      failure_map["track_quality"] = false;
+      failure_map["vertex_quality"] = false;
+
+      if (_verbose) std::cout << "[NuMuCCEventSelection] Selection FAILED. No flash-matched object." << std::endl;
+      return false;
+
     } else {
       failure_map["flash_match"] = true;
     }
@@ -127,7 +145,8 @@ namespace ubana {
       failure_map["flash_match_score"] = true;
     }
 
- 
+    if (_verbose) std::cout << "[NuMuCCEventSelection] 2" << std::endl;
+
     // Delta X
     if(_ubxsec_event->slc_flsmatch_qllx.at(scl_ll_max) - _ubxsec_event->slc_flsmatch_tpcx.at(scl_ll_max) > _deltax_cut_up) {
       reason = "fail_flash_match_deltax_up";
@@ -149,11 +168,11 @@ namespace ubana {
     } else {
       failure_map["flash_match_deltaz_up"] = true;
     }
-    if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) < _deltax_cut_down) {
-      reason = "fail_flash_match_deltax_down";
-      failure_map["flash_match_deltax_down"] = false;
+    if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) < _deltaz_cut_down) {
+      reason = "fail_flash_match_deltaz_down";
+      failure_map["flash_match_deltaz_down"] = false;
     } else {
-      failure_map["flash_match_deltax_down"] = true;
+      failure_map["flash_match_deltaz_down"] = true;
     }
 
     // FV
@@ -163,6 +182,7 @@ namespace ubana {
     } else {
       failure_map["fiducial_volume"] = true;
     }
+if (_verbose) std::cout << "[NuMuCCEventSelection] 3" << std::endl;
 
     // Vertex Check   
     if(_ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) > _vtxcheck_angle_cut_up) {
@@ -190,9 +210,9 @@ namespace ubana {
     // Track Quality
     if(!_ubxsec_event->slc_passed_min_track_quality.at(scl_ll_max)) {
       reason = "fail_track quality";
-      failure_map["track quality"] = false;
+      failure_map["track_quality"] = false;
     } else {
-      failure_map["track quality"] = true;
+      failure_map["track_quality"] = true;
     }
     
     // Vertex Quality
@@ -202,6 +222,8 @@ namespace ubana {
     } else {
       failure_map["vertex_quality"] = true;
     }
+
+    if (_verbose) std::cout << "[NuMuCCEventSelection] 4" << std::endl;
 
     slice_index = scl_ll_max;
 

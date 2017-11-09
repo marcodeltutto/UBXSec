@@ -119,6 +119,8 @@ class UBXSecEvent /*: public TObject*/{
   vector<bool>     slc_muoncandidate_contained; ///< Is true if the muon candidate in the TPCObject is fully contained
   vector<double>   slc_muoncandidate_dqdx_trunc; /// dqdx truncated mean for the muon candidate
   vector<int>      slc_muoncandidate_truepdg; ///< True pdg code of the candated muon track
+  vector<int>      slc_muoncandidate_trueorigin; ///< True origin of the candidate muon track
+  vector<double>   slc_muoncandidate_mcs_delta_ll; ///< Delta LL from MCS fit
   Int_t            nbeamfls; ///< Number of beam flashes in the event
   vector<double>   beamfls_time; ///< Time of the beam flash
   vector<double>   beamfls_pe; ///< PE of the beam flash

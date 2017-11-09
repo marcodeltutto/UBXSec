@@ -102,6 +102,8 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_muoncandidate_contained.resize(vsize, _default_value);
   slc_muoncandidate_dqdx_trunc.resize(vsize, _default_value);
   slc_muoncandidate_truepdg.resize(vsize, _default_value);
+  slc_muoncandidate_trueorigin.resize(vsize, _default_value);
+  slc_muoncandidate_mcs_delta_ll.resize(vsize, _default_value);
   slc_acpt_outoftime.resize(vsize, _default_value);
   slc_crosses_top_boundary.resize(vsize, _default_value);
   slc_nuvtx_closetodeadregion_u.resize(vsize, _default_value);

@@ -22,6 +22,9 @@ Data product to store the event selection results.
 \hypertarget{classubana_1_1SelectionResult_ab7053b38033e245ffa2c9ad3c6a4b3dc}{void {\bfseries Set\-Failure\-Reason} (std\-::string reason)}\label{classubana_1_1SelectionResult_ab7053b38033e245ffa2c9ad3c6a4b3dc}
 
 \item 
+\hypertarget{classubana_1_1SelectionResult_a7a18d47cf1572ff34b538e503d355f70}{void {\bfseries Set\-Cut\-Flow\-Status} (std\-::map$<$ std\-::string, bool $>$ input)}\label{classubana_1_1SelectionResult_a7a18d47cf1572ff34b538e503d355f70}
+
+\item 
 \hypertarget{classubana_1_1SelectionResult_afcfc5b9afaf6e549117ae49bb9adfd1a}{const std\-::string \& \hyperlink{classubana_1_1SelectionResult_afcfc5b9afaf6e549117ae49bb9adfd1a}{Get\-Selection\-Type} () const }\label{classubana_1_1SelectionResult_afcfc5b9afaf6e549117ae49bb9adfd1a}
 
 \begin{DoxyCompactList}\small\item\em Returns the type of event selection run (numu cc inclusive / ccpi0 / others...) \end{DoxyCompactList}\item 
@@ -30,7 +33,11 @@ Data product to store the event selection results.
 \begin{DoxyCompactList}\small\item\em Returns the status of the selection (true is event passed, flase otherwise) \end{DoxyCompactList}\item 
 \hypertarget{classubana_1_1SelectionResult_abfd85000aca03d3cd347cde67f7b7e4b}{const std\-::string \& \hyperlink{classubana_1_1SelectionResult_abfd85000aca03d3cd347cde67f7b7e4b}{Get\-Failure\-Reason} () const }\label{classubana_1_1SelectionResult_abfd85000aca03d3cd347cde67f7b7e4b}
 
-\begin{DoxyCompactList}\small\item\em If \hyperlink{classubana_1_1SelectionResult_a776daea1e79f4b6978f0d4fd17a0a845}{Get\-Selection\-Status()} returns false, it returns a string containing the reason for the failure. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em If \hyperlink{classubana_1_1SelectionResult_a776daea1e79f4b6978f0d4fd17a0a845}{Get\-Selection\-Status()} returns false, it returns a string containing the reason for the failure. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1SelectionResult_a96cd70fc1bd429e073961bfe0c01d1b2}{const std\-::map$<$ std\-::string, \\*
+bool $>$ \& \hyperlink{classubana_1_1SelectionResult_a96cd70fc1bd429e073961bfe0c01d1b2}{Get\-Cut\-Flow\-Status} () const }\label{classubana_1_1SelectionResult_a96cd70fc1bd429e073961bfe0c01d1b2}
+
+\begin{DoxyCompactList}\small\item\em Returns the effect of each cut (all true if event is selected) \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}

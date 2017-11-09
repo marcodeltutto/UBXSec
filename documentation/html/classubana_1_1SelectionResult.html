@@ -110,6 +110,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SetSelectionType</b> 
 <tr class="memitem:ab7053b38033e245ffa2c9ad3c6a4b3dc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7053b38033e245ffa2c9ad3c6a4b3dc"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SetFailureReason</b> (std::string reason)</td></tr>
 <tr class="separator:ab7053b38033e245ffa2c9ad3c6a4b3dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a18d47cf1572ff34b538e503d355f70"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a18d47cf1572ff34b538e503d355f70"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetCutFlowStatus</b> (std::map&lt; std::string, bool &gt; input)</td></tr>
+<tr class="separator:a7a18d47cf1572ff34b538e503d355f70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afcfc5b9afaf6e549117ae49bb9adfd1a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcfc5b9afaf6e549117ae49bb9adfd1a"></a>
 const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1SelectionResult.html#afcfc5b9afaf6e549117ae49bb9adfd1a">GetSelectionType</a> () const </td></tr>
 <tr class="memdesc:afcfc5b9afaf6e549117ae49bb9adfd1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the type of event selection run (numu cc inclusive / ccpi0 / others...) <br/></td></tr>
@@ -122,6 +125,11 @@ const bool &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el
 const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1SelectionResult.html#abfd85000aca03d3cd347cde67f7b7e4b">GetFailureReason</a> () const </td></tr>
 <tr class="memdesc:abfd85000aca03d3cd347cde67f7b7e4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">If <a class="el" href="classubana_1_1SelectionResult.html#a776daea1e79f4b6978f0d4fd17a0a845" title="Returns the status of the selection (true is event passed, flase otherwise) ">GetSelectionStatus()</a> returns false, it returns a string containing the reason for the failure. <br/></td></tr>
 <tr class="separator:abfd85000aca03d3cd347cde67f7b7e4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96cd70fc1bd429e073961bfe0c01d1b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a96cd70fc1bd429e073961bfe0c01d1b2"></a>
+const std::map&lt; std::string, <br class="typebreak"/>
+bool &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1SelectionResult.html#a96cd70fc1bd429e073961bfe0c01d1b2">GetCutFlowStatus</a> () const </td></tr>
+<tr class="memdesc:a96cd70fc1bd429e073961bfe0c01d1b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the effect of each cut (all true if event is selected) <br/></td></tr>
+<tr class="separator:a96cd70fc1bd429e073961bfe0c01d1b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Data product to store the event selection results. </p>

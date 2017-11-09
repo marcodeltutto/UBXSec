@@ -94,38 +94,44 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">namespace </span>ubana {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classubana_1_1SelectionResult.html">   29</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classubana_1_1SelectionResult.html">SelectionResult</a> {</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <a class="code" href="classubana_1_1SelectionResult.html">SelectionResult</a>();</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classubana_1_1SelectionResult.html">SelectionResult</a>();</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">void</span> SetSelectionStatus(<span class="keywordtype">bool</span> status)      {_selection_status = status;}</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">void</span> SetSelectionType(std::string type)   {_selection_type = type;}</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordtype">void</span> SetFailureReason(std::string reason) {_failure_reason = reason;}</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keyword">const</span> std::string &amp; <a class="code" href="classubana_1_1SelectionResult.html#afcfc5b9afaf6e549117ae49bb9adfd1a">GetSelectionType</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">bool</span> &amp; <a class="code" href="classubana_1_1SelectionResult.html#a776daea1e79f4b6978f0d4fd17a0a845">GetSelectionStatus</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">const</span> std::string &amp; <a class="code" href="classubana_1_1SelectionResult.html#abfd85000aca03d3cd347cde67f7b7e4b">GetFailureReason</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;map&gt;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">namespace </span>ubana {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classubana_1_1SelectionResult.html">   30</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classubana_1_1SelectionResult.html">SelectionResult</a> {</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <a class="code" href="classubana_1_1SelectionResult.html">SelectionResult</a>();</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classubana_1_1SelectionResult.html">SelectionResult</a>();</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">void</span> SetSelectionStatus(<span class="keywordtype">bool</span> status)                    {_selection_status = status;}</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordtype">void</span> SetSelectionType(std::string type)                 {_selection_type = type;}</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordtype">void</span> SetFailureReason(std::string reason)               {_failure_reason = reason;}</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordtype">void</span> SetCutFlowStatus(std::map&lt;std::string,bool&gt; input) {_cut_flow_status = input;}</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">const</span> std::string &amp; <a class="code" href="classubana_1_1SelectionResult.html#afcfc5b9afaf6e549117ae49bb9adfd1a">GetSelectionType</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">bool</span> &amp; <a class="code" href="classubana_1_1SelectionResult.html#a776daea1e79f4b6978f0d4fd17a0a845">GetSelectionStatus</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">const</span> std::string &amp; <a class="code" href="classubana_1_1SelectionResult.html#abfd85000aca03d3cd347cde67f7b7e4b">GetFailureReason</a>() <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    std::string _selection_type;    </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    std::string _failure_reason;    </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">bool</span>        _selection_status;  </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; };</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SelectionResult_h */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="classubana_1_1SelectionResult_html"><div class="ttname"><a href="classubana_1_1SelectionResult.html">ubana::SelectionResult</a></div><div class="ttdoc">Data product to store the event selection results. </div><div class="ttdef"><b>Definition:</b> SelectionResult.h:29</div></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keyword">const</span> std::map&lt;std::string,bool&gt; &amp; <a class="code" href="classubana_1_1SelectionResult.html#a96cd70fc1bd429e073961bfe0c01d1b2">GetCutFlowStatus</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    std::string                _selection_type;    </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    std::string                _failure_reason;    </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">bool</span>                       _selection_status;  </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    std::map&lt;std::string,bool&gt; _cut_flow_status;   </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; };</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;}</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SelectionResult_h */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="classubana_1_1SelectionResult_html"><div class="ttname"><a href="classubana_1_1SelectionResult.html">ubana::SelectionResult</a></div><div class="ttdoc">Data product to store the event selection results. </div><div class="ttdef"><b>Definition:</b> SelectionResult.h:30</div></div>
 <div class="ttc" id="classubana_1_1SelectionResult_html_afcfc5b9afaf6e549117ae49bb9adfd1a"><div class="ttname"><a href="classubana_1_1SelectionResult.html#afcfc5b9afaf6e549117ae49bb9adfd1a">ubana::SelectionResult::GetSelectionType</a></div><div class="ttdeci">const std::string &amp; GetSelectionType() const </div><div class="ttdoc">Returns the type of event selection run (numu cc inclusive / ccpi0 / others...) </div><div class="ttdef"><b>Definition:</b> SelectionResult.cxx:11</div></div>
+<div class="ttc" id="classubana_1_1SelectionResult_html_a96cd70fc1bd429e073961bfe0c01d1b2"><div class="ttname"><a href="classubana_1_1SelectionResult.html#a96cd70fc1bd429e073961bfe0c01d1b2">ubana::SelectionResult::GetCutFlowStatus</a></div><div class="ttdeci">const std::map&lt; std::string, bool &gt; &amp; GetCutFlowStatus() const </div><div class="ttdoc">Returns the effect of each cut (all true if event is selected) </div><div class="ttdef"><b>Definition:</b> SelectionResult.cxx:17</div></div>
 <div class="ttc" id="classubana_1_1SelectionResult_html_abfd85000aca03d3cd347cde67f7b7e4b"><div class="ttname"><a href="classubana_1_1SelectionResult.html#abfd85000aca03d3cd347cde67f7b7e4b">ubana::SelectionResult::GetFailureReason</a></div><div class="ttdeci">const std::string &amp; GetFailureReason() const </div><div class="ttdoc">If GetSelectionStatus() returns false, it returns a string containing the reason for the failure...</div><div class="ttdef"><b>Definition:</b> SelectionResult.cxx:15</div></div>
 <div class="ttc" id="classubana_1_1SelectionResult_html_a776daea1e79f4b6978f0d4fd17a0a845"><div class="ttname"><a href="classubana_1_1SelectionResult.html#a776daea1e79f4b6978f0d4fd17a0a845">ubana::SelectionResult::GetSelectionStatus</a></div><div class="ttdeci">const bool &amp; GetSelectionStatus() const </div><div class="ttdoc">Returns the status of the selection (true is event passed, flase otherwise) </div><div class="ttdef"><b>Definition:</b> SelectionResult.cxx:13</div></div>
 </div><!-- fragment --></div><!-- contents -->

@@ -143,7 +143,7 @@ namespace ubana {
     }
 
     // DeltaZ
-    if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) > _deltax_cut_up) {
+    if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) > _deltaz_cut_up) {
       reason = "fail_flash_match_deltaz_up";
       failure_map["flash_match_deltaz_up"] = false;
     } else {

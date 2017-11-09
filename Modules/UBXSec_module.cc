@@ -1033,6 +1033,7 @@ void UBXSec::produce(art::Event & e) {
         ubxsec_event->slc_muoncandidate_truepdg[slice] = mcpar->PdgCode();
         if (mc_truth) {
           if (mc_truth->Origin() == simb::kBeamNeutrino && mcpar->PdgCode() == 13 && mcpar->Mother() == 0) {
+            ubxsec_event->slc_muoncandidate_trueorigin[slice] = ubana::kBeamNeutrino;
             _h_mom_true_mcs->Fill(mcpar->P(), ubxsec_event->slc_muoncandidate_mom_mcs[slice]);
             if (fully_contained) {
               _mom_true_contained = mcpar->P();
@@ -1051,6 +1052,7 @@ void UBXSec::produce(art::Event & e) {
             }
           }
           if (mc_truth->Origin() == simb::kCosmicRay && (mcpar->PdgCode() == 13 || mcpar->PdgCode() == -13)) {
+            ubxsec_event->slc_muoncandidate_trueorigin[slice] = ubana::kCosmicRay;
             _mom_cosmic_true = mcpar->P();
             _mom_cosmic_mcs = ubxsec_event->slc_muoncandidate_mom_mcs[slice];
             _mom_cosmic_mcs_downforced = track_going_down ?   mcsfitresult_mu_v.at(candidate_track.key())->fwdMomentum() 
@@ -1069,6 +1071,14 @@ void UBXSec::produce(art::Event & e) {
       if (_debug) std::cout << "[UBXSec] \t \t Mom by Range:    " << ubxsec_event->slc_muoncandidate_mom_range[slice] << std::endl;
       if (_debug) std::cout << "[UBXSec] \t \t Mom by MCS:      " << ubxsec_event->slc_muoncandidate_mom_mcs[slice] << std::endl;
       if (_debug) std::cout << "[UBXSec] \t \t Fully Contained? " << (ubxsec_event->slc_muoncandidate_contained[slice] ? "YES" : "NO") << std::endl;
+
+      // Try look at MCS for stopping muons
+      bool down_track = candidate_track->Vertex().Y() > candidate_track->End().Y();
+      double f_ll = mcsfitresult_mu_v.at(candidate_track.key())->fwdLogLikelihood();
+      double b_ll = mcsfitresult_mu_v.at(candidate_track.key())->bwdLogLikelihood();
+      ubxsec_event->slc_muoncandidate_mcs_delta_ll[slice] = f_ll - b_ll;
+      if (!down_track) ubxsec_event->slc_muoncandidate_mcs_delta_ll[slice] = b_ll - f_ll;
+
 
     } else {
 
@@ -1198,6 +1208,7 @@ void UBXSec::produce(art::Event & e) {
       }
       _mcs_cosmic_track_direction_tree->Fill();
     }
+
 
     std::cout << "[UBXSec] --- SLICE INFORMATION SAVED" << std::endl;
   } // slice loop
@@ -1354,12 +1365,11 @@ void UBXSec::produce(art::Event & e) {
   std::map<std::string,bool> failure_map;
   bool is_selected = _event_selection.IsSelected(slice_index, failure_map);
   if (_debug) std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Is Selected? " << (is_selected ? "YES" : "NO") << std::endl;
-  //if (_debug) std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Failure Reason " << reason << std::endl;
   bool first = true;
   if (_debug) {
     for (auto iter : failure_map) {
       std::cout << "[UBXSec] Cut: " << iter.first << "  >>>  " << (iter.second ? "PASSED" : "NOT PASSED") << std::endl;
-      if (first) {
+      if (first && !iter.second) {
         reason = "fail_" + iter.first;
         first = false;
       } 

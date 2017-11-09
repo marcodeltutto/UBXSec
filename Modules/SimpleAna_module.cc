@@ -52,6 +52,9 @@ SimpleAna::SimpleAna(fhicl::ParameterSet const & p)
 
 void SimpleAna::analyze(art::Event const & e)
 {
+
+  std::cout << "[SimpleAna] Simple UBXSec Validation Module. Starts." << std::endl;
+
   // Implementation of required member function here.
   art::Handle<std::vector<ubana::SelectionResult>> selection_h;
   e.getByLabel("UBXSec",selection_h);
@@ -69,6 +72,15 @@ void SimpleAna::analyze(art::Event const & e)
     std::cout << "[SimpleAna] Failure reason " << selection_v.at(0)->GetFailureReason()  << std::endl;
   }
 
+  std::map<std::string,bool> failure_map = selection_v.at(0)->GetCutFlowStatus();
+
+  std::cout << "[SimpleAna] Now Printing Cut Flow Status" << std::endl;
+
+  for (auto iter : failure_map) {
+    std::cout << "[SimpleAna] Cut: " << iter.first << "  >>>  " << (iter.second ? "PASSED" : "NOT PASSED") << std::endl;
+  }
+
+  std::cout << "[SimpleAna] Simple UBXSec Validation Module. Ends." << std::endl;
 }
 
 DEFINE_ART_MODULE(SimpleAna)

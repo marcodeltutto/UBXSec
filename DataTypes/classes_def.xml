@@ -118,6 +118,7 @@
   <class name="art::Wrapper<art::Assns<ubana::SelectionResult,ubana::TPCObject,void> >" />
 
 
+  <class name="std::map<std::string,bool>"/>
 
 
 

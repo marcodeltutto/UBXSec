@@ -22,8 +22,8 @@ ACPTTagger: {
   MinTrackLength:        0
  
   PEMin:                 0
-  Debug:                 true
-  CreateHisto:           true
+  Debug:                 false
+  CreateHisto:           false
 }
 
 microboone_acpttagger: @local::ACPTTagger

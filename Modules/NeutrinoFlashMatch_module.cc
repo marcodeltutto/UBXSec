@@ -218,8 +218,8 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     f.pe_err_v.resize(geo->NOpDets());
     for (unsigned int i = 0; i < f.pe_v.size(); i++) {
       unsigned int opdet = geo->OpDetFromOpChannel(i);
-      f.pe_v[opdet] = flash.PE(i);
-      f.pe_err_v[opdet] = sqrt(flash.PE(i));
+      f.pe_v[opdet] = flash.PE(i) * 0.5;
+      f.pe_err_v[opdet] = sqrt(flash.PE(i) * 0.5);
     }
     f.time = flash.Time();
     f.idx = nBeamFlashes-1;
@@ -247,7 +247,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     std::cout << "More than one beam flash in this event." << std::endl;
     std::cout << "Taking beam flash with more PEs." << std::endl;
 
-    // Sort tracks by length
+    // Sort flashes by length
     std::sort(beam_flashes.begin(), beam_flashes.end(),
               [](::flashana::Flash_t a, ::flashana::Flash_t b) -> bool
               {

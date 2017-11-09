@@ -53,7 +53,7 @@ namespace ubana {
 
   }
 
-  bool NuMuCCEventSelection::IsSelected(size_t & slice_index, std::string & reason) {
+  bool NuMuCCEventSelection::IsSelected(size_t & slice_index, std::map<std::string,bool> & failure_map) {
     
     if (!_configured || !_event_is_set) {
       std::cout << "Call to NuMuCCEventSelection::IsSelected() without having done configuration or having set the UBXSecEvent" << std::endl;
@@ -61,7 +61,7 @@ namespace ubana {
     }
 
     slice_index = -1;
-    reason = "no_failure";
+    std::string reason = "no_failure";
 
     // ************ 
     // Flashes
@@ -69,7 +69,10 @@ namespace ubana {
 
     if (_ubxsec_event->nbeamfls == 0) {
       reason = "no_beam_disc_flashes";
-      return false;
+      failure_map["beam_disc_flashes"] = false;
+      //return false;
+    } else {
+      failure_map["beam_disc_flashes"] = true;
     }
 
     int flashInBeamSpill = -1;    
@@ -90,10 +93,11 @@ namespace ubana {
     
     if (flashInBeamSpill == -1) {
       reason = "no_beam_spill_flash";
-      return false;   
+      failure_map["beam_spill_flash"] = false;
+    } else {
+      failure_map["beam_spill_flash"] = true;
     }
     
-    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass Flash" << std::endl;
 
     // *******************************
     // Find slice with maximum score
@@ -111,79 +115,105 @@ namespace ubana {
     
     if (scl_ll_max == -1) {
       reason = "fail_flash_match";
-      return false;
+      failure_map["flash_match"] = false;
+    } else {
+      failure_map["flash_match"] = true;
     }
     
     if (score_max <= _flsmatch_score_cut) {
       reason = "fail_flash_match_score";
-      return false;
+      failure_map["flash_match_score"] = false;
+    } else {
+      failure_map["flash_match_score"] = true;
     }
 
-    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass FlashMatching Score" << std::endl;
  
     // Delta X
     if(_ubxsec_event->slc_flsmatch_qllx.at(scl_ll_max) - _ubxsec_event->slc_flsmatch_tpcx.at(scl_ll_max) > _deltax_cut_up) {
       reason = "fail_flash_match_deltax_up";
-      return false;
+      failure_map["flash_match_deltax_up"] = false;
+    } else {
+      failure_map["flash_match_deltax_up"] = true;
     }
     if(_ubxsec_event->slc_flsmatch_qllx.at(scl_ll_max) - _ubxsec_event->slc_flsmatch_tpcx.at(scl_ll_max) < _deltax_cut_down) {
       reason = "fail_flash_match_deltax_down";
-      return false;
+      failure_map["flash_match_deltax_down"] = false;
+    } else {
+      failure_map["flash_match_deltax_down"] = true;
     }
-    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass FlashMatching DeltaX" << std::endl;
 
     // DeltaZ
     if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) > _deltaz_cut_up) {
       reason = "fail_flash_match_deltaz_up";
-      return false;
+      failure_map["flash_match_deltaz_up"] = false;
+    } else {
+      failure_map["flash_match_deltaz_up"] = true;
     }
-    if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) < _deltaz_cut_down) {
-      reason = "fail_flash_match_deltaz_down";
-      return false;
+    if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) < _deltax_cut_down) {
+      reason = "fail_flash_match_deltax_down";
+      failure_map["flash_match_deltax_down"] = false;
+    } else {
+      failure_map["flash_match_deltax_down"] = true;
     }
-    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass FlashMatching DeltaZ" << std::endl;
 
     // FV
     if(_ubxsec_event->slc_nuvtx_fv.at(scl_ll_max) == 0) {
       reason = "fail_fiducial_volume";
-      return false;
+      failure_map["fiducial_volume"] = false;
+    } else {
+      failure_map["fiducial_volume"] = true;
     }
-    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass Fiducial Volume" << std::endl;
 
     // Vertex Check   
     if(_ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) > _vtxcheck_angle_cut_up) {
       reason = "fail_vertex_check_up";
-      return false;
+      failure_map["vertex_check_up"] = false;
+    } else {
+      failure_map["vertex_check_up"] = true;
     }
     if(_ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) < _vtxcheck_angle_cut_down 
        && _ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) !=-9999 ) {
       reason = "fail_vertex_check_down";
-      return false;
-    } 
-    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass VertexCheck" << std::endl;
+      failure_map["vertex_check_down"] = false;
+    } else {
+      failure_map["vertex_check_down"] = true;
+    }
 
     // N Track
     if(_ubxsec_event->slc_ntrack.at(scl_ll_max) < _ntrack_cut) {
       reason = "fail_ntrack";
-      return false;
+      failure_map["ntrack"] = false;
+    } else {
+      failure_map["ntrack"] = true;
     }
-    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass NTrack Requirement" << std::endl; 
 
     // Track Quality
     if(!_ubxsec_event->slc_passed_min_track_quality.at(scl_ll_max)) {
       reason = "fail_track quality";
-      return false;
+      failure_map["track quality"] = false;
+    } else {
+      failure_map["track quality"] = true;
     }
-    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass Track Quality" << std::endl;
     
     // Vertex Quality
     if(!_ubxsec_event->slc_passed_min_vertex_quality.at(scl_ll_max)) {
       reason = "fail_vertex_quality";
-      return false;
-    }   
-    if (_verbose) std::cout << "[NuMuCCEventSelection] Pass Vertex Quality" << std::endl;
+      failure_map["vertex_quality"] = false;
+    } else {
+      failure_map["vertex_quality"] = true;
+    }
 
     slice_index = scl_ll_max;
+
+    for (auto iter : failure_map) {
+      if (!iter.second) {
+        if (_verbose) std::cout << "[NuMuCCEventSelection] Selection FAILED. Did not pass " << iter.first << " cut." << std::endl;
+        return false;
+      }
+    }
+
+    if (_verbose) std::cout << "[NuMuCCEventSelection] Selection PASSED. All cuts are satisfied." << std::endl;
+
     return true;
 
   }

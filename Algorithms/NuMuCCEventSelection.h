@@ -51,7 +51,7 @@ namespace ubana{
     void SetEvent(UBXSecEvent*);
 
     /// Returns true if this event is selected
-    bool IsSelected(size_t & slice_index, std::string & reason);
+    bool IsSelected(size_t & slice_index, std::map<std::string,bool> & failure_map);
 
   protected:
 

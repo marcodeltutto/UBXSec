@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 namespace ubana {
 
@@ -33,9 +34,10 @@ namespace ubana {
     SelectionResult();
     virtual ~SelectionResult();
 
-    void SetSelectionStatus(bool status)      {_selection_status = status;}
-    void SetSelectionType(std::string type)   {_selection_type = type;}
-    void SetFailureReason(std::string reason) {_failure_reason = reason;}
+    void SetSelectionStatus(bool status)                    {_selection_status = status;}
+    void SetSelectionType(std::string type)                 {_selection_type = type;}
+    void SetFailureReason(std::string reason)               {_failure_reason = reason;}
+    void SetCutFlowStatus(std::map<std::string,bool> input) {_cut_flow_status = input;}
 
     /// Returns the type of event selection run (numu cc inclusive / ccpi0 / others...)
     const std::string & GetSelectionType() const;
@@ -46,11 +48,15 @@ namespace ubana {
     /// If GetSelectionStatus() returns false, it returns a string containing the reason for the failure
     const std::string & GetFailureReason() const;
 
+    /// Returns the effect of each cut (all true if event is selected)
+    const std::map<std::string,bool> & GetCutFlowStatus() const;
+
   private:
 
-    std::string _selection_type;    ///< Event selection type (ccnumu, nue, ...)
-    std::string _failure_reason;    ///< Reason for selection failure
-    bool        _selection_status;  ///< True if event selected
+    std::string                _selection_type;    ///< Event selection type (ccnumu, nue, ...)
+    std::string                _failure_reason;    ///< Reason for selection failure
+    bool                       _selection_status;  ///< True if event selected
+    std::map<std::string,bool> _cut_flow_status;   ///< Stores the effect of each cut
 
  };
 }

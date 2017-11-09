@@ -60,6 +60,7 @@
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
 #include "lardataobj/AnalysisBase/CosmicTag.h"
 #include "uboone/UBXSec/DataTypes/TPCObject.h"
+#include "lardataobj/RawData/TriggerData.h"
 
 #include "uboone/UBXSec/DataTypes/UBXSecEvent.h"
 #include "uboone/UBXSec/DataTypes/SelectionResult.h"
@@ -1263,6 +1264,22 @@ void UBXSec::produce(art::Event & e) {
   }
 
 
+
+  // Trigger Time
+
+  art::Handle<std::vector<raw::Trigger> > evt_trigger_h;
+  e.getByLabel("triggersim",evt_trigger_h);
+
+  if( !evt_trigger_h.isValid() || evt_trigger_h->empty() ) {
+    std::cerr << "Trigger product is not valid or empty." << std::endl;
+    return;
+  }
+
+  auto const & evt_trigger = (*evt_trigger_h)[0];
+  auto const trig_time = evt_trigger.TriggerTime();
+
+  std::cout << "Trigger Time is " << trig_time << std::endl;
+
   /* MCHits
   ::art::Handle< std::vector<sim::MCHitCollection> > mcHit_h;
   e.getByLabel("mchitfinder",mcHit_h);
@@ -1333,14 +1350,28 @@ void UBXSec::produce(art::Event & e) {
   _event_selection.SetEvent(ubxsec_event);
 
   size_t slice_index;
-  std::string reason;
-  bool is_selected = _event_selection.IsSelected(slice_index, reason);
+  std::string reason = "no_failure";
+  std::map<std::string,bool> failure_map;
+  bool is_selected = _event_selection.IsSelected(slice_index, failure_map);
   if (_debug) std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Is Selected? " << (is_selected ? "YES" : "NO") << std::endl;
-  if (_debug) std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Failure Reason " << reason << std::endl;
+  //if (_debug) std::cout << "[UBXSec] >>>>>>>>>>>>>>>>>>>>>> Failure Reason " << reason << std::endl;
+  bool first = true;
+  if (_debug) {
+    for (auto iter : failure_map) {
+      std::cout << "[UBXSec] Cut: " << iter.first << "  >>>  " << (iter.second ? "PASSED" : "NOT PASSED") << std::endl;
+      if (first) {
+        reason = "fail_" + iter.first;
+        first = false;
+      } 
+    }
+  }
+
+  std::cout << "[UBXSec] Selection Failed at Cut: " << reason << std::endl;
 
   ::ubana::SelectionResult selection_result;
   selection_result.SetSelectionType("numu_cc_inclusive");
   selection_result.SetFailureReason(reason);
+  selection_result.SetCutFlowStatus(failure_map);
 
   // *********************
   // Save Event Selection Output in the Event

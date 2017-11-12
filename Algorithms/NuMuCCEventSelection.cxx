@@ -72,7 +72,24 @@ namespace ubana {
     if (_ubxsec_event->nbeamfls == 0) {
       reason = "no_beam_disc_flashes";
       failure_map["beam_disc_flashes"] = false;
-      //return false;
+
+      failure_map["beam_spill_flash"] = false;
+      failure_map["flash_match"] = false;
+      failure_map["flash_match_score"] = false;
+      failure_map["flash_match_deltax_up"] = false;
+      failure_map["flash_match_deltax_down"] = false;
+      failure_map["flash_match_deltaz_up"] = false;
+      failure_map["flash_match_deltaz_down"] = false;
+      failure_map["fiducial_volume"] = false;
+      failure_map["vertex_check_up"] = false;
+      failure_map["vertex_check_down"] = false;
+      failure_map["ntrack"] = false;
+      failure_map["track_quality"] = false;
+      failure_map["vertex_quality"] = false;
+
+      if (_verbose) std::cout << "[NuMuCCEventSelection] Selection FAILED. No beam disc flashes." << std::endl;
+      return false;
+
     } else {
       failure_map["beam_disc_flashes"] = true;
     }
@@ -96,6 +113,23 @@ namespace ubana {
     if (flashInBeamSpill == -1) {
       reason = "no_beam_spill_flash";
       failure_map["beam_spill_flash"] = false;
+
+      failure_map["flash_match"] = false;
+      failure_map["flash_match_score"] = false;
+      failure_map["flash_match_deltax_up"] = false;
+      failure_map["flash_match_deltax_down"] = false;
+      failure_map["flash_match_deltaz_up"] = false;
+      failure_map["flash_match_deltaz_down"] = false;
+      failure_map["fiducial_volume"] = false;
+      failure_map["vertex_check_up"] = false;
+      failure_map["vertex_check_down"] = false;
+      failure_map["ntrack"] = false;
+      failure_map["track_quality"] = false;
+      failure_map["vertex_quality"] = false;
+
+      if (_verbose) std::cout << "[NuMuCCEventSelection] Selection FAILED. No beam spill flash object." << std::endl;
+      return false;
+
     } else {
       failure_map["beam_spill_flash"] = true;
     }
@@ -120,6 +154,7 @@ namespace ubana {
       reason = "fail_flash_match";
       failure_map["flash_match"] = false;
 
+      failure_map["flash_match_score"] = false;
       failure_map["flash_match_deltax_up"] = false;
       failure_map["flash_match_deltax_down"] = false;
       failure_map["flash_match_deltaz_up"] = false;

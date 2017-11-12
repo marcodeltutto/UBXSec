@@ -1276,20 +1276,6 @@ void UBXSec::produce(art::Event & e) {
 
 
 
-  // Trigger Time
-
-  art::Handle<std::vector<raw::Trigger> > evt_trigger_h;
-  e.getByLabel("triggersim",evt_trigger_h);
-
-  if( !evt_trigger_h.isValid() || evt_trigger_h->empty() ) {
-    std::cerr << "Trigger product is not valid or empty." << std::endl;
-    return;
-  }
-
-  auto const & evt_trigger = (*evt_trigger_h)[0];
-  auto const trig_time = evt_trigger.TriggerTime();
-
-  std::cout << "Trigger Time is " << trig_time << std::endl;
 
   /* MCHits
   ::art::Handle< std::vector<sim::MCHitCollection> > mcHit_h;

@@ -218,8 +218,8 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     f.pe_err_v.resize(geo->NOpDets());
     for (unsigned int i = 0; i < f.pe_v.size(); i++) {
       unsigned int opdet = geo->OpDetFromOpChannel(i);
-      f.pe_v[opdet] = flash.PE(i) * 0.5;
-      f.pe_err_v[opdet] = sqrt(flash.PE(i) * 0.5);
+      f.pe_v[opdet] = flash.PE(i);
+      f.pe_err_v[opdet] = sqrt(flash.PE(i));
     }
     f.time = flash.Time();
     f.idx = nBeamFlashes-1;

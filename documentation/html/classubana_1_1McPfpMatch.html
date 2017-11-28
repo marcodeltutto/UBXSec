@@ -109,9 +109,9 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1McPfpMatch.html#aa6578a20f7a8194fae3caa2b19044e40">_Configure_</a> (const Config_t &amp;pset)</td></tr>
 <tr class="memdesc:aa6578a20f7a8194fae3caa2b19044e40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure. <br/></td></tr>
 <tr class="separator:aa6578a20f7a8194fae3caa2b19044e40"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f07649a58ade64a2a127846231cd7c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1McPfpMatch.html#a0f07649a58ade64a2a127846231cd7c8">Configure</a> (art::Event const &amp;e, std::string _pfp_producer, std::string _spacepoint_producer, std::string _hitfinder_producer, std::string _geant_producer)</td></tr>
-<tr class="memdesc:a0f07649a58ade64a2a127846231cd7c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure function parameters.  <a href="#a0f07649a58ade64a2a127846231cd7c8">More...</a><br/></td></tr>
-<tr class="separator:a0f07649a58ade64a2a127846231cd7c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0f60c86d087ee5c99a73170cf03b200"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1McPfpMatch.html#af0f60c86d087ee5c99a73170cf03b200">Configure</a> (art::Event const &amp;e, std::string _pfp_producer, std::string _spacepoint_producer, std::string _hitfinder_producer, std::string _geant_producer, std::string _hit_mcp_producer, lar_pandora::LArPandoraHelper::DaughterMode daughterMode)</td></tr>
+<tr class="memdesc:af0f60c86d087ee5c99a73170cf03b200"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure function parameters.  <a href="#af0f60c86d087ee5c99a73170cf03b200">More...</a><br/></td></tr>
+<tr class="separator:af0f60c86d087ee5c99a73170cf03b200"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44436a82315246fb67b42f8542fb327c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1McPfpMatch.html#a44436a82315246fb67b42f8542fb327c">GetRecoToTrueMatches</a> (lar_pandora::PFParticlesToMCParticles &amp;matchedParticles)</td></tr>
 <tr class="memdesc:a44436a82315246fb67b42f8542fb327c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns matching between true and reconstructed particles.  <a href="#a44436a82315246fb67b42f8542fb327c">More...</a><br/></td></tr>
 <tr class="separator:a44436a82315246fb67b42f8542fb327c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -128,7 +128,7 @@ lar_pandora::PFParticlesToHits&#160;</td><td class="memItemRight" valign="bottom
 <tr class="separator:a5906c7bb3e976375cdbb7c281aa869e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a0f07649a58ade64a2a127846231cd7c8"></a>
+<a class="anchor" id="af0f60c86d087ee5c99a73170cf03b200"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -160,7 +160,19 @@ lar_pandora::PFParticlesToHits&#160;</td><td class="memItemRight" valign="bottom
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>_geant_producer</em>&#160;</td>
+          <td class="paramname"><em>_geant_producer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>_hit_mcp_producer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">lar_pandora::LArPandoraHelper::DaughterMode&#160;</td>
+          <td class="paramname"><em>daughterMode</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -178,7 +190,14 @@ lar_pandora::PFParticlesToHits&#160;</td><td class="memItemRight" valign="bottom
     <tr><td class="paramname">_pfp_producer</td><td>the PFParticle producer label </td></tr>
     <tr><td class="paramname">_spacepoint_producer</td><td>the SpacePoint producer label </td></tr>
     <tr><td class="paramname">_hitfinder_producer</td><td>the Hit producer label </td></tr>
+    <tr><td class="paramname">_geant_producer</td><td>The Geant4 producer labelConfigure function parameters Configure function parameters (call this function first)</td></tr>
+    <tr><td class="paramname">e</td><td>the art::Event </td></tr>
+    <tr><td class="paramname">_pfp_producer</td><td>the PFParticle producer label </td></tr>
+    <tr><td class="paramname">_spacepoint_producer</td><td>the SpacePoint producer label </td></tr>
+    <tr><td class="paramname">_hitfinder_producer</td><td>the Hit producer label </td></tr>
     <tr><td class="paramname">_geant_producer</td><td>The Geant4 producer label </td></tr>
+    <tr><td class="paramname">_hit_mcp_producer</td><td>The producer that created hit &lt;-&gt; MCP associations (the final news of MCC8) </td></tr>
+    <tr><td class="paramname">daughterMode</td><td></td></tr>
   </table>
   </dd>
 </dl>

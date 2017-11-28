@@ -171,7 +171,9 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
  
   _is_mc = !e.isRealData();
 
-  if (_is_mc) mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+  //if (_is_mc) mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+
+  mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel, "pandoraCosmicHitRemoval"/* _mcpHitAssLabel */, lar_pandora::LArPandoraHelper::kAddDaughters);
 
   // Instantiate the output
   std::unique_ptr< std::vector< ubana::TPCObject > >                tpcObjectVector        (new std::vector<ubana::TPCObject>);

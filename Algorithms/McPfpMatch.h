@@ -57,7 +57,21 @@ namespace ubana {
      *  @param _hitfinder_producer the Hit producer label
      *  @param _geant_producer The Geant4 producer label
      */
-    void Configure(art::Event const & e, std::string _pfp_producer, std::string _spacepoint_producer, std::string _hitfinder_producer, std::string _geant_producer);
+    //void Configure(art::Event const & e, std::string _pfp_producer, std::string _spacepoint_producer, std::string _hitfinder_producer, std::string _geant_producer);
+
+    /// Configure function parameters
+     /**
+     *  @brief Configure function parameters (call this function first)
+     *
+     *  @param e the art::Event
+     *  @param _pfp_producer the PFParticle producer label
+     *  @param _spacepoint_producer the SpacePoint producer label
+     *  @param _hitfinder_producer the Hit producer label
+     *  @param _geant_producer The Geant4 producer label
+     *  @param _hit_mcp_producer The producer that created hit <-> MCP associations (the final news of MCC8)
+     *  @param daughterMode
+     */
+    void Configure(art::Event const & e, std::string _pfp_producer, std::string _spacepoint_producer, std::string _hitfinder_producer, std::string _geant_producer, std::string _hit_mcp_producer, lar_pandora::LArPandoraHelper::DaughterMode daughterMode );
   
      /**
      *  @brief Returns matching between true and reconstructed particles

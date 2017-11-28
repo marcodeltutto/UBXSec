@@ -1085,9 +1085,9 @@ double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry
     if (dqdx_v.size() == 0)
       return result;
 
-    for (auto q : dqdx_v) {
-      std::cout << "dqdx before trim: " << q << std::endl;
-    }
+    //for (auto q : dqdx_v) {
+    //  std::cout << "dqdx before trim: " << q << std::endl;
+    //}
 
     double median = GetMedian(dqdx_v);
     double std    = GetSTD(dqdx_v);
@@ -1102,7 +1102,7 @@ double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry
       if (q > median - n * std && 
           q < median + n * std) {
         dqdx_v_trimmed.emplace_back(q);
-        std::cout << "dqdx after trim: " << q << std::endl;
+        //std::cout << "dqdx after trim: " << q << std::endl;
       }
     }
 

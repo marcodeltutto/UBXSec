@@ -17,8 +17,6 @@ export QUAL2=prof
 
 source /grid/fermiapp/products/uboone/setup_uboone.sh
 
-setup git
-setup gitflow
 setup mrb
 export MRB_PROJECT=larsoft
 
@@ -42,7 +40,7 @@ mrbslp
 ## How to run
 
 To run over a BNB+Cosmic file:
-`lar -c run_ubxsec_mc.fcl -s art_root_file.root`
+`lar -c run_ubxsec_mc_bnbcosmic.fcl -s art_root_file.root`
 
 To run over a BNBON data file:
 `lar -c run_ubxsec_data_bnbon.fcl -s art_root_file.root`

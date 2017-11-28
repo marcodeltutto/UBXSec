@@ -247,7 +247,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     std::cout << "More than one beam flash in this event." << std::endl;
     std::cout << "Taking beam flash with more PEs." << std::endl;
 
-    // Sort tracks by length
+    // Sort flashes by length
     std::sort(beam_flashes.begin(), beam_flashes.end(),
               [](::flashana::Flash_t a, ::flashana::Flash_t b) -> bool
               {

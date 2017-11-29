@@ -1192,4 +1192,21 @@ double UBXSecHelper::GetSTD(std::vector<double> dqdx_v) {
 }
 
 
+//_________________________________________________________________________________
+art::Ptr<simb::MCTruth> UBXSecHelper::TrackIDToMCTruth(art::Event const & e, std::string _geant_producer, int geant_track_id) {
+
+    lar_pandora::MCTruthToMCParticles truthToParticles;
+    lar_pandora::MCParticlesToMCTruth particlesToTruth;
+
+    lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geant_producer, truthToParticles, particlesToTruth);
+
+    for (auto iter : particlesToTruth) {
+      if (iter.first->TrackId() == geant_track_id) {
+        return iter.second;
+      }
+    }  
+
+    art::Ptr<simb::MCTruth> null_ptr;
+    return null_ptr;
+}
 

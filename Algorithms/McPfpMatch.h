@@ -57,7 +57,7 @@ namespace ubana {
      *  @param _hitfinder_producer the Hit producer label
      *  @param _geant_producer The Geant4 producer label
      */
-    //void Configure(art::Event const & e, std::string _pfp_producer, std::string _spacepoint_producer, std::string _hitfinder_producer, std::string _geant_producer);
+    void Configure(art::Event const & e, std::string _pfp_producer, std::string _spacepoint_producer, std::string _hitfinder_producer, std::string _geant_producer);
 
     /// Configure function parameters
      /**
@@ -91,7 +91,7 @@ namespace ubana {
     bool _configured = false;
 
     bool _debug      = false;
-    bool _verbose    = false;
+    bool _verbose    = true;
 
   };
 }

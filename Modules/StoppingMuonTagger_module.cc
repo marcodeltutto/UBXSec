@@ -76,7 +76,7 @@ public:
 
 private:
 
-  ::art::ServiceHandle<cheat::BackTracker> bt;
+  //::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
   ::ubana::FiducialVolume _fiducial_volume;
 

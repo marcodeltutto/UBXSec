@@ -292,6 +292,14 @@ class UBXSecHelper {
   static double GetVariance(std::vector<double>);
 
   static double GetSTD(std::vector<double>);
+
+  /**
+   *  @brief Returns the MCTruth given a GEANT track ID
+   *
+   *  @param e the Event
+   *  @param _geant_producer the gean producer label
+   *  @param geant_track_id the geant track id */
+  static art::Ptr<simb::MCTruth> TrackIDToMCTruth(art::Event const & e, std::string _geant_producer, int geant_track_id);
 };
 
 

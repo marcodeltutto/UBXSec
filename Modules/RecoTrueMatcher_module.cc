@@ -135,10 +135,10 @@ void RecoTrueMatcher::produce(art::Event & e)
     return;
   } 
  
-//  if (_use_premade_ass)   
+  if (_use_premade_ass)   
     _mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel, _mcpHitAssLabel, lar_pandora::LArPandoraHelper::kAddDaughters);
-//  else 
-//    _mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+  else 
+    _mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
 
   lar_pandora::PFParticlesToMCParticles matched_pfp_to_mcp_map;    // This is a map: PFParticle to matched MCParticle
 
@@ -156,7 +156,8 @@ void RecoTrueMatcher::produce(art::Event & e)
 
     if(_debug) {
       std::cout << "[RecoTrueMatcher]\t PFP with ID " << pf_par->Self() << ", and PDG " << pf_par->PdgCode() << std::endl;
-      std::cout << "[RecoTrueMatcher]\t\t ...matched to MCPAR with PDG " << mc_par->PdgCode() << std::endl;
+      std::cout << "[RecoTrueMatcher]\t\t ...matched to MCPAR with PDG " << mc_par->PdgCode()
+                << " and Vx, Vy, Vz = " << mc_par->Vx() << ", " << mc_par->Vy() << ", " << mc_par->Vz() << std::endl;
     }
 
     ubana::MCGhost mcGhost;

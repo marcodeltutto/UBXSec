@@ -40,7 +40,7 @@
 #include "lardataobj/AnalysisBase/BackTrackerMatchingData.h"
 
 #include "McPfpMatch.h"
-
+#include "UBXSecHelper.h"
 
 
 namespace ubana {
@@ -58,7 +58,7 @@ namespace ubana {
 
   }
 
-  /* 
+   
   void McPfpMatch::Configure(art::Event const & e, 
                              std::string _pfp_producer, 
                              std::string _spacepoint_producer, 
@@ -135,7 +135,7 @@ namespace ubana {
     _configured = true;
   }
 
-*/
+
 
 
 
@@ -191,7 +191,6 @@ namespace ubana {
       lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geant_producer, trueParticleVector);
       lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geant_producer, truthToParticles, particlesToTruth);
 
-
       // Construct a Particle Map (trackID to MCParticle)
       lar_pandora::MCParticleMap particleMap;
 
@@ -211,6 +210,8 @@ namespace ubana {
       std::vector<anab::BackTrackerHitMatchingData const*> match_v;
 
       for (auto hit : hitVector) {
+
+        mcp_v.clear(); match_v.clear();
         mcps_from_hit.get(hit.key(), mcp_v, match_v);
 
         double max_energy = -1;
@@ -237,6 +238,11 @@ namespace ubana {
             continue;
 
           hit_to_mcps_map[hit] = selectedParticle;
+
+          //const auto mct = UBXSecHelper::TrackIDToMCTruth(e, "largeant", selectedParticle->TrackId());
+          //if (mct->Origin() == simb::kBeamNeutrino && selectedParticle->PdgCode() == 13 && selectedParticle->Mother() == 0) {
+            //std::cout << "Muon from neutrino ass to hit " << hit->PeakTime() << ", "<< hit->WireID () << std::endl;
+          //}
         }
 
       }

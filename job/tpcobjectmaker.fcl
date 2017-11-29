@@ -12,6 +12,7 @@ TPCObjectMaker: {
   HitProducer:                "pandoraCosmicHitRemoval::UBXSec"
   GeantModule:                "largeant"
   SpacePointProducer:         "pandoraNu::UBXSec"
+  MCPHitAssProducer:          "pandoraCosmicHitRemoval::UBXSec"
   FilterObjects:              true
   Debug:                      true
 }

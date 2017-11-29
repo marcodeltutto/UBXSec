@@ -10,6 +10,7 @@ RecoTrueMatcher: {
   HitProducer:            "pandoraCosmicHitRemoval::UBXSec"
   GeantModule:            "largeant"
   SpacePointProducer:     "pandoraNu::UBXSec"
+  MCPHitAssProducer:      "pandoraCosmicHitRemoval::UBXSec"
 
   DebugMode:              true 
   Verbose:                true

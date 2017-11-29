@@ -99,7 +99,8 @@ ubxsec_data_producers: [ saturationTest,
                          NeutrinoFlashMatch,
                          UBXSec ] 
 
-ubxsec_data_analyzers: [ CosmicTaggerAna ]
+ubxsec_data_analyzers: [ #CosmicTaggerAna 
+                       ]
 
 
 # Set reco properties

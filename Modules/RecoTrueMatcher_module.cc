@@ -96,7 +96,7 @@ RecoTrueMatcher::RecoTrueMatcher(fhicl::ParameterSet const & p) {
   _spacepointLabel                = p.get<std::string>("SpacePointProducer");
   _mcpHitAssLabel                 = p.get<std::string>("MCPHitAssProducer", "pandoraCosmicHitRemoval");
 
-  _use_premade_ass                = p.get<bool>("UsePreMadeAssociations", true);
+  _use_premade_ass                = p.get<bool>("UsePremadeMCPHitAss");
 
   _debug                          = p.get<bool>("DebugMode");
   _verbose                        = p.get<bool>("Verbose");

@@ -140,6 +140,9 @@ private:
   std::string _hitfinderLabel;
   std::string _geantModuleLabel;
   std::string _spacepointLabel;
+  std::string _mcpHitAssLabel;
+
+  bool _use_premade_ass;
   bool _do_filter;
   bool _debug;
 };
@@ -155,6 +158,8 @@ ubana::TPCObjectMaker::TPCObjectMaker(fhicl::ParameterSet const & p)
   _geantModuleLabel   = p.get<std::string>("GeantModule");
   _spacepointLabel    = p.get<std::string>("SpacePointProducer");
   _mcpHitAssLabel     = p.get<std::string>("MCPHitAssProducer", "pandoraCosmicHitRemoval");
+
+  _use_premade_ass    = p.get<bool>       ("UsePremadeMCPHitAss");
   _do_filter          = p.get<bool>       ("FilterObjects");
   _debug              = p.get<bool>       ("Debug");
 

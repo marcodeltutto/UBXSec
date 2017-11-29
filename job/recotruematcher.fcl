@@ -12,6 +12,7 @@ RecoTrueMatcher: {
   SpacePointProducer:     "pandoraNu::UBXSec"
   MCPHitAssProducer:      "pandoraCosmicHitRemoval::UBXSec"
 
+  UsePremadeMCPHitAss:    true
   DebugMode:              true 
   Verbose:                true
 

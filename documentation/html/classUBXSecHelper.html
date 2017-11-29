@@ -203,6 +203,9 @@ static double&#160;</td><td class="memItemRight" valign="bottom"><b>GetVariance<
 <tr class="memitem:aea63fece97a7aaefb3956eb312a844a0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aea63fece97a7aaefb3956eb312a844a0"></a>
 static double&#160;</td><td class="memItemRight" valign="bottom"><b>GetSTD</b> (std::vector&lt; double &gt;)</td></tr>
 <tr class="separator:aea63fece97a7aaefb3956eb312a844a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ab95e69a7b94a8b50de724e2f04f69e"><td class="memItemLeft" align="right" valign="top">static art::Ptr&lt; simb::MCTruth &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a3ab95e69a7b94a8b50de724e2f04f69e">TrackIDToMCTruth</a> (art::Event const &amp;e, std::string _geant_producer, int geant_track_id)</td></tr>
+<tr class="memdesc:a3ab95e69a7b94a8b50de724e2f04f69e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the MCTruth given a GEANT track ID.  <a href="#a3ab95e69a7b94a8b50de724e2f04f69e">More...</a><br/></td></tr>
+<tr class="separator:a3ab95e69a7b94a8b50de724e2f04f69e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An helper class for <a class="el" href="classUBXSec.html" title="Art producer module. ">UBXSec</a>. </p>
@@ -1542,6 +1545,56 @@ static double&#160;</td><td class="memItemRight" valign="bottom"><b>GetSTD</b> (
   <table class="params">
     <tr><td class="paramname">reco_nu_vtx</td><td>the point to check </td></tr>
     <tr><td class="paramname">plane_no</td><td>the plane we want to check with </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a3ab95e69a7b94a8b50de724e2f04f69e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">art::Ptr&lt; simb::MCTruth &gt; UBXSecHelper::TrackIDToMCTruth </td>
+          <td>(</td>
+          <td class="paramtype">art::Event const &amp;&#160;</td>
+          <td class="paramname"><em>e</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>_geant_producer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>geant_track_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the MCTruth given a GEANT track ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">e</td><td>the Event </td></tr>
+    <tr><td class="paramname">_geant_producer</td><td>the gean producer label </td></tr>
+    <tr><td class="paramname">geant_track_id</td><td>the geant track id </td></tr>
   </table>
   </dd>
 </dl>

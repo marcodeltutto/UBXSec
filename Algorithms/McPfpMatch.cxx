@@ -227,18 +227,22 @@ namespace ubana {
         
         if (best_match_id > -1) {
 
-          const art::Ptr<simb::MCParticle> thisParticle = mcp_v.at(best_match_id);
-          const art::Ptr<simb::MCParticle> primaryParticle(lar_pandora::LArPandoraHelper::GetFinalStateMCParticle(particleMap, thisParticle));
-          const art::Ptr<simb::MCParticle> selectedParticle((lar_pandora::LArPandoraHelper::kAddDaughters == daughterMode) ? primaryParticle : thisParticle);
+          try {
 
-          if ((lar_pandora::LArPandoraHelper::kIgnoreDaughters == daughterMode) && (selectedParticle != primaryParticle))
-            continue;
+            const art::Ptr<simb::MCParticle> thisParticle = mcp_v.at(best_match_id);
+            const art::Ptr<simb::MCParticle> primaryParticle(lar_pandora::LArPandoraHelper::GetFinalStateMCParticle(particleMap, thisParticle));
+            const art::Ptr<simb::MCParticle> selectedParticle((lar_pandora::LArPandoraHelper::kAddDaughters == daughterMode) ? primaryParticle : thisParticle);
 
-          if (!(lar_pandora::LArPandoraHelper::IsVisible(selectedParticle)))
-            continue;
+            if ((lar_pandora::LArPandoraHelper::kIgnoreDaughters == daughterMode) && (selectedParticle != primaryParticle))
+              continue;
 
-          hit_to_mcps_map[hit] = selectedParticle;
+            if (!(lar_pandora::LArPandoraHelper::IsVisible(selectedParticle)))
+              continue;
 
+            hit_to_mcps_map[hit] = selectedParticle;
+
+          } catch (cet::exception &e) {
+          }
           //const auto mct = UBXSecHelper::TrackIDToMCTruth(e, "largeant", selectedParticle->TrackId());
           //if (mct->Origin() == simb::kBeamNeutrino && selectedParticle->PdgCode() == 13 && selectedParticle->Mother() == 0) {
             //std::cout << "Muon from neutrino ass to hit " << hit->PeakTime() << ", "<< hit->WireID () << std::endl;

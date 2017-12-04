@@ -5,11 +5,12 @@
 <!DOCTYPE project [
 <!ENTITY release "v06_26_01_07">
 <!ENTITY releasetag "e10:prof">
-<!ENTITY name "ubxsec_v2.0.1_mc_intimecosmic">
+<!ENTITY name "ubxsec_v2.0.2_mc_intimecosmic">
 <!ENTITY tag "ubxsec">
 <!ENTITY file_type "mc">
 <!ENTITY run_type "physics">
 <!ENTITY PNFSpath "/pnfs/uboone/persistent/users/mdeltutt/">
+<!ENTITY ubxsec_version "v2.0.2_test_0.5BeamFlash">
 ]>
 
 
@@ -19,7 +20,7 @@
   <group>uboone</group>
 
   <!-- Project size -->
-  <numevents>75000</numevents>
+  <numevents>140000</numevents>
 
   <!-- Operating System -->
   <os>SL5,SL6</os>
@@ -31,7 +32,7 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Oct22_20_00.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Nov06_20_22.tgz</local>
   </larsoft>
 
   <!-- Project stages -->
@@ -40,13 +41,13 @@
     <fcl>run_ubxsec_mc_intimecosmic.fcl</fcl>
     <inputdef>prodcosmics_corsika_cmc_uboone_intime_mcc8.3_reco2</inputdef>
     <defname>&name;_&tag;_ana</defname>
-    <maxfilesperjob>3</maxfilesperjob>
-    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_mc_intimecosmic</outdir>
+    <maxfilesperjob>4</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_mc_intimecosmic</outdir>
     <workdir>&PNFSpath;grid_workdir_ubxsec_mc_intimecosmic</workdir>
-    <numjobs>500</numjobs>
+    <numjobs>700</numjobs>
     <datatier>ubana</datatier>
     <memory>4000</memory>
-    <jobsub> --expected-lifetime=12h --mail_never --generate-email-summary </jobsub>
+    <jobsub> --expected-lifetime=24h --mail_never --generate-email-summary </jobsub>
     <disk>50GB</disk>
   </stage>
 

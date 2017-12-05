@@ -94,6 +94,12 @@ namespace ubana{
     /// Calulates the dQds given ordered hits
     void CalculatedQds();
 
+    /// Calculated the dqds averaging neibouring hits
+    void PerformdQdsSlider();
+
+    /// Returns true if this object has been id'ed as a Stopping Muon
+    bool MakeDecision();
+
     /// Restores flags
     void Clear();
 
@@ -103,16 +109,20 @@ namespace ubana{
     ///Set the conversion from time to cm
     void SetT2Cm(double x) {_t2cm = x;}
 
+    /// Removes max and min value and returns the median
+    double GetTruncMedian(std::vector<double> v);
+
   protected:
 
     ubana::SimpleHitVector _s_hit_v;
     int _start_index = -1;
     std::vector<double> _dqds_v;
     std::vector<double> _ds_v;
+    std::vector<double> _dqds_slider;
 
     double _w2cm = 0.3;    // to cm 
     double _t2cm = 0.0557; // to cm
-    double _dqds_calib = 1.;
+    double _dqds_calib = 198.;
 
     bool _hits_ordered = false;
   };

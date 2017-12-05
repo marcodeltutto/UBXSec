@@ -284,7 +284,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
     const double *highest_point = sp_v.at(0)->XYZ();
     //raw::ChannelID_t ch = geo->NearestChannel(highest_point, 2);
     int w = geo->NearestWire(highest_point, 2);
-    size_t time = highest_point[0];//fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2));
+    size_t time = fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2));
     std::cout << "[StoppingMuonTagger] Highest point: wire: " << w << ", time: " << time << std::endl;
 
     /*
@@ -314,7 +314,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
       shit.time = h->PeakTime();
       shit.wire = h->WireID().Wire;
 
-      std::cout << "Emplacing hit with time " << shit.time << ", and wire " << shit.wire << ", on plane " << shit.plane << std::endl;
+      //std::cout << "Emplacing hit with time " << shit.time << ", and wire " << shit.wire << ", on plane " << shit.plane << std::endl;
       shit_v.emplace_back(shit);
     }
 
@@ -340,6 +340,17 @@ void StoppingMuonTagger::produce(art::Event & e) {
     // dQds
     std::cout << "[StoppingMuonTagger] Now calculate dqds" << std::endl; 
     _helper.CalculatedQds();    
+
+    // dQds Slider
+    std::cout << "[StoppingMuonTagger] Now perform window slider" << std::endl;
+    _helper.PerformdQdsSlider();
+
+    // Make a decision
+    std::cout << "[StoppingMuonTagger] Now make a decision" << std::endl;
+    bool result = _helper.MakeDecision();
+
+    std::cout << "[StoppingMuonTagger] Is stoppin muon? " << (result ? "YES" : "NO") << std::endl;
+
   } // TPCObject loop
 
   _h_nstopmu->Fill(n_stopmu);

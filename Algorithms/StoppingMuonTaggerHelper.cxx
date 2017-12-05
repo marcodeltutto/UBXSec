@@ -4,6 +4,7 @@
 #include "StoppingMuonTaggerHelper.h"
 #include <iostream>
 #include <algorithm>
+#include <numeric> 
 #include "TVector3.h"
 
 namespace ubana {
@@ -207,16 +208,20 @@ namespace ubana {
     new_vector.clear();
     new_vector.reserve(_s_hit_v.size());
 
+    _ds_v.clear();
     _ds_v.reserve(_s_hit_v.size());
 
     new_vector.push_back(_s_hit_v.at(_start_index));
 
     _s_hit_v.erase(_s_hit_v.begin() + _start_index);
 
+    double min_dist = 1e9; 
+    int min_index = -1;
+
     while (_s_hit_v.size() != 0) {
 
-      double min_dist = 1e9;
-      int min_index = -1;
+      min_dist = 1e9;
+      min_index = -1; 
 
       for (size_t i = 0; i < _s_hit_v.size(); i++){
 
@@ -246,6 +251,9 @@ namespace ubana {
 
     }
 
+    // For the last hit, use the last values of min_dist
+    _ds_v.push_back(min_dist);
+
     // Now that the vector is ordered, reassing to the original one
     _s_hit_v = new_vector;
 
@@ -266,7 +274,7 @@ namespace ubana {
     }
  
     if (_ds_v.size() != _s_hit_v.size()) {
-      std::cout << __FUNCTION__ << " ds size is different than hit vector size" << std::endl;
+      std::cout << __FUNCTION__ << ": ds size is different than hit vector size" << std::endl;
       throw std::exception();
     }
  
@@ -283,14 +291,85 @@ namespace ubana {
       ds = (this_point - next_point).Mag();
 
       _dqds_v.emplace_back(_s_hit_v.at(i).integral/ds * _dqds_calib);
+      //std::cout << "_dqds_v.back() " << _dqds_v.back() << std::endl;
 
     }
 
     // Finish with the last point
     _dqds_v.emplace_back(_s_hit_v.at(_s_hit_v.size()-1).integral/ds * _dqds_calib);
 
+    return;
   }
 
+
+
+  void StoppingMuonTaggerHelper::PerformdQdsSlider() {
+
+    if (_dqds_v.size() < 20)
+      return;
+
+    _dqds_slider.clear();
+
+    size_t window = 10;
+
+    for (size_t i = 0; i < _dqds_v.size() - window; i++) {
+
+      std::vector<double> temp_v(_dqds_v.begin() + i, _dqds_v.begin() + i + window);
+      double median_dqds = this->GetTruncMedian(temp_v);
+      _dqds_slider.emplace_back(median_dqds);
+      std::cout << "dqds_slider value " << median_dqds << std::endl;
+
+    }
+
+    return;
+
+  }
+
+  double StoppingMuonTaggerHelper::GetTruncMedian(std::vector<double> v) {
+
+    // Find and erase max element
+    auto it_max = std::max_element(v.begin(), v.end());
+    v.erase(it_max);
+
+    // Find and erase min element
+    auto it_min = std::min_element(v.begin(), v.end());
+    v.erase(it_min);
+
+    double median = -1;
+
+    size_t size = v.size();
+    std::sort(v.begin(), v.end());
+    if (size % 2 == 0){
+      median = (v[size/2 - 1] + v[size/2]) / 2;
+    }
+    else{
+      median = v[size/2];
+    }
+
+    return median;
+  }
+
+
+  bool StoppingMuonTaggerHelper::MakeDecision() {
+
+    std::vector<double> temp = _dqds_slider;
+
+    // Remove first three and last three hits
+    temp.erase(temp.begin(), temp.begin() + 3);
+    temp.erase(temp.end() - 3, temp.end());
+
+    // Get mean of first and last 5
+    double start_mean = std::accumulate(temp.begin(), temp.begin() + 5, 0);
+    double end_mean = std::accumulate(temp.end() - 5, temp.end(), 0);
+
+    double perc_diff = (start_mean - end_mean) / start_mean * 100.;
+
+    if (perc_diff > 20.) {
+      return true;
+    } 
+
+    return false;   
+  }
 }
 
 

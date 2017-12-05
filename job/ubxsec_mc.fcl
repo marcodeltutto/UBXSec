@@ -118,8 +118,8 @@ ubxsec_mc_reco.pandoraCosmicTrackPFPart.PFParticleModuleLabel:   "pandoraCosmic"
 ubxsec_mc_reco.pandoraCosmicTrackPFPart.TrackModuleLabel:        "pandoraCosmic"
 ubxsec_mc_reco.pandoraCosmicTrackPFPart.EndTickPadding:          75
 ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCXBoundary:            10
-ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCYBoundary:            20
-ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCZBoundary:            10
+ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCYBoundary:            30
+ubxsec_mc_reco.pandoraCosmicTrackPFPart.TPCZBoundary:            20
 ubxsec_mc_reco.pandoraCosmicTrackPFPart.Debug:                   false
 
 ubxsec_mc_reco.pandoraCosmicFlashTag.DebugMode:                  false

@@ -123,13 +123,20 @@ namespace ubana{
     std::vector<double> _ds_v;
     std::vector<double> _dqds_slider;
 
+    bool _hits_ordered = false;
+
     double _w2cm = 0.3;    // to cm 
     double _t2cm = 0.0557; // to cm
     double _dqds_calib = 198.;
 
+    size_t _slider_window = 10;
     double _max_allowed_hit_distance = 15.;
+    int _hits_to_remove = 3;
+    int _pre_post_window = 5;
+    double _perc_diff_cut = 20;
 
-    bool _hits_ordered = false;
+    bool _debug = false;
+
   };
 }
 

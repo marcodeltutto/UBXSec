@@ -19,6 +19,7 @@
 #include "art/Framework/Services/Optional/TFileService.h"
 #include "art/Framework/Services/Optional/TFileDirectory.h"
 #include "canvas/Persistency/Common/FindManyP.h"
+#include "lardata/Utilities/AssociationUtil.h"
 
 #include <memory>
 
@@ -57,6 +58,8 @@
 #include "TH1D.h"
 #include "TH2D.h"
 
+const std::vector<float> endPt1 = {-9999., -9999., -9999.};
+const std::vector<float> endPt2 = {-9999., -9999., -9999.};
 
 class StoppingMuonTagger;
 
@@ -116,6 +119,8 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p) {
   _cluster_producer   = p.get<std::string>("ClusterProducer",    "pandoraNu::UBXSec");
   _track_producer     = p.get<std::string>("TrackProducer",    "pandoraNu::UBXSec");
 
+  _helper.Configure(p.get<fhicl::ParameterSet>("AlgorithmConfiguration"));
+
   _debug = p.get<bool>("DebugMode", true);
 
   fDetectorProperties = lar::providerFrom<detinfo::DetectorPropertiesService>(); 
@@ -123,11 +128,25 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p) {
   art::ServiceHandle<art::TFileService> fs;
   _h_nstopmu = fs->make<TH1D>("h_nstopmu", ";Stopping Muons Per Event;", 10, 0, 10);
   _h_stopmu_type = fs->make<TH1D>("h_stopmu_type", "Stopping Muon Chategories;;", 10, 0, 10);
+
+
+  produces< std::vector<anab::CosmicTag>>();
+  produces< art::Assns<anab::CosmicTag,   recob::Track>>();
+  produces< art::Assns<recob::PFParticle, anab::CosmicTag>>();
+
 }
+
+
 
 void StoppingMuonTagger::produce(art::Event & e) {
 
   if (_debug) std::cout <<"[StoppingMuonTagger] Starts." << std::endl;
+
+  // Instantiate the output
+  std::unique_ptr<std::vector<anab::CosmicTag>> cosmicTagVector (new std::vector<anab::CosmicTag>);
+  std::unique_ptr<art::Assns<anab::CosmicTag, recob::Track>> assnOutCosmicTagTrack(new art::Assns<anab::CosmicTag, recob::Track>);
+  std::unique_ptr<art::Assns<recob::PFParticle, anab::CosmicTag>> assnOutCosmicTagPFParticle(new art::Assns<recob::PFParticle, anab::CosmicTag>);
+
 
   // Get TPCObjects from the Event
   art::Handle<std::vector<ubana::TPCObject>> tpcobj_h;
@@ -168,7 +187,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
   for (size_t i = 0; i < tpcobj_v.size(); i++) {
 
-    std::cout << "[StoppingMuonTagger] >>>>> TPCObject " << i << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] >>>>> TPCObject " << i << std::endl;
 
     art::Ptr<ubana::TPCObject> tpcobj = tpcobj_v.at(i);
 
@@ -182,7 +201,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
       if (tpcobj->GetOriginExtra() != ubana::TPCObjectOriginExtra::kStoppingMuon) continue;
 
-      std::cout << "[StoppingMuonTagger] Found TPCObject representing a stopping cosmic muon." << std::endl;
+      if (_debug) std::cout << "[StoppingMuonTagger] Found TPCObject representing a stopping cosmic muon." << std::endl;
       n_stopmu++;
 
       if (tracks.size() == 1 && showers.size() == 0)          // One track - bin 0
@@ -200,10 +219,11 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     }
 
-    std::cout <<"[StoppingMuonTagger]\t Number of tracks for this TPCObject:  " << tracks.size()  << std::endl;
-    std::cout <<"[StoppingMuonTagger]\t Number of showers for this TPCObject: " << showers.size() << std::endl;
-    std::cout <<"[StoppingMuonTagger]\t Number of PFPs for this TPCObject:    " << pfps.size()    << std::endl;
-
+    if (_debug) { 
+      std::cout <<"[StoppingMuonTagger]\t Number of tracks for this TPCObject:  " << tracks.size()  << std::endl;
+      std::cout <<"[StoppingMuonTagger]\t Number of showers for this TPCObject: " << showers.size() << std::endl;
+      std::cout <<"[StoppingMuonTagger]\t Number of PFPs for this TPCObject:    " << pfps.size()    << std::endl;
+   }
 
 
     // Get all the SpacePoints from the PFPs (this will be used to look for 
@@ -214,6 +234,10 @@ void StoppingMuonTagger::produce(art::Event & e) {
     // get the track and then check that is not coplanar with wires in the 
     // collection plane.
   
+    // These two are needed to make the associations later
+    art::Ptr<recob::PFParticle> primary_pfp;
+    std::vector<art::Ptr<recob::Track>> primary_track_v;
+
     std::vector<art::Ptr<recob::SpacePoint>> sp_v;
     sp_v.clear();
 
@@ -249,17 +273,20 @@ void StoppingMuonTagger::produce(art::Event & e) {
       } 
 
       if (p->IsPrimary() && !lar_pandora::LArPandoraHelper::IsNeutrino(p)) {
+
         auto iter4 = pfps_to_tracks.find(p);
         if (iter4 == pfps_to_tracks.end()) {
           std::cout << "[StoppingMuonTagger] PFParticle in TPCObject not found by pandora !?" << std::endl;
           throw std::exception();
         }
+
+        primary_pfp = p;
+        primary_track_v = iter4->second;
+
         if ((iter4->second).size() != 0) { 
           double deltax = (iter4->second)[0]->Vertex().Z() - (iter4->second)[0]->End().Z();
-          std::cout << "delta x is " << deltax << std::endl;
-          std::cout << "coplanar)cut is " << _coplanar_cut << std::endl; 
+          if (_debug) std::cout << "delta x is " << deltax << std::endl;
           collection_coplanar = (iter4->second)[0]->Vertex().Z() - (iter4->second)[0]->End().Z() < _coplanar_cut;
-          std::cout << "collection_coplanar is " << (collection_coplanar ? "true" : "false") << std::endl;
         }
       }
     }
@@ -282,9 +309,9 @@ void StoppingMuonTagger::produce(art::Event & e) {
     int highest_w = geo->NearestWire(highest_point, 2) * geo->WirePitch(geo::PlaneID(0,0,2));
     double highest_t = highest_point[0];
     //size_t time = fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2));
-    std::cout << "[StoppingMuonTagger] Highest point: wire: " << geo->NearestWire(highest_point, 2) 
-              << ", time: " << fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2)) 
-              << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] Highest point: wire: " << geo->NearestWire(highest_point, 2) 
+                       << ", time: " << fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2)) 
+                       << std::endl;
 
     /*
     double time2cm = 0.1;
@@ -294,11 +321,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
     size_t time = highest_point[0]/time2cm + offset_collection;  
     */
 
-    std::cout << "[StoppingMuonTagger] Now create simple hit vector, size " << hit_v.size() << std::endl;
-
-    std::cout << "MARCO: 1000 -> " << fDetectorProperties->ConvertTicksToX(1000, geo::PlaneID(0,0,2))<< std::endl;
-    std::cout << "MARCO: 1001 -> " << fDetectorProperties->ConvertTicksToX(1001, geo::PlaneID(0,0,2))<< std::endl;
-    std::cout << "MARCO: 1002 -> " << fDetectorProperties->ConvertTicksToX(1002, geo::PlaneID(0,0,2))<< std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] Now create simple hit vector, size " << hit_v.size() << std::endl;
 
     // Create SimpleHit vector
     ubana::SimpleHitVector shit_v;
@@ -313,14 +336,14 @@ void StoppingMuonTagger::produce(art::Event & e) {
       shit.time = fDetectorProperties->ConvertTicksToX(h->PeakTime(), geo::PlaneID(0,0,2));
       shit.wire = h->WireID().Wire * geo->WirePitch(geo::PlaneID(0,0,2));
 
-      std::cout << "Emplacing hit with time " << shit.t << ", and wire " << shit.w << ", on plane " << shit.plane << std::endl;
+      if (_debug) std::cout << "Emplacing hit with time " << shit.t << ", and wire " << shit.w << ", on plane " << shit.plane << std::endl;
       shit_v.emplace_back(shit);
     }
 
     std::cout << "[StoppingMuonTagger] Simple hit vector size " << shit_v.size() << std::endl;
 
     // Clear the algorithm
-    std::cout << "[StoppingMuonTagger] Clear algo" << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] Clear algo" << std::endl;
     _helper.Clear();
 
     if (collection_coplanar) {
@@ -330,40 +353,52 @@ void StoppingMuonTagger::produce(art::Event & e) {
     }
 
     // Emplace to the helper
-    std::cout << "[StoppingMuonTagger] Now emplace hits" << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] Now emplace hits" << std::endl;
     _helper.Emplace(shit_v);
 
     // Only collection plane hits
-    std::cout << "[StoppingMuonTagger] Now filter hits by plane" << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] Now filter hits by plane" << std::endl;
     size_t n_hits = _helper.FilterByPlane(2);
 
     if (n_hits == 0) continue;
 
     // Set the start hit
-    std::cout << "[StoppingMuonTagger] Now set start hit" << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] Now set start hit" << std::endl;
     _helper.SetStartHit(highest_t, highest_w, 2); 
 
     // Order hits
-    std::cout << "[StoppingMuonTagger] Now order hits" << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] Now order hits" << std::endl;
     _helper.OrderHits();
 
     // dQds
-    std::cout << "[StoppingMuonTagger] Now calculate dqds" << std::endl; 
+    if (_debug) std::cout << "[StoppingMuonTagger] Now calculate dqds" << std::endl; 
     _helper.CalculatedQds();    
 
     // dQds Slider
-    std::cout << "[StoppingMuonTagger] Now perform window slider" << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] Now perform window slider" << std::endl;
     _helper.PerformdQdsSlider();
 
     // Make a decision
-    std::cout << "[StoppingMuonTagger] Now make a decision" << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] Now make a decision" << std::endl;
     bool result = _helper.MakeDecision();
 
-    std::cout << "[StoppingMuonTagger] Is stopping muon? " << (result ? "YES" : "NO") << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon? " << (result ? "YES" : "NO") << std::endl;
 
+    double cosmicScore = 0.;
+    if (result) {
+      cosmicScore = 1.;
+    }
+    cosmicTagVector->emplace_back(endPt1, endPt2, cosmicScore, anab::CosmicTagID_t::kGeometry_Y); 
+    util::CreateAssn(*this, e, *cosmicTagVector, primary_track_v, *assnOutCosmicTagTrack);
+    util::CreateAssn(*this, e, *cosmicTagVector, primary_pfp, *assnOutCosmicTagPFParticle);
+    
   } // TPCObject loop
 
   _h_nstopmu->Fill(n_stopmu);
+
+  e.put(std::move(cosmicTagVector));
+  e.put(std::move(assnOutCosmicTagTrack));
+  e.put(std::move(assnOutCosmicTagPFParticle));
 
   if (_debug) std::cout <<"[StoppingMuonTagger] Ends." << std::endl;
 

@@ -11,6 +11,18 @@ StoppingMuonTagger: {
   ClusterProducer:         "pandoraNu::UBXSec"
   TrackProducer:           "pandoraNu::UBXSec"
 
+  AlgorithmConfiguration:  {
+    WireToCmConstant:      0.3
+    TimeToCmConstant:      0.0557
+    GainCalib:             198
+    SliderWindow:          10
+    MaxAllowedHitDistance: 15
+    HitsToRemove:          3
+    PrePostWindow:         5
+    PercDiffCut:           20
+    DebugMode:             false 
+  }
+
   FiducialVolumeSettings:  @local::UBXSecFiducialVolumeSettings  
 }
 
@@ -19,5 +31,10 @@ microboone_cosmicstoppingmutagger.TPCObjectProducer:  "pandoraCosmicTPCObj"
 microboone_cosmicstoppingmutagger.PFParticleProducer: "pandoraCosmic"
 microboone_cosmicstoppingmutagger.ClusterProducer:    "pandoraCosmic"
 microboone_cosmicstoppingmutagger.TrackProducer:      "pandoraCosmic"
+
+microboone_cosmicstoppingmutagger_mc: @local::microboone_cosmicstoppingmutagger
+
+microboone_cosmicstoppingmutagger_data: @local::microboone_cosmicstoppingmutagger
+microboone_cosmicstoppingmutagger_data.AlgorithmConfiguration.GainCalib: 243
 
 END_PROLOG

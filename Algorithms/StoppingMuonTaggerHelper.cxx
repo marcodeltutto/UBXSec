@@ -388,7 +388,7 @@ namespace ubana {
   bool StoppingMuonTaggerHelper::MakeDecision() {
 
     if (_dqds_slider.size() < (unsigned int) (_hits_to_remove * 2 + _pre_post_window * 2)) {
-      std::cout << "Can't make decision, number of simple hits is " << _dqds_slider.size() << ", which is less then " << _hits_to_remove * 2 + _pre_post_window * 2 << std::endl;
+      if (_debug) std::cout << "Can't make decision, number of simple hits is " << _dqds_slider.size() << ", which is less then " << _hits_to_remove * 2 + _pre_post_window * 2 << std::endl;
       return false;
     }
 

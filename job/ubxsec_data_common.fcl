@@ -27,11 +27,14 @@ services:
   message:                 @local::microboone_message_services_prod_debug
   FileCatalogMetadata:     @local::art_file_catalog_mc
   @table::microboone_simulation_services
+  @table::microboone_reco_data_services 
+  #@table::microboone_services_reco
   BackTracker:             @local::microboone_backtracker
 }
 
+#services.DatabaseUtil.ShouldConnect: false
 #services.PmtGainService.PmtGainProvider.UseDB:               true
-services.ChannelStatusService.ChannelStatusProvider.UseDB:   false
+services.ChannelStatusService.ChannelStatusProvider.UseDB:   true
 #services.DetPedestalService.DetPedestalRetrievalAlg.UseDB:   false
 
 services.DetectorPropertiesService.NumberTimeSamples:        6400

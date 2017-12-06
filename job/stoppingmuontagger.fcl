@@ -10,6 +10,7 @@ StoppingMuonTagger: {
   PFParticleProducer:      "pandoraNu::UBXSec"
   ClusterProducer:         "pandoraNu::UBXSec"
   TrackProducer:           "pandoraNu::UBXSec"
+  DebugMode:               false
 
   AlgorithmConfiguration:  {
     WireToCmConstant:      0.3

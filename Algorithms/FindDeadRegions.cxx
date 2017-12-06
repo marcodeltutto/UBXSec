@@ -53,6 +53,16 @@ void FindDeadRegions::Configure(fhicl::ParameterSet const& pset) {
 }
 
 
+void FindDeadRegions::SetChannelStatus(unsigned int ch, int status) {
+
+  if (status < _ch_thres) {
+    CSstatusVec.at(ch) = false;
+  } else {
+    CSstatusVec.at(ch) = true;
+  }
+
+}
+
 void FindDeadRegions::LoadBWires() {
 
   std::cout << "[FindDeadRegions] Loading wires from " << (_use_file ? " files." : "database.") << std::endl;
@@ -68,7 +78,7 @@ void FindDeadRegions::LoadBWires() {
   float ex;
   float ey;
   float ez;
-
+/*
   std::vector<unsigned int> channelVec;
   std::vector<unsigned int> planeVec;
   std::vector<unsigned int> wireVec;
@@ -78,7 +88,7 @@ void FindDeadRegions::LoadBWires() {
   std::vector<float> exVec;
   std::vector<float> eyVec;
   std::vector<float> ezVec;
-
+*/
   double xyz[3];
 
   std::cout << "[FindDeadRegions] Loading geometry." << std::endl;
@@ -111,6 +121,8 @@ void FindDeadRegions::LoadBWires() {
       ey = xyz[1];
       ez = xyz[2];
 
+      if (channel == 6128) 
+         std::cout << "[FindDeadRegions] channel 6128, corresponds to wire " << wire << " and position is " << sx << ", " << sy << ", " << sz << ", " << ex << ", " << ey << ", " << ez << std::endl;   
 
       channelVec.push_back(channel);
       planeVec.push_back(plane);
@@ -192,9 +204,6 @@ void FindDeadRegions::LoadBWires() {
   }
 
 
-  std::vector<unsigned int> CSchannelVec;
-  std::vector<bool> CSstatusVec;
-
   std::cout << "[FindDeadRegions] Loading channel statuses." << std::endl;
 
   if (!_use_file) {
@@ -205,11 +214,14 @@ void FindDeadRegions::LoadBWires() {
 
     const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
 
-    /*
-    std::cout << "Just before chanFilt.Status(0)"<< std::endl;
-    chanFilt.Status(0);
-    std::cout << "Just after chanFilt.Status(0)"<< std::endl;
-    */
+    
+    //std::cout << "Just before chanFilt.Status(1)"<< std::endl;
+    //chanFilt.Status(1);
+    //std::cout << "Just after chanFilt.Status(1)"<< std::endl;
+    
+
+    CSchannelVec.resize(8256);
+    CSstatusVec.resize(8256);
 
     for (unsigned int channel = 0; channel < 8256; channel++) {
 
@@ -217,9 +229,9 @@ void FindDeadRegions::LoadBWires() {
 
       // Channel statuses: 1=dead, 3=noisy, 4=good
       if (chanFilt.Status(channel) < _ch_thres) {
-        CSstatusVec.push_back(false);
+        CSstatusVec.at(channel) = false;
       } else {
-        CSstatusVec.push_back(true);
+        CSstatusVec.at(channel) = true;
       }
     }
   } else {
@@ -228,16 +240,20 @@ void FindDeadRegions::LoadBWires() {
     // From File
     // **********
 
+    std::cout << "[FindDeadRegions] Reading channel status form file." << std::endl;
     std::ifstream chanstatfile;
     chanstatfile.open("ChanStatus.txt");
     if (!chanstatfile.is_open())
-      std::cerr << "Problem opening file ChanStatus.txt."  << std::endl;
+      std::cerr << "Problem opening file ChanStatus.txt." << std::endl;
 
     std::string string_CSchannel;
     std::string string_CSstatus;
 
     unsigned int CSchannel;
     bool CSstatus;
+
+    CSstatusVec.clear();
+    CSstatusVec.clear();
 
     while(chanstatfile >> string_CSchannel)
     {
@@ -254,6 +270,14 @@ void FindDeadRegions::LoadBWires() {
   }
 
   std::cout << "[FindDeadRegions] Loading ended." << std::endl;
+
+  CreateBWires();
+}
+
+
+void FindDeadRegions::CreateBWires() {
+
+  std::cout << "[FindDeadRegions] Now creating BWires" << std::endl;
 
   bool isGoodChannel;
 
@@ -342,9 +366,11 @@ void FindDeadRegions::LoadBWires() {
 
   isGoodChannel = true;
   for(int i = 4800; i < 8256; i++) {
+
     if((CSstatusVec.at(i) == false) && (isGoodChannel == true)) {
       isGoodChannel = false;
 
+      std::cout << "start of bwire at ch " << i << std::endl;
       BoundaryWire BWire;
       BWire.wire_num = wireVec.at(i);
       BWire.y_start = syVec.at(i);
@@ -358,6 +384,7 @@ void FindDeadRegions::LoadBWires() {
     else if((CSstatusVec.at(i) == true) && (isGoodChannel == false)) {
       isGoodChannel = true;
 
+      std::cout << "end of bwire at ch " << i << std::endl;
       BoundaryWire BWire;
       BWire.wire_num = wireVec.at(i-1);
       BWire.y_start = syVec.at(i-1);
@@ -381,7 +408,11 @@ void FindDeadRegions::LoadBWires() {
     }
   }
 
-  std::cout << "[FindDeadRegions] LoadBwires ends." << std::endl;
+  std::cout << "[FindDeadRegions] Finishes creating BWires." << std::endl;
+
+  std::cout << "[FindDeadRegions] Number of BWires in U " << BWires_U.size() << std::endl;
+  std::cout << "[FindDeadRegions] Number of BWires in V " << BWires_V.size() << std::endl;
+  std::cout << "[FindDeadRegions] Number of BWires in Y " << BWires_Y.size() << std::endl;
 
   return;
 }
@@ -467,6 +498,42 @@ bool FindDeadRegions::NearDeadReg2P(float yVal, float zVal, float tolerance) {
   }
 }
 
+
+//____________________________________________________________________________________________________
+bool FindDeadRegions::NearDeadRegCollection(float zVal, float tolerance) {
+
+  float minDist_Y = 100000.0;
+
+  std::cout << "BWires_Y.size() " << BWires_Y.size() << std::endl;
+
+  for (unsigned int i = 0; i < BWires_Y.size(); i++) {
+    std::cout << "NearDeadRegCollection: looking at bwire with z" << BWires_Y[i].z_start << std::endl;
+    float dist = fabs(zVal-BWires_Y[i].z_start);
+    std::cout << "NearDeadRegCollection: \t dist is " << dist << std::endl;
+
+    if (dist < minDist_Y) {
+      minDist_Y = dist;
+    }
+
+    if (BWires_Y[i].isLowWire == true) {
+      float z1 = BWires_Y[i].z_start;
+      float z2 = BWires_Y[i+1].z_start;
+
+      if ((zVal >= z1) && (zVal <= z2)) {
+        minDist_Y = 0.0;
+      }
+    }
+  }
+
+  std::cout << "NearDeadRegCollection: minDist_Y is " << minDist_Y << std::endl;
+  std::cout << "NearDeadRegCollection: tolerance is " << tolerance << std::endl;
+  if (minDist_Y < tolerance) {
+    return true;
+  }
+  
+  return false;
+
+}
 
 
 

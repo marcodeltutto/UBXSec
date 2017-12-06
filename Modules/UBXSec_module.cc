@@ -65,6 +65,14 @@
 #include "uboone/UBXSec/DataTypes/UBXSecEvent.h"
 #include "uboone/UBXSec/DataTypes/SelectionResult.h"
 
+
+#include "uboone/Utilities/SignalShapingServiceMicroBooNE.h"
+#include "larevt/CalibrationDBI/Interface/DetPedestalService.h"
+#include "larevt/CalibrationDBI/Interface/DetPedestalProvider.h"
+#include "larevt/CalibrationDBI/Interface/ChannelStatusService.h"
+#include "larevt/CalibrationDBI/Interface/ChannelStatusProvider.h"
+
+
 // LArSoft include
 #include "uboone/UBFlashFinder/PECalib.h"
 #include "larsim/MCCheater/BackTracker.h"
@@ -287,7 +295,14 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _trk_mom_calculator.SetMinLength(_min_track_len);
 
   _database_pdg = new TDatabasePDG;
-
+/*
+  const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
+  for (unsigned int ch = 0; ch < 8256; ch++) {
+    deadRegionsFinder.SetChannelStatus(ch, chanFilt.Status(ch)); 
+  }
+  std::cout << "Now fore reload BWires" << std::endl;
+  deadRegionsFinder.CreateBWires();
+*/
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
 
@@ -404,7 +419,6 @@ void UBXSec::produce(art::Event & e) {
   // Initialize the UBXSecEvent
   ubxsec_event->Init();
 
-
   _run = ubxsec_event->run    = e.id().run();
   _subrun = ubxsec_event->subrun = e.id().subRun();
   _event = ubxsec_event->event  = e.id().event();
@@ -420,6 +434,15 @@ void UBXSec::produce(art::Event & e) {
 
   ::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
+
+  // Prepare the dead region finder
+  std::cout << "Recreate ch status map" << std::endl;
+  const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
+  for (unsigned int ch = 0; ch < 8256; ch++) {
+    deadRegionsFinder.SetChannelStatus(ch, chanFilt.Status(ch));
+  }
+  std::cout << "Now force reload BWires" << std::endl;
+  deadRegionsFinder.CreateBWires();
 
   // Use '_detp' to find 'efield' and 'temp'
   auto const* _detp = lar::providerFrom<detinfo::DetectorPropertiesService>();
@@ -893,14 +916,43 @@ void UBXSec::produce(art::Event & e) {
         ubxsec_event->slc_kalman_ndof[slice] = trk_ptr->Ndof();
       }
     }
-    bool goodTrack = false;
+    bool goodTrack = true;
     for (auto trk : track_v_v[slice]) {
-      if (!deadRegionsFinder.NearDeadReg2P( (trk->Vertex()).Y(), (trk->Vertex()).Z(), 0.6 )  &&
-          !deadRegionsFinder.NearDeadReg2P( (trk->End()).Y(),    (trk->End()).Z(),    0.6 )  &&
-          UBXSecHelper::TrackPassesHitRequirment(e, _pfp_producer, trk, _minimumHitRequirement) ) {
-        goodTrack = true;
-        continue;
-      }
+      if (deadRegionsFinder.NearDeadReg2P( (trk->Vertex()).Y(), (trk->Vertex()).Z(), 0.6 )  &&
+          deadRegionsFinder.NearDeadReg2P( (trk->End()).Y(),    (trk->End()).Z(),    0.6 )  &&
+          !UBXSecHelper::TrackPassesHitRequirment(e, _pfp_producer, trk, _minimumHitRequirement) ) {
+        goodTrack = false;
+        //continue;
+      } 
+
+      /*
+      std::cout << "MMMMMMM This is track start, end " << (trk->Vertex()).X() 
+        << ", " << (trk->Vertex()).Y() << ", " 
+        << (trk->Vertex()).Z() << ", end " 
+        << (trk->End()).X() << ", " 
+        << (trk->End()).Y() << ", " 
+        << (trk->End()).Z() 
+        << " ===>>> " << (goodTrack ? "IS GOOD" : "IS BAD")<< std::endl;
+
+      double loc[3] = {trk->Vertex().X(), trk->Vertex().Y(), trk->Vertex().Z()};
+      raw::ChannelID_t ch = geo->NearestChannel(loc, geo::PlaneID(0,0,2));
+      const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
+      std::cout << "START Nearest ch is " << ch << ", and status is " << chanFilt.Status(ch) << std::endl;
+
+     std::vector< geo::WireID > wire_v = geo->ChannelToWire(ch);
+      std::cout << "Corresponds to wire " << wire_v[0].Wire << " on plane " << wire_v[0].Plane << std::endl;
+
+      loc[0] = (trk->End()).X(); loc[1] = (trk->End()).Y(); loc[2] = (trk->End()).Z();
+      ch = geo->NearestChannel(loc, geo::PlaneID(0,0,2));
+      std::cout << "END Nearest ch is " << ch << ", and status is " << chanFilt.Status(ch) << std::endl;
+      wire_v = geo->ChannelToWire(ch);
+      std::cout << "Corresponds to wire " << wire_v[0].Wire << " on plane " << wire_v[0].Plane << std::endl;
+      std::cout << "Trying with ch " << ch +1 << ", status is " << chanFilt.Status(ch+1)  << std::endl;
+*/
+if(deadRegionsFinder.NearDeadRegCollection( trk->Vertex().Z(), 10) )
+          std::cout << "Start is near dead region collection" << std::endl;
+      if(deadRegionsFinder.NearDeadRegCollection( trk->End().Z(), 10 ) )
+          std::cout << "End is near dead region collection" << std::endl; 
     }
     if (goodTrack) ubxsec_event->slc_passed_min_track_quality[slice] = true;
     else ubxsec_event->slc_passed_min_track_quality[slice] = false;

@@ -121,7 +121,7 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p) {
 
   _helper.Configure(p.get<fhicl::ParameterSet>("AlgorithmConfiguration"));
 
-  _debug = p.get<bool>("DebugMode", true);
+  _debug = p.get<bool>("DebugMode", false);
 
   fDetectorProperties = lar::providerFrom<detinfo::DetectorPropertiesService>(); 
 
@@ -340,7 +340,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
       shit_v.emplace_back(shit);
     }
 
-    std::cout << "[StoppingMuonTagger] Simple hit vector size " << shit_v.size() << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] Simple hit vector size " << shit_v.size() << std::endl;
 
     // Clear the algorithm
     if (_debug) std::cout << "[StoppingMuonTagger] Clear algo" << std::endl;

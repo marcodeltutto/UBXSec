@@ -376,7 +376,11 @@ art::Ptr<recob::PFParticle> ubana::TPCObjectMaker::GetNuPFP(lar_pandora::PFParti
     if(lar_pandora::LArPandoraHelper::IsNeutrino(pfp_v.at(pfp))) {
       return pfp_v.at(pfp);
     }
+    if(_pandora_cosmic_mode && pfp_v.at(pfp)->IsPrimary()) {
+      return pfp_v.at(pfp);
+    }
   }
+
   std::cout << "[TPCObjectMaker] No neutrino PFP found." << std::endl;
 
   art::Ptr<recob::PFParticle> temp;

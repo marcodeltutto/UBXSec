@@ -44,6 +44,8 @@ ubxsec_mc_reco:
   ophitBeamTest:                  @local::microboone_ophit_saturation_beam
   simpleFlashBeamTest:            @local::UBFlashBeamMC
 
+  pandoraCosmicTPCObj:            @local::TPCObjectMakerCosmic
+
   pandoraCosmicTrackPFPart:       @local::microboone_cosmicpfparticletagger
   pandoraCosmicFlashTag:          @local::microboone_cosmicpfpflashtagger
   pandoraCosmicACPTTagger:        @local::microboone_acpttagger 
@@ -91,10 +93,11 @@ ubxsec_mc_ana:
 ubxsec_mc_producers: [ saturationTest, 
                        ophitBeamTest,
                        simpleFlashBeamTest,
+                       pandoraCosmicTPCObj,
                        pandoraCosmicTrackPFPart,
                        pandoraCosmicFlashTag,
                        pandoraCosmicACPTTagger,
-                       pandoraCosmicStoppingMu
+                       pandoraCosmicStoppingMu,
                        pandoraCosmicHitRemoval,
                        pandoraNu,
                        pandoraNuAll,

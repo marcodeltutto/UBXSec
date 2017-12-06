@@ -83,10 +83,10 @@ namespace ubana{
     void Emplace(ubana::SimpleHitVector v) {_s_hit_v = v;}
     
     /// Filter hits keeping only in selected plane
-    void FilterByPlane(int);
+    size_t FilterByPlane(int);
 
     /// Sets the start hit given time, wire and plane
-    void SetStartHit(double t, int w, int p);
+    void SetStartHit(double t, double w, int p);
 
     /// Orde hits from start hit (has to be set)
     void OrderHits();
@@ -109,6 +109,9 @@ namespace ubana{
     ///Set the conversion from time to cm
     void SetT2Cm(double x) {_t2cm = x;}
 
+    /// Sets the max distance between consecutive hits
+    void SetMaxAllowedHitDistance(double x) {_max_allowed_hit_distance = x;}
+
     /// Removes max and min value and returns the median
     double GetTruncMedian(std::vector<double> v);
 
@@ -123,6 +126,8 @@ namespace ubana{
     double _w2cm = 0.3;    // to cm 
     double _t2cm = 0.0557; // to cm
     double _dqds_calib = 198.;
+
+    double _max_allowed_hit_distance = 15.;
 
     bool _hits_ordered = false;
   };

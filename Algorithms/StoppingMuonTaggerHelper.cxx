@@ -32,28 +32,38 @@ namespace ubana {
   //_________________________________________________________________________________ 
   void StoppingMuonTaggerHelper::Clear(){
      _s_hit_v.clear();
+     _dqds_v.clear();
+     _ds_v.clear();
+     _dqds_slider.clear();
+
      _start_index = -1;
+     _hits_ordered = false;
   }
 
 
   //_________________________________________________________________________________ 
-  void StoppingMuonTaggerHelper::FilterByPlane(int plane_no) {
+  size_t StoppingMuonTaggerHelper::FilterByPlane(int plane_no) {
+
+    std::vector<ubana::SimpleHit> new_vector;
+    new_vector.clear();
 
     for (size_t element = 0; element < _s_hit_v.size(); element++) {
 
-      if (_s_hit_v.at(element).plane != plane_no)
-        _s_hit_v.erase(_s_hit_v.begin() + element);
+      if (_s_hit_v.at(element).plane == plane_no)
+        new_vector.push_back(_s_hit_v.at(element));
 
     }
 
-    return;
+    std::swap(new_vector, _s_hit_v);
+
+    return _s_hit_v.size();
 
   }
 
 
   //_________________________________________________________________________________
   void StoppingMuonTaggerHelper::SetStartHit(double time, 
-                                             int wire_no, 
+                                             double wire_no, 
                                              int plane_no) {
 
 
@@ -92,7 +102,7 @@ namespace ubana {
 
     auto almost_best_hit = _s_hit_v.at(best_hit_id);
 
-    std::cout << "Almost best hit has wire " << almost_best_hit.wire << ", and time " << almost_best_hit.time << std::endl;
+    std::cout << "Almost best hit has wire " << almost_best_hit.w << ", and time " << almost_best_hit.t << std::endl;
 
     TVector3 pt0(almost_best_hit.time, almost_best_hit.wire, 0);
 
@@ -146,7 +156,7 @@ namespace ubana {
 
       n_step_left ++;
 
-      std::cout << "Found hit on the left with dist < 10, wire " << iter->second.wire << ", time " << iter->second.time << std::endl;
+      std::cout << "Found hit on the left with dist < 10, wire " << iter->second.w << ", time " << iter->second.t << std::endl;
     }
 
     // Then go rigth
@@ -171,20 +181,33 @@ namespace ubana {
 
       n_step_right ++;
 
-      std::cout << "Found hit on the rigth with dist < 10, wire " << iter->second.wire << ", time " << iter->second.time << std::endl; 
+      std::cout << "Found hit on the rigth with dist < 10, wire " << iter->second.w << ", time " << iter->second.t << std::endl; 
     }
 
+    std::cout << "here, best_index_right: " << best_index_right << ", best_index_left " << best_index_left << std::endl;
+
+    _start_index = 0;
+
     if (n_step_left == 0 || n_step_right == 0) {
+      std::cout << "here1" << std::endl;
       _start_index = best_hit_id;
     } else if (n_step_left > n_step_right) {
+      std::cout << "here2" << std::endl;
       _start_index = best_index_right;
-    } else if (n_step_right > n_step_left) {
+    } else if (n_step_right >= n_step_left) {
+      std::cout << "here3" << std::endl;
       _start_index = best_index_left;
     }
 
+    std::cout << "here4" << std::endl;
+
     std::cout << "[StoppingMuonTaggerHelper] Start hit set to w: " 
-              << _s_hit_v.at(_start_index).wire << ", and t: " 
-              << _s_hit_v.at(_start_index).time << std::endl;
+              << _s_hit_v.at(_start_index).w << ", and t: " 
+              << _s_hit_v.at(_start_index).t << std::endl;
+
+    std::cout << "here5" << std::endl;
+
+    return;
   }
 
   
@@ -204,6 +227,9 @@ namespace ubana {
       return;
     }
 
+
+    std::cout << "Max allowed hit distanc: " << _max_allowed_hit_distance << std::endl;
+
     ubana::SimpleHitVector new_vector;
     new_vector.clear();
     new_vector.reserve(_s_hit_v.size());
@@ -212,6 +238,10 @@ namespace ubana {
     _ds_v.reserve(_s_hit_v.size());
 
     new_vector.push_back(_s_hit_v.at(_start_index));
+
+    for (auto h : _s_hit_v) {
+      std::cout << "BEFORE: " << h.w << ", " << h.t << std::endl;
+    }
 
     _s_hit_v.erase(_s_hit_v.begin() + _start_index);
 
@@ -241,7 +271,8 @@ namespace ubana {
       }
 
       // Emplace the next hit in the new vector...
-      if (min_dist < 40) {
+      if (min_dist < _max_allowed_hit_distance) {
+        std::cout << "min_dist: " << min_dist <<std::endl;
         new_vector.push_back(_s_hit_v.at(min_index));
         _ds_v.push_back(min_dist);
       }
@@ -257,9 +288,9 @@ namespace ubana {
     // Now that the vector is ordered, reassing to the original one
     _s_hit_v = new_vector;
 
-    //for (auto h : _s_hit_v) {
-      //std::cout << "AFTER: " << h.wire << ", " << h.time << std::endl;
-    //}
+    for (auto h : _s_hit_v) {
+      std::cout << "AFTER: " << h.w << ", " << h.t << std::endl;
+    }
 
     _hits_ordered = true;
 
@@ -286,12 +317,12 @@ namespace ubana {
     // First calculate vector of ds
     for (size_t i = 0; i < _s_hit_v.size()-1; i++) {
 
-      TVector3 this_point(_s_hit_v.at(i).wire * _w2cm, _s_hit_v.at(i).time * _t2cm, 0);
-      TVector3 next_point(_s_hit_v.at(i+1).wire * _w2cm, _s_hit_v.at(i+1).time * _t2cm, 0);
+      TVector3 this_point(_s_hit_v.at(i).wire, _s_hit_v.at(i).time, 0);
+      TVector3 next_point(_s_hit_v.at(i+1).wire, _s_hit_v.at(i+1).time, 0);
       ds = (this_point - next_point).Mag();
 
       _dqds_v.emplace_back(_s_hit_v.at(i).integral/ds * _dqds_calib);
-      //std::cout << "_dqds_v.back() " << _dqds_v.back() << std::endl;
+      std::cout << "_dqds_v.back() " << _dqds_v.back() << std::endl;
 
     }
 
@@ -352,15 +383,23 @@ namespace ubana {
 
   bool StoppingMuonTaggerHelper::MakeDecision() {
 
+    int _hits_to_remove = 3;
+    int _pre_post_window = 5;
+
+    if (_dqds_slider.size() < (unsigned int) (_hits_to_remove * 2 + _pre_post_window * 2)) {
+      std::cout << "Can't make decision, number of simple hits is " << _dqds_slider.size() << ", which is less then " << _hits_to_remove * 2 + _pre_post_window * 2 << std::endl;
+      return false;
+    }
+
     std::vector<double> temp = _dqds_slider;
 
     // Remove first three and last three hits
-    temp.erase(temp.begin(), temp.begin() + 3);
-    temp.erase(temp.end() - 3, temp.end());
+    temp.erase(temp.begin(), temp.begin() + _hits_to_remove);
+    temp.erase(temp.end() - _hits_to_remove, temp.end());
 
     // Get mean of first and last 5
-    double start_mean = std::accumulate(temp.begin(), temp.begin() + 5, 0);
-    double end_mean = std::accumulate(temp.end() - 5, temp.end(), 0);
+    double start_mean = std::accumulate(temp.begin(), temp.begin() + _pre_post_window, 0);
+    double end_mean = std::accumulate(temp.end() - _pre_post_window, temp.end(), 0);
 
     double perc_diff = (start_mean - end_mean) / start_mean * 100.;
 

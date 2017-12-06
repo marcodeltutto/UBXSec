@@ -141,21 +141,23 @@ private:
   std::string _geantModuleLabel;
   std::string _spacepointLabel;
   bool _do_filter;
+  bool _pandora_cosmic_mode;
   bool _debug;
 };
 
 
 ubana::TPCObjectMaker::TPCObjectMaker(fhicl::ParameterSet const & p)
 {
-  _pfp_producer       = p.get<std::string>("PFParticleProducer"); 
-  _vertexLabel        = p.get<std::string>("VertexProducer");
-  _trackLabel         = p.get<std::string>("TrackProducer");
-  _showerLabel        = p.get<std::string>("ShowerProducer");
-  _hitfinderLabel     = p.get<std::string>("HitProducer");
-  _geantModuleLabel   = p.get<std::string>("GeantModule");
-  _spacepointLabel    = p.get<std::string>("SpacePointProducer");
-  _do_filter          = p.get<bool>       ("FilterObjects");
-  _debug              = p.get<bool>       ("Debug");
+  _pfp_producer        = p.get<std::string>("PFParticleProducer"); 
+  _vertexLabel         = p.get<std::string>("VertexProducer");
+  _trackLabel          = p.get<std::string>("TrackProducer");
+  _showerLabel         = p.get<std::string>("ShowerProducer");
+  _hitfinderLabel      = p.get<std::string>("HitProducer");
+  _geantModuleLabel    = p.get<std::string>("GeantModule");
+  _spacepointLabel     = p.get<std::string>("SpacePointProducer");
+  _do_filter           = p.get<bool>       ("FilterObjects");
+  _pandora_cosmic_mode = p.get<bool>       ("PandoraCosmicMode", "false"); 
+  _debug               = p.get<bool>       ("Debug");
 
   if (_do_filter) _tpcobj_filter = new ubana::TPCObjectFilter();
 
@@ -407,11 +409,14 @@ void ubana::TPCObjectMaker::GetTPCObjects(lar_pandora::PFParticleVector pfPartic
   for (unsigned int n = 0; n < pfParticleList.size(); ++n) {
     const art::Ptr<recob::PFParticle> particle = pfParticleList.at(n);
 
-    if(lar_pandora::LArPandoraHelper::IsNeutrino(particle)) {
-      if (_debug) std::cout << "[TPCObjectMaker] \t Creating TPC Object " << track_v_v.size() << std::endl;
+    bool is_main_pfp = lar_pandora::LArPandoraHelper::IsNeutrino(particle);
+    if (_pandora_cosmic_mode) is_main_pfp = particle->IsPrimary();
 
-      if (_debug) std::cout << "[TPCObjectMaker] \t PFP " << particle->Self() << " is the neutrino PFP." << std::endl;
-      if (_debug) std::cout << "[TPCObjectMaker] \t The neutrino PFP " << (particle->IsPrimary() ? "is" : "is not") << " a primary" << std::endl;
+    if(is_main_pfp) {
+      if (_debug) std::cout << "[TPCObjectMaker] \t >>> Creating TPC Object " << track_v_v.size() << " <<<"<< std::endl;
+
+      if (_debug) std::cout << "[TPCObjectMaker] \t PFP " << particle->Self() << " is the " << (_pandora_cosmic_mode ? "primary" : "neutrino") << " PFP." << std::endl;
+      if (_debug) std::cout << "[TPCObjectMaker] \t The main PFP " << (particle->IsPrimary() ? "is" : "is not") << " a primary" << std::endl;
 
       lar_pandora::TrackVector track_v;
       lar_pandora::ShowerVector shower_v;
@@ -546,16 +551,29 @@ void ubana::TPCObjectMaker::GetMultiplicity(lar_pandora::PFParticleVector pfPart
                                             int & t,
                                             int & s) {
 
+  // Initialize
+  p = t = s = -1;
+
   // Input PFP has to be a neutrino
   if (!lar_pandora::LArPandoraHelper::IsNeutrino(particle)) {
-    std::cerr << "[TPCObjectMaker] Using ubana::TPCObjectMaker::GetMultiplicity with a non neutrino PFP as input. Exiting now." << std::endl;
-    throw std::exception();
+
+    // Check if it's a primary at least, and in case return, otherwise raise exception
+    if (particle->IsPrimary()) {
+      if(_pandora_cosmic_mode) {
+        return;
+      } else {
+        std::cout << "[TPCObjectMaker] Using ubana::TPCObjectMaker::GetMultiplicity with a primary but not a neutrino PFP as input. Will return now." << std::endl;
+        return;
+      }
+    } else {
+      std::cerr << "[TPCObjectMaker] Using ubana::TPCObjectMaker::GetMultiplicity with a non neutrino PFP as input. Exiting now." << std::endl;
+      throw std::exception();
+    }
+
   }
 
-  // Initialize
-  p = 0;
-  t = 0;
-  s = 0;
+  // Reset
+  p = t = s = 0;
 
   const std::vector<size_t> &daughterIDs = particle->Daughters();
   if(daughterIDs.size() == 0) {

@@ -88,7 +88,13 @@ private:
   ::ubana::StoppingMuonTaggerHelper _helper;
 
   std::string _tpcobject_producer;
+  std::string _pfp_producer;
+  std::string _cluster_producer;
+  std::string _track_producer;
 
+  double _coplanar_cut = 5.;
+
+  bool _debug;
 
   TH1D * _h_nstopmu;
   TH1D * _h_stopmu_type;
@@ -105,7 +111,12 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p) {
 
   _fiducial_volume.PrintConfig();
 
-  _tpcobject_producer             = p.get<std::string>("TPCObjectProducer", "TPCObjectMaker");
+  _tpcobject_producer = p.get<std::string>("TPCObjectProducer",  "TPCObjectMaker::UBXSec");
+  _pfp_producer       = p.get<std::string>("PFParticleProducer", "pandoraNu::UBXSec");
+  _cluster_producer   = p.get<std::string>("ClusterProducer",    "pandoraNu::UBXSec");
+  _track_producer     = p.get<std::string>("TrackProducer",    "pandoraNu::UBXSec");
+
+  _debug = p.get<bool>("DebugMode", true);
 
   fDetectorProperties = lar::providerFrom<detinfo::DetectorPropertiesService>(); 
 
@@ -116,62 +127,42 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p) {
 
 void StoppingMuonTagger::produce(art::Event & e) {
 
-  std::cout <<"[StoppingMuonTagger] Starts." << std::endl;
+  if (_debug) std::cout <<"[StoppingMuonTagger] Starts." << std::endl;
 
   // Get TPCObjects from the Event
   art::Handle<std::vector<ubana::TPCObject>> tpcobj_h;
   e.getByLabel(_tpcobject_producer, tpcobj_h);
   if (!tpcobj_h.isValid()) {
-    std::cout << "[StoppingMuonTagger] Cannote locate ubana::TPCObject." << std::endl;
+    //std::cout << "[StoppingMuonTagger] Cannote locate ubana::TPCObject." << std::endl;
+    throw cet::exception(__PRETTY_FUNCTION__) << "Cannote locate ubana::TPCObject." << std::endl;
   }
-  //art::FindManyP<ubana::FlashMatch> tpcobjToFlashMatchAssns(tpcobj_h, e, _neutrino_flash_match_producer);
+
   art::FindManyP<recob::Track>      tpcobjToTrackAssns(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<recob::Shower>     tpcobjToShowerAssns(tpcobj_h, e, _tpcobject_producer);
-  //art::FindManyP<anab::CosmicTag>   tpcobjToCosmicTagAssns(tpcobj_h, e, _geocosmictag_producer);
 
   std::vector<art::Ptr<ubana::TPCObject>> tpcobj_v;
   art::fill_ptr_vector(tpcobj_v, tpcobj_h);
 
-  /*
-  // Collect tracks and map track->hit
-  lar_pandora::TrackVector track_v;
-  lar_pandora::TracksToHits tracks_to_hits;
-  lar_pandora::LArPandoraHelper::CollectTracks(e, "pandoraNu::UBXSec", track_v, tracks_to_hits);
-
-  // Collect showers and map shower->hit
-  lar_pandora::ShowerVector shower_v;
-  lar_pandora::ShowersToHits showers_to_hits; 
-  lar_pandora::LArPandoraHelper::CollectShowers(e, "pandoraNu::UBXSec", shower_v, showers_to_hits); 
-*/
   // Collect pfparticles and map pfp->spacepoint
   lar_pandora::PFParticleVector pfp_v;
   lar_pandora::PFParticlesToSpacePoints pfps_to_spacepoints;
-  lar_pandora::LArPandoraHelper::CollectPFParticles(e, "pandoraNu::UBXSec", pfp_v, pfps_to_spacepoints);
-
+  lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, pfp_v, pfps_to_spacepoints);
 
   // Collect pfparticles and map pfp->cluster
   lar_pandora::PFParticlesToClusters pfps_to_clusters;
-  lar_pandora::LArPandoraHelper::CollectPFParticles(e, "pandoraNu::UBXSec", pfp_v, pfps_to_clusters);
+  lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, pfp_v, pfps_to_clusters);
 
   // Collect clusters and map cluster->hit
   lar_pandora::ClusterVector cluster_v;
   lar_pandora::ClustersToHits clusters_to_hits;
-  lar_pandora::LArPandoraHelper::CollectClusters(e, "pandoraNu::UBXSec", cluster_v, clusters_to_hits);
+  lar_pandora::LArPandoraHelper::CollectClusters(e, _cluster_producer, cluster_v, clusters_to_hits);
 
-  // Collect hits
-  art::Handle<std::vector<recob::Hit>> hit_h;
-  e.getByLabel("pandoraCosmicHitRemoval", hit_h); 
-  if(!hit_h.isValid()) {
-    std::cout << "[StoppingMuonTagger] Cannote locate recob::Hit." << std::endl;
-  }
-  std::vector<art::Ptr<recob::Hit>> hit_v;
-  art::fill_ptr_vector(hit_v, hit_h);
-  for (auto h : hit_v){
-    if (h->WireID().Wire == 2056) {
-      std::cout << "Found hit on wire 2056, time is " << h->PeakTime() << std::endl;
-    }
-  }
+  // Collect tracks and map pfp->track
+  lar_pandora::TrackVector track_v;
+  lar_pandora::PFParticlesToTracks pfps_to_tracks;
+  lar_pandora::LArPandoraHelper::CollectTracks(e, _track_producer, track_v, pfps_to_tracks);
+
 
   int n_stopmu = 0;
 
@@ -214,37 +205,23 @@ void StoppingMuonTagger::produce(art::Event & e) {
     std::cout <<"[StoppingMuonTagger]\t Number of PFPs for this TPCObject:    " << pfps.size()    << std::endl;
 
 
-    // Get all the hits ...
-    std::vector<art::Ptr<recob::Hit>> hit_v;
-    hit_v.clear();
 
-    /*
-    // ...from tracks
-    for (auto t : tracks) {
-      auto iter = tracks_to_hits.find(t);
-      if (iter == tracks_to_hits.end()) {
-        std::cout << "[StoppingMuonTagger] Track in TPCObject not found by pandora!?" << std::endl;
-        throw std::exception();
-      }
-      hit_v.reserve(hit_v.size() + iter->second.size());
-      hit_v.insert(hit_v.end(), iter->second.begin(), iter->second.end());     
-    }
-
-    // ...from showers
-    for (auto s : showers) { 
-      auto iter = showers_to_hits.find(s);
-      if (iter == showers_to_hits.end()) { 
-        std::cout << "[StoppingMuonTagger] Shower in TPCObject not found by pandora!?" << std::endl;
-        throw std::exception();
-      }
-      hit_v.reserve(hit_v.size() + iter->second.size()); 
-      hit_v.insert(hit_v.end(), iter->second.begin(), iter->second.end());
-    }
-    */
-
-    // Get all the Hits SpacePoints from the PFPs
+    // Get all the SpacePoints from the PFPs (this will be used to look for 
+    // the highest point in the TPCObject). Also get all the clusters for this
+    // TPCObject, and use the clusters to go to the hits. Collect all
+    // these hits in a vector.
+    // When we look at the primary pfp (a cosmic by fiat in pandoraCosmic), 
+    // get the track and then check that is not coplanar with wires in the 
+    // collection plane.
+  
     std::vector<art::Ptr<recob::SpacePoint>> sp_v;
     sp_v.clear();
+
+    std::vector<art::Ptr<recob::Hit>> hit_v; 
+    hit_v.clear();
+
+    bool collection_coplanar = false;
+
     for (auto p : pfps) {
       auto iter = pfps_to_spacepoints.find(p);
       if (iter == pfps_to_spacepoints.end()) { 
@@ -270,6 +247,25 @@ void StoppingMuonTagger::produce(art::Event & e) {
         hit_v.reserve(hit_v.size() + iter3->second.size());
         hit_v.insert(hit_v.end(), iter3->second.begin(), iter3->second.end());
       } 
+
+      if (p->IsPrimary() && !lar_pandora::LArPandoraHelper::IsNeutrino(p)) {
+        auto iter4 = pfps_to_tracks.find(p);
+        if (iter4 == pfps_to_tracks.end()) {
+          std::cout << "[StoppingMuonTagger] PFParticle in TPCObject not found by pandora !?" << std::endl;
+          throw std::exception();
+        }
+        if ((iter4->second).size() != 0) { 
+          double deltax = (iter4->second)[0]->Vertex().Z() - (iter4->second)[0]->End().Z();
+          std::cout << "delta x is " << deltax << std::endl;
+          std::cout << "coplanar)cut is " << _coplanar_cut << std::endl; 
+          collection_coplanar = (iter4->second)[0]->Vertex().Z() - (iter4->second)[0]->End().Z() < _coplanar_cut;
+          std::cout << "collection_coplanar is " << (collection_coplanar ? "true" : "false") << std::endl;
+        }
+      }
+    }
+
+    if (hit_v.size() == 0) {
+      continue;
     }
 
     // Now get the highest point
@@ -283,9 +279,12 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     const double *highest_point = sp_v.at(0)->XYZ();
     //raw::ChannelID_t ch = geo->NearestChannel(highest_point, 2);
-    int w = geo->NearestWire(highest_point, 2);
-    size_t time = fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2));
-    std::cout << "[StoppingMuonTagger] Highest point: wire: " << w << ", time: " << time << std::endl;
+    int highest_w = geo->NearestWire(highest_point, 2) * geo->WirePitch(geo::PlaneID(0,0,2));
+    double highest_t = highest_point[0];
+    //size_t time = fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2));
+    std::cout << "[StoppingMuonTagger] Highest point: wire: " << geo->NearestWire(highest_point, 2) 
+              << ", time: " << fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2)) 
+              << std::endl;
 
     /*
     double time2cm = 0.1;
@@ -305,20 +304,30 @@ void StoppingMuonTagger::produce(art::Event & e) {
     ubana::SimpleHitVector shit_v;
     for (auto h : hit_v) {
       ubana::SimpleHit shit;
-      shit.t = fDetectorProperties->ConvertTicksToX(h->PeakTime(), 
-                                                       geo::PlaneID(0,0,2));
-      shit.w = h->WireID().Wire * geo->WirePitch(geo::PlaneID(0,0,2));
+      shit.t = h->PeakTime();
+      shit.w = h->WireID().Wire;
+
       shit.plane = h->View();
       shit.integral = h->Integral();
 
-      shit.time = h->PeakTime();
-      shit.wire = h->WireID().Wire;
+      shit.time = fDetectorProperties->ConvertTicksToX(h->PeakTime(), geo::PlaneID(0,0,2));
+      shit.wire = h->WireID().Wire * geo->WirePitch(geo::PlaneID(0,0,2));
 
-      //std::cout << "Emplacing hit with time " << shit.time << ", and wire " << shit.wire << ", on plane " << shit.plane << std::endl;
+      std::cout << "Emplacing hit with time " << shit.t << ", and wire " << shit.w << ", on plane " << shit.plane << std::endl;
       shit_v.emplace_back(shit);
     }
 
     std::cout << "[StoppingMuonTagger] Simple hit vector size " << shit_v.size() << std::endl;
+
+    // Clear the algorithm
+    std::cout << "[StoppingMuonTagger] Clear algo" << std::endl;
+    _helper.Clear();
+
+    if (collection_coplanar) {
+      _helper.SetMaxAllowedHitDistance(40);
+    } else {
+      _helper.SetMaxAllowedHitDistance(15); 
+    }
 
     // Emplace to the helper
     std::cout << "[StoppingMuonTagger] Now emplace hits" << std::endl;
@@ -326,12 +335,13 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     // Only collection plane hits
     std::cout << "[StoppingMuonTagger] Now filter hits by plane" << std::endl;
-    _helper.FilterByPlane(2);
+    size_t n_hits = _helper.FilterByPlane(2);
 
-    
+    if (n_hits == 0) continue;
+
     // Set the start hit
     std::cout << "[StoppingMuonTagger] Now set start hit" << std::endl;
-    _helper.SetStartHit(time, w, 2); 
+    _helper.SetStartHit(highest_t, highest_w, 2); 
 
     // Order hits
     std::cout << "[StoppingMuonTagger] Now order hits" << std::endl;
@@ -349,13 +359,13 @@ void StoppingMuonTagger::produce(art::Event & e) {
     std::cout << "[StoppingMuonTagger] Now make a decision" << std::endl;
     bool result = _helper.MakeDecision();
 
-    std::cout << "[StoppingMuonTagger] Is stoppin muon? " << (result ? "YES" : "NO") << std::endl;
+    std::cout << "[StoppingMuonTagger] Is stopping muon? " << (result ? "YES" : "NO") << std::endl;
 
   } // TPCObject loop
 
   _h_nstopmu->Fill(n_stopmu);
 
-  std::cout <<"[StoppingMuonTagger] Ends." << std::endl;
+  if (_debug) std::cout <<"[StoppingMuonTagger] Ends." << std::endl;
 
 }
 

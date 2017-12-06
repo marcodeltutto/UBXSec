@@ -7,8 +7,17 @@ BEGIN_PROLOG
 StoppingMuonTagger: {
   module_type:             "StoppingMuonTagger"
   TPCObjectProducer:       "TPCObjectMaker"
+  PFParticleProducer:      "pandoraNu::UBXSec"
+  ClusterProducer:         "pandoraNu::UBXSec"
+  TrackProducer:           "pandoraNu::UBXSec"
 
   FiducialVolumeSettings:  @local::UBXSecFiducialVolumeSettings  
 }
+
+microboone_cosmicstoppingmutagger: @local::StoppingMuonTagger
+microboone_cosmicstoppingmutagger.TPCObjectProducer:  "pandoraCosmicTPCObj" 
+microboone_cosmicstoppingmutagger.PFParticleProducer: "pandoraCosmic"
+microboone_cosmicstoppingmutagger.ClusterProducer:    "pandoraCosmic"
+microboone_cosmicstoppingmutagger.TrackProducer:      "pandoraCosmic"
 
 END_PROLOG

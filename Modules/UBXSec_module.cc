@@ -391,7 +391,9 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
 void UBXSec::produce(art::Event & e) {
 
   if(_debug) std::cout << "********** UBXSec starts" << std::endl;
-  if(_debug) std::cout << "event: " << e.id().event() << std::endl;
+  if(_debug) std::cout << "Run:    " << e.id().run()    << std::endl; 
+  if(_debug) std::cout << "SubRun: " << e.id().subRun() << std::endl;
+  if(_debug) std::cout << "Event:  " << e.id().event()  << std::endl;
 
 
   // Instantiate the output

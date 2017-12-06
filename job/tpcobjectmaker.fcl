@@ -13,6 +13,22 @@ TPCObjectMaker: {
   GeantModule:                "largeant"
   SpacePointProducer:         "pandoraNu::UBXSec"
   FilterObjects:              true
+  PandorCosmicMode:           false
+  Debug:                      true
+}
+
+
+TPCObjectMakerCosmic: {
+  module_type:                "TPCObjectMaker"
+  PFParticleProducer:         "pandoraCosmic"
+  TrackProducer:              "pandoraCosmic"
+  ShowerProducer:             "pandoraCosmic"
+  VertexProducer:             "pandoraCosmic"
+  HitProducer:                "gaushit"
+  GeantModule:                "largeant"
+  SpacePointProducer:         "pandoraCosmic"
+  FilterObjects:              false
+  PandorCosmicMode:           true
   Debug:                      true
 }
 

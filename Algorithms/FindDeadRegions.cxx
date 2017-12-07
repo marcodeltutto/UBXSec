@@ -78,17 +78,7 @@ void FindDeadRegions::LoadBWires() {
   float ex;
   float ey;
   float ez;
-/*
-  std::vector<unsigned int> channelVec;
-  std::vector<unsigned int> planeVec;
-  std::vector<unsigned int> wireVec;
-  std::vector<float> sxVec;
-  std::vector<float> syVec;
-  std::vector<float> szVec;
-  std::vector<float> exVec;
-  std::vector<float> eyVec;
-  std::vector<float> ezVec;
-*/
+
   double xyz[3];
 
   std::cout << "[FindDeadRegions] Loading geometry." << std::endl;
@@ -120,9 +110,6 @@ void FindDeadRegions::LoadBWires() {
       ex = xyz[0];
       ey = xyz[1];
       ez = xyz[2];
-
-      if (channel == 6128) 
-         std::cout << "[FindDeadRegions] channel 6128, corresponds to wire " << wire << " and position is " << sx << ", " << sy << ", " << sz << ", " << ex << ", " << ey << ", " << ez << std::endl;   
 
       channelVec.push_back(channel);
       planeVec.push_back(plane);
@@ -213,12 +200,6 @@ void FindDeadRegions::LoadBWires() {
     // **********
 
     const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
-
-    
-    //std::cout << "Just before chanFilt.Status(1)"<< std::endl;
-    //chanFilt.Status(1);
-    //std::cout << "Just after chanFilt.Status(1)"<< std::endl;
-    
 
     CSchannelVec.resize(8256);
     CSstatusVec.resize(8256);

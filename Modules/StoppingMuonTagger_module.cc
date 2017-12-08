@@ -22,6 +22,7 @@
 #include "lardata/Utilities/AssociationUtil.h"
 
 #include <memory>
+#include <limits>
 
 // Data products include
 #include "lardataobj/MCBase/MCTrack.h"
@@ -89,6 +90,9 @@ private:
   ::ubana::FiducialVolume _fiducial_volume;
 
   ::ubana::StoppingMuonTaggerHelper _helper;
+
+  /// Takes a pointer to a point, and if outside the dector puts it at the det border
+  void ContainPoint(double * point);
 
   std::string _tpcobject_producer;
   std::string _pfp_producer;
@@ -312,8 +316,10 @@ void StoppingMuonTagger::produce(art::Event & e) {
                 return xyz_a[1] > xyz_b[1];
               });
 
-    const double *highest_point = sp_v.at(0)->XYZ();
+    const double *highest_point_c = sp_v.at(0)->XYZ();
+    double highest_point[3] = {highest_point_c[0], highest_point_c[1], highest_point_c[2]};
     //raw::ChannelID_t ch = geo->NearestChannel(highest_point, 2);
+    this->ContainPoint(highest_point);
     int highest_w = geo->NearestWire(highest_point, 2) * geo->WirePitch(geo::PlaneID(0,0,2));
     double highest_t = highest_point[0];
     //size_t time = fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2));
@@ -411,5 +417,31 @@ void StoppingMuonTagger::produce(art::Event & e) {
   if (_debug) std::cout <<"[StoppingMuonTagger] Ends." << std::endl;
 
 }
+
+void StoppingMuonTagger::ContainPoint(double * point) {
+
+  double x = point[0];
+  double y = point[1];
+  double z = point[2];
+
+  double e = std::numeric_limits<double>::epsilon();
+
+  if (x < 0. + e)
+    point[0] = 0. + e;
+  if (x > 2.*geo->DetHalfWidth() - e)
+    point[0] = 2.*geo->DetHalfWidth() - e;
+
+  if (y < -geo->DetHalfWidth() + e)
+    point[1] = -geo->DetHalfWidth() + e;
+  if (y > geo->DetHalfWidth() - e)
+    point[1] = geo->DetHalfWidth() - e;
+
+  if (z < 0. + e) 
+    point[2] = 0.+ e;
+  if (z > geo->DetLength() - e)
+    point[2] = geo->DetLength() - e;
+
+}
+
 
 DEFINE_ART_MODULE(StoppingMuonTagger)

@@ -489,12 +489,8 @@ bool FindDeadRegions::NearDeadRegCollection(float zVal, float tolerance) {
 
   float minDist_Y = 100000.0;
 
-  std::cout << "BWires_Y.size() " << BWires_Y.size() << std::endl;
-
   for (unsigned int i = 0; i < BWires_Y.size(); i++) {
-    std::cout << "NearDeadRegCollection: looking at bwire with z" << BWires_Y[i].z_start << std::endl;
     float dist = fabs(zVal-BWires_Y[i].z_start);
-    std::cout << "NearDeadRegCollection: \t dist is " << dist << std::endl;
 
     if (dist < minDist_Y) {
       minDist_Y = dist;
@@ -510,8 +506,6 @@ bool FindDeadRegions::NearDeadRegCollection(float zVal, float tolerance) {
     }
   }
 
-  std::cout << "NearDeadRegCollection: minDist_Y is " << minDist_Y << std::endl;
-  std::cout << "NearDeadRegCollection: tolerance is " << tolerance << std::endl;
   if (minDist_Y < tolerance) {
     return true;
   }

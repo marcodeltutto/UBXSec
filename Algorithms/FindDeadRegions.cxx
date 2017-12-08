@@ -37,12 +37,13 @@
 #include "FindDeadRegions.h"
 
 FindDeadRegions::FindDeadRegions()//fhicl::ParameterSet const & p, art::ActivityRegistry & areg)
-// :
-// Initialize member data here.
 {
 
-  // Load boundary wires at initialization
-  LoadBWires();
+  // Load wire geometry at initialization
+  LoadWireGeometry();
+
+  CSchannelVec.resize(8256);
+  CSstatusVec.resize(8256);
 
 }
 
@@ -63,9 +64,9 @@ void FindDeadRegions::SetChannelStatus(unsigned int ch, int status) {
 
 }
 
-void FindDeadRegions::LoadBWires() {
+void FindDeadRegions::LoadWireGeometry() {
 
-  std::cout << "[FindDeadRegions] Loading wires from " << (_use_file ? " files." : "database.") << std::endl;
+  std::cout << "[FindDeadRegions] Loading wires from " << (_use_file ? "files." : "database.") << std::endl;
 
   ::art::ServiceHandle<geo::Geometry> geo;
 
@@ -190,6 +191,12 @@ void FindDeadRegions::LoadBWires() {
     geofile.close();
   }
 
+}
+
+
+
+
+void FindDeadRegions::LoadChannelStatus() {
 
   std::cout << "[FindDeadRegions] Loading channel statuses." << std::endl;
 
@@ -252,7 +259,6 @@ void FindDeadRegions::LoadBWires() {
 
   std::cout << "[FindDeadRegions] Loading ended." << std::endl;
 
-  CreateBWires();
 }
 
 
@@ -351,7 +357,6 @@ void FindDeadRegions::CreateBWires() {
     if((CSstatusVec.at(i) == false) && (isGoodChannel == true)) {
       isGoodChannel = false;
 
-      std::cout << "start of bwire at ch " << i << std::endl;
       BoundaryWire BWire;
       BWire.wire_num = wireVec.at(i);
       BWire.y_start = syVec.at(i);
@@ -365,7 +370,6 @@ void FindDeadRegions::CreateBWires() {
     else if((CSstatusVec.at(i) == true) && (isGoodChannel == false)) {
       isGoodChannel = true;
 
-      std::cout << "end of bwire at ch " << i << std::endl;
       BoundaryWire BWire;
       BWire.wire_num = wireVec.at(i-1);
       BWire.y_start = syVec.at(i-1);

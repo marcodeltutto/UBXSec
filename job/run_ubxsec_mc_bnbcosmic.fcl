@@ -19,6 +19,8 @@ physics.producers.pandoraCosmicTrackPFPart.FlashTimeVetoEnd:   4.80
 
 physics.producers.NeutrinoFlashMatch.FlashVetoTimeStart: 3.20
 physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   4.80
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillStarts: 3.20 
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillEnds:   4.80
 
 physics.producers.UBXSec.BeamSpillStart:                 3.20
 physics.producers.UBXSec.BeamSpillEnd:                   4.80

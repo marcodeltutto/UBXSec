@@ -34,7 +34,7 @@ services:
 
 #services.DatabaseUtil.ShouldConnect: false
 #services.PmtGainService.PmtGainProvider.UseDB:               true
-services.ChannelStatusService.ChannelStatusProvider.UseDB:   true
+#services.ChannelStatusService.ChannelStatusProvider.UseDB:   false
 #services.DetPedestalService.DetPedestalRetrievalAlg.UseDB:   false
 
 services.DetectorPropertiesService.NumberTimeSamples:        6400

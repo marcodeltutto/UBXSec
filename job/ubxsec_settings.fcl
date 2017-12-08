@@ -25,6 +25,7 @@ UBXSec: {
 
   UseGENIEInfo:                 true
   MinimumHitRequirement:        3
+  MinimumDistanceToDeadRegion:  5.
 
   GeoCosmicScoreCut:            0.6
   ToleranceTrackMultiplicity:   5.

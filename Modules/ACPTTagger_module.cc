@@ -218,7 +218,7 @@ void ACPTTagger::produce(art::Event & e)
   e.getByLabel(_swtrigger_producer, softwareTriggerHandle);
 
   if (!softwareTriggerHandle.isValid() || softwareTriggerHandle.failedToGet()){
-    std::cerr << "Failed to get software trigget data product with label " << _swtrigger_producer << std::endl;
+    //std::cerr << "Failed to get software trigget data product with label " << _swtrigger_producer << std::endl;
   } else {
     std::vector<std::string> algoNames = softwareTriggerHandle->getListOfAlgorithms();
     size_t trigger = 0;

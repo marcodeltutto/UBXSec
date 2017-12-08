@@ -195,6 +195,8 @@ void StoppingMuonTagger::produce(art::Event & e) {
     std::vector<art::Ptr<recob::PFParticle>> pfps    = tpcobjToPFPAssns.at(tpcobj.key());
     std::vector<art::Ptr<recob::Shower>>     showers = tpcobjToShowerAssns.at(tpcobj.key());
 
+    bool ignore_this = false;
+
     if (!e.isRealData()) {
 
       if (tpcobj->GetOrigin() != ubana::TPCObjectOrigin::kCosmicRay) continue;
@@ -277,7 +279,9 @@ void StoppingMuonTagger::produce(art::Event & e) {
         auto iter4 = pfps_to_tracks.find(p);
         if (iter4 == pfps_to_tracks.end()) {
           std::cout << "[StoppingMuonTagger] PFParticle in TPCObject not found by pandora !?" << std::endl;
-          throw std::exception();
+          //throw std::exception();
+          ignore_this = true;
+          continue;
         }
 
         primary_pfp = p;
@@ -292,6 +296,10 @@ void StoppingMuonTagger::produce(art::Event & e) {
     }
 
     if (hit_v.size() == 0) {
+      continue;
+    }
+
+    if (ignore_this) {
       continue;
     }
 

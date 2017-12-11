@@ -9,9 +9,12 @@ ACPTTagger: {
   PFPartProducer:        "pandoraCosmic"
   TrackProducer:         "pandoraCosmicKHit"
   SpacePointProducer:    "pandoraCosmic"
+  ClusterProducer:       "pandoraCosmic"
   SWTriggerProducer:     "swtrigger"
 
+  UseTracks:             true
   UseSpacePoints:        true
+  UseHits:               true
 
   AnodeTime:             0.53
   CathodeTime:           2291
@@ -22,7 +25,7 @@ ACPTTagger: {
   MinTrackLength:        0
  
   PEMin:                 0
-  Debug:                 false
+  Debug:                 true
   CreateHisto:           false
 }
 

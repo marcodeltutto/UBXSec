@@ -557,16 +557,12 @@ void ACPTTagger::SortSpacePoints(std::vector<art::Ptr<recob::SpacePoint>> sp_v, 
   if (sp_v.size() < 2) 
     return;
 
-  std::cout << "b here1" << std::endl;
-
   // Sort SpacePoints by y position
   std::sort(sp_v.begin(), sp_v.end(),
             [](art::Ptr<recob::SpacePoint> a, art::Ptr<recob::SpacePoint> b) -> bool
             {
               return a->XYZ()[1] > b->XYZ()[1];
             });
-
-  std::cout << "b here2" << std::endl;
 
   // Just save start and end point
   sorted_points.resize(2);
@@ -586,32 +582,22 @@ void ACPTTagger::SortSpacePoints(std::vector<art::Ptr<recob::SpacePoint>> sp_v, 
 
 void ACPTTagger::SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vector<TVector3>& sorted_points, TVector3 highest_point) {
 
-  std::cout << "here1" << std::endl;
   sorted_points.clear();
-  std::cout << "here2" << std::endl;
   if (hit_v.size() < 2)
     return;
-  std::cout << "here3" << std::endl;
   // Only collection plane hits
   std::vector<art::Ptr<recob::Hit>> temp_v;
   temp_v.clear();
-  std::cout << "here4" << std::endl;
   for (size_t i = 0; i < hit_v.size(); i++) {
-    std::cout << "here5" << std::endl;
     if (hit_v.at(i)->View() == 2) {
-      std::cout << "here6" << std::endl;
       temp_v.push_back(hit_v.at(i));
-      std::cout << "here7" << std::endl;
     }
   }
   std::swap(temp_v, hit_v);
-  std::cout << "here8" << std::endl;
   if (hit_v.size() < 2)
     return;
-  std::cout << "here9" << std::endl;
   for (size_t i = 0; i < hit_v.size(); i++) {
 
-    std::cout << "Using hit with wire " << hit_v.at(i)->WireID().Wire << ", time " << hit_v.at(i)->PeakTime() << ", and plane " << hit_v.at(i)->View() << std::endl;
   }
 
   // Sort Hit by x position

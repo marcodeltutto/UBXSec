@@ -214,25 +214,26 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     if (!e.isRealData()) {
 
-      if (tpcobj->GetOrigin() != ubana::TPCObjectOrigin::kCosmicRay) continue;
+      if (tpcobj->GetOrigin() != ubana::TPCObjectOrigin::kCosmicRay &&
+          tpcobj->GetOriginExtra() != ubana::TPCObjectOriginExtra::kStoppingMuon) {
 
-      if (tpcobj->GetOriginExtra() != ubana::TPCObjectOriginExtra::kStoppingMuon) continue;
+        if (_debug) std::cout << "[StoppingMuonTagger] Found TPCObject representing a stopping cosmic muon." << std::endl;
+        n_stopmu++;
 
-      if (_debug) std::cout << "[StoppingMuonTagger] Found TPCObject representing a stopping cosmic muon." << std::endl;
-      n_stopmu++;
+        if (tracks.size() == 1 && showers.size() == 0)          // One track - bin 0
+          _h_stopmu_type->Fill(0);
+        else if (tracks.size() == 0 && showers.size() == 1)     // One shower - bin 1
+          _h_stopmu_type->Fill(1);
+        else if (tracks.size() == 1 && showers.size() == 1)     // One track One shower - bin 2
+          _h_stopmu_type->Fill(2);
+        else if (tracks.size() == 2 && showers.size() == 0)     // Two track Zero shower - bin 3
+          _h_stopmu_type->Fill(3);
+        else if (tracks.size() == 0 && showers.size() == 2)     // Zero track Two shower - bin 4
+          _h_stopmu_type->Fill(4);
+        else                                                    // Others
+          _h_stopmu_type->Fill(5);
 
-      if (tracks.size() == 1 && showers.size() == 0)          // One track - bin 0
-        _h_stopmu_type->Fill(0);
-      else if (tracks.size() == 0 && showers.size() == 1)     // One shower - bin 1
-        _h_stopmu_type->Fill(1);
-      else if (tracks.size() == 1 && showers.size() == 1)     // One track One shower - bin 2
-        _h_stopmu_type->Fill(2);
-      else if (tracks.size() == 2 && showers.size() == 0)     // Two track Zero shower - bin 3
-        _h_stopmu_type->Fill(3);
-      else if (tracks.size() == 0 && showers.size() == 2)     // Zero track Two shower - bin 4
-        _h_stopmu_type->Fill(4);
-      else                                                    // Others
-        _h_stopmu_type->Fill(5);
+      }
 
     }
 

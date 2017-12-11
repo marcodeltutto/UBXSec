@@ -23,7 +23,7 @@ StoppingMuonTagger: {
     MaxAllowedHitDistance: 15
     HitsToRemove:          3
     PrePostWindow:         5
-    PercDiffCut:           20
+    PercDiffCut:           50
     DebugMode:             true
   }
 

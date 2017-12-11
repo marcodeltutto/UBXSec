@@ -435,7 +435,7 @@ namespace ubana {
 
     double perc_diff = (start_mean - end_mean) / start_mean * 100.;
 
-    std::cout << "[IsStopMuBragg] Start mean: " << start_mean << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl;
+    if (_debug) std::cout << "[IsStopMuBragg] Start mean: " << start_mean << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl;
 
     if (perc_diff > _perc_diff_cut) {
       return true;
@@ -460,9 +460,10 @@ namespace ubana {
     end_mean /= _pre_post_window;
 
     double perc_diff = (start_mean - end_mean) / start_mean * 100.;
-    std::cout << "[IsStopMuBragg] Start mean: " << start_mean << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl;
 
-    if (perc_diff < -50) {
+    if (_debug) std::cout << "[IsStopMuBragg] Start mean: " << start_mean << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl;
+
+    if (perc_diff < -_perc_diff_cut) {
       return true;
     }
 

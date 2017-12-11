@@ -29,7 +29,7 @@ TPCObjectMakerCosmic: {
   SpacePointProducer:         "pandoraCosmic"
   FilterObjects:              false
   PandorCosmicMode:           true
-  Debug:                      true
+  Debug:                      false
 }
 
 

@@ -43,6 +43,7 @@
 #include "lardataobj/AnalysisBase/CosmicTag.h"
 #include "lardataobj/AnalysisBase/Calorimetry.h"
 #include "uboone/UBXSec/DataTypes/TPCObject.h"
+#include "larreco/RecoAlg/TrajectoryMCSFitter.h"
 
 // LArSoft include
 #include "uboone/UBFlashFinder/PECalib.h"
@@ -85,14 +86,19 @@ private:
   //::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
   //::art::ServiceHandle<detinfo::DetectorPropertiesService> det;
-  detinfo::DetectorProperties const* fDetectorProperties;
+  ::detinfo::DetectorProperties const* fDetectorProperties;
 
   ::ubana::FiducialVolume _fiducial_volume;
 
   ::ubana::StoppingMuonTaggerHelper _helper;
 
+  ::trkf::TrajectoryMCSFitter _mcs_fitter;
+
   /// Takes a pointer to a point, and if outside the dector puts it at the det border
   void ContainPoint(double * point);
+
+  /// Takes a recob::Tracks and returns true if is a stopping muon
+  bool IsStopMuMCS(art::Ptr<recob::Track> t);
 
   std::string _tpcobject_producer;
   std::string _pfp_producer;
@@ -100,6 +106,7 @@ private:
   std::string _track_producer;
 
   double _coplanar_cut = 5.;
+  double _mcs_delta_ll_cut = -5.;
 
   bool _debug;
 
@@ -108,7 +115,8 @@ private:
 };
 
 
-StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p) {
+StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p) 
+  : _mcs_fitter(p.get< fhicl::ParameterSet >("MCSFitter")) {
 
 
   _fiducial_volume.Configure(p.get<fhicl::ParameterSet>("FiducialVolumeSettings"),
@@ -122,6 +130,9 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p) {
   _pfp_producer       = p.get<std::string>("PFParticleProducer", "pandoraNu::UBXSec");
   _cluster_producer   = p.get<std::string>("ClusterProducer",    "pandoraNu::UBXSec");
   _track_producer     = p.get<std::string>("TrackProducer",    "pandoraNu::UBXSec");
+
+  _coplanar_cut       = p.get<double>("CoplanarCut",   5.);
+  _mcs_delta_ll_cut   = p.get<double>("MCSDeltaLLCut", -5.);
 
   _helper.Configure(p.get<fhicl::ParameterSet>("AlgorithmConfiguration"));
 
@@ -291,10 +302,11 @@ void StoppingMuonTagger::produce(art::Event & e) {
         primary_pfp = p;
         primary_track_v = iter4->second;
 
-        if ((iter4->second).size() != 0) { 
-          double deltax = (iter4->second)[0]->Vertex().Z() - (iter4->second)[0]->End().Z();
+        if (primary_track_v.size() != 0) { 
+          double deltax = primary_track_v.at(0)->Vertex().Z() - primary_track_v.at(0)->End().Z();
           if (_debug) std::cout << "delta x is " << deltax << std::endl;
-          collection_coplanar = (iter4->second)[0]->Vertex().Z() - (iter4->second)[0]->End().Z() < _coplanar_cut;
+          collection_coplanar = primary_track_v.at(0)->Vertex().Z() - primary_track_v.at(0)->End().Z() 
+                                < _coplanar_cut;
         }
       }
     }
@@ -320,8 +332,8 @@ void StoppingMuonTagger::produce(art::Event & e) {
     double highest_point[3] = {highest_point_c[0], highest_point_c[1], highest_point_c[2]};
     //raw::ChannelID_t ch = geo->NearestChannel(highest_point, 2);
     this->ContainPoint(highest_point);
-    int highest_w = geo->NearestWire(highest_point, 2) * geo->WirePitch(geo::PlaneID(0,0,2));
-    double highest_t = highest_point[0];
+    int highest_w = geo->NearestWire(highest_point, 2) ;//* geo->WirePitch(geo::PlaneID(0,0,2));
+    double highest_t = fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2))/4.;//highest_point[0];
     //size_t time = fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2));
     if (_debug) std::cout << "[StoppingMuonTagger] Highest point: wire: " << geo->NearestWire(highest_point, 2) 
                        << ", time: " << fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2)) 
@@ -341,16 +353,16 @@ void StoppingMuonTagger::produce(art::Event & e) {
     ubana::SimpleHitVector shit_v;
     for (auto h : hit_v) {
       ubana::SimpleHit shit;
-      shit.t = h->PeakTime();
-      shit.w = h->WireID().Wire;
+      shit.t = fDetectorProperties->ConvertTicksToX(h->PeakTime(), geo::PlaneID(0,0,2));
+      shit.w = h->WireID().Wire * geo->WirePitch(geo::PlaneID(0,0,2));
 
       shit.plane = h->View();
       shit.integral = h->Integral();
 
-      shit.time = fDetectorProperties->ConvertTicksToX(h->PeakTime(), geo::PlaneID(0,0,2));
-      shit.wire = h->WireID().Wire * geo->WirePitch(geo::PlaneID(0,0,2));
+      shit.time = h->PeakTime() / 4;
+      shit.wire = h->WireID().Wire;
 
-      if (_debug) std::cout << "Emplacing hit with time " << shit.t << ", and wire " << shit.w << ", on plane " << shit.plane << std::endl;
+      if (_debug) std::cout << "Emplacing hit with time " << shit.time*4 << ", and wire " << shit.wire << ", on plane " << shit.plane << std::endl;
       shit_v.emplace_back(shit);
     }
 
@@ -365,6 +377,10 @@ void StoppingMuonTagger::produce(art::Event & e) {
     } else {
       _helper.SetMaxAllowedHitDistance(15); 
     }
+
+    // Set the highest point and the FV
+    _helper.SetFiducialVolume(_fiducial_volume);
+    _helper.SetVertexPoint(highest_point);
 
     // Emplace to the helper
     if (_debug) std::cout << "[StoppingMuonTagger] Now emplace hits" << std::endl;
@@ -394,14 +410,24 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     // Make a decision
     if (_debug) std::cout << "[StoppingMuonTagger] Now make a decision" << std::endl;
-    bool result = _helper.MakeDecision();
+    bool result = _helper.MakeDecision(ubana::kAlgoMichel);
 
-    if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon? " << (result ? "YES" : "NO") << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (michel)? " << (result ? "YES" : "NO") << std::endl;
+
+
+    bool result_bragg = _helper.MakeDecision(ubana::kAlgoBragg);
+    if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (bragg)? " << (result_bragg ? "YES" : "NO") << std::endl;
+
+    // Also try with the MCS fitter
+    bool result_mcs = this->IsStopMuMCS(primary_track_v.at(0));
+
+    if (_debug) std::cout << "[StoppingMuonTagger] MCS thinks " << (result_mcs ? "is" : "is not") << " a stopping muon" << std::endl;
 
     double cosmicScore = 0.;
-    if (result) {
+    if (result || result_bragg || result_mcs) {
       cosmicScore = 1.;
     }
+    if (_debug) std::cout << "[StoppingMuonTagger] Cosmic Score is " << cosmicScore << std::endl;
     cosmicTagVector->emplace_back(endPt1, endPt2, cosmicScore, anab::CosmicTagID_t::kGeometry_Y); 
     util::CreateAssn(*this, e, *cosmicTagVector, primary_track_v, *assnOutCosmicTagTrack);
     util::CreateAssn(*this, e, *cosmicTagVector, primary_pfp, *assnOutCosmicTagPFParticle);
@@ -417,6 +443,47 @@ void StoppingMuonTagger::produce(art::Event & e) {
   if (_debug) std::cout <<"[StoppingMuonTagger] Ends." << std::endl;
 
 }
+
+
+
+bool StoppingMuonTagger::IsStopMuMCS(art::Ptr<recob::Track> t) {
+
+  TVector3 track_start = t->Vertex();
+  TVector3 track_end   = t->End();
+
+  // Check it goes donwards
+  if (track_end.Y() > track_start.Y())
+    std::swap(track_start, track_end);
+
+  // Check the upper point is outside the FV
+  bool vtx_contained = _fiducial_volume.InFV(track_start);
+
+  if (vtx_contained)
+    return false;
+
+  recob::MCSFitResult result = _mcs_fitter.fitMcs(*t);
+
+  double fwd_ll = result.fwdLogLikelihood();
+  double bwd_ll = result.bwdLogLikelihood(); 
+
+  if (_debug) std::cout <<"[StoppingMuonTagger] FWD " << fwd_ll << ", BWD " << bwd_ll << std::endl;
+
+  double delta_ll;
+
+  if (track_start.Y() > track_end.Y())
+    delta_ll = fwd_ll - bwd_ll;
+  else
+    delta_ll = bwd_ll - fwd_ll;
+
+  if (_debug) std::cout <<"[StoppingMuonTagger] DELTA " << delta_ll << ", cut at " << _mcs_delta_ll_cut << std::endl;
+  if (delta_ll < _mcs_delta_ll_cut)
+    return true;
+  else
+    return false;
+
+}
+
+
 
 void StoppingMuonTagger::ContainPoint(double * point) {
 

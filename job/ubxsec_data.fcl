@@ -131,7 +131,7 @@ ubxsec_data_reco.pandoraCosmicACPTTagger.CathodeTime:              2318
 ubxsec_data_reco.pandoraCosmicHitRemoval.CosmicProducerLabels:     ["pandoraCosmicTrackPFPart::UBXSec", "pandoraCosmicFlashTag::UBXSec", "pandoraCosmicACPTTagger::UBXSec", "pandoraCosmicStoppingMu::UBXSec" ]
 ubxsec_data_reco.pandoraCosmicHitRemoval.TrackProducerLabels:      ["pandoraCosmic",                    "pandoraCosmic",                 "pandoraCosmicKHit",               "pandoraCosmic"                    ]
 ubxsec_data_reco.pandoraCosmicHitRemoval.AssnProducerLabels:       ["pandoraCosmic",                    "pandoraCosmic",                 "pandoraCosmicKHit",               "pandoraCosmic"                    ]
-ubxsec_data_reco.pandoraCosmicHitRemoval.CosmicTagThresholds:      [0.6,                                0.99,                            0.99,                             5]  #0.99                               ]
+ubxsec_data_reco.pandoraCosmicHitRemoval.CosmicTagThresholds:      [0.6,                                0.99,                            0.99,              0.99                                ]
 ubxsec_data_reco.pandoraCosmicHitRemoval.PFParticleProducerLabel:  "pandoraCosmic"
 ubxsec_data_reco.pandoraCosmicHitRemoval.EndTickPadding:           75
 

@@ -112,8 +112,8 @@ namespace ubana {
 
     auto almost_best_hit = _s_hit_v.at(best_hit_id);
 
-    if (_debug) std::cout << "Almost best hit has wire " << almost_best_hit.w 
-                          << ", and time " << almost_best_hit.t << std::endl;
+    if (_debug) std::cout << "Almost best hit has wire " << almost_best_hit.wire
+                          << ", and time " << almost_best_hit.time*4 << std::endl;
 
     TVector3 pt0(almost_best_hit.time, almost_best_hit.wire, 0);
 
@@ -165,8 +165,8 @@ namespace ubana {
 
       n_step_left ++;
 
-      if (_debug) std::cout << "Found hit on the left, wire " << iter->second.w 
-                            << ", time " << iter->second.t << std::endl;
+      if (_debug) std::cout << "Found hit on the left, wire " << iter->second.wire
+                            << ", time " << iter->second.time << std::endl;
     }
 
     // Then go rigth
@@ -189,8 +189,8 @@ namespace ubana {
 
       n_step_right ++;
 
-      if (_debug) std::cout << "Found hit on the right, wire " << iter->second.w 
-                            << ", time " << iter->second.t << std::endl; 
+      if (_debug) std::cout << "Found hit on the right, wire " << iter->second.wire 
+                            << ", time " << iter->second.time*4 << std::endl; 
     }
 
     _start_index = 0;
@@ -205,8 +205,8 @@ namespace ubana {
 
 
     if (_debug) std::cout << "[StoppingMuonTaggerHelper] Start hit set to w: " 
-                          << _s_hit_v.at(_start_index).w << ", and t: " 
-                          << _s_hit_v.at(_start_index).t << std::endl;
+                          << _s_hit_v.at(_start_index).wire << ", and t: " 
+                          << _s_hit_v.at(_start_index).time*4 << std::endl;
 
 
     return;
@@ -241,7 +241,7 @@ namespace ubana {
 
     if (_debug) {
       for (auto h : _s_hit_v) {
-        std::cout << "BEFORE: " << h.w << ", " << h.t << std::endl;
+        std::cout << "BEFORE: " << h.wire << ", " << h.time*4 << std::endl;
       }
     }
 
@@ -292,7 +292,7 @@ namespace ubana {
 
     if (_debug) {
       for (auto h : _s_hit_v) {
-        std::cout << "AFTER: " << h.w << ", " << h.t << std::endl;
+        std::cout << "AFTER: " << h.wire << ", " << h.time*4 << std::endl;
       }
     }
 
@@ -318,11 +318,10 @@ namespace ubana {
 
     double ds = 1.;
 
-    // First calculate vector of ds
     for (size_t i = 0; i < _s_hit_v.size()-1; i++) {
 
-      TVector3 this_point(_s_hit_v.at(i).wire, _s_hit_v.at(i).time, 0);
-      TVector3 next_point(_s_hit_v.at(i+1).wire, _s_hit_v.at(i+1).time, 0);
+      TVector3 this_point(_s_hit_v.at(i).wire * _w2cm, _s_hit_v.at(i).time * _t2cm, 0);
+      TVector3 next_point(_s_hit_v.at(i+1).wire * _w2cm, _s_hit_v.at(i+1).time * _t2cm, 0);
       ds = (this_point - next_point).Mag();
 
       _dqds_v.emplace_back(_s_hit_v.at(i).integral/ds * _dqds_calib);
@@ -385,7 +384,37 @@ namespace ubana {
   }
 
 
-  bool StoppingMuonTaggerHelper::MakeDecision() {
+  bool StoppingMuonTaggerHelper::MakeDecision(::ubana::StopMuAlgoType algo) {
+
+   switch (algo) {
+
+     case kAlgoMichel:
+       return this->IsStopMuMichel();
+       break;
+
+     case kAlgoBragg:
+       return this->IsStopMuBragg();
+       break;
+
+     case kAlgoSimpleMIP:
+       return false;
+       break;
+
+     case kAlgoCurvature:
+       return false;
+       break;
+
+     default:
+       std::cout << "Algo not found." << std::endl;
+       throw std::exception();
+    }
+
+    return false;
+
+  }
+
+
+  bool StoppingMuonTaggerHelper::IsStopMuMichel() {
 
     if (_dqds_slider.size() < (unsigned int) (_hits_to_remove * 2 + _pre_post_window * 2)) {
       if (_debug) std::cout << "Can't make decision, number of simple hits is " << _dqds_slider.size() << ", which is less then " << _hits_to_remove * 2 + _pre_post_window * 2 << std::endl;
@@ -400,9 +429,13 @@ namespace ubana {
 
     // Get mean of first and last 5
     double start_mean = std::accumulate(temp.begin(), temp.begin() + _pre_post_window, 0);
+    start_mean /= _pre_post_window;
     double end_mean = std::accumulate(temp.end() - _pre_post_window, temp.end(), 0);
+    end_mean /= _pre_post_window;
 
     double perc_diff = (start_mean - end_mean) / start_mean * 100.;
+
+    std::cout << "[IsStopMuBragg] Start mean: " << start_mean << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl;
 
     if (perc_diff > _perc_diff_cut) {
       return true;
@@ -410,6 +443,34 @@ namespace ubana {
 
     return false;   
   }
+
+
+
+
+  bool StoppingMuonTaggerHelper::IsStopMuBragg() {
+
+    // Vertex must not be in the FV
+    if (_fv.InFV(_vertex))
+      return false;
+
+    // Take firsts hits, then lasts hits 
+    double start_mean = std::accumulate(_dqds_slider.begin(), _dqds_slider.begin() + _pre_post_window, 0);
+    start_mean /= _pre_post_window;
+    double end_mean = std::accumulate(_dqds_slider.end() - _pre_post_window, _dqds_slider.end(), 0);
+    end_mean /= _pre_post_window;
+
+    double perc_diff = (start_mean - end_mean) / start_mean * 100.;
+    std::cout << "[IsStopMuBragg] Start mean: " << start_mean << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl;
+
+    if (perc_diff < -50) {
+      return true;
+    }
+
+    return false;
+
+  }
+
+
 }
 
 

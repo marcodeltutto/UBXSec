@@ -20,7 +20,7 @@
 #include "lardataobj/RecoBase/Vertex.h"
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
-
+#include "uboone/UBXSec/Algorithms/FiducialVolume.h"
 
 namespace ubana {
 
@@ -51,6 +51,14 @@ namespace ubana {
   };
 
   typedef std::vector<ubana::SimpleHit> SimpleHitVector;
+
+  enum StopMuAlgoType{
+    kAlgoUnknown = -1,
+    kAlgoMichel = 0,
+    kAlgoBragg = 1,
+    kAlgoCurvature = 2,
+    kAlgoSimpleMIP = 3,
+  };
 
 }
 
@@ -97,8 +105,14 @@ namespace ubana{
     /// Calculated the dqds averaging neibouring hits
     void PerformdQdsSlider();
 
-    /// Returns true if this object has been id'ed as a Stopping Muon
-    bool MakeDecision();
+    /// Returns true if this object has been id'ed as a Stopping Muon given an algo
+    bool MakeDecision(ubana::StopMuAlgoType algo);
+
+    /// Algo, returns true if is a stopping muon decaying to Michel
+    bool IsStopMuMichel();
+
+    /// Algo, returns true if is a stopping muon, looks at the Bragg peak
+    bool IsStopMuBragg();
 
     /// Restores flags
     void Clear();
@@ -112,6 +126,12 @@ namespace ubana{
     /// Sets the max distance between consecutive hits
     void SetMaxAllowedHitDistance(double x) {_max_allowed_hit_distance = x;}
 
+    /// Sets the vertex, or highest point
+    void SetVertexPoint(double *p) {_vertex.SetX(p[0]); _vertex.SetY(p[1]); _vertex.SetZ(p[2]);}
+
+    /// Sets the FV object
+    void SetFiducialVolume(ubana::FiducialVolume fv) {_fv = fv;}
+
     /// Removes max and min value and returns the median
     double GetTruncMedian(std::vector<double> v);
 
@@ -122,6 +142,8 @@ namespace ubana{
     std::vector<double> _dqds_v;
     std::vector<double> _ds_v;
     std::vector<double> _dqds_slider;
+    ubana::FiducialVolume _fv;
+    TVector3 _vertex;
 
     bool _hits_ordered = false;
 

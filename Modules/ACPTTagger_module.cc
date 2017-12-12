@@ -68,6 +68,7 @@ private:
   void SortTrackPoints(const recob::Track& track, std::vector<TVector3>& sorted_points);
   void SortSpacePoints(std::vector<art::Ptr<recob::SpacePoint>> sp_v, std::vector<TVector3>& sorted_points);
   void SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vector<TVector3>& sorted_points, TVector3 highest_point);
+  TVector3 ContainPoint(TVector3 p);
  
   std::string _flash_producer;
   std::string _pfp_producer;
@@ -385,7 +386,8 @@ void ACPTTagger::produce(art::Event & e)
       std::vector<TVector3> pts;
       this->SortSpacePoints(spacepoint_v, pts);
       if (pts.size() > 0) {
-        this->SortHitPoints(hit_v, pts, pts[0]);
+        TVector3 hp = this->ContainPoint(pts[0]);
+        this->SortHitPoints(hit_v, pts, hp);
         if (pts.size() >= 2) {
           sorted_points_v.emplace_back(pts);
         }
@@ -687,6 +689,32 @@ bool ACPTTagger::GetSign(std::vector<TVector3> sorted_points)
 
 }
 
+TVector3 ACPTTagger::ContainPoint(TVector3 p) {
 
+  TVector3 p_out = p;
+
+  double x = p.X();
+  double y = p.Y();
+  double z = p.Z();
+
+  double e = std::numeric_limits<double>::epsilon();
+
+  if (x < 0. + e)
+    p_out.SetX(0. + e);
+  if (x > 2.*geo->DetHalfWidth() - e)
+    p_out.SetX(2.*geo->DetHalfWidth() - e);
+
+  if (y < -geo->DetHalfWidth() + e)
+    p_out.SetY(-geo->DetHalfWidth() + e);
+  if (y > geo->DetHalfWidth() - e)
+    p_out.SetY(geo->DetHalfWidth() - e);
+
+  if (z < 0. + e)
+    p_out.SetZ(0.+ e);
+  if (z > geo->DetLength() - e)
+    p_out.SetZ(geo->DetLength() - e);
+
+  return p_out;
+}
 
 DEFINE_ART_MODULE(ACPTTagger)

@@ -449,6 +449,11 @@ namespace ubana {
 
   bool StoppingMuonTaggerHelper::IsStopMuBragg() {
 
+    if (_dqds_slider.size() < (unsigned int) (_pre_post_window * 2)) {
+      if (_debug) std::cout << "Can't make decision, number of simple hits is " << _dqds_slider.size() << ", which is less then " << _pre_post_window * 2 << std::endl;
+      return false;
+    }
+
     // Vertex must not be in the FV
     if (_fv.InFV(_vertex))
       return false;

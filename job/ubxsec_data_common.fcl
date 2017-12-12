@@ -33,9 +33,10 @@ services:
 }
 
 #services.DatabaseUtil.ShouldConnect: false
-services.PmtGainService.PmtGainProvider.UseDB:               false
-services.ChannelStatusService.ChannelStatusProvider.UseDB:   false
-services.DetPedestalService.DetPedestalRetrievalAlg.UseDB:   false
+services.PmtGainService.PmtGainProvider.UseDB:                   false
+services.ChannelStatusService.ChannelStatusProvider.UseDB:       false
+services.DetPedestalService.DetPedestalRetrievalAlg.UseDB:       false
+services.ElectronicsCalibService.ElectronicsCalibProvider.UseDB: false 
 
 services.DetectorPropertiesService.NumberTimeSamples:        6400
 services.DetectorPropertiesService.ReadOutWindowSize:        6400

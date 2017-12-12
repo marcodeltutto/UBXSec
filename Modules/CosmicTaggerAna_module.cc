@@ -392,7 +392,7 @@ void CosmicTaggerAna::analyze(art::Event const & e)
   for (unsigned int i = 0; i < pfpStopMuTagged.size(); i++) {
     for (unsigned int j = 0; j < neutrinoOriginPFP.size(); j++) {
       if(pfpStopMuTagged[i] == neutrinoOriginPFP[j]) {
-        if (_debug) std::cout << ">>>>>>>>>>>>>>>>> ACPT A neutrino related PFP (with ID " << neutrinoOriginPFP[j]->Self() << ") was tagged by the stopmu tagger with tag " << tagid_v[i] << std::endl;
+        if (_debug) std::cout << ">>>>>>>>>>>>>>>>> STOPMU A neutrino related PFP (with ID " << neutrinoOriginPFP[j]->Self() << ") was tagged by the stopmu tagger with tag " << tagid_v[i] << std::endl;
         _nu_pfp_stopmu_tagged = 1;
         _nu_pfp_tagged_total = 1;
       }
@@ -525,7 +525,7 @@ void CosmicTaggerAna::GetTaggedPFP(art::Event const & e, std::string cosmictag_p
 
     // Get the cosmic tag
     art::Ptr<anab::CosmicTag> cosmicTag(cosmicTagHandle, ct);
-    //if(_debug) std::cout << "This cosmic tag (" << ct << ") has type: " << cosmicTag->CosmicType() << std::endl;
+    //if(_debug) std::cout << "This cosmic tag (" << ct << ") has type: " << cosmicTag->CosmicType() << " and score: " << cosmicTag->CosmicScore() << std::endl;
 
     // Get the PFP associated with this CT
     std::vector<art::Ptr<recob::PFParticle>> cosmicTagToPFP_v = cosmicPFPAssns.at(cosmicTag.key());

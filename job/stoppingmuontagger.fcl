@@ -10,7 +10,7 @@ StoppingMuonTagger: {
   PFParticleProducer:      "pandoraNu::UBXSec"
   ClusterProducer:         "pandoraNu::UBXSec"
   TrackProducer:           "pandoraNu::UBXSec"
-  DebugMode:               true
+  DebugMode:               false
 
   CoplanarCut:             5.
   MCSDeltaLLCut:           -5.
@@ -24,7 +24,7 @@ StoppingMuonTagger: {
     HitsToRemove:          3
     PrePostWindow:         5
     PercDiffCut:           50
-    DebugMode:             true
+    DebugMode:             false
   }
 
   MCSFitter: {

@@ -262,6 +262,11 @@ void StoppingMuonTagger::produce(art::Event & e) {
     std::vector<art::Ptr<recob::Hit>> hit_v; 
     hit_v.clear();
 
+    if (pfps.size() == 0) {
+      ignore_this = true;    
+      continue;
+    }
+
     bool collection_coplanar = false;
 
     for (auto p : pfps) {
@@ -303,7 +308,10 @@ void StoppingMuonTagger::produce(art::Event & e) {
         primary_pfp = p;
         primary_track_v = iter4->second;
 
-        if (primary_track_v.size() != 0) { 
+        if (primary_track_v.size() == 0) { 
+          ignore_this = true;
+          continue; 
+        } else {
           double deltax = primary_track_v.at(0)->Vertex().Z() - primary_track_v.at(0)->End().Z();
           if (_debug) std::cout << "delta x is " << deltax << std::endl;
           collection_coplanar = primary_track_v.at(0)->Vertex().Z() - primary_track_v.at(0)->End().Z() 
@@ -316,7 +324,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
       continue;
     }
 
-    if (ignore_this) {
+    if (ignore_this || !primary_pfp) {
       continue;
     }
 
@@ -420,16 +428,21 @@ void StoppingMuonTagger::produce(art::Event & e) {
     if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (bragg)? " << (result_bragg ? "YES" : "NO") << std::endl;
 
     // Also try with the MCS fitter
-    bool result_mcs = this->IsStopMuMCS(primary_track_v.at(0));
+    bool result_mcs = false;
+    if (primary_track_v.size() != 0) { 
+      result_mcs = this->IsStopMuMCS(primary_track_v.at(0));
+    }
 
     if (_debug) std::cout << "[StoppingMuonTagger] MCS thinks " << (result_mcs ? "is" : "is not") << " a stopping muon" << std::endl;
 
     double cosmicScore = 0.;
+    anab::CosmicTagID_t tag_id = anab::CosmicTagID_t::kNotTagged;
     if (result || result_bragg || result_mcs) {
       cosmicScore = 1.;
+      tag_id = anab::CosmicTagID_t::kGeometry_Y;
     }
     if (_debug) std::cout << "[StoppingMuonTagger] Cosmic Score is " << cosmicScore << std::endl;
-    cosmicTagVector->emplace_back(endPt1, endPt2, cosmicScore, anab::CosmicTagID_t::kGeometry_Y); 
+    cosmicTagVector->emplace_back(endPt1, endPt2, cosmicScore, tag_id); 
     util::CreateAssn(*this, e, *cosmicTagVector, primary_track_v, *assnOutCosmicTagTrack);
     util::CreateAssn(*this, e, *cosmicTagVector, primary_pfp, *assnOutCosmicTagPFParticle);
     

@@ -436,8 +436,10 @@ namespace ubana {
       throw std::exception();
     }
 
-    if (_dqds_v.size() < _slider_window * 2)
+    if (_dqds_v.size() < _slider_window * 2) {
+      std::cout << __FUNCTION__ << ": not enough hits" << std::endl;
       return;
+    }
 
     //size_t window = _slider_window;
 
@@ -516,6 +518,10 @@ namespace ubana {
 
   void StoppingMuonTaggerHelper::PrintOnFile(int index) {
 
+    if (_s_hit_v.size() != _linearity_v.size() || _s_hit_v.size() != _dqds_slider.size()) {
+      return;
+    }
+
     for (size_t i = 0; i < _dqds_slider.size(); i++) {
       _csvfile << index << "," 
                << i << "," 
@@ -541,6 +547,11 @@ namespace ubana {
 
 
   void StoppingMuonTaggerHelper::CalculateLocalLinearity() {
+
+    if (_s_hit_v.size() < 2) {
+      std::cout << "Cannot calculate linearity if less than 2 hits" << std::endl;
+      return;
+    }
 
     std::vector<double> R;
     R.reserve(_s_hit_v.size());
@@ -584,6 +595,7 @@ namespace ubana {
 
     _linearity_is_set = true;
 
+    std::cout << "here end ll" << std::endl;
     return;
   } 
 
@@ -676,8 +688,16 @@ namespace ubana {
 
     // Find the hits with the maximum dqds, that one will be the hit
     // where the Bragg peak is
-    auto it_max = std::max_element(_dqds_slider.begin(), _dqds_slider.end()); 
-    size_t bragg_index = it_max - _dqds_slider.begin(); 
+    size_t bragg_index;
+    auto it_max = std::max_element(_dqds_slider.begin(), _dqds_slider.end());
+    bragg_index = it_max - _dqds_slider.begin();
+    double bragg_dqds = *it_max;
+    for (bool flag = true; flag && it_max != _dqds_slider.end(); it_max++) {
+      if (*it_max < bragg_dqds) {
+        bragg_index = --it_max - _dqds_slider.begin();
+        flag = false;
+      }
+    }
 
     if (_debug) std::cout << "[IsStopMuBragg] Bragg peak hit index is " << bragg_index << std::endl;
 
@@ -722,6 +742,30 @@ namespace ubana {
     // Vertex must not be in the FV
     if (_fv.InFV(_vertex))
       return false;
+
+    // Find the hits with the maximum dqds, that one will be the hit
+    // where the Bragg peak is
+    size_t bragg_index;
+    auto it_max = std::max_element(_dqds_slider.begin(), _dqds_slider.end());
+    bragg_index = it_max - _dqds_slider.begin();
+    double bragg_dqds = *it_max;
+    for (bool flag = true; flag && it_max != _dqds_slider.end(); it_max++) {
+      if (*it_max < bragg_dqds) {
+        bragg_index = --it_max - _dqds_slider.begin();
+        flag = false;
+      }
+    }
+
+    if (_debug) std::cout << "[IsStopMuBragg] Bragg peak hit index is " << bragg_index << std::endl;
+
+    // Check that in that region the local linearity is less than threshold
+    double bragg_local_linearity = _linearity_v.at(bragg_index);
+
+    if (bragg_local_linearity > _local_linearity_threshold) {
+      if (_debug) std::cout << "[IsStopMuBragg] Local linearity is " << bragg_local_linearity
+                            << " which is less than threshold (" << _local_linearity_threshold << ")" << std::endl;
+      return false;
+    }
 
     // Take firsts hits, then lasts hits 
     double start_mean = std::accumulate(_dqds_slider.begin(), _dqds_slider.begin() + _pre_post_window, 0);

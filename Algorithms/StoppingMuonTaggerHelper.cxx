@@ -13,6 +13,9 @@ namespace ubana {
   StoppingMuonTaggerHelper::StoppingMuonTaggerHelper()
   {
     if (_debug) std::cout << "StoppingMuonTaggerHelper Instantiated." << std::endl;
+
+    _csvfile.open ("stopping_muon_tagger_helper.csv", std::ofstream::out | std::ofstream::trunc);
+    _csvfile << "n,i,dqdx,dqdx_slider,linearity" << std::endl;
   }
 
   //_________________________________________________________________________________ 
@@ -27,6 +30,7 @@ namespace ubana {
     _hits_to_remove = pset.get< int > ( "HitsToRemove", 3 );
     _pre_post_window = pset.get< int > ( "PrePostWindow", 5 ); 
     _perc_diff_cut = pset.get< double > ( "PercDiffCut", 20 );
+    _local_linearity_threshold = pset.get< double > ( "LocalLinerityThreshold", 0.85 );
     _debug = pset.get< bool > ( "DebugMode", false );
 
   }
@@ -70,6 +74,94 @@ namespace ubana {
 
   }
 
+
+  //_________________________________________________________________________________
+  size_t StoppingMuonTaggerHelper::FilterOnSingleWire() {
+
+    if (!_hits_ordered) {
+      std::cout << __PRETTY_FUNCTION__ << ": need to order hits first." << std::endl;
+      throw std::exception();
+    }
+
+    std::vector<ubana::SimpleHit> new_vector;
+    new_vector.clear(); 
+
+    std::vector<double> new_vector_ds;
+    new_vector_ds.clear();
+
+    std::vector<double> mean_v;
+    mean_v.clear();
+
+    std::vector<double> wire_v;
+
+    for(const auto& window : this->get_windows(_s_hit_v, 4)) {
+
+      for (auto s_h : window) {
+        wire_v.push_back(s_h.wire);
+      }
+
+      mean_v.push_back(this->mean(wire_v));
+
+      wire_v.clear();
+    }
+
+    new_vector.push_back(_s_hit_v.at(0));
+    new_vector.push_back(_s_hit_v.at(1));
+    new_vector_ds.push_back(_ds_v.at(0));
+    new_vector_ds.push_back(_ds_v.at(1));
+
+    for (size_t i = 2; i < mean_v.size()-1; i++) {
+
+      if (_debug) std::cout << "i: " << i 
+                            << " wire : " << _s_hit_v.at(i).wire 
+                            << " time : " << _s_hit_v.at(i).time 
+                            << " mean: " << mean_v.at(i) << std::endl;
+
+      if (std::abs(mean_v.at(i-1) - mean_v.at(i)) < 1    && 
+          _s_hit_v.at(i-1).wire !=  _s_hit_v.at(i).wire  &&
+          std::abs(mean_v.at(i)   - mean_v.at(i+1)) < 1  &&
+          _s_hit_v.at(i).wire !=  _s_hit_v.at(i+1).wire    ) {
+
+        std::cout << ">>>" << std::endl;
+        if (_s_hit_v.at(i).integral > _s_hit_v.at(i+1).integral) {
+          new_vector.push_back(_s_hit_v.at(i));
+          new_vector_ds.push_back(_ds_v.at(i));
+        } else {
+          new_vector.push_back(_s_hit_v.at(i+1));
+          new_vector_ds.push_back(_ds_v.at(i+1)); 
+        }
+
+        i++;
+
+      } else {
+
+        new_vector.push_back(_s_hit_v.at(i));
+        new_vector_ds.push_back(_ds_v.at(i));
+      }
+
+    }
+
+    new_vector.push_back(_s_hit_v.at(_s_hit_v.size()-1));
+    new_vector_ds.push_back(_ds_v.at(_ds_v.size()-1)); 
+
+    if (_debug) {
+      int counter = 0;
+      for (auto h : new_vector) {
+        std::cout << "AFTER2: i " << counter 
+                  << ", wire: " << h.wire 
+                  << ", time: " << h.time*4  << std::endl;
+      }
+    }
+    
+    std::swap(new_vector, _s_hit_v);
+    std::swap(new_vector_ds, _ds_v); 
+
+    if (_s_hit_v.size() != _ds_v.size()) {
+      std::cout << "_s_hit_v and _ds_v size mismatch" << std::endl;
+      throw std::exception();
+    }
+    return _s_hit_v.size();
+  }
 
   //_________________________________________________________________________________
   void StoppingMuonTaggerHelper::SetStartHit(double time, 
@@ -339,35 +431,74 @@ namespace ubana {
 
   void StoppingMuonTaggerHelper::PerformdQdsSlider() {
 
+    if (_dqds_v.size() != _s_hit_v.size()) {
+      std::cout << __FUNCTION__ << ": dqds size is different than hit vector size" << std::endl;
+      throw std::exception();
+    }
+
     if (_dqds_v.size() < _slider_window * 2)
       return;
 
+    //size_t window = _slider_window;
+
+    if (_slider_window % 2 != 0) {
+      std::cout << __FUNCTION__ << ": _slider_window has to be even." << std::endl; 
+      throw std::exception();
+    }
+
     _dqds_slider.clear();
+    _dqds_slider.reserve(_dqds_v.size());
 
-    size_t window = _slider_window;
 
-    for (size_t i = 0; i < _dqds_v.size() - window; i++) {
+    for(const auto& window : this->get_windows(_dqds_v, _slider_window)) {
 
-      std::vector<double> temp_v(_dqds_v.begin() + i, _dqds_v.begin() + i + window);
-      double median_dqds = this->GetTruncMedian(temp_v);
-      _dqds_slider.emplace_back(median_dqds);
+      double median_dqds = this->GetTruncMedian(window);
+      _dqds_slider.push_back(median_dqds);
       if (_debug) std::cout << "dqds_slider value " << median_dqds << std::endl;
+
 
     }
 
+/*
+
+    for (size_t i = window/2; i < _dqds_v.size() - window/2; i++) {
+
+      std::vector<double> temp_v(_dqds_v.begin() + i - window/2, _dqds_v.begin() + i + window/2);
+      double median_dqds = this->GetTruncMedian(temp_v);
+      _dqds_slider.at(i) = median_dqds;
+      if (_debug) std::cout << "dqds_slider value " << median_dqds << " at i " << i << std::endl;
+    }
+
+    // Now do the edges
+    for (size_t i = 0; i < window/2; i++) {
+      std::vector<double> temp_v(_dqds_v.begin(), _dqds_v.begin() + window); 
+      double median_dqds = this->GetTruncMedian(temp_v);
+      _dqds_slider.at(i) = median_dqds;
+      if (_debug) std::cout << "dqds_slider value " << median_dqds << " at i " << i << std::endl;
+    }
+    for (size_t i = _dqds_v.size() - window/2; i < _dqds_v.size(); i++) {
+      std::vector<double> temp_v(_dqds_v.begin() + _dqds_v.size() - window/2, _dqds_v.begin() + _dqds_v.size());
+      double median_dqds = this->GetTruncMedian(temp_v); 
+      _dqds_slider.at(i) = median_dqds;
+      if (_debug) std::cout << "dqds_slider value " << median_dqds << " at i " << i << std::endl;
+    }
+
+*/
     return;
 
   }
 
   double StoppingMuonTaggerHelper::GetTruncMedian(std::vector<double> v) {
 
-    // Find and erase max element
-    auto it_max = std::max_element(v.begin(), v.end());
-    v.erase(it_max);
+    if (v.size() > 2) {
+      // Find and erase max element
+      auto it_max = std::max_element(v.begin(), v.end());
+      v.erase(it_max);
 
-    // Find and erase min element
-    auto it_min = std::min_element(v.begin(), v.end());
-    v.erase(it_min);
+      // Find and erase min element
+      auto it_min = std::min_element(v.begin(), v.end());
+      v.erase(it_min);
+    }
 
     double median = -1;
 
@@ -381,6 +512,120 @@ namespace ubana {
     }
 
     return median;
+  }
+
+  void StoppingMuonTaggerHelper::PrintOnFile(int index) {
+
+    for (size_t i = 0; i < _dqds_slider.size(); i++) {
+      _csvfile << index << "," 
+               << i << "," 
+               << _dqds_v.at(i) << "," 
+               << _dqds_slider.at(i) << ", "
+               << _linearity_v.at(i)
+               << std::endl;
+    }
+
+    if (_debug) {
+      int counter = 0;
+      for (auto h : _s_hit_v) {
+        std::cout << "AFTER2: i " << counter
+                  << ", wire: " << h.wire
+                  << ", time: " << h.time*4
+                  << ", dqdx_slide: " << _dqds_slider.at(counter)
+                  << ", linearity: " << _linearity_v.at(counter) << std::endl;
+        counter++;
+      }
+    }
+
+  }
+
+
+  void StoppingMuonTaggerHelper::CalculateLocalLinearity() {
+
+    std::vector<double> R;
+    R.reserve(_s_hit_v.size());
+
+    std::vector<double> X;
+    std::vector<double> Y;
+    X.reserve(_slider_window);
+    Y.reserve(_slider_window);
+
+    for(const auto& window : this->get_windows(_s_hit_v, 20/*_slider_window*/)) {
+
+      for(const auto& s_hit : window) {
+        X.push_back(s_hit.wire); 
+        Y.push_back(s_hit.time);
+      }
+
+      auto c  = cov(X,Y);
+      auto sX = stdev(X);
+      auto sY = stdev(Y);
+      auto r  = std::abs(c/(sX * sY));
+
+      if(_debug) {
+        //std::cout << "c: "  << c << std::endl
+        //          << "sX: " << sX <<  std::endl
+        //          << "sY: " << sY <<  std::endl
+        //          << "r: "  << r <<  std::endl;
+        std::cout << "Local Linearity: " << r << std::endl;
+      }
+
+      if(std::isnan(r)) r = 0.0; 
+      R.push_back(r);
+      
+      X.clear(); Y.clear();
+    }   
+ 
+    //first and last points will be nan. Lets set them equal to the points just above and below
+    R.at(0)            = R.at(1);
+    R.at(R.size() - 1) = R.at(R.size() - 2);
+    
+    _linearity_v = R;
+
+    _linearity_is_set = true;
+
+    return;
+  } 
+
+  double StoppingMuonTaggerHelper::cov (const std::vector<double>& data1,
+                                        const std::vector<double>& data2) const
+  {
+    if(data1.size() == 0) std::cout << __FUNCTION__ << "You have me nill to cov" << std::endl;
+    if(data2.size() == 0) std::cout << __FUNCTION__ << "You have me nill to cov" << std::endl;
+
+    double result = 0.0;
+    auto   mean1  = mean(data1);
+    auto   mean2  = mean(data2);
+    
+    for(size_t i = 0; i < data1.size(); ++i)
+      result += (data1[i] - mean1)*(data2[i] - mean2);
+    
+    return result/((double)data1.size());
+      
+  }
+
+  double StoppingMuonTaggerHelper::stdev(const std::vector<double>& data) const
+  {
+    if(data.size() == 0) std::cout << __FUNCTION__ << "You have me nill to stdev" << std::endl;
+
+    double result = 0.0;
+    auto    avg   = mean(data);
+    for(const auto& d: data)
+      result += (d - avg)*(d - avg);
+    
+    return sqrt(result/((double)data.size()));
+  }
+
+  double StoppingMuonTaggerHelper::mean(const std::vector<double>& data) const
+  {
+    if(data.size() == 0) std::cout << __FUNCTION__ << "You have me nill to mean" << std::endl;
+        
+    double result = 0.0;
+
+    for(const auto& d : data) 
+      result += d;
+        
+    return (result / ((double)data.size()));
   }
 
 
@@ -417,17 +662,35 @@ namespace ubana {
   bool StoppingMuonTaggerHelper::IsStopMuMichel() {
 
     if (_dqds_slider.size() < (unsigned int) (_hits_to_remove * 2 + _pre_post_window * 2)) {
-      if (_debug) std::cout << "Can't make decision, number of simple hits is " << _dqds_slider.size() << ", which is less then " << _hits_to_remove * 2 + _pre_post_window * 2 << std::endl;
+      if (_debug) std::cout << "Can't make decision, number of simple hits is " << _dqds_slider.size() 
+                            << ", which is less then " << _hits_to_remove * 2 + _pre_post_window * 2 << std::endl;
       return false;
     }
 
     std::vector<double> temp = _dqds_slider;
 
-    // Remove first three and last three hits
+    // Remove first "_hits_to_remove" and last "_hits_to_remove" hits
     temp.erase(temp.begin(), temp.begin() + _hits_to_remove);
     temp.erase(temp.end() - _hits_to_remove, temp.end());
 
-    // Get mean of first and last 5
+
+    // Find the hits with the maximum dqds, that one will be the hit
+    // where the Bragg peak is
+    auto it_max = std::max_element(_dqds_slider.begin(), _dqds_slider.end()); 
+    size_t bragg_index = it_max - _dqds_slider.begin(); 
+
+    if (_debug) std::cout << "[IsStopMuBragg] Bragg peak hit index is " << bragg_index << std::endl;
+
+    // Check that in that region the local linearity is less than threshold
+    double bragg_local_linearity = _linearity_v.at(bragg_index);
+
+    if (bragg_local_linearity > _local_linearity_threshold) {
+      if (_debug) std::cout << "[IsStopMuBragg] Local linearity is " << bragg_local_linearity 
+                            << " which is less than threshold (" << _local_linearity_threshold << ")" << std::endl;
+      return false;
+    }
+
+    // Get mean of first and last hits
     double start_mean = std::accumulate(temp.begin(), temp.begin() + _pre_post_window, 0);
     start_mean /= _pre_post_window;
     double end_mean = std::accumulate(temp.end() - _pre_post_window, temp.end(), 0);
@@ -435,7 +698,8 @@ namespace ubana {
 
     double perc_diff = (start_mean - end_mean) / start_mean * 100.;
 
-    if (_debug) std::cout << "[IsStopMuBragg] Start mean: " << start_mean << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl;
+    if (_debug) std::cout << "[IsStopMuBragg] Start mean: " << start_mean 
+                          << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl;
 
     if (perc_diff > _perc_diff_cut) {
       return true;
@@ -450,7 +714,8 @@ namespace ubana {
   bool StoppingMuonTaggerHelper::IsStopMuBragg() {
 
     if (_dqds_slider.size() < (unsigned int) (_pre_post_window * 2)) {
-      if (_debug) std::cout << "Can't make decision, number of simple hits is " << _dqds_slider.size() << ", which is less then " << _pre_post_window * 2 << std::endl;
+      if (_debug) std::cout << "Can't make decision, number of simple hits is " << _dqds_slider.size() 
+                            << ", which is less then " << _pre_post_window * 2 << std::endl;
       return false;
     }
 
@@ -466,7 +731,8 @@ namespace ubana {
 
     double perc_diff = (start_mean - end_mean) / start_mean * 100.;
 
-    if (_debug) std::cout << "[IsStopMuBragg] Start mean: " << start_mean << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl;
+    if (_debug) std::cout << "[IsStopMuBragg] Start mean: " << start_mean 
+                          << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl;
 
     if (perc_diff < -_perc_diff_cut) {
       return true;
@@ -476,6 +742,58 @@ namespace ubana {
 
   }
 
+
+
+  template<typename T>
+  std::vector<std::vector<T>> StoppingMuonTaggerHelper::get_windows(const std::vector<T>& the_thing,
+                                                                    const size_t window_size) const
+  {
+
+    // given a vector of values return a vector of the same length
+    // with each element being a vector of the values of the local neighbors
+    // of the element at position i in the original vector
+    // input  : [0,1,2,3,4,5,6,...,...,N-3,N-2,N-1] (input vector of size N)
+    // output  (assuming a value of 'w' below == 3):
+    // 0th element: [0]
+    // 1st element: [0,1,2]
+    // 2nd element: [0,1,2,3,4]
+    // jth element: [j-w,j-w+1,..,j+w-2,j+w-1]
+    
+    std::vector<std::vector<T>> data;
+    
+    auto w = window_size + 2;
+    w = (unsigned int)((w - 1)/2);
+    auto num = the_thing.size();
+    
+    data.reserve(num);
+    
+    for(size_t i = 1; i <= num; ++i) {
+      std::vector<T> inner;
+      inner.reserve(20);
+      // if we are at the beginning of the vector (and risk accessing -1 elements)
+      if(i < w)
+        {
+          for(size_t j = 0; j < 2 * (i%w) - 1; ++j)
+            inner.push_back(the_thing[j]);
+        }
+      // if we are at the end of the vector (and risk going past it)
+      else if (i > num - w + 1)
+        {
+          for(size_t j = num - 2*((num - i)%w)-1 ; j < num; ++j)
+            inner.push_back(the_thing[j]);
+        }
+      // if we are in the middle of the waveform
+      else
+        {
+          for(size_t j = i - w; j < i + w - 1; ++j)
+            inner.push_back(the_thing[j]);
+        }
+      data.emplace_back(inner);
+    }
+
+    return data;
+  
+  }
 
 }
 

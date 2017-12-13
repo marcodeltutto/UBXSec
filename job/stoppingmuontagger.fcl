@@ -10,21 +10,22 @@ StoppingMuonTagger: {
   PFParticleProducer:      "pandoraNu::UBXSec"
   ClusterProducer:         "pandoraNu::UBXSec"
   TrackProducer:           "pandoraNu::UBXSec"
-  DebugMode:               false
+  DebugMode:               true
 
   CoplanarCut:             5.
   MCSDeltaLLCut:           -5.
 
   AlgorithmConfiguration:  {
-    WireToCmConstant:      0.3
-    TimeToCmConstant:      0.0557
-    GainCalib:             198
-    SliderWindow:          10
-    MaxAllowedHitDistance: 15
-    HitsToRemove:          3
-    PrePostWindow:         5
-    PercDiffCut:           50
-    DebugMode:             false
+    WireToCmConstant:        0.3
+    TimeToCmConstant:        0.0557
+    GainCalib:               198
+    SliderWindow:            10
+    MaxAllowedHitDistance:   15
+    HitsToRemove:            5
+    PrePostWindow:           10
+    PercDiffCut:             35 #50
+    LocalLinerityThreshold:  0.85
+    DebugMode:               true
   }
 
   MCSFitter: {

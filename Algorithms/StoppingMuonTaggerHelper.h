@@ -15,6 +15,7 @@
 #define STOPPINGMUONTAGGERHELPER_H
 
 #include <iostream>
+#include <fstream>
 #include "fhiclcpp/ParameterSet.h"
 #include "lardataobj/RecoBase/Track.h"
 #include "lardataobj/RecoBase/Vertex.h"
@@ -87,11 +88,17 @@ namespace ubana{
     /// Printd the current configuration
     void PrintConfig();
 
+    ///
+    void PrintOnFile(int index);
+
     /// Sets the Simple Hit Vector
     void Emplace(ubana::SimpleHitVector v) {_s_hit_v = v;}
     
     /// Filter hits keeping only in selected plane
     size_t FilterByPlane(int);
+
+    ///
+    size_t FilterOnSingleWire();
 
     /// Sets the start hit given time, wire and plane
     void SetStartHit(double t, double w, int p);
@@ -104,6 +111,19 @@ namespace ubana{
 
     /// Calculated the dqds averaging neibouring hits
     void PerformdQdsSlider();
+
+    /// Calculates the local linearity along the hits
+    void CalculateLocalLinearity();
+
+    ///
+    double cov (const std::vector<double>& data1,
+                const std::vector<double>& data2) const;
+
+    ///
+    double stdev(const std::vector<double>& data) const;
+
+    ///
+    double mean (const std::vector<double>& data) const;
 
     /// Returns true if this object has been id'ed as a Stopping Muon given an algo
     bool MakeDecision(ubana::StopMuAlgoType algo);
@@ -135,6 +155,10 @@ namespace ubana{
     /// Removes max and min value and returns the median
     double GetTruncMedian(std::vector<double> v);
 
+    /// Returns selected elements in window
+    template<typename T>
+    std::vector<std::vector<T> > get_windows(const std::vector<T>& the_thing,
+                                             const size_t window_size) const;
   protected:
 
     ubana::SimpleHitVector _s_hit_v;
@@ -142,6 +166,9 @@ namespace ubana{
     std::vector<double> _dqds_v;
     std::vector<double> _ds_v;
     std::vector<double> _dqds_slider;
+    std::vector<double> _linearity_v;
+    bool _linearity_is_set = false;
+
     ubana::FiducialVolume _fv;
     TVector3 _vertex;
 
@@ -156,9 +183,11 @@ namespace ubana{
     int _hits_to_remove = 3;
     int _pre_post_window = 5;
     double _perc_diff_cut = 20;
+    double _local_linearity_threshold = 0.85;
 
     bool _debug = false;
 
+    std::ofstream _csvfile; 
   };
 }
 

@@ -314,7 +314,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
         } else {
           double deltax = primary_track_v.at(0)->Vertex().Z() - primary_track_v.at(0)->End().Z();
           if (_debug) std::cout << "delta x is " << deltax << std::endl;
-          collection_coplanar = primary_track_v.at(0)->Vertex().Z() - primary_track_v.at(0)->End().Z() 
+          collection_coplanar = std::abs(primary_track_v.at(0)->Vertex().Z() - primary_track_v.at(0)->End().Z()) 
                                 < _coplanar_cut;
         }
       }
@@ -382,7 +382,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
     _helper.Clear();
 
     if (collection_coplanar) {
-      _helper.SetMaxAllowedHitDistance(40);
+      _helper.SetMaxAllowedHitDistance(20);
     } else {
       _helper.SetMaxAllowedHitDistance(15); 
     }
@@ -409,6 +409,9 @@ void StoppingMuonTagger::produce(art::Event & e) {
     if (_debug) std::cout << "[StoppingMuonTagger] Now order hits" << std::endl;
     _helper.OrderHits();
 
+    //
+    _helper.FilterOnSingleWire();
+
     // dQds
     if (_debug) std::cout << "[StoppingMuonTagger] Now calculate dqds" << std::endl; 
     _helper.CalculatedQds();    
@@ -416,6 +419,12 @@ void StoppingMuonTagger::produce(art::Event & e) {
     // dQds Slider
     if (_debug) std::cout << "[StoppingMuonTagger] Now perform window slider" << std::endl;
     _helper.PerformdQdsSlider();
+
+    // Linearity
+    if (_debug) std::cout << "[StoppingMuonTagger] Now calculate local linearity" << std::endl;
+    _helper.CalculateLocalLinearity();
+
+     _helper.PrintOnFile(i);
 
     // Make a decision
     if (_debug) std::cout << "[StoppingMuonTagger] Now make a decision" << std::endl;

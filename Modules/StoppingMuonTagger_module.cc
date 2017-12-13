@@ -436,17 +436,18 @@ void StoppingMuonTagger::produce(art::Event & e) {
     bool result_bragg = _helper.MakeDecision(ubana::kAlgoBragg);
     if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (bragg)? " << (result_bragg ? "YES" : "NO") << std::endl;
 
-    // Also try with the MCS fitter
+    /* Also try with the MCS fitter
     bool result_mcs = false;
     if (primary_track_v.size() != 0) { 
       result_mcs = this->IsStopMuMCS(primary_track_v.at(0));
     }
 
     if (_debug) std::cout << "[StoppingMuonTagger] MCS thinks " << (result_mcs ? "is" : "is not") << " a stopping muon" << std::endl;
+    */
 
     double cosmicScore = 0.;
     anab::CosmicTagID_t tag_id = anab::CosmicTagID_t::kNotTagged;
-    if (result || result_bragg || result_mcs) {
+    if (result || result_bragg /*|| result_mcs*/) {
       cosmicScore = 1.;
       tag_id = anab::CosmicTagID_t::kGeometry_Y;
     }

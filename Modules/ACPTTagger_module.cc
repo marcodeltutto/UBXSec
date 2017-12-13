@@ -32,6 +32,7 @@
 #include "lardataobj/AnalysisBase/CosmicTag.h"
 #include "lardata/Utilities/AssociationUtil.h"
 #include "uboone/RawData/utils/ubdaqSoftwareTriggerData.h"
+#include "larevt/SpaceChargeServices/SpaceChargeService.h"
 
 #include "TVector3.h"
 #include "TTree.h"
@@ -440,8 +441,14 @@ void ACPTTagger::produce(art::Event & e)
       this->GetClosestDtDz(sorted_points[0],                      _cathodeTime, z_center, _dt_u_cathode, _dz_u_cathode, false);
       this->GetClosestDtDz(sorted_points[sorted_points.size()-1], _cathodeTime, z_center, _dt_d_cathode, _dz_d_cathode, false);
 
-      bool sign = this->GetSign(sorted_points);
+      auto const* SCE = lar::providerFrom<spacecharge::SpaceChargeService>();
+      std::vector<double> sce_corr = SCE->GetPosOffsets(256.35,
+                                    sorted_points[sorted_points.size()-1].Y(),
+                                    sorted_points[sorted_points.size()-1].Z());
+      std::cout << "x_corr is " << sce_corr.at(0) << std::endl;
 
+      bool sign = this->GetSign(sorted_points);
+      
       // A
       if (_dt_u_anode.back() > _anodeTime - _dt_resolution_a && _dt_u_anode.back() < _anodeTime + _dt_resolution_a 
        && _dz_u_anode.back() > -_dz_resolution_a && _dz_u_anode.back() < _dz_resolution_a
@@ -661,7 +668,7 @@ void ACPTTagger::SortTrackPoints(const recob::Track& track, std::vector<TVector3
 
   if (_debug) {
     std::cout << "[ACPTTagger] Track start " << start.X() << " " << start.Y() << " " << start.Z() << std::endl;
-    std::cout << "[ACPTTagger] Track start " << end.X() << " " << end.Y() << " " << end.Z() << std::endl;
+    std::cout << "[ACPTTagger] Track end   " << end.X() << " " << end.Y() << " " << end.Z() << std::endl;
   }
 
   // if points are ordered correctly                                                                                                                                       
@@ -672,6 +679,7 @@ void ACPTTagger::SortTrackPoints(const recob::Track& track, std::vector<TVector3
 
   // otherwise flip order                                                                                                                                                 
   else {
+    if (_debug) std::cout << "[ACPTTagger] \t These thos points will be flipped" << std::endl;
     for (size_t i=0; i < N; i++)
       sorted_points.push_back( track.LocationAtPoint( N - i - 1) );
   }

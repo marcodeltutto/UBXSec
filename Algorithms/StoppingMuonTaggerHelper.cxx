@@ -706,7 +706,7 @@ namespace ubana {
 
     if (bragg_local_linearity > _local_linearity_threshold) {
       if (_debug) std::cout << "[IsStopMuBragg] Local linearity is " << bragg_local_linearity 
-                            << " which is less than threshold (" << _local_linearity_threshold << ")" << std::endl;
+                            << " which is above threshold (" << _local_linearity_threshold << ")" << std::endl;
       return false;
     }
 
@@ -758,14 +758,27 @@ namespace ubana {
 
     if (_debug) std::cout << "[IsStopMuBragg] Bragg peak hit index is " << bragg_index << std::endl;
 
-    // Check that in that region the local linearity is less than threshold
+    // In this case we are looking for events that don't have a Michel, 
+    // so we want to ensure that the local linearity is not below threshold
+    // in the Bragg region
     double bragg_local_linearity = _linearity_v.at(bragg_index);
 
-    if (bragg_local_linearity > _local_linearity_threshold) {
+    if (bragg_local_linearity < _local_linearity_threshold) {
       if (_debug) std::cout << "[IsStopMuBragg] Local linearity is " << bragg_local_linearity
                             << " which is less than threshold (" << _local_linearity_threshold << ")" << std::endl;
       return false;
     }
+
+    // We actually want that there is no no kink in this cluster,
+    // as we just want the muon to stop
+    for (auto l : _linearity_v) {
+      if (l < _local_linearity_threshold) {
+        if (_debug) std::cout << "[IsStopMuBragg] Local linearity is " << l
+                              << " which is less than threshold (" << _local_linearity_threshold << ")" << std::endl;
+        return false;
+      }
+    }
+
 
     // Take firsts hits, then lasts hits 
     double start_mean = std::accumulate(_dqds_slider.begin(), _dqds_slider.begin() + _pre_post_window, 0);

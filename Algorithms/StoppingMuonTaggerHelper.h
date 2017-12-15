@@ -104,7 +104,7 @@ namespace ubana{
     void SetStartHit(double t, double w, int p);
 
     /// Orde hits from start hit (has to be set)
-    void OrderHits();
+    size_t OrderHits();
 
     /// Calulates the dQds given ordered hits
     void CalculatedQds();
@@ -134,6 +134,9 @@ namespace ubana{
     /// Algo, returns true if is a stopping muon, looks at the Bragg peak
     bool IsStopMuBragg();
 
+    /// Algo, returns true if is a stopping muon, looks at the curvature
+    bool IsStopMuCurvature(); 
+
     /// Restores flags
     void Clear();
 
@@ -155,6 +158,9 @@ namespace ubana{
     /// Removes max and min value and returns the median
     double GetTruncMedian(std::vector<double> v);
 
+    /// Returns the curvature of a circle passing trough 3 points (2D, z value of points has to be zero)
+    double GetCurvature(TVector3 pt1, TVector3 pt2, TVector3 pt3);
+      
     /// Returns selected elements in window
     template<typename T>
     std::vector<std::vector<T> > get_windows(const std::vector<T>& the_thing,
@@ -180,6 +186,7 @@ namespace ubana{
 
     size_t _slider_window = 10;
     double _max_allowed_hit_distance = 15.;
+    double _slope_threshold = 0.15;
     int _hits_to_remove = 3;
     int _pre_post_window = 5;
     double _perc_diff_cut = 20;

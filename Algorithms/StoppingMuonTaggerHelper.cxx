@@ -26,7 +26,8 @@ namespace ubana {
     _t2cm = pset.get< double > ( "TimeToCmConstant", 0.0557 ); 
     _dqds_calib = pset.get< double > ( "GainCalib", 198 );
     _slider_window = pset.get< size_t > ( "SliderWindow", 10 );
-    _max_allowed_hit_distance = pset.get< double > ( "MaxAllowedHitDistance", 15 ); 
+    _max_allowed_hit_distance = pset.get< double > ( "MaxAllowedHitDistance", 15 );
+    _slope_threshold = pset.get< double > ( "SlopeThreshold", 0.15 );  
     _hits_to_remove = pset.get< int > ( "HitsToRemove", 3 );
     _pre_post_window = pset.get< int > ( "PrePostWindow", 5 ); 
     _perc_diff_cut = pset.get< double > ( "PercDiffCut", 20 );
@@ -81,6 +82,11 @@ namespace ubana {
     if (!_hits_ordered) {
       std::cout << __PRETTY_FUNCTION__ << ": need to order hits first." << std::endl;
       throw std::exception();
+    }
+
+    if (_s_hit_v.size() < 4) {
+      std::cout << __PRETTY_FUNCTION__ << ": _s_hit_v size is less than 4." << std::endl;
+      return 0;
     }
 
     std::vector<ubana::SimpleHit> new_vector;
@@ -307,18 +313,18 @@ namespace ubana {
   
 
   //_________________________________________________________________________________ 
-  void StoppingMuonTaggerHelper::OrderHits() {
+  size_t StoppingMuonTaggerHelper::OrderHits() {
 
     if (_start_index < 0) {
       std::cout << "Start hit not set." << std::endl;
-      return;
+      return 0;
     }
 
     if ((size_t)_start_index >= _s_hit_v.size()) {
       std::cout << "Start hit not compatible with current hit vector." 
        << "Start hit index is " << _start_index 
        << ", while hit vector size is " << _s_hit_v.size() << std::endl;
-      return;
+      return 0;
     }
 
 
@@ -369,6 +375,34 @@ namespace ubana {
         if (_debug) std::cout << "min_dist: " << min_dist <<std::endl;
         new_vector.push_back(_s_hit_v.at(min_index));
         _ds_v.push_back(min_dist);
+      } else {
+
+        // Calculate previous slope
+        auto iter = new_vector.end();
+        auto sh_3 = _s_hit_v.at(min_index);
+        auto sh_2 = *(--iter);
+        auto sh_1 = *(--iter);
+        double slope = (sh_2.time - sh_1.time) / (sh_2.wire - sh_1.wire);
+
+        // Calculate the new slope
+        double slope_new = (sh_3.time - sh_2.time) / (sh_3.wire - sh_2.wire);
+
+        if (_debug) std::cout << "Current slope : " << slope 
+                              << " New slope: " << slope_new 
+                              << " Diff: " << slope_new - slope << std::endl;
+
+        // If the two slopes are close, than there is 
+        // probably a dead region between the point.
+        // If so, increase the min distance by half a meter
+        // and add the hit.
+        if (std::abs(slope_new - slope) < _slope_threshold &&
+            min_dist < _max_allowed_hit_distance + 50) {
+
+          new_vector.push_back(_s_hit_v.at(min_index)); 
+          _ds_v.push_back(min_dist);
+
+        } 
+
       }
 
       // ...and delete it from the old vector
@@ -390,7 +424,7 @@ namespace ubana {
 
     _hits_ordered = true;
 
-    return;
+    return _s_hit_v.size();
   }
 
   void StoppingMuonTaggerHelper::CalculatedQds() {
@@ -412,8 +446,8 @@ namespace ubana {
 
     for (size_t i = 0; i < _s_hit_v.size()-1; i++) {
 
-      TVector3 this_point(_s_hit_v.at(i).wire * _w2cm, _s_hit_v.at(i).time * _t2cm, 0);
-      TVector3 next_point(_s_hit_v.at(i+1).wire * _w2cm, _s_hit_v.at(i+1).time * _t2cm, 0);
+      TVector3 this_point(_s_hit_v.at(i).wire * _w2cm, _s_hit_v.at(i).time*_t2cm, 0);
+      TVector3 next_point(_s_hit_v.at(i+1).wire * _w2cm, _s_hit_v.at(i+1).time*_t2cm, 0);
       ds = (this_point - next_point).Mag();
 
       _dqds_v.emplace_back(_s_hit_v.at(i).integral/ds * _dqds_calib);
@@ -658,7 +692,7 @@ namespace ubana {
        break;
 
      case kAlgoCurvature:
-       return false;
+       return this->IsStopMuCurvature();
        break;
 
      default:
@@ -699,16 +733,18 @@ namespace ubana {
       }
     }
 
-    if (_debug) std::cout << "[IsStopMuBragg] Bragg peak hit index is " << bragg_index << std::endl;
+    if (_debug) std::cout << "[IsStopMuMichel] Bragg peak hit index is " << bragg_index << std::endl;
 
     // Check that in that region the local linearity is less than threshold
     double bragg_local_linearity = _linearity_v.at(bragg_index);
 
     if (bragg_local_linearity > _local_linearity_threshold) {
-      if (_debug) std::cout << "[IsStopMuBragg] Local linearity is " << bragg_local_linearity 
+      if (_debug) std::cout << "[IsStopMuMichel] Local linearity is " << bragg_local_linearity 
                             << " which is above threshold (" << _local_linearity_threshold << ")" << std::endl;
       return false;
     }
+
+    // Check we have enough hits after the Bragg peak
 
     // Get mean of first and last hits
     double start_mean = std::accumulate(temp.begin(), temp.begin() + _pre_post_window, 0);
@@ -718,7 +754,7 @@ namespace ubana {
 
     double perc_diff = (start_mean - end_mean) / start_mean * 100.;
 
-    if (_debug) std::cout << "[IsStopMuBragg] Start mean: " << start_mean 
+    if (_debug) std::cout << "[IsStopMuMichel] Start mean: " << start_mean 
                           << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl;
 
     if (perc_diff > _perc_diff_cut) {
@@ -799,6 +835,115 @@ namespace ubana {
 
   }
 
+
+  bool StoppingMuonTaggerHelper::IsStopMuCurvature() {
+
+    if (_s_hit_v.size() < (unsigned int) (_pre_post_window * 2)) {
+      if (_debug) std::cout << "Can't make decision, number of simple hits is " << _s_hit_v.size()
+                            << ", which is less then " << _pre_post_window * 2 << std::endl;
+      return false;
+    }
+
+    // Find the hits with the maximum dqds, that one will be the hit
+    // where the Bragg peak is
+    size_t bragg_index;
+    auto it_max = std::max_element(_dqds_slider.begin(), _dqds_slider.end());
+    bragg_index = it_max - _dqds_slider.begin();
+    double bragg_dqds = *it_max;
+    for (bool flag = true; flag && it_max != _dqds_slider.end(); it_max++) {
+      if (*it_max < bragg_dqds) {
+        bragg_index = --it_max - _dqds_slider.begin();
+        flag = false;
+      }
+    }
+
+    if (_debug) std::cout << "[IsStopMuCurvature] Bragg peak hit index is " << bragg_index << std::endl;
+
+    if (bragg_index < (size_t) _pre_post_window * 2) {
+      std::cout << "[IsStopMuCurvature] Not enough points"  << std::endl;
+      return false;
+    }
+
+    // In this case we are looking for events that don't have a Michel, 
+    // so we want to ensure that the local linearity is not below threshold
+    // in the Bragg region
+    double bragg_local_linearity = _linearity_v.at(bragg_index);
+
+    if (bragg_local_linearity > _local_linearity_threshold) {
+      if (_debug) std::cout << "[IsStopMuBragg] Local linearity is " << bragg_local_linearity
+                            << " which is above threshold (" << _local_linearity_threshold << ")" << std::endl;
+      return false;
+    }
+
+    /* Calulate curvature first up to the bragg hit
+    // http://paulbourke.net/geometry/circlesphere/
+
+    TVector3 pt0(0., 0., 0.);
+    TVector3 pt1(0., 0., 0.);
+    TVector3 pt2(0., 0., 0.);
+
+    for (size_t i = 1; i < bragg_index - _pre_post_window - 1; i++) {
+    
+      pt0.SetX(_s_hit_v.at(i-1).wire);
+      pt0.SetY(_s_hit_v.at(i-1).time);
+ 
+      pt1.SetX(_s_hit_v.at(i).wire);
+      pt1.SetY(_s_hit_v.at(i).time);
+
+      pt2.SetX(_s_hit_v.at(i+1).wire);
+      pt2.SetY(_s_hit_v.at(i+1).time);
+     
+      double curvature = this->GetCurvature(pt0, pt1, pt2);
+
+      std::cout << "Curvature is " << curvature << std::endl;
+    }
+    */
+
+    // Look at linearity before the bragg peak
+
+    std::vector<double> lin;
+    lin.clear();
+    lin.insert(lin.end(), _linearity_v.begin() + bragg_index - 3 * _pre_post_window, 
+                          _linearity_v.begin() + bragg_index - 3);
+
+    double lin_mean = std::accumulate(lin.begin(), lin.end(), 0);
+    lin_mean /= (double) lin.size();
+
+    if (_debug) std::cout << "[IsStopMuBragg] Average of local linearity before the Bragg peak is " 
+                          << lin_mean << std::endl;
+
+    if (lin_mean < 0.75/*_linearity_curvature_threshold*/)
+      return true;
+
+
+    return false;
+  }
+
+
+  double StoppingMuonTaggerHelper::GetCurvature(TVector3 pt1, TVector3 pt2, TVector3 pt3) {
+
+    if (pt1.Z() != 0 || pt2.Z() != 0 || pt3.Z() != 0) {
+      std::cout << __PRETTY_FUNCTION__ << "Third component of input points has to be zero." << std::endl;
+      throw std::exception();
+    }
+
+    double ma = ( pt2.Y() - pt1.Y() ) / ( pt2.X() - pt1.X() );
+    double mb = ( pt3.Y() - pt2.Y() ) / ( pt3.X() - pt2.X() );
+
+    double x = ( ma * mb * (pt1.Y() - pt3.Y()) + mb * (pt1.X() + pt2.X()) - ma * (pt2.X() + pt3.X()) ) / ( 2 * (mb - ma) );
+
+    double y = (-1/ma) * ( x - (pt1.X() + pt2.X())/2 ) + (pt1.Y() + pt2.Y())/2;
+
+    TVector3 center(x, y, 0.);
+
+    double radius = (pt1 - center).Mag();
+
+    if (radius == 0)
+      return 1e9;
+
+    return 1./radius;
+
+  } 
 
 
   template<typename T>

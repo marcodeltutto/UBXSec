@@ -407,10 +407,14 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     // Order hits
     if (_debug) std::cout << "[StoppingMuonTagger] Now order hits" << std::endl;
-    _helper.OrderHits();
+    n_hits = _helper.OrderHits();
 
-    //
-    _helper.FilterOnSingleWire();
+    if (n_hits == 0) continue;
+
+    // Filter hist is belonging to same wire
+    n_hits = _helper.FilterOnSingleWire();
+
+    if (n_hits == 0) continue;
 
     // dQds
     if (_debug) std::cout << "[StoppingMuonTagger] Now calculate dqds" << std::endl; 
@@ -435,6 +439,9 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     bool result_bragg = _helper.MakeDecision(ubana::kAlgoBragg);
     if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (bragg)? " << (result_bragg ? "YES" : "NO") << std::endl;
+
+    //bool result_curvature = _helper.MakeDecision(ubana::kAlgoCurvature);
+    //if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (curvature)? " << (result_curvature ? "YES" : "NO") << std::endl;
 
     /* Also try with the MCS fitter
     bool result_mcs = false;

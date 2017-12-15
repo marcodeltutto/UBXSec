@@ -68,7 +68,7 @@ private:
   bool GetSign(std::vector<TVector3> sorted_points);
   void SortTrackPoints(const recob::Track& track, std::vector<TVector3>& sorted_points);
   void SortSpacePoints(std::vector<art::Ptr<recob::SpacePoint>> sp_v, std::vector<TVector3>& sorted_points);
-  void SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vector<TVector3>& sorted_points, TVector3 highest_point);
+  void SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vector<TVector3>& sorted_points, TVector3 highest_point, size_t planeno);
   TVector3 ContainPoint(TVector3 p);
  
   std::string _flash_producer;
@@ -388,7 +388,21 @@ void ACPTTagger::produce(art::Event & e)
       this->SortSpacePoints(spacepoint_v, pts);
       if (pts.size() > 0) {
         TVector3 hp = this->ContainPoint(pts[0]);
-        this->SortHitPoints(hit_v, pts, hp);
+
+        // Plane 2
+        this->SortHitPoints(hit_v, pts, hp, 2);
+        if (pts.size() >= 2) {
+          sorted_points_v.emplace_back(pts);
+        }
+
+        // Plane 1
+        this->SortHitPoints(hit_v, pts, hp, 1);
+        if (pts.size() >= 2) {
+          sorted_points_v.emplace_back(pts); 
+        }
+
+        // Plane 0
+        this->SortHitPoints(hit_v, pts, hp, 0);
         if (pts.size() >= 2) {
           sorted_points_v.emplace_back(pts);
         }
@@ -589,7 +603,7 @@ void ACPTTagger::SortSpacePoints(std::vector<art::Ptr<recob::SpacePoint>> sp_v, 
 
 
 
-void ACPTTagger::SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vector<TVector3>& sorted_points, TVector3 highest_point) {
+void ACPTTagger::SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vector<TVector3>& sorted_points, TVector3 highest_point, size_t planeno) {
 
   sorted_points.clear();
   if (hit_v.size() < 2)
@@ -598,7 +612,7 @@ void ACPTTagger::SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vec
   std::vector<art::Ptr<recob::Hit>> temp_v;
   temp_v.clear();
   for (size_t i = 0; i < hit_v.size(); i++) {
-    if (hit_v.at(i)->View() == 2) {
+    if (hit_v.at(i)->View() == planeno) {
       temp_v.push_back(hit_v.at(i));
     }
   }

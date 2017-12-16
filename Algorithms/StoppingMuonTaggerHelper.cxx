@@ -32,6 +32,8 @@ namespace ubana {
     _pre_post_window = pset.get< int > ( "PrePostWindow", 5 ); 
     _perc_diff_cut = pset.get< double > ( "PercDiffCut", 20 );
     _local_linearity_threshold = pset.get< double > ( "LocalLinerityThreshold", 0.85 );
+    _min_muon_hits = pset.get< int > ( "MinMuonHits", 20 );
+    _max_michel_hits = pset.get< int > ( "MaxMichelHits", 50 );
     _debug = pset.get< bool > ( "DebugMode", false );
 
   }
@@ -735,7 +737,7 @@ namespace ubana {
 
     if (_debug) std::cout << "[IsStopMuMichel] Bragg peak hit index is " << bragg_index << std::endl;
 
-    // Check that in that region the local linearity is less than threshold
+    // Check that in the Bragg region the local linearity is less than threshold
     double bragg_local_linearity = _linearity_v.at(bragg_index);
 
     if (bragg_local_linearity > _local_linearity_threshold) {
@@ -744,7 +746,30 @@ namespace ubana {
       return false;
     }
 
-    // Check we have enough hits after the Bragg peak
+    // Check that the local linearity in the muon region (before Bragg) is above threshold
+    for (size_t i = 0; i < bragg_index - _pre_post_window; i++) {
+      if (_linearity_v.at(i) < _local_linearity_threshold) {
+        if (_debug) std::cout << "[IsStopMuMichel] Local linearity at hit " << i << " (before Bragg) is " << _linearity_v.at(i)
+                              << " which is below threshold (" << _local_linearity_threshold << ")" << std::endl;
+        return false;
+      }
+    }
+
+    // Check that the photon hits are below the maximum allowed
+    int n_michel_hits = _dqds_slider.size() - bragg_index;
+    if (n_michel_hits > _max_michel_hits) {
+      if (_debug) std::cout << "[IsStopMuMichel] Number of Michel hits is " << n_michel_hits
+                            << " which is above maximum allowed (" << _max_michel_hits << ")" << std::endl;
+      return false;
+    }
+
+    // Check that we have enough muon hits
+    int n_muon_hits = bragg_index;
+    if (n_muon_hits < _min_muon_hits) {
+      if (_debug) std::cout << "[IsStopMuMichel] Number of muon hits is " << n_muon_hits
+                            << " which is below minimum allowed (" << _min_muon_hits << ")" << std::endl;
+      return false;
+    }
 
     // Get mean of first and last hits
     double start_mean = std::accumulate(temp.begin(), temp.begin() + _pre_post_window, 0);

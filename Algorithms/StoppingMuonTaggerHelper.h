@@ -191,6 +191,8 @@ namespace ubana{
     int _pre_post_window = 5;
     double _perc_diff_cut = 20;
     double _local_linearity_threshold = 0.85;
+    int _min_muon_hits = 20;
+    int _max_michel_hits = 50;
 
     bool _debug = false;
 

@@ -26,6 +26,8 @@ StoppingMuonTagger: {
     PrePostWindow:           10
     PercDiffCut:             35 #50
     LocalLinerityThreshold:  0.85
+    MinMuonHits:             20           
+    MaxMichelHits:           50
     DebugMode:               true
   }
 

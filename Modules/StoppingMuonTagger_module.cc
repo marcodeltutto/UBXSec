@@ -136,6 +136,8 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p)
 
   _helper.Configure(p.get<fhicl::ParameterSet>("AlgorithmConfiguration"));
 
+  _helper.PrintConfig();
+
   _debug = p.get<bool>("DebugMode", false);
 
   fDetectorProperties = lar::providerFrom<detinfo::DetectorPropertiesService>(); 

@@ -33,6 +33,8 @@ namespace ubana {
     _perc_diff_cut = pset.get< double > ( "PercDiffCut", 20 );
     _local_linearity_threshold = pset.get< double > ( "LocalLinerityThreshold", 0.85 );
     _min_muon_hits = pset.get< int > ( "MinMuonHits", 20 );
+    _max_muon_hits = pset.get< int > ( "MaxMuonHits", 2000 );
+    _min_michel_hits = pset.get< int > ( "MinMichelHits", 2 );
     _max_michel_hits = pset.get< int > ( "MaxMichelHits", 50 );
     _debug = pset.get< bool > ( "DebugMode", false );
 
@@ -42,8 +44,20 @@ namespace ubana {
   void StoppingMuonTaggerHelper::PrintConfig() {
 
     std::cout << "--- StoppingMuonTaggerHelper configuration:" << std::endl;
-    //std::cout << "---   _max_distance  = " << _max_distance << std::endl;
-
+    std::cout << "---   _min_muon_hits               = " << _min_muon_hits << std::endl;
+    std::cout << "---   _max_muon_hits               = " << _max_muon_hits << std::endl;
+    std::cout << "---   _min_michel_hits             = " << _min_michel_hits << std::endl;
+    std::cout << "---   _max_michel_hits             = " << _max_michel_hits << std::endl;
+    std::cout << "---   _hits_to_remove              = " << _hits_to_remove << std::endl;
+    std::cout << "---   _pre_post_window             = " << _pre_post_window << std::endl;
+    std::cout << "---   _perc_diff_cut               = " << _perc_diff_cut << std::endl;
+    std::cout << "---   _local_linearity_threshold   = " << _local_linearity_threshold << std::endl;
+    std::cout << "---   _slope_threshold             = " << _slope_threshold << std::endl;
+    std::cout << "---   _max_allowed_hit_distance    = " << _max_allowed_hit_distance << std::endl;
+    std::cout << "---   _slider_window               = " << _slider_window << std::endl;
+    std::cout << "---   _dqds_calib                  = " << _dqds_calib << std::endl;
+    std::cout << "---   _w2cm                        = " << _w2cm << std::endl;
+    std::cout << "---   _t2cm                        = " << _t2cm << std::endl;
   }
 
   //_________________________________________________________________________________ 
@@ -152,15 +166,6 @@ namespace ubana {
     new_vector.push_back(_s_hit_v.at(_s_hit_v.size()-1));
     new_vector_ds.push_back(_ds_v.at(_ds_v.size()-1)); 
 
-    if (_debug) {
-      int counter = 0;
-      for (auto h : new_vector) {
-        std::cout << "AFTER2: i " << counter 
-                  << ", wire: " << h.wire 
-                  << ", time: " << h.time*4  << std::endl;
-      }
-    }
-    
     std::swap(new_vector, _s_hit_v);
     std::swap(new_vector_ds, _ds_v); 
 
@@ -570,7 +575,7 @@ namespace ubana {
     if (_debug) {
       int counter = 0;
       for (auto h : _s_hit_v) {
-        std::cout << "AFTER2: i " << counter
+        std::cout << "i " << counter
                   << ", wire: " << h.wire
                   << ", time: " << h.time*4
                   << ", dqdx_slide: " << _dqds_slider.at(counter)
@@ -737,6 +742,21 @@ namespace ubana {
 
     if (_debug) std::cout << "[IsStopMuMichel] Bragg peak hit index is " << bragg_index << std::endl;
 
+    // Check that we have enough muon hits
+    int n_muon_hits = bragg_index;
+    if (n_muon_hits > _max_muon_hits) {
+      if (_debug) std::cout << "[IsStopMuMichel] Number of muon hits is " << n_muon_hits
+                            << " which is above maximum allowed (" << _max_muon_hits << ")" << std::endl;
+      return false;
+    }
+
+    // Check that the number of muon hits are above the minimum allowed
+    if (n_muon_hits < _min_muon_hits) {
+      if (_debug) std::cout << "[IsStopMuMichel] Number of muon hits is " << n_muon_hits
+                            << " which is below minimum allowed (" << _min_muon_hits << ")" << std::endl;
+      return false;
+    }
+
     // Check that in the Bragg region the local linearity is less than threshold
     double bragg_local_linearity = _linearity_v.at(bragg_index);
 
@@ -763,11 +783,10 @@ namespace ubana {
       return false;
     }
 
-    // Check that we have enough muon hits
-    int n_muon_hits = bragg_index;
-    if (n_muon_hits < _min_muon_hits) {
-      if (_debug) std::cout << "[IsStopMuMichel] Number of muon hits is " << n_muon_hits
-                            << " which is below minimum allowed (" << _min_muon_hits << ")" << std::endl;
+    // Check that the photon hits are above the minimum allowed
+    if (n_michel_hits < _min_michel_hits) {
+      if (_debug) std::cout << "[IsStopMuMichel] Number of Michel hits is " << n_michel_hits
+                            << " which is below the minimum allowed (" << _min_michel_hits << ")" << std::endl;
       return false;
     }
 
@@ -841,11 +860,43 @@ namespace ubana {
     }
 
 
-    // Take firsts hits, then lasts hits 
-    double start_mean = std::accumulate(_dqds_slider.begin(), _dqds_slider.begin() + _pre_post_window, 0);
-    start_mean /= _pre_post_window;
-    double end_mean = std::accumulate(_dqds_slider.end() - _pre_post_window, _dqds_slider.end(), 0);
-    end_mean /= _pre_post_window;
+    // Take firsts hits, then lasts hits
+    bool _use_mean = false; 
+    double start_mean, end_mean;
+
+    if (_use_mean) { 
+
+      start_mean = std::accumulate(_dqds_slider.begin(), _dqds_slider.begin() + _pre_post_window, 0);
+      start_mean /= _pre_post_window;
+      end_mean = std::accumulate(_dqds_slider.end() - _pre_post_window, _dqds_slider.end(), 0);
+      end_mean /= _pre_post_window;
+
+    } else {
+
+      std::vector<double>::const_iterator first = _dqds_slider.begin();
+      std::vector<double>::const_iterator last  = _dqds_slider.begin() + _pre_post_window;
+      std::vector<double> temp(first, last);
+      std::sort(temp.begin(), temp.end());
+
+      double _n_hits_remove = 7.;
+
+      std::cout << "temp.size() " << temp.size() << std::endl;
+      for (auto i : temp) std::cout << "value: " << i << std::endl;
+
+      start_mean = std::accumulate(temp.begin(), temp.begin() + _n_hits_remove, 0);
+      start_mean /= _n_hits_remove;
+
+      first = _dqds_slider.end() - _pre_post_window;
+      last  = _dqds_slider.end();
+      std::vector<double> temp2(first, last);
+      std::sort(temp2.begin(), temp2.end());
+
+      std::cout << "temp2.size() " << temp2.size() << std::endl;
+      for (auto i : temp2) std::cout << "value: " << i << std::endl;
+
+      end_mean = std::accumulate(temp2.begin(), temp2.begin() + _n_hits_remove, 0);
+      end_mean /= _n_hits_remove;
+    }
 
     double perc_diff = (start_mean - end_mean) / start_mean * 100.;
 

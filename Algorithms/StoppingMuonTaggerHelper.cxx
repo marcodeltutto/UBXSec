@@ -742,8 +742,8 @@ namespace ubana {
 
     if (_debug) std::cout << "[IsStopMuMichel] Bragg peak hit index is " << bragg_index << std::endl;
 
-    // Check that we have enough muon hits
-    int n_muon_hits = bragg_index;
+    // Check that the number of muon hits are below the maximum allowed
+    int n_muon_hits = bragg_index + 1;
     if (n_muon_hits > _max_muon_hits) {
       if (_debug) std::cout << "[IsStopMuMichel] Number of muon hits is " << n_muon_hits
                             << " which is above maximum allowed (" << _max_muon_hits << ")" << std::endl;
@@ -757,7 +757,7 @@ namespace ubana {
       return false;
     }
 
-    // Check that in the Bragg region the local linearity is less than threshold
+    // Check that the local linearity is less than threshold in the Bragg region
     double bragg_local_linearity = _linearity_v.at(bragg_index);
 
     if (bragg_local_linearity > _local_linearity_threshold) {
@@ -776,7 +776,7 @@ namespace ubana {
     }
 
     // Check that the photon hits are below the maximum allowed
-    int n_michel_hits = _dqds_slider.size() - bragg_index;
+    int n_michel_hits = _dqds_slider.size() - bragg_index - 1;
     if (n_michel_hits > _max_michel_hits) {
       if (_debug) std::cout << "[IsStopMuMichel] Number of Michel hits is " << n_michel_hits
                             << " which is above maximum allowed (" << _max_michel_hits << ")" << std::endl;
@@ -838,6 +838,21 @@ namespace ubana {
 
     if (_debug) std::cout << "[IsStopMuBragg] Bragg peak hit index is " << bragg_index << std::endl;
 
+    // Check that the number of muon hits are below the maximum allowed
+    int n_muon_hits = bragg_index + 1;
+    if (n_muon_hits > _max_muon_hits) {
+      if (_debug) std::cout << "[IsStopMuMichel] Number of muon hits is " << n_muon_hits
+                            << " which is above maximum allowed (" << _max_muon_hits << ")" << std::endl;
+      return false;
+    }
+
+    // Check that the number of muon hits are above the minimum allowed
+    if (n_muon_hits < _min_muon_hits) {
+      if (_debug) std::cout << "[IsStopMuMichel] Number of muon hits is " << n_muon_hits
+                            << " which is below minimum allowed (" << _min_muon_hits << ")" << std::endl;
+      return false;
+    }
+
     // In this case we are looking for events that don't have a Michel, 
     // so we want to ensure that the local linearity is not below threshold
     // in the Bragg region
@@ -849,7 +864,7 @@ namespace ubana {
       return false;
     }
 
-    // We actually want that there is no no kink in this cluster,
+    // We actually want that there is no kink in this cluster,
     // as we just want the muon to stop
     for (auto l : _linearity_v) {
       if (l < _local_linearity_threshold) {

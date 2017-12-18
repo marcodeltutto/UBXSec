@@ -344,11 +344,11 @@ namespace ubana {
 
     new_vector.push_back(_s_hit_v.at(_start_index));
 
-    if (_debug) {
-      for (auto h : _s_hit_v) {
-        std::cout << "BEFORE: " << h.wire << ", " << h.time*4 << std::endl;
-      }
-    }
+    //if (_debug) {
+    //  for (auto h : _s_hit_v) {
+    //    std::cout << "BEFORE: " << h.wire << ", " << h.time*4 << std::endl;
+    //  }
+    //}
 
     _s_hit_v.erase(_s_hit_v.begin() + _start_index);
 
@@ -379,7 +379,7 @@ namespace ubana {
 
       // Emplace the next hit in the new vector...
       if (min_dist < _max_allowed_hit_distance) {
-        if (_debug) std::cout << "min_dist: " << min_dist <<std::endl;
+        //if (_debug) std::cout << "min_dist: " << min_dist <<std::endl;
         new_vector.push_back(_s_hit_v.at(min_index));
         _ds_v.push_back(min_dist);
       } else {
@@ -425,7 +425,7 @@ namespace ubana {
 
     if (_debug) {
       for (auto h : _s_hit_v) {
-        std::cout << "AFTER: " << h.wire << ", " << h.time*4 << std::endl;
+        std::cout << "Ordered hits: " << h.wire << ", " << h.time*4 << std::endl;
       }
     }
 
@@ -458,7 +458,7 @@ namespace ubana {
       ds = (this_point - next_point).Mag();
 
       _dqds_v.emplace_back(_s_hit_v.at(i).integral/ds * _dqds_calib);
-      if (_debug) std::cout << "_dqds_v.back() " << _dqds_v.back() << std::endl;
+      //if (_debug) std::cout << "_dqds_v.back() " << _dqds_v.back() << std::endl;
 
     }
 
@@ -497,7 +497,7 @@ namespace ubana {
 
       double median_dqds = this->GetTruncMedian(window);
       _dqds_slider.push_back(median_dqds);
-      if (_debug) std::cout << "dqds_slider value " << median_dqds << std::endl;
+      //if (_debug) std::cout << "dqds_slider value " << median_dqds << std::endl;
 
 
     }
@@ -619,7 +619,7 @@ namespace ubana {
         //          << "sX: " << sX <<  std::endl
         //          << "sY: " << sY <<  std::endl
         //          << "r: "  << r <<  std::endl;
-        std::cout << "Local Linearity: " << r << std::endl;
+        //std::cout << "Local Linearity: " << r << std::endl;
       }
 
       if(std::isnan(r)) r = 0.0; 
@@ -636,7 +636,6 @@ namespace ubana {
 
     _linearity_is_set = true;
 
-    std::cout << "here end ll" << std::endl;
     return;
   } 
 
@@ -841,14 +840,14 @@ namespace ubana {
     // Check that the number of muon hits are below the maximum allowed
     int n_muon_hits = bragg_index + 1;
     if (n_muon_hits > _max_muon_hits) {
-      if (_debug) std::cout << "[IsStopMuMichel] Number of muon hits is " << n_muon_hits
+      if (_debug) std::cout << "[IsStopMuBragg] Number of muon hits is " << n_muon_hits
                             << " which is above maximum allowed (" << _max_muon_hits << ")" << std::endl;
       return false;
     }
 
     // Check that the number of muon hits are above the minimum allowed
     if (n_muon_hits < _min_muon_hits) {
-      if (_debug) std::cout << "[IsStopMuMichel] Number of muon hits is " << n_muon_hits
+      if (_debug) std::cout << "[IsStopMuBragg] Number of muon hits is " << n_muon_hits
                             << " which is below minimum allowed (" << _min_muon_hits << ")" << std::endl;
       return false;
     }
@@ -895,9 +894,6 @@ namespace ubana {
 
       double _n_hits_remove = 7.;
 
-      std::cout << "temp.size() " << temp.size() << std::endl;
-      for (auto i : temp) std::cout << "value: " << i << std::endl;
-
       start_mean = std::accumulate(temp.begin(), temp.begin() + _n_hits_remove, 0);
       start_mean /= _n_hits_remove;
 
@@ -905,9 +901,6 @@ namespace ubana {
       last  = _dqds_slider.end();
       std::vector<double> temp2(first, last);
       std::sort(temp2.begin(), temp2.end());
-
-      std::cout << "temp2.size() " << temp2.size() << std::endl;
-      for (auto i : temp2) std::cout << "value: " << i << std::endl;
 
       end_mean = std::accumulate(temp2.begin(), temp2.begin() + _n_hits_remove, 0);
       end_mean /= _n_hits_remove;

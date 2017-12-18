@@ -373,7 +373,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
       shit.time = h->PeakTime() / 4;
       shit.wire = h->WireID().Wire;
 
-      if (_debug) std::cout << "Emplacing hit with time " << shit.time*4 << ", and wire " << shit.wire << ", on plane " << shit.plane << std::endl;
+      //if (_debug) std::cout << "Emplacing hit with time " << shit.time*4 << ", and wire " << shit.wire << ", on plane " << shit.plane << std::endl;
       shit_v.emplace_back(shit);
     }
 

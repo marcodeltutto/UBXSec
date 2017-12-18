@@ -25,7 +25,7 @@ ACPTTagger: {
   MinTrackLength:        0
  
   PEMin:                 0
-  Debug:                 true
+  Debug:                 false
   CreateHisto:           false
 }
 

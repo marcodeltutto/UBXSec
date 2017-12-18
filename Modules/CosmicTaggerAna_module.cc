@@ -213,6 +213,7 @@ void CosmicTaggerAna::analyze(art::Event const & e)
 
   _n_pfp = recoParticleVector.size();
 
+  _n_pfp_primary = 0;
   for (int i = 0; i < _n_pfp; i++) {
     if (!recoParticleVector.at(i)->IsPrimary()) continue;
     _n_pfp_primary++;

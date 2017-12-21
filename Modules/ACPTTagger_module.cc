@@ -100,7 +100,7 @@ private:
   std::vector<double> _flash_zwidth;
   double _pe_min;
 
-  bool _debug, _create_histo;
+  bool _debug, _create_histo, _create_tree;
 
   const std::vector<float> endPt1 = {-9999., -9999., -9999.};
   const std::vector<float> endPt2 = {-9999., -9999., -9999.};
@@ -153,6 +153,7 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
   _pe_min              = p.get<double> ("PEMin", 0);
   _debug               = p.get<bool>("Debug", false);
   _create_histo        = p.get<bool>("CreateHisto", false); 
+  _create_tree         = p.get<bool>("CreateTree", false);
 
   //_csvfile.open ("acpt.csv", std::ofstream::out | std::ofstream::trunc);
   //_csvfile << "trk_x_up,trk_x_down,fls_time" << std::endl;
@@ -174,7 +175,7 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
     _h_dz_d_cathode = fs->make<TH1D>("h_dz_d_cathode", ";Track Z - Flash Z [cm];Events", 200, -200, 200);
   }
 
-  if (_debug) {
+  if (_create_tree) {
     _tree1 = fs->make<TTree>("tree","");
     _tree1->Branch("run",           &_run,                 "run/I");
     _tree1->Branch("subrun",        &_subrun,              "subrun/I");
@@ -215,11 +216,12 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
 void ACPTTagger::produce(art::Event & e)
 {
 
-  if (_debug) {
+  if (_create_tree) {
     _run    = e.id().run();
     _subrun = e.id().subRun();
     _event  = e.id().event();
-   
+  }  
+  if (_debug) {
     std::cout << "AnodeTime set to " << _anodeTime << std::endl;
     std::cout << "CathodeTime set to " << _cathodeTime << std::endl;
   }
@@ -389,21 +391,31 @@ void ACPTTagger::produce(art::Event & e)
       if (pts.size() > 0) {
         TVector3 hp = this->ContainPoint(pts[0]);
 
+        double z_start=0, z_end=0;
+
         // Plane 2
         this->SortHitPoints(hit_v, pts, hp, 2);
-        if (pts.size() >= 2) {
+        if (pts.size() == 2) {
+          z_start = pts.at(0).Z();
+          z_end = pts.at(1).Z();
           sorted_points_v.emplace_back(pts);
         }
 
         // Plane 1
         this->SortHitPoints(hit_v, pts, hp, 1);
-        if (pts.size() >= 2) {
+        if (pts.size() == 2) {
+          // Hack z pos untill I know how to do it
+          pts.at(0).SetZ(z_start);
+          pts.at(1).SetZ(z_end);
           sorted_points_v.emplace_back(pts); 
         }
 
         // Plane 0
         this->SortHitPoints(hit_v, pts, hp, 0);
-        if (pts.size() >= 2) {
+        if (pts.size() == 2) {
+          // Hack z pos untill I know how to do it
+          pts.at(0).SetZ(z_start);
+          pts.at(1).SetZ(z_end);
           sorted_points_v.emplace_back(pts);
         }
       }
@@ -435,6 +447,7 @@ void ACPTTagger::produce(art::Event & e)
       }
     }
       
+
 
     size_t loop_max = sorted_points_v.size();
 
@@ -525,7 +538,7 @@ void ACPTTagger::produce(art::Event & e)
   e.put(std::move(assnOutCosmicTagTrack));
   e.put(std::move(assnOutCosmicTagPFParticle));
 
-  if (_debug) _tree1->Fill();
+  if (_create_tree) _tree1->Fill();
 }
 
 
@@ -553,7 +566,7 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_cente
       _h_diff_a->Fill(diff);
       _h_diff_c->Fill(diff);
     }
-    if (_debug && fill_histo) {
+    if (_create_tree && fill_histo) {
       _tree2_dt = diff;
       _tree2_flstime = _flash_times[theflash];
       _tree2_tracktime = _end.X() / _drift_vel;
@@ -631,7 +644,7 @@ void ACPTTagger::SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vec
             });
 
   double time_highest = fDetectorProperties->ConvertXToTicks(highest_point.X(), geo::PlaneID(0,0,2));
-  int wire_highest = geo->NearestWire(highest_point, 2);
+  int wire_highest = geo->NearestWire(highest_point, planeno);
 
   std::cout << "[ACPTTagger] wire_highest " << wire_highest << ", time_highest " << time_highest << std::endl;
 

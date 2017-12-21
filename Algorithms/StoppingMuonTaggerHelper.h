@@ -195,6 +195,7 @@ namespace ubana{
     int _max_muon_hits = 2000;
     int _min_michel_hits = 2;
     int _max_michel_hits = 50;
+    int _max_end_hits = 120;
 
     bool _debug = false;
 

@@ -21,8 +21,8 @@ StoppingMuonTagger: {
     GainCalib:               198
     SliderWindow:            10
     MaxAllowedHitDistance:   15
-    SlopeThreshold:          0.15
-    HitsToRemove:            5
+    SlopeThreshold:          0.25
+    HitsToRemove:            3
     PrePostWindow:           10
     PercDiffCut:             35 #50
     LocalLinerityThreshold:  0.9
@@ -30,6 +30,7 @@ StoppingMuonTagger: {
     MaxMuonHits:             2000
     MinMichelHits:           2
     MaxMichelHits:           50
+    MaxEndHits:              100
     DebugMode:               true
   }
 

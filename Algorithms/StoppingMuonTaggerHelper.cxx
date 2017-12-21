@@ -36,6 +36,7 @@ namespace ubana {
     _max_muon_hits = pset.get< int > ( "MaxMuonHits", 2000 );
     _min_michel_hits = pset.get< int > ( "MinMichelHits", 2 );
     _max_michel_hits = pset.get< int > ( "MaxMichelHits", 50 );
+    _max_end_hits = pset.get< int > ( "MaxEndHits", 120 );  
     _debug = pset.get< bool > ( "DebugMode", false );
 
   }
@@ -382,13 +383,13 @@ namespace ubana {
         //if (_debug) std::cout << "min_dist: " << min_dist <<std::endl;
         new_vector.push_back(_s_hit_v.at(min_index));
         _ds_v.push_back(min_dist);
-      } else {
-
+      } else if (new_vector.size() > 5){
+ 
         // Calculate previous slope
         auto iter = new_vector.end();
         auto sh_3 = _s_hit_v.at(min_index);
         auto sh_2 = *(--iter);
-        auto sh_1 = *(--iter);
+        auto sh_1 = *(iter-5); // go 5 hits back
         double slope = (sh_2.time - sh_1.time) / (sh_2.wire - sh_1.wire);
 
         // Calculate the new slope
@@ -423,11 +424,11 @@ namespace ubana {
     // Now that the vector is ordered, reassing to the original one
     _s_hit_v = new_vector;
 
-    if (_debug) {
-      for (auto h : _s_hit_v) {
-        std::cout << "Ordered hits: " << h.wire << ", " << h.time*4 << std::endl;
-      }
-    }
+    //if (_debug) {
+      //for (auto h : _s_hit_v) {
+        //std::cout << "Ordered hits: " << h.wire << ", " << h.time*4 << std::endl;
+      //}
+    //}
 
     _hits_ordered = true;
 
@@ -713,23 +714,25 @@ namespace ubana {
 
   bool StoppingMuonTaggerHelper::IsStopMuMichel() {
 
-    if (_dqds_slider.size() < (unsigned int) (_hits_to_remove * 2 + _pre_post_window * 2)) {
+    if (_dqds_slider.size() < (unsigned int) (_hits_to_remove * 2 + _pre_post_window * 2 + 6)) {
       if (_debug) std::cout << "Can't make decision, number of simple hits is " << _dqds_slider.size() 
-                            << ", which is less then " << _hits_to_remove * 2 + _pre_post_window * 2 << std::endl;
+                            << ", which is less then " << _hits_to_remove * 2 + _pre_post_window * 2 + 6<< std::endl;
       return false;
     }
 
-    std::vector<double> temp = _dqds_slider;
-
-    // Remove first "_hits_to_remove" and last "_hits_to_remove" hits
-    temp.erase(temp.begin(), temp.begin() + _hits_to_remove);
-    temp.erase(temp.end() - _hits_to_remove, temp.end());
-
-
     // Find the hits with the maximum dqds, that one will be the hit
-    // where the Bragg peak is
-    size_t bragg_index;
-    auto it_max = std::max_element(_dqds_slider.begin(), _dqds_slider.end());
+    // where the Bragg peak is. If this is a big cluster, is likely that 
+    // there'll be a big delta ray that may fake a Bragg peak. In this case, 
+    // look only at the end of the cluster to find the Bragg peak.
+    int offset = 1; // at least start from 1 as first hit is usually bad
+    if (_dqds_slider.size() > (size_t)_max_end_hits) {
+      if (_debug) std::cout << "[IsStopMuMichel] Many hits in this cluseter ("
+                            << _dqds_slider.size() << "), finding Bragg in the last "
+                            << _max_end_hits << " hits." << std::endl;
+      offset = _dqds_slider.size() - _max_end_hits;
+    }
+    int bragg_index;
+    auto it_max = std::max_element(_dqds_slider.begin()+offset, _dqds_slider.end());
     bragg_index = it_max - _dqds_slider.begin();
     double bragg_dqds = *it_max;
     for (bool flag = true; flag && it_max != _dqds_slider.end(); it_max++) {
@@ -766,7 +769,7 @@ namespace ubana {
     }
 
     // Check that the local linearity in the muon region (before Bragg) is above threshold
-    for (size_t i = 0; i < bragg_index - _pre_post_window; i++) {
+    for (size_t i = offset; i < (size_t) bragg_index - _pre_post_window; i++) {
       if (_linearity_v.at(i) < _local_linearity_threshold) {
         if (_debug) std::cout << "[IsStopMuMichel] Local linearity at hit " << i << " (before Bragg) is " << _linearity_v.at(i)
                               << " which is below threshold (" << _local_linearity_threshold << ")" << std::endl;
@@ -790,10 +793,43 @@ namespace ubana {
     }
 
     // Get mean of first and last hits
+    std::vector<double> temp = _dqds_slider;
+
+    // Remove first "_hits_to_remove" and last "_hits_to_remove" hits
+    /*if (offset > 0) {
+      temp.erase(temp.begin(), temp.begin() + offset);
+    } else {
+      temp.erase(temp.begin(), temp.begin() + _hits_to_remove);
+    }*/
+    std::cout << "_dqds_slider vector has size " << _dqds_slider.size() << std::endl;
+    std::cout << "temp vector has size " << temp.size() << std::endl;
+    temp.erase(temp.begin(), temp.begin() + bragg_index - (_pre_post_window + 5));
+    temp.erase(temp.end() - _hits_to_remove, temp.end());
+
+    std::cout << "temp vector has size " << temp.size() << std::endl;
+
+    bragg_index = (_pre_post_window + 5);
+
+    std::cout << "bragg index is " << bragg_index << std::endl;
+    std::cout << "at bragg index temp vector is " << temp.at(bragg_index) << std::endl;
+
+    for (size_t i = 0; i < temp.size(); i++) std::cout << i << ": temp = " << temp.at(i) << std::endl;
+
     double start_mean = std::accumulate(temp.begin(), temp.begin() + _pre_post_window, 0);
     start_mean /= _pre_post_window;
+
     double end_mean = std::accumulate(temp.end() - _pre_post_window, temp.end(), 0);
     end_mean /= _pre_post_window;
+
+    int edge = bragg_index + 5;
+
+    if (temp.size() - edge < (size_t) _pre_post_window) {
+      int vector_size = (int) temp.size();
+      if (_debug) std::cout << "[IsStopMuMichel] Few Michel hits, calculating average only on "
+                            << vector_size - edge << " hits." << std::endl;
+      end_mean = std::accumulate(temp.end() - (vector_size - edge), temp.end(), 0);
+      end_mean /= (double) vector_size - edge;
+    }
 
     double perc_diff = (start_mean - end_mean) / start_mean * 100.;
 
@@ -864,10 +900,11 @@ namespace ubana {
     }
 
     // We actually want that there is no kink in this cluster,
-    // as we just want the muon to stop
-    for (auto l : _linearity_v) {
-      if (l < _local_linearity_threshold) {
-        if (_debug) std::cout << "[IsStopMuBragg] Local linearity is " << l
+    // as we just want the muon to stop. But exclude first hits 
+    // as things can get funny at the beginning
+    for (size_t l = _hits_to_remove; l < _linearity_v.size(); l++) {
+      if (_linearity_v.at(l) < _local_linearity_threshold) {
+        if (_debug) std::cout << "[IsStopMuBragg] Local linearity is " << _linearity_v.at(l)
                               << " which is less than threshold (" << _local_linearity_threshold << ")" << std::endl;
         return false;
       }

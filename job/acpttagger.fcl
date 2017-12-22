@@ -13,14 +13,14 @@ ACPTTagger: {
   SWTriggerProducer:     "swtrigger"
 
   UseTracks:             true
-  UseSpacePoints:        true
+  UseSpacePoints:        false
   UseHits:               true
 
   AnodeTime:             0.53
   CathodeTime:           2291
-  DtResolutionAnode:     5
+  DtResolutionAnode:     7
   DzResolutionAnode:     80
-  DtResolutionCathode:   5
+  DtResolutionCathode:   7
   DzResolutionCathode:   80
   MinTrackLength:        0
  

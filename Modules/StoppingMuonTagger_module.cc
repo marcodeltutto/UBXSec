@@ -50,6 +50,7 @@
 #include "larsim/MCCheater/BackTracker.h"
 
 //Algorithms include
+#include "uboone/LLBasicTool/GeoAlgo/GeoTrajectory.h"
 #include "uboone/UBXSec/Algorithms/FiducialVolume.h"
 #include "uboone/UBXSec/Algorithms/StoppingMuonTaggerHelper.h"
 
@@ -330,6 +331,21 @@ void StoppingMuonTagger::produce(art::Event & e) {
       continue;
     }
 
+    // First exclude spacepoints outside the tpc
+    std::vector<art::Ptr<recob::SpacePoint>> temp;
+    ::geoalgo::AABox tpcvol(0., (-1.)*geo->DetHalfHeight(), 
+                            0., geo->DetHalfWidth()*2, 
+                            geo->DetHalfHeight(), geo->DetLength());
+
+    for (auto s : sp_v) {
+      const double *xyz = s->XYZ();
+      ::geoalgo::Vector point (xyz[0], xyz[1], xyz[2]);
+      if (tpcvol.Contain(point)) {
+        temp.push_back(s);
+      }
+    }
+    sp_v = temp;
+
     // Now get the highest point
     std::sort(sp_v.begin(), sp_v.end(),
               [](art::Ptr<recob::SpacePoint> a, art::Ptr<recob::SpacePoint> b) -> bool
@@ -338,6 +354,11 @@ void StoppingMuonTagger::produce(art::Event & e) {
                 const double *xyz_b = b->XYZ();
                 return xyz_a[1] > xyz_b[1];
               });
+
+    if (sp_v.size() == 0) {
+      std::cout << "Not enough spacepoints." << std::endl;
+      continue;
+    }
 
     const double *highest_point_c = sp_v.at(0)->XYZ();
     double highest_point[3] = {highest_point_c[0], highest_point_c[1], highest_point_c[2]};
@@ -442,6 +463,8 @@ void StoppingMuonTagger::produce(art::Event & e) {
     bool result_bragg = _helper.MakeDecision(ubana::kAlgoBragg);
     if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (bragg)? " << (result_bragg ? "YES" : "NO") << std::endl;
 
+    bool result_simplemip = _helper.MakeDecision(ubana::kAlgoSimpleMIP);
+    if (_debug) std::cout << "[StoppingMuonTagger] Is simple MIP? " << (result_simplemip ? "YES" : "NO") << std::endl;
     //bool result_curvature = _helper.MakeDecision(ubana::kAlgoCurvature);
     //if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (curvature)? " << (result_curvature ? "YES" : "NO") << std::endl;
 
@@ -456,7 +479,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     double cosmicScore = 0.;
     anab::CosmicTagID_t tag_id = anab::CosmicTagID_t::kNotTagged;
-    if (result || result_bragg /*|| result_mcs*/) {
+    if (result || result_bragg || result_simplemip/*|| result_mcs*/) {
       cosmicScore = 1.;
       tag_id = anab::CosmicTagID_t::kGeometry_Y;
     }

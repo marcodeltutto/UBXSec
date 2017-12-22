@@ -134,6 +134,9 @@ namespace ubana{
     /// Algo, returns true if is a stopping muon, looks at the Bragg peak
     bool IsStopMuBragg();
 
+    /// Algo, returns true if is is a crossing simple MIP
+    bool IsSimpleMIP();
+
     /// Algo, returns true if is a stopping muon, looks at the curvature
     bool IsStopMuCurvature(); 
 

@@ -135,10 +135,10 @@ namespace ubana {
 
     for (size_t i = 2; i < mean_v.size()-1; i++) {
 
-      if (_debug) std::cout << "i: " << i 
-                            << " wire : " << _s_hit_v.at(i).wire 
-                            << " time : " << _s_hit_v.at(i).time 
-                            << " mean: " << mean_v.at(i) << std::endl;
+      //if (_debug) std::cout << "i: " << i 
+      //                      << " wire : " << _s_hit_v.at(i).wire 
+      //                      << " time : " << _s_hit_v.at(i).time 
+      //                      << " mean: " << mean_v.at(i) << std::endl;
 
       if (std::abs(mean_v.at(i-1) - mean_v.at(i)) < 1    && 
           _s_hit_v.at(i-1).wire !=  _s_hit_v.at(i).wire  &&
@@ -380,7 +380,7 @@ namespace ubana {
 
       // Emplace the next hit in the new vector...
       if (min_dist < _max_allowed_hit_distance) {
-        //if (_debug) std::cout << "min_dist: " << min_dist <<std::endl;
+        if (_debug) std::cout << "min_dist: " << min_dist <<std::endl;
         new_vector.push_back(_s_hit_v.at(min_index));
         _ds_v.push_back(min_dist);
       } else if (new_vector.size() > 5){
@@ -395,16 +395,36 @@ namespace ubana {
         // Calculate the new slope
         double slope_new = (sh_3.time - sh_2.time) / (sh_3.wire - sh_2.wire);
 
+        std::cout << "sh_1.wire: "<<sh_1.wire<<", sh_1.time: "<< sh_1.time << std::endl;
+        std::cout << "sh_2.wire: "<<sh_2.wire<<", sh_2.time: "<< sh_2.time << std::endl;
+        std::cout << "sh_3.wire: "<<sh_3.wire<<", sh_3.time: "<< sh_3.time << std::endl;
         if (_debug) std::cout << "Current slope : " << slope 
                               << " New slope: " << slope_new 
                               << " Diff: " << slope_new - slope << std::endl;
+
+        // Check the next hit will be in a consecutive wire
+        bool progressive_order = false;
+
+        if (sh_1.wire < sh_2.wire) {
+          if (sh_3.wire > sh_2.wire) {
+            progressive_order = true;
+          }
+        }
+        if (sh_2.wire < sh_1.wire) {
+          if (sh_3.wire < sh_2.wire) {
+            progressive_order = true;
+          }
+        }
+
+        std::cout << "Progressive order? " << (progressive_order ? "YES" : "NO") << std::endl;
 
         // If the two slopes are close, than there is 
         // probably a dead region between the point.
         // If so, increase the min distance by half a meter
         // and add the hit.
         if (std::abs(slope_new - slope) < _slope_threshold &&
-            min_dist < _max_allowed_hit_distance + 50) {
+            min_dist < _max_allowed_hit_distance + 50 &&
+            progressive_order) {
 
           new_vector.push_back(_s_hit_v.at(min_index)); 
           _ds_v.push_back(min_dist);
@@ -459,7 +479,7 @@ namespace ubana {
       ds = (this_point - next_point).Mag();
 
       _dqds_v.emplace_back(_s_hit_v.at(i).integral/ds * _dqds_calib);
-      //if (_debug) std::cout << "_dqds_v.back() " << _dqds_v.back() << std::endl;
+      if (_debug) std::cout << "_dqds_v.back() " << _dqds_v.back() << std::endl;
 
     }
 
@@ -695,7 +715,7 @@ namespace ubana {
        break;
 
      case kAlgoSimpleMIP:
-       return false;
+       return this->IsSimpleMIP();
        break;
 
      case kAlgoCurvature:
@@ -956,6 +976,82 @@ namespace ubana {
 
   }
 
+  bool StoppingMuonTaggerHelper::IsSimpleMIP() {
+
+    // This algo excludes the first and last hit
+
+    // Check that the local linearity in never below threshold
+    for (size_t i = 1; i < _linearity_v.size() - 1; i++) {
+
+      if (_linearity_v.at(i) < _local_linearity_threshold) {
+
+        std::cout << "[IsSimpleMIP] Local linearity at hit" << i 
+                  << " is " << _linearity_v.at(i) 
+                  << " which is below threshold (" 
+                  << _local_linearity_threshold << ")." << std::endl;
+        return false;
+
+      }
+    }
+
+    // Now verify the first and last hits are flat in dqds
+    std::vector<double> start_v (_dqds_v.begin() + 1, _dqds_v.begin() + 6);
+    std::vector<double> end_v (_dqds_v.end() - 6, _dqds_v.end() - 1);
+
+    //double std_start = stdev(start_v);
+    //double std_end = stdev(end_v);
+    //std::cout << "std_start: " << std_start << ", std_end: " << std_end << std::endl;
+
+    bool good_start = true;
+    bool good_end = true;
+
+    for (auto q : start_v) {
+      if (q < 40000 || q > 75000) {
+        good_start = false;
+      }
+    }
+
+    for (auto q : end_v) { 
+      if (q < 40000 || q > 75000) {
+        good_end = false;
+      }
+    }
+
+    std::cout << "[IsSimpleMIP] Start is " << (good_start ? "GOOD" : "END") << std::endl;    std::cout << "[IsSimpleMIP] End is " << (good_end ? "GOOD" : "END") << std::endl;
+
+    double start_mean = 0, end_mean = 0;
+
+    start_mean = std::accumulate(_dqds_slider.begin() + 1, 
+                                 _dqds_slider.begin() + 6, 0);
+    start_mean /= 5.;
+
+    end_mean = std::accumulate(_dqds_slider.end() - 6,
+                               _dqds_slider.end() - 1, 0);
+    end_mean /= 5.;
+
+    double perc_diff = (start_mean - end_mean) / start_mean * 100.; 
+
+    if (_debug) std::cout << "[IsSimpleMIP Start mean: " << start_mean
+                          << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl; 
+
+    if (std::abs(perc_diff) < 10) {
+      return true;
+    }
+
+    return false;
+
+  }
+
+  /*
+  double StoppingMuonTaggerHelper::GetSTD(std::vector<double> v) {
+
+    double sum = std::accumulate(v.begin(), v.end(), 0.0);
+    double mean = sum / v.size();
+
+    double sq_sum = std::inner_product(v.begin(), v.end(), v.begin(), 0.0);
+    double stdev = std::sqrt(sq_sum / v.size() - mean * mean);
+  }
+  */
 
   bool StoppingMuonTaggerHelper::IsStopMuCurvature() {
 

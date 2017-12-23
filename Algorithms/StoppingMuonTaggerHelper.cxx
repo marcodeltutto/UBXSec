@@ -830,6 +830,10 @@ namespace ubana {
 
     bragg_index = (_pre_post_window + 5);
 
+    if (temp.size() <= (size_t)bragg_index) {
+      std::cout << "Not enough hits." << std::endl;
+      return false;
+    }
     std::cout << "bragg index is " << bragg_index << std::endl;
     std::cout << "at bragg index temp vector is " << temp.at(bragg_index) << std::endl;
 

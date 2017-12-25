@@ -491,7 +491,7 @@ namespace ubana {
 
 
 
-  void StoppingMuonTaggerHelper::PerformdQdsSlider() {
+  bool StoppingMuonTaggerHelper::PerformdQdsSlider() {
 
     if (_dqds_v.size() != _s_hit_v.size()) {
       std::cout << __FUNCTION__ << ": dqds size is different than hit vector size" << std::endl;
@@ -500,7 +500,7 @@ namespace ubana {
 
     if (_dqds_v.size() < _slider_window * 2) {
       std::cout << __FUNCTION__ << ": not enough hits" << std::endl;
-      return;
+      return false;
     }
 
     //size_t window = _slider_window;
@@ -548,7 +548,7 @@ namespace ubana {
     }
 
 */
-    return;
+    return true;
 
   }
 
@@ -1006,7 +1006,9 @@ namespace ubana {
 
     // Check compatibility
     if (_dqds_v.size() != _dqds_slider.size()) {
-      std::cout << "[IsSimpleMIP] _dqds_v.size() != _dqds_slider.size()" << std::endl;
+      std::cout << "[IsSimpleMIP] _dqds_v vector size is " << _dqds_v.size() 
+                << " which is different to _dqds_slider vector size, which is "
+                << _dqds_slider.size() << "." << std::endl;
       throw std::exception();
     }
 

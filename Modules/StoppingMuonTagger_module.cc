@@ -445,7 +445,10 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     // dQds Slider
     if (_debug) std::cout << "[StoppingMuonTagger] Now perform window slider" << std::endl;
-    _helper.PerformdQdsSlider();
+    bool status = _helper.PerformdQdsSlider();
+
+    if (!status)
+      continue;
 
     // Linearity
     if (_debug) std::cout << "[StoppingMuonTagger] Now calculate local linearity" << std::endl;

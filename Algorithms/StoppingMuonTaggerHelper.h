@@ -110,7 +110,7 @@ namespace ubana{
     void CalculatedQds();
 
     /// Calculated the dqds averaging neibouring hits
-    void PerformdQdsSlider();
+    bool PerformdQdsSlider();
 
     /// Calculates the local linearity along the hits
     void CalculateLocalLinearity();

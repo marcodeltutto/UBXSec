@@ -739,10 +739,10 @@ TVector3 ACPTTagger::ContainPoint(TVector3 p) {
   if (x > 2.*geo->DetHalfWidth() - e)
     p_out.SetX(2.*geo->DetHalfWidth() - e);
 
-  if (y < -geo->DetHalfWidth() + e)
-    p_out.SetY(-geo->DetHalfWidth() + e);
-  if (y > geo->DetHalfWidth() - e)
-    p_out.SetY(geo->DetHalfWidth() - e);
+  if (y < -geo->DetHalfHeight() + e)
+    p_out.SetY(-geo->DetHalfHeight() + e);
+  if (y > geo->DetHalfHeight() - e)
+    p_out.SetY(geo->DetHalfHeight() - e);
 
   if (z < 0. + e)
     p_out.SetZ(0.+ e);

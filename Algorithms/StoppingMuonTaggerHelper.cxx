@@ -1004,6 +1004,18 @@ namespace ubana {
       }
     }
 
+    // Check compatibility
+    if (_dqds_v.size() != _dqds_slider.size()) {
+      std::cout << "[IsSimpleMIP] _dqds_v.size() != _dqds_slider.size()" << std::endl;
+      throw std::exception();
+    }
+
+    // Check that we have enough hits
+    if (_dqds_v.size() < 6 + 1 + 6 + 1) {
+      std::cout << "[IsSimpleMIP] Not enough hits." << std::endl;
+      return false;
+    }
+
     // Now verify the first and last hits are flat in dqds
     std::vector<double> start_v (_dqds_v.begin() + 1, _dqds_v.begin() + 6);
     std::vector<double> end_v (_dqds_v.end() - 6, _dqds_v.end() - 1);
@@ -1030,6 +1042,9 @@ namespace ubana {
     std::cout << "[IsSimpleMIP] Start is " << (good_start ? "GOOD" : "BAD") << std::endl;
     std::cout << "[IsSimpleMIP] End is " << (good_end ? "GOOD" : "BAD") << std::endl;
 
+
+    // Now use the smoothed dqds to evaluate the start and 
+    // end dqds average value
     double start_mean = 0, end_mean = 0;
 
     start_mean = std::accumulate(_dqds_slider.begin() + 1, 

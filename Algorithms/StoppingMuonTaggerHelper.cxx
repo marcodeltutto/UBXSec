@@ -266,7 +266,7 @@ namespace ubana {
       TVector3 pt1(iter->second.time, iter->second.wire, 0);
       double dist = (pt0-pt1).Mag();
   
-      if (dist > _max_allowed_hit_distance) // Check this number! 
+      if (dist > 2.) // Check this number! 
         break;
 
       n_step_left ++;
@@ -740,6 +740,12 @@ namespace ubana {
       return false;
     }
 
+
+    // Vertex must not be in the FV
+    if (_fv.InFV(_vertex))
+      return false;
+
+
     // Find the hits with the maximum dqds, that one will be the hit
     // where the Bragg peak is. If this is a big cluster, is likely that 
     // there'll be a big delta ray that may fake a Bragg peak. In this case, 
@@ -1021,7 +1027,8 @@ namespace ubana {
       }
     }
 
-    std::cout << "[IsSimpleMIP] Start is " << (good_start ? "GOOD" : "END") << std::endl;    std::cout << "[IsSimpleMIP] End is " << (good_end ? "GOOD" : "END") << std::endl;
+    std::cout << "[IsSimpleMIP] Start is " << (good_start ? "GOOD" : "BAD") << std::endl;
+    std::cout << "[IsSimpleMIP] End is " << (good_end ? "GOOD" : "BAD") << std::endl;
 
     double start_mean = 0, end_mean = 0;
 
@@ -1038,7 +1045,7 @@ namespace ubana {
     if (_debug) std::cout << "[IsSimpleMIP Start mean: " << start_mean
                           << ", end mean " << end_mean << ", Perc diff is " << perc_diff << std::endl; 
 
-    if (std::abs(perc_diff) < 10) {
+    if (good_start && good_end && std::abs(perc_diff) < 10) {
       return true;
     }
 

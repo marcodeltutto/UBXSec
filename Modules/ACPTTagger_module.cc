@@ -63,7 +63,7 @@ public:
 private:
 
   /// Claculates the (track reco time) - (flash time) from the _end specified point, that is the closest to the _value given
-  bool GetClosestDtDz(TVector3 _end, double _value, double trk_z_center, std::vector<double> &_dt, std::vector<double> &_dz, bool fill_histo);
+  bool GetClosestDtDz(TVector3 _end, double _value, double trk_z_start, double trk_z_end, std::vector<double> &_dt, std::vector<double> &_dz, bool fill_histo);
   /// Returns true if sign is positive, negative otherwise
   bool GetSign(std::vector<TVector3> sorted_points);
   void SortTrackPoints(const recob::Track& track, std::vector<TVector3>& sorted_points);
@@ -470,14 +470,16 @@ void ACPTTagger::produce(art::Event & e)
 
       std::vector<TVector3> sorted_points = sorted_points_v.at(i);
      
-      double z_center = sorted_points[0].Z();
-      z_center += sorted_points[sorted_points.size()-1].Z();
-      z_center /= 2.;
+      //double z_center = sorted_points[0].Z();
+      //z_center += sorted_points[sorted_points.size()-1].Z();
+      //z_center /= 2.;
+      double trk_z_start = sorted_points[0].Z();
+      double trk_z_end   = sorted_points[sorted_points.size()-1].Z();
 
-      this->GetClosestDtDz(sorted_points[0],                      _anodeTime,   z_center, _dt_u_anode,   _dz_u_anode,   true);
-      this->GetClosestDtDz(sorted_points[sorted_points.size()-1], _anodeTime,   z_center, _dt_d_anode,   _dz_d_anode,   true);
-      this->GetClosestDtDz(sorted_points[0],                      _cathodeTime, z_center, _dt_u_cathode, _dz_u_cathode, false);
-      this->GetClosestDtDz(sorted_points[sorted_points.size()-1], _cathodeTime, z_center, _dt_d_cathode, _dz_d_cathode, false);
+      this->GetClosestDtDz(sorted_points[0],                      _anodeTime,   trk_z_start, trk_z_end, _dt_u_anode,   _dz_u_anode,   true);
+      this->GetClosestDtDz(sorted_points[sorted_points.size()-1], _anodeTime,   trk_z_start, trk_z_end, _dt_d_anode,   _dz_d_anode,   true);
+      this->GetClosestDtDz(sorted_points[0],                      _cathodeTime, trk_z_start, trk_z_end, _dt_u_cathode, _dz_u_cathode, false);
+      this->GetClosestDtDz(sorted_points[sorted_points.size()-1], _cathodeTime, trk_z_start, trk_z_end, _dt_d_cathode, _dz_d_cathode, false);
 
       auto const* SCE = lar::providerFrom<spacecharge::SpaceChargeService>();
       std::vector<double> sce_corr = SCE->GetPosOffsets(256.35,
@@ -555,7 +557,7 @@ void ACPTTagger::produce(art::Event & e)
 }
 
 
-bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_center, std::vector<double> &_dt, std::vector<double> &_dz, bool fill_histo) {
+bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_start, double trk_z_end, std::vector<double> &_dt, std::vector<double> &_dz, bool fill_histo) {
 
   double dist = 1e9;
   double min_dist = 1e9;
@@ -590,10 +592,33 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_cente
 
   if (theflash == -1) return false;
 
-  std::cout << "flash index " << theflash << ", flashtime " << _flash_times.at(theflash) << ", flashcenter " << _flash_zcenter.at(theflash) << ", trackcenter " << trk_z_center << std::endl;
- 
+  if (trk_z_start > trk_z_end)
+    std::swap(trk_z_start, trk_z_end);
+
+  double dz = 1e9;
+
+  if (_flash_zcenter[theflash] > trk_z_start && _flash_zcenter[theflash] < trk_z_end) { 
+    dz = 0;
+  } else {
+
+    if (_flash_zcenter[theflash] < trk_z_start)
+      dz = std::abs(_flash_zcenter[theflash] - trk_z_start);
+
+    if (_flash_zcenter[theflash] > trk_z_end)
+      dz = std::abs(_flash_zcenter[theflash] - trk_z_end);
+  }
+
+
+  if (_debug) std::cout << "Flash index " << theflash 
+                        << ", flashtime " << _flash_times.at(theflash) 
+                        << ", flashcenter " << _flash_zcenter.at(theflash) 
+                        << ", trackstart " << trk_z_start 
+                        << ", trackend " << trk_z_end 
+                        << ", dz " << dz << std::endl;
+
+
   _dt.emplace_back(min_diff);
-  _dz.emplace_back(trk_z_center - _flash_zcenter[theflash]); 
+  _dz.emplace_back(dz/*trk_z_center - _flash_zcenter[theflash]*/); 
 
   return true;
 

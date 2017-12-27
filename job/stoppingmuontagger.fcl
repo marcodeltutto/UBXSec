@@ -20,7 +20,7 @@ StoppingMuonTagger: {
     TimeToCmConstant:        0.0557
     GainCalib:               198
     SliderWindow:            10
-    MaxAllowedHitDistance:   15
+    MaxAllowedHitDistance:   6
     SlopeThreshold:          0.25
     HitsToRemove:            3
     PrePostWindow:           10

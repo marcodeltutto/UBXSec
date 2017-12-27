@@ -405,9 +405,9 @@ void StoppingMuonTagger::produce(art::Event & e) {
     _helper.Clear();
 
     if (collection_coplanar) {
-      _helper.SetMaxAllowedHitDistance(20);
+      _helper.SetMaxAllowedHitDistance(10);
     } else {
-      _helper.SetMaxAllowedHitDistance(15); 
+      _helper.SetMaxAllowedHitDistance(6); 
     }
 
     // Set the highest point and the FV

@@ -266,13 +266,13 @@ namespace ubana {
       TVector3 pt1(iter->second.time, iter->second.wire, 0);
       double dist = (pt0-pt1).Mag();
   
-      if (dist > 2.) // Check this number! 
+      if (dist > 4.) // Check this number! 
         break;
 
       n_step_left ++;
 
       if (_debug) std::cout << "Found hit on the left, wire " << iter->second.wire
-                            << ", time " << iter->second.time << std::endl;
+                            << ", time " << iter->second.time*4 << std::endl;
     }
 
     // Then go rigth
@@ -290,7 +290,7 @@ namespace ubana {
       TVector3 pt1(iter->second.time, iter->second.wire, 0);
       double dist = (pt0-pt1).Mag(); 
 
-      if (dist > _max_allowed_hit_distance) // Check this number!  
+      if (dist > 4.) // Check this number!  
         break; 
 
       n_step_right ++;
@@ -742,8 +742,8 @@ namespace ubana {
 
 
     // Vertex must not be in the FV
-    if (_fv.InFV(_vertex))
-      return false;
+    //if (_fv.InFV(_vertex))
+    //  return false;
 
 
     // Find the hits with the maximum dqds, that one will be the hit
@@ -794,7 +794,11 @@ namespace ubana {
       return false;
     }
 
-    // Check that the local linearity in the muon region (before Bragg) is above threshold
+    // Check that the local linearity in the muon region (before Bragg) 
+    // is above threshold. Exclude first hits as things can get funny
+    // at the beginning. Also exclude last hits as we expect the muon 
+    // to curve in the last region
+    /*
     for (size_t i = offset; i < (size_t) bragg_index - _pre_post_window; i++) {
       if (_linearity_v.at(i) < _local_linearity_threshold) {
         if (_debug) std::cout << "[IsStopMuMichel] Local linearity at hit " << i << " (before Bragg) is " << _linearity_v.at(i)
@@ -802,6 +806,7 @@ namespace ubana {
         return false;
       }
     }
+    */
 
     // Check that the photon hits are below the maximum allowed
     int n_michel_hits = _dqds_slider.size() - bragg_index - 1;
@@ -921,6 +926,7 @@ namespace ubana {
     // In this case we are looking for events that don't have a Michel, 
     // so we want to ensure that the local linearity is not below threshold
     // in the Bragg region
+    /*
     double bragg_local_linearity = _linearity_v.at(bragg_index);
 
     if (bragg_local_linearity < _local_linearity_threshold) {
@@ -928,13 +934,14 @@ namespace ubana {
                             << " which is less than threshold (" << _local_linearity_threshold << ")" << std::endl;
       return false;
     }
+    */
 
     // We actually want that there is no kink in this cluster,
     // as we just want the muon to stop. But exclude first hits 
     // as things can get funny at the beginning
-    for (size_t l = _hits_to_remove; l < _linearity_v.size(); l++) {
+    for (size_t l = _hits_to_remove; l < _linearity_v.size() - _hits_to_remove; l++) {
       if (_linearity_v.at(l) < _local_linearity_threshold) {
-        if (_debug) std::cout << "[IsStopMuBragg] Local linearity is " << _linearity_v.at(l)
+        if (_debug) std::cout << "[IsStopMuBragg] Local linearity at hit " << l << " is " << _linearity_v.at(l)
                               << " which is less than threshold (" << _local_linearity_threshold << ")" << std::endl;
         return false;
       }
@@ -995,7 +1002,7 @@ namespace ubana {
 
       if (_linearity_v.at(i) < _local_linearity_threshold) {
 
-        std::cout << "[IsSimpleMIP] Local linearity at hit" << i 
+        std::cout << "[IsSimpleMIP] Local linearity at hit " << i 
                   << " is " << _linearity_v.at(i) 
                   << " which is below threshold (" 
                   << _local_linearity_threshold << ")." << std::endl;

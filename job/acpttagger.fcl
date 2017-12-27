@@ -7,7 +7,7 @@ ACPTTagger: {
   module_type:           "ACPTTagger"
   FlashProducer:         "simpleFlashCosmic"
   PFPartProducer:        "pandoraCosmic"
-  TrackProducer:         "pandoraCosmicKHit"
+  TrackProducer:         "pandoraCosmic"
   SpacePointProducer:    "pandoraCosmic"
   ClusterProducer:       "pandoraCosmic"
   SWTriggerProducer:     "swtrigger"

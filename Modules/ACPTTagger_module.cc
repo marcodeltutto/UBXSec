@@ -351,6 +351,7 @@ void ACPTTagger::produce(art::Event & e)
 
     // grab associated tracks
     std::vector<art::Ptr<recob::Track>> track_v = pfp_track_assn_v.at(i);
+    if(_debug) std::cout << "Number of associated tracks: " << track_v.size() << std::endl;
 
     // grab associated spacepoints
     std::vector<art::Ptr<recob::SpacePoint>> spacepoint_v = pfp_spacepoint_assn_v.at(i);
@@ -398,7 +399,10 @@ void ACPTTagger::produce(art::Event & e)
         if (pts.size() == 2) {
           z_start = pts.at(0).Z();
           z_end = pts.at(1).Z();
+          if(_debug) std::cout << "Empacing end points for hits on plane 2" << std::endl;
           sorted_points_v.emplace_back(pts);
+        } else {
+          if(_debug) std::cout << "Not enough hits on plane 2" << std::endl;
         }
 
         // Plane 1
@@ -407,7 +411,10 @@ void ACPTTagger::produce(art::Event & e)
           // Hack z pos untill I know how to do it
           pts.at(0).SetZ(z_start);
           pts.at(1).SetZ(z_end);
+          if(_debug) std::cout << "Empacing end points for hits on plane 1" << std::endl;
           sorted_points_v.emplace_back(pts); 
+        } else {
+          if(_debug) std::cout << "Not enough hits on plane 1" << std::endl;
         }
 
         // Plane 0
@@ -416,7 +423,10 @@ void ACPTTagger::produce(art::Event & e)
           // Hack z pos untill I know how to do it
           pts.at(0).SetZ(z_start);
           pts.at(1).SetZ(z_end);
+          if(_debug) std::cout << "Empacing end points for hits on plane 0" << std::endl;
           sorted_points_v.emplace_back(pts);
+        } else {
+          if(_debug) std::cout << "Not enough hits on plane 0" << std::endl;
         }
       }
     }
@@ -442,6 +452,7 @@ void ACPTTagger::produce(art::Event & e)
           pts.resize(2);
           pts.at(0) = start;
           pts.at(1) = end;
+          if(_debug) std::cout << "Empacing end points for tracks." << std::endl;
           sorted_points_v.emplace_back(pts);
         } 
       }
@@ -509,16 +520,16 @@ void ACPTTagger::produce(art::Event & e)
       }
 
       if (_debug) {
-
-        std::cout << "_dt_u_anode " << _dt_u_anode.back() << std::endl;
+         
+        std::cout << "\n_dt_u_anode " << _dt_u_anode.back() << std::endl;
         std::cout << "_dt_d_anode " << _dt_d_anode.back() << std::endl;
         std::cout << "_dt_u_cathode " << _dt_u_cathode.back() << std::endl;
         std::cout << "_dt_d_cathode " << _dt_d_cathode.back() << std::endl;
         std::cout << "_dz_u_anode " << _dz_u_anode.back() << std::endl;
         std::cout << "_dz_d_anode " << _dz_d_anode.back() << std::endl;
         std::cout << "_dz_u_cathode " << _dz_u_cathode.back() << std::endl;
-        std::cout << "_dz_d_cathode " << _dz_d_cathode.back() << std::endl << std::endl;
-        if (isCosmic) std::cout << "Tagged!" << std::endl;
+        std::cout << "_dz_d_cathode " << _dz_d_cathode.back() << std::endl;
+        if (isCosmic) std::cout << "> Tagged!\n" << std::endl;
       }
       
     } // Points loop
@@ -527,6 +538,8 @@ void ACPTTagger::produce(art::Event & e)
     if (isCosmic) {
       cosmicScore = 1;
     }
+
+    if(_debug) std::cout << "Cosmic score is: " << cosmicScore << std::endl << std::endl;
      
     cosmicTagTrackVector->emplace_back(endPt1, endPt2, cosmicScore, anab::CosmicTagID_t::kGeometry_XY);
     util::CreateAssn(*this, e, *cosmicTagTrackVector, track_v, *assnOutCosmicTagTrack );

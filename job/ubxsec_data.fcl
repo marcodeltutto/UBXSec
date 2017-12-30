@@ -141,7 +141,8 @@ ubxsec_data_reco.pandoraNu.ConfigFile:                             "PandoraSetti
 
 ubxsec_data_reco.pandoraNucalo.TrackModuleLabel:                   "pandoraNu::UBXSec"
 ubxsec_data_reco.pandoraNucalo.SpacePointModuleLabel:              "pandoraNu::UBXSec"
-ubxsec_data_reco.pandoraNucalo.Flip_dQdx:                          false
+ubxsec_data_reco.pandoraNucalo.FlipTrack_dQdx:                     false
+ubxsec_data_reco.pandoraNucalo.Flip_dQdx:                          false 
 
 ubxsec_data_reco.pandoraNupid.CalorimetryModuleLabel:              "pandoraNucalo::UBXSec"
 ubxsec_data_reco.pandoraNupid.TrackModuleLabel:                    "pandoraNu::UBXSec"

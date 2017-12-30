@@ -188,6 +188,8 @@ namespace ubana {
       return;
     }
 
+    std::cout << "wire_no: " << wire_no << ", time: " << time << std::endl;
+
     TVector3 pt1(time, wire_no, 0);
     
     double min_dist = 1e9;
@@ -474,8 +476,8 @@ namespace ubana {
 
     for (size_t i = 0; i < _s_hit_v.size()-1; i++) {
 
-      TVector3 this_point(_s_hit_v.at(i).wire * _w2cm, _s_hit_v.at(i).time*_t2cm, 0);
-      TVector3 next_point(_s_hit_v.at(i+1).wire * _w2cm, _s_hit_v.at(i+1).time*_t2cm, 0);
+      TVector3 this_point(_s_hit_v.at(i).wire * _w2cm, _s_hit_v.at(i).time*4*_t2cm, 0);
+      TVector3 next_point(_s_hit_v.at(i+1).wire * _w2cm, _s_hit_v.at(i+1).time*4*_t2cm, 0);
       ds = (this_point - next_point).Mag();
 
       _dqds_v.emplace_back(_s_hit_v.at(i).integral/ds * _dqds_calib);
@@ -998,7 +1000,7 @@ namespace ubana {
     // This algo excludes the first and last hit
 
     // Check that the local linearity in never below threshold
-    for (size_t i = 1; i < _linearity_v.size() - 1; i++) {
+    for (size_t i = 2; i < _linearity_v.size() - 2; i++) {
 
       if (_linearity_v.at(i) < _local_linearity_threshold) {
 

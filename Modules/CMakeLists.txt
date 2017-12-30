@@ -12,6 +12,8 @@ art_make( BASENAME_ONLY
           LIB_LIBRARIES
                    uboonecode_uboone_UBXSec_Algorithms
                    uboonecode_uboone_UBXSec_DataTypes
+                   HitCosmicTag_Base 
+                   HitCosmicTag_Algorithms
                    uboonecode_uboone_BasicTool_GeoAlgo
                    uboone_UBFlashFinder
 		   uboonecode_uboone_SelectionTool_OpT0FinderBase
@@ -64,6 +66,8 @@ art_make( BASENAME_ONLY
           MODULE_LIBRARIES
                    uboonecode_uboone_UBXSec_Algorithms 
                    uboonecode_uboone_UBXSec_DataTypes
+                   HitCosmicTag_Base
+                   HitCosmicTag_Algorithms
                    #uboonecode_uboone_UBXSec
                    larsim_MCCheater_BackTracker_service
 		   larpandora_LArPandoraInterface

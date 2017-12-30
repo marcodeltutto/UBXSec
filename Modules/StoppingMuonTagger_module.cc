@@ -53,6 +53,11 @@
 #include "uboone/LLBasicTool/GeoAlgo/GeoTrajectory.h"
 #include "uboone/UBXSec/Algorithms/FiducialVolume.h"
 #include "uboone/UBXSec/Algorithms/StoppingMuonTaggerHelper.h"
+#include "uboone/UBXSec/HitCosmicTag/Base/DataTypes.h"
+#include "uboone/UBXSec/HitCosmicTag/Base/CosmicTagManager.h"
+#include "uboone/UBXSec/HitCosmicTag/Algorithms/StopMuMichel.h"
+#include "uboone/UBXSec/HitCosmicTag/Algorithms/StopMuBragg.h"
+#include "uboone/UBXSec/HitCosmicTag/Algorithms/CosmicSimpleMIP.h"
 
 // Root include
 #include "TString.h"
@@ -83,6 +88,8 @@ public:
   void produce(art::Event & e) override;
 
 private:
+
+  ::cosmictag::CosmicTagManager _ct_manager;
 
   //::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
@@ -119,6 +126,8 @@ private:
 StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p) 
   : _mcs_fitter(p.get< fhicl::ParameterSet >("MCSFitter")) {
 
+
+  _ct_manager.Configure(p.get<cosmictag::Config_t>("CosmicTagManager"));
 
   _fiducial_volume.Configure(p.get<fhicl::ParameterSet>("FiducialVolumeSettings"),
                              geo->DetHalfHeight(),
@@ -383,6 +392,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     // Create SimpleHit vector
     ubana::SimpleHitVector shit_v;
+    std::vector<cosmictag::SimpleHit> simple_hit_v;
     for (auto h : hit_v) {
       ubana::SimpleHit shit;
       shit.t = fDetectorProperties->ConvertTicksToX(h->PeakTime(), geo::PlaneID(0,0,2));
@@ -396,6 +406,20 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
       //if (_debug) std::cout << "Emplacing hit with time " << shit.time*4 << ", and wire " << shit.wire << ", on plane " << shit.plane << std::endl;
       shit_v.emplace_back(shit);
+
+      if (h->View() == 2) {
+        cosmictag::SimpleHit sh;
+        sh.t = fDetectorProperties->ConvertTicksToX(h->PeakTime(), geo::PlaneID(0,0,2));
+        sh.w = h->WireID().Wire * geo->WirePitch(geo::PlaneID(0,0,2));
+
+        sh.plane = h->View();
+        sh.integral = h->Integral();
+
+        sh.time = h->PeakTime() / 4;
+        sh.wire = h->WireID().Wire; 
+
+        simple_hit_v.emplace_back(sh);
+      }
     }
 
     if (_debug) std::cout << "[StoppingMuonTagger] Simple hit vector size " << shit_v.size() << std::endl;
@@ -417,6 +441,46 @@ void StoppingMuonTagger::produce(art::Event & e) {
     // Emplace to the helper
     if (_debug) std::cout << "[StoppingMuonTagger] Now emplace hits" << std::endl;
     _helper.Emplace(shit_v);
+
+    cosmictag::SimpleCluster sc(simple_hit_v);
+    _ct_manager.Emplace(std::move(sc));
+
+    cosmictag::SimpleHit start;
+    start.time = highest_t;
+    start.wire = highest_w;
+    start.plane = 2;
+    _ct_manager.SetStartHit(std::move(start));
+
+    bool passed = _ct_manager.Run();
+
+    if (passed) {
+
+      _ct_manager.PrintClusterStatus();
+
+      cosmictag::SimpleCluster processed_cluster = _ct_manager.GetCluster();
+
+      // Michel algo
+      ((cosmictag::StopMuMichel*)(_ct_manager.GetCustomAlgo("StopMuMichel")))->PrintConfig();
+
+      bool ct_result_michel = ((cosmictag::StopMuMichel*)(_ct_manager.GetCustomAlgo("StopMuMichel")))->IsStopMuMichel(processed_cluster);
+      std::cout << "[CT TEST] ct_result_michel is " << (ct_result_michel ? "YES" : "NO") << std::endl;
+
+
+      // Bragg algo
+      bool vtx_in_fv = _fiducial_volume.InFV(highest_point);
+      ((cosmictag::StopMuBragg*)(_ct_manager.GetCustomAlgo("StopMuBragg")))->PrintConfig();
+      bool ct_result_bragg = ((cosmictag::StopMuBragg*)(_ct_manager.GetCustomAlgo("StopMuBragg")))->IsStopMuBragg(processed_cluster) && vtx_in_fv;
+      std::cout << "[CT TEST] ct_result_bragg is " << (ct_result_bragg ? "YES" : "NO") << std::endl;
+
+
+      // CosmicSimpleMIP
+      ((cosmictag::CosmicSimpleMIP*)(_ct_manager.GetCustomAlgo("CosmicSimpleMIP")))->PrintConfig();
+      bool ct_result_simplemip = ((cosmictag::CosmicSimpleMIP*)(_ct_manager.GetCustomAlgo("CosmicSimpleMIP")))->IsCosmicSimpleMIP(processed_cluster);
+      std::cout << "[CT TEST] ct_result_simplemip is " << (ct_result_simplemip ? "YES" : "NO") << std::endl;
+
+    }
+
+
 
     // Only collection plane hits
     if (_debug) std::cout << "[StoppingMuonTagger] Now filter hits by plane" << std::endl;

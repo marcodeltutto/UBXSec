@@ -1,4 +1,5 @@
 #include "fiducial_volume_settings.fcl"
+#include "cosmictagalgo.fcl"
 
 BEGIN_PROLOG
 #
@@ -15,6 +16,8 @@ StoppingMuonTagger: {
   CoplanarCut:             5.
   MCSDeltaLLCut:           -5.
 
+  CosmicTagManager: @local::cosmictag_config_mc
+
   AlgorithmConfiguration:  {
     WireToCmConstant:        0.3
     TimeToCmConstant:        0.0557
@@ -29,7 +32,7 @@ StoppingMuonTagger: {
     MinMuonHits:             20           
     MaxMuonHits:             2000
     MinMichelHits:           2
-    MaxMichelHits:           50
+    MaxMichelHits:           70
     MaxEndHits:              100
     DebugMode:               true
   }
@@ -61,5 +64,6 @@ microboone_cosmicstoppingmutagger_mc: @local::microboone_cosmicstoppingmutagger
 
 microboone_cosmicstoppingmutagger_data: @local::microboone_cosmicstoppingmutagger
 microboone_cosmicstoppingmutagger_data.AlgorithmConfiguration.GainCalib: 243
+microboone_cosmicstoppingmutagger_data.CosmicTagManager: @local::cosmictag_config_data
 
 END_PROLOG

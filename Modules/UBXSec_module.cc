@@ -401,9 +401,9 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
 void UBXSec::produce(art::Event & e) {
 
   if(_debug) std::cout << "********** UBXSec starts" << std::endl;
-  if(_debug) std::cout << "Run:    "   << e.id().run()    << 
+  if(_debug) std::cout << "Run: "   << e.id().run()    << 
                           ", subRun: " << e.id().subRun() <<
-                          ", event:  " << e.id().event()  << std::endl;
+                          ", event: " << e.id().event()  << std::endl;
 
 
   // Instantiate the output
@@ -1049,6 +1049,7 @@ void UBXSec::produce(art::Event & e) {
       // Look at calorimetry for the muon candidate
       std::vector<art::Ptr<anab::Calorimetry>> calos = calos_from_track.at(candidate_track.key());
       ubxsec_event->slc_muoncandidate_dqdx_trunc[slice] = UBXSecHelper::GetDqDxTruncatedMean(calos);
+      std::cout << "[UBXSec] \t Truncated mean dQ/ds for candidate is: " << ubxsec_event->slc_muoncandidate_dqdx_trunc[slice] << std::endl;
 
       // Get the related PFP
       art::Ptr<recob::PFParticle> candidate_pfp = pfp_from_track.at(candidate_track.key()).at(0);

@@ -179,7 +179,6 @@ void StoppingMuonTagger::produce(art::Event & e) {
   art::Handle<std::vector<ubana::TPCObject>> tpcobj_h;
   e.getByLabel(_tpcobject_producer, tpcobj_h);
   if (!tpcobj_h.isValid()) {
-    //std::cout << "[StoppingMuonTagger] Cannote locate ubana::TPCObject." << std::endl;
     throw cet::exception(__PRETTY_FUNCTION__) << "Cannote locate ubana::TPCObject." << std::endl;
   }
 
@@ -325,7 +324,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
           continue; 
         } else {
           double deltax = primary_track_v.at(0)->Vertex().Z() - primary_track_v.at(0)->End().Z();
-          if (_debug) std::cout << "delta x is " << deltax << std::endl;
+          if (_debug) std::cout << "[StoppingMuonTagger] Delta x is " << deltax << std::endl;
           collection_coplanar = std::abs(primary_track_v.at(0)->Vertex().Z() - primary_track_v.at(0)->End().Z()) 
                                 < _coplanar_cut;
         }
@@ -365,7 +364,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
               });
 
     if (sp_v.size() == 0) {
-      std::cout << "Not enough spacepoints." << std::endl;
+      std::cout << "[StoppingMuonTagger] Not enough spacepoints." << std::endl;
       continue;
     }
 
@@ -391,9 +390,10 @@ void StoppingMuonTagger::produce(art::Event & e) {
     if (_debug) std::cout << "[StoppingMuonTagger] Now create simple hit vector, size " << hit_v.size() << std::endl;
 
     // Create SimpleHit vector
-    ubana::SimpleHitVector shit_v;
+    //ubana::SimpleHitVector shit_v;
     std::vector<cosmictag::SimpleHit> simple_hit_v;
     for (auto h : hit_v) {
+/*
       ubana::SimpleHit shit;
       shit.t = fDetectorProperties->ConvertTicksToX(h->PeakTime(), geo::PlaneID(0,0,2));
       shit.w = h->WireID().Wire * geo->WirePitch(geo::PlaneID(0,0,2));
@@ -406,6 +406,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
       //if (_debug) std::cout << "Emplacing hit with time " << shit.time*4 << ", and wire " << shit.wire << ", on plane " << shit.plane << std::endl;
       shit_v.emplace_back(shit);
+*/
 
       if (h->View() == 2) {
         cosmictag::SimpleHit sh;
@@ -422,8 +423,8 @@ void StoppingMuonTagger::produce(art::Event & e) {
       }
     }
 
-    if (_debug) std::cout << "[StoppingMuonTagger] Simple hit vector size " << shit_v.size() << std::endl;
-
+    if (_debug) std::cout << "[StoppingMuonTagger] Simple hit vector size " << simple_hit_v.size() << std::endl;
+/*
     // Clear the algorithm
     if (_debug) std::cout << "[StoppingMuonTagger] Clear algo" << std::endl;
     _helper.Clear();
@@ -441,17 +442,31 @@ void StoppingMuonTagger::produce(art::Event & e) {
     // Emplace to the helper
     if (_debug) std::cout << "[StoppingMuonTagger] Now emplace hits" << std::endl;
     _helper.Emplace(shit_v);
+*/
 
+    if (collection_coplanar) {
+      if (_debug) std::cout << "[StoppingMuonTagger] This object is collection coplanar" << std::endl;
+    }
+
+    _ct_manager.Reset();
+
+    // Emplacing simple hits to the manager
     cosmictag::SimpleCluster sc(simple_hit_v);
     _ct_manager.Emplace(std::move(sc));
 
+    // Creating an approximate start hit
     cosmictag::SimpleHit start;
     start.time = highest_t;
     start.wire = highest_w;
     start.plane = 2;
     _ct_manager.SetStartHit(std::move(start));
 
+    // Running the cluster analyser
     bool passed = _ct_manager.Run();
+
+    bool ct_result_michel = false;
+    bool ct_result_bragg = false;
+    bool ct_result_simplemip = false;
 
     if (passed) {
 
@@ -461,27 +476,26 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
       // Michel algo
       ((cosmictag::StopMuMichel*)(_ct_manager.GetCustomAlgo("StopMuMichel")))->PrintConfig();
-
-      bool ct_result_michel = ((cosmictag::StopMuMichel*)(_ct_manager.GetCustomAlgo("StopMuMichel")))->IsStopMuMichel(processed_cluster);
-      std::cout << "[CT TEST] ct_result_michel is " << (ct_result_michel ? "YES" : "NO") << std::endl;
+      ct_result_michel = ((cosmictag::StopMuMichel*)(_ct_manager.GetCustomAlgo("StopMuMichel")))->IsStopMuMichel(processed_cluster);
+      if(_debug) std::cout << "[CT TEST] Is stopping muon (michel)? " << (ct_result_michel ? "YES" : "NO") << std::endl;
 
 
       // Bragg algo
       bool vtx_in_fv = _fiducial_volume.InFV(highest_point);
       ((cosmictag::StopMuBragg*)(_ct_manager.GetCustomAlgo("StopMuBragg")))->PrintConfig();
-      bool ct_result_bragg = ((cosmictag::StopMuBragg*)(_ct_manager.GetCustomAlgo("StopMuBragg")))->IsStopMuBragg(processed_cluster) && vtx_in_fv;
-      std::cout << "[CT TEST] ct_result_bragg is " << (ct_result_bragg ? "YES" : "NO") << std::endl;
+      ct_result_bragg = ((cosmictag::StopMuBragg*)(_ct_manager.GetCustomAlgo("StopMuBragg")))->IsStopMuBragg(processed_cluster) && !vtx_in_fv;
+      if(_debug) std::cout << "[CT TEST] Is stopping muon (bragg)? " << (ct_result_bragg ? "YES" : "NO") << std::endl;
 
 
       // CosmicSimpleMIP
       ((cosmictag::CosmicSimpleMIP*)(_ct_manager.GetCustomAlgo("CosmicSimpleMIP")))->PrintConfig();
-      bool ct_result_simplemip = ((cosmictag::CosmicSimpleMIP*)(_ct_manager.GetCustomAlgo("CosmicSimpleMIP")))->IsCosmicSimpleMIP(processed_cluster);
-      std::cout << "[CT TEST] ct_result_simplemip is " << (ct_result_simplemip ? "YES" : "NO") << std::endl;
+      ct_result_simplemip = ((cosmictag::CosmicSimpleMIP*)(_ct_manager.GetCustomAlgo("CosmicSimpleMIP")))->IsCosmicSimpleMIP(processed_cluster);
+      if(_debug) std::cout << "[CT TEST] Is simple MIP? " << (ct_result_simplemip ? "YES" : "NO") << std::endl;
 
     }
 
 
-
+/*
     // Only collection plane hits
     if (_debug) std::cout << "[StoppingMuonTagger] Now filter hits by plane" << std::endl;
     size_t n_hits = _helper.FilterByPlane(2);
@@ -534,7 +548,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
     if (_debug) std::cout << "[StoppingMuonTagger] Is simple MIP? " << (result_simplemip ? "YES" : "NO") << std::endl;
     //bool result_curvature = _helper.MakeDecision(ubana::kAlgoCurvature);
     //if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (curvature)? " << (result_curvature ? "YES" : "NO") << std::endl;
-
+*/
     /* Also try with the MCS fitter
     bool result_mcs = false;
     if (primary_track_v.size() != 0) { 
@@ -546,9 +560,9 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     double cosmicScore = 0.;
     anab::CosmicTagID_t tag_id = anab::CosmicTagID_t::kNotTagged;
-    if (result || result_bragg || result_simplemip/*|| result_mcs*/) {
+    if (ct_result_michel || ct_result_bragg || ct_result_simplemip/*|| result_mcs*/) {
       cosmicScore = 1.;
-      tag_id = anab::CosmicTagID_t::kGeometry_Y;
+      tag_id = anab::CosmicTagID_t::kGeometry_Y; // ... don't have a proper id for these
     }
     if (_debug) std::cout << "[StoppingMuonTagger] Cosmic Score is " << cosmicScore << std::endl;
     cosmicTagVector->emplace_back(endPt1, endPt2, cosmicScore, tag_id); 

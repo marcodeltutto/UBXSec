@@ -1,0 +1,3 @@
+[submodule "HitCosmicTag"]
+	path = HitCosmicTag
+	url = git@github.com:marcodeltutto/HitCosmicTag.git

@@ -1,0 +1,27 @@
+#include "cosmictagalgo.fcl"
+
+BEGIN_PROLOG
+#
+# Module configuration
+#
+CandidateConsistency: {
+  module_type:           "CandidateConsistency"
+  TPCObjectProducer:     "TPCObjectMaker::UBXSec"
+  TrackProducer:         "pandoraNu::UBXSec"
+  ShowerProducer:        "pandoraNu::UBXSec"
+
+  Tolerance:             5.
+  DqDsThreshold:         60000
+  LinearityThreshold:    0.7
+  
+  DebugMode:             true
+
+  CosmicTagManager: @local::cosmictag_config_mc
+}
+
+CandidateConsistency_mc: @local::CandidateConsistency
+
+CandidateConsistency_data: @local::CandidateConsistency
+CandidateConsistency_data.CosmicTagManager: @local::cosmictag_config_data
+
+END_PROLOG

@@ -166,6 +166,7 @@ private:
   std::string _particle_id_producer;
   std::string _mc_ghost_producer;
   std::string _geocosmictag_producer;
+  std::string _candidateconsistency_producer;
   std::string _mcsfitresult_mu_producer;
   std::string _mcsfitresult_pi_producer;
   std::string _calorimetry_producer;
@@ -264,6 +265,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _particle_id_producer           = p.get<std::string>("ParticleIDProducer");
   _mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
   _geocosmictag_producer          = p.get<std::string>("GeoCosmicTaggerProducer");
+  _candidateconsistency_producer  = p.get<std::string>("CandidateConsistencyProducer");
   _mcsfitresult_mu_producer       = p.get<std::string>("MCSFitResultMuProducer");
   _mcsfitresult_pi_producer       = p.get<std::string>("MCSFitResultPiProducer");
   _calorimetry_producer           = p.get<std::string>("CalorimetryProducer");
@@ -401,7 +403,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
 void UBXSec::produce(art::Event & e) {
 
   if(_debug) std::cout << "********** UBXSec starts" << std::endl;
-  if(_debug) std::cout << "Run: "   << e.id().run()    << 
+  if(_debug) std::cout << "Run: " << e.id().run() << 
                           ", subRun: " << e.id().subRun() <<
                           ", event: " << e.id().event()  << std::endl;
 
@@ -414,7 +416,7 @@ void UBXSec::produce(art::Event & e) {
   // Initialize the UBXSecEvent
   ubxsec_event->Init();
 
-  _run = ubxsec_event->run    = e.id().run();
+  _run = ubxsec_event->run = e.id().run();
   _subrun = ubxsec_event->subrun = e.id().subRun();
   _event = ubxsec_event->event  = e.id().event();
 
@@ -472,6 +474,7 @@ void UBXSec::produce(art::Event & e) {
   art::FindManyP<recob::Track>      tpcobjToTrackAssns(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<anab::CosmicTag>   tpcobjToCosmicTagAssns(tpcobj_h, e, _geocosmictag_producer);
+  art::FindManyP<anab::CosmicTag>   tpcobjToConsistency(tpcobj_h, e, _candidateconsistency_producer);
 
   // ACPT
   art::Handle<std::vector<anab::T0> > t0_h;
@@ -772,6 +775,11 @@ void UBXSec::produce(art::Event & e) {
   ubxsec_event->n_tpcobj_nu_origin = 0;
   ubxsec_event->n_tpcobj_cosmic_origin = 0;
 
+  //
+  // THIS IS THE MAIN LOOP OVER THE 
+  // TPCOBJECTS CANDIDATES IN THIS EVENT
+  //
+
   for (unsigned int slice = 0; slice < tpcobj_h->size(); slice++){
     std::cout << "[UBXSec] >>> SLICE " << slice << std::endl;
 
@@ -837,6 +845,19 @@ void UBXSec::produce(art::Event & e) {
     ubxsec_event->slc_mult_track[slice] = t;
     ubxsec_event->slc_mult_shower[slice] = s;
     ubxsec_event->slc_mult_track_tolerance[slice] = tpcobj.GetNTracksCloseToVertex(_tolerance_track_multiplicity);
+
+    // Candidate Consistency
+    ubxsec_event->slc_consistency[slice] = true;
+    std::vector<art::Ptr<anab::CosmicTag>> consistency_tags = tpcobjToConsistency.at(slice);
+    if(consistency_tags.size() == 0 || consistency_tags.size() > 1) {
+      std::cout << "[UBXSec] \t More than one Consistency Tag match per tpcobj ?!" << std::endl;
+    } else {
+      auto ct = consistency_tags.at(0);
+      if (ct->CosmicScore() > 0) {
+        std::cout << "[UBXSec] \t This slice has been tagged as not consistent." << std::endl;
+        ubxsec_event->slc_consistency[slice] = false;
+      }
+    }
 
     // Neutrino Flash match
     ubxsec_event->slc_flsmatch_score[slice] = -9999;

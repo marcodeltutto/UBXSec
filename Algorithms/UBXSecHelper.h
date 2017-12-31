@@ -285,6 +285,8 @@ class UBXSecHelper {
 
   static double GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry>> calos);
 
+  static double GetDqDxTruncatedMean(std::vector<double> dqdx_v);
+
   static double GetMean(std::vector<double>);
 
   static double GetMedian(std::vector<double>);

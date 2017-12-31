@@ -19,6 +19,7 @@
 #include "cosmictaggerana.fcl"
 #include "geocosmictagger.fcl"
 #include "stoppingmuontagger.fcl"
+#include "candidateconsistency.fcl"
 
 #include "opticaldetectormodules_microboone.fcl"
 #include "ubflashfinder.fcl"
@@ -80,6 +81,8 @@ ubxsec_data_flashmatch:
    NeutrinoFlashMatch:            @local::NeutrinoFlashMatch
    #CosmicFlashMatch:              @local::CosmicFlashMatch
 
+   CandidateConsistency:          @local::CandidateConsistency_data
+
    UBXSec:                        @local::UBXSec
 }
 
@@ -108,6 +111,7 @@ ubxsec_data_producers: [ saturationTest,
                          pandoraNuGeoCosmicTag,
                          #pandoraNuStoppingMuonTag,
                          NeutrinoFlashMatch,
+                         CandidateConsistency,
                          UBXSec ] 
 
 ubxsec_data_analyzers: [ CosmicTaggerAna ]

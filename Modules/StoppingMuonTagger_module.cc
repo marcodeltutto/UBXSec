@@ -91,9 +91,7 @@ private:
 
   ::cosmictag::CosmicTagManager _ct_manager;
 
-  //::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
-  //::art::ServiceHandle<detinfo::DetectorPropertiesService> det;
   ::detinfo::DetectorProperties const* fDetectorProperties;
 
   ::ubana::FiducialVolume _fiducial_volume;
@@ -370,43 +368,19 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     const double *highest_point_c = sp_v.at(0)->XYZ();
     double highest_point[3] = {highest_point_c[0], highest_point_c[1], highest_point_c[2]};
-    //raw::ChannelID_t ch = geo->NearestChannel(highest_point, 2);
     this->ContainPoint(highest_point);
     int highest_w = geo->NearestWire(highest_point, 2) ;//* geo->WirePitch(geo::PlaneID(0,0,2));
     double highest_t = fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2))/4.;//highest_point[0];
-    //size_t time = fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2));
     if (_debug) std::cout << "[StoppingMuonTagger] Highest point: wire: " << geo->NearestWire(highest_point, 2) 
                        << ", time: " << fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2)) 
                        << std::endl;
 
-    /*
-    double time2cm = 0.1;
-    double triggerOffset = 3200;
-    double planeOrigin[3] = {0.0, -0.3, -0.6};
-    double offset_collection = triggerOffset * time2cm - planeOrigin[2];
-    size_t time = highest_point[0]/time2cm + offset_collection;  
-    */
 
     if (_debug) std::cout << "[StoppingMuonTagger] Now create simple hit vector, size " << hit_v.size() << std::endl;
 
     // Create SimpleHit vector
-    //ubana::SimpleHitVector shit_v;
     std::vector<cosmictag::SimpleHit> simple_hit_v;
     for (auto h : hit_v) {
-/*
-      ubana::SimpleHit shit;
-      shit.t = fDetectorProperties->ConvertTicksToX(h->PeakTime(), geo::PlaneID(0,0,2));
-      shit.w = h->WireID().Wire * geo->WirePitch(geo::PlaneID(0,0,2));
-
-      shit.plane = h->View();
-      shit.integral = h->Integral();
-
-      shit.time = h->PeakTime() / 4;
-      shit.wire = h->WireID().Wire;
-
-      //if (_debug) std::cout << "Emplacing hit with time " << shit.time*4 << ", and wire " << shit.wire << ", on plane " << shit.plane << std::endl;
-      shit_v.emplace_back(shit);
-*/
 
       if (h->View() == 2) {
         cosmictag::SimpleHit sh;
@@ -424,25 +398,6 @@ void StoppingMuonTagger::produce(art::Event & e) {
     }
 
     if (_debug) std::cout << "[StoppingMuonTagger] Simple hit vector size " << simple_hit_v.size() << std::endl;
-/*
-    // Clear the algorithm
-    if (_debug) std::cout << "[StoppingMuonTagger] Clear algo" << std::endl;
-    _helper.Clear();
-
-    if (collection_coplanar) {
-      _helper.SetMaxAllowedHitDistance(10);
-    } else {
-      _helper.SetMaxAllowedHitDistance(6); 
-    }
-
-    // Set the highest point and the FV
-    _helper.SetFiducialVolume(_fiducial_volume);
-    _helper.SetVertexPoint(highest_point);
-
-    // Emplace to the helper
-    if (_debug) std::cout << "[StoppingMuonTagger] Now emplace hits" << std::endl;
-    _helper.Emplace(shit_v);
-*/
 
     if (collection_coplanar) {
       if (_debug) std::cout << "[StoppingMuonTagger] This object is collection coplanar" << std::endl;
@@ -494,69 +449,6 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     }
 
-
-/*
-    // Only collection plane hits
-    if (_debug) std::cout << "[StoppingMuonTagger] Now filter hits by plane" << std::endl;
-    size_t n_hits = _helper.FilterByPlane(2);
-
-    if (n_hits == 0) continue;
-
-    // Set the start hit
-    if (_debug) std::cout << "[StoppingMuonTagger] Now set start hit" << std::endl;
-    _helper.SetStartHit(highest_t, highest_w, 2); 
-
-    // Order hits
-    if (_debug) std::cout << "[StoppingMuonTagger] Now order hits" << std::endl;
-    n_hits = _helper.OrderHits();
-
-    if (n_hits == 0) continue;
-
-    // Filter hist is belonging to same wire
-    n_hits = _helper.FilterOnSingleWire();
-
-    if (n_hits == 0) continue;
-
-    // dQds
-    if (_debug) std::cout << "[StoppingMuonTagger] Now calculate dqds" << std::endl; 
-    _helper.CalculatedQds();    
-
-    // dQds Slider
-    if (_debug) std::cout << "[StoppingMuonTagger] Now perform window slider" << std::endl;
-    bool status = _helper.PerformdQdsSlider();
-
-    if (!status)
-      continue;
-
-    // Linearity
-    if (_debug) std::cout << "[StoppingMuonTagger] Now calculate local linearity" << std::endl;
-    _helper.CalculateLocalLinearity();
-
-     _helper.PrintOnFile(i);
-
-    // Make a decision
-    if (_debug) std::cout << "[StoppingMuonTagger] Now make a decision" << std::endl;
-    bool result = _helper.MakeDecision(ubana::kAlgoMichel);
-
-    if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (michel)? " << (result ? "YES" : "NO") << std::endl;
-
-
-    bool result_bragg = _helper.MakeDecision(ubana::kAlgoBragg);
-    if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (bragg)? " << (result_bragg ? "YES" : "NO") << std::endl;
-
-    bool result_simplemip = _helper.MakeDecision(ubana::kAlgoSimpleMIP);
-    if (_debug) std::cout << "[StoppingMuonTagger] Is simple MIP? " << (result_simplemip ? "YES" : "NO") << std::endl;
-    //bool result_curvature = _helper.MakeDecision(ubana::kAlgoCurvature);
-    //if (_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (curvature)? " << (result_curvature ? "YES" : "NO") << std::endl;
-*/
-    /* Also try with the MCS fitter
-    bool result_mcs = false;
-    if (primary_track_v.size() != 0) { 
-      result_mcs = this->IsStopMuMCS(primary_track_v.at(0));
-    }
-
-    if (_debug) std::cout << "[StoppingMuonTagger] MCS thinks " << (result_mcs ? "is" : "is not") << " a stopping muon" << std::endl;
-    */
 
     double cosmicScore = 0.;
     anab::CosmicTagID_t tag_id = anab::CosmicTagID_t::kNotTagged;

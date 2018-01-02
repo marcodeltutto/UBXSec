@@ -309,7 +309,7 @@ void CosmicTaggerAna::analyze(art::Event const & e)
   if (_debug) std::cout << "Neutrino related PFPs in this event: " << neutrinoOriginPFP.size() << std::endl;
 
 
-
+  _nu_pfp_tagged_total = 0;
 
 
   // *******************

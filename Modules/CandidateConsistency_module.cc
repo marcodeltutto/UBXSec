@@ -331,7 +331,8 @@ void CandidateConsistency::produce(art::Event & e)
 
       // Creating an approximate start hit
       double vertex[3] = {selected_showers_vertex.at(i).X(), selected_showers_vertex.at(i).Y(), selected_showers_vertex.at(i).Z()};
-      double vertex_t = fDetectorProperties->ConvertXToTicks(selected_showers_vertex.at(i).X(), geo::PlaneID(0,0,2))/4.;
+      this->ContainPoint(vertex);
+      double vertex_t = fDetectorProperties->ConvertXToTicks(vertex[0], geo::PlaneID(0,0,2))/4.;
       int vertex_w    = geo->NearestWire(vertex, 2);
 
       cosmictag::SimpleHit start;

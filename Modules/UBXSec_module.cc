@@ -853,10 +853,13 @@ void UBXSec::produce(art::Event & e) {
       std::cout << "[UBXSec] \t More than one Consistency Tag match per tpcobj ?!" << std::endl;
     } else {
       auto ct = consistency_tags.at(0);
-      if (ct->CosmicScore() > 0) {
-        std::cout << "[UBXSec] \t This slice has been tagged as not consistent." << std::endl;
+      std::cout << "[UBXSec] \t Candidate Consistency Score: " << ct->CosmicScore() << std::endl;
+      if (ct->CosmicType() != anab::CosmicTagID_t::kNotTagged) {
+        std::cout << "[UBXSec] \t This slice has been tagged as not consistent. Type " << ct->CosmicType() 
+                  << ", score: " << ct->CosmicScore() << std::endl;
         ubxsec_event->slc_consistency[slice] = false;
       }
+      ubxsec_event->slc_consistency_score[slice] = ct->CosmicScore();
     }
 
     // Neutrino Flash match

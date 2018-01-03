@@ -12,7 +12,10 @@ CandidateConsistency: {
 
   Tolerance:             5.
   DqDsThreshold:         60000
+  DistanceCut:           8
+  PercentageLosenHits:   30
   LinearityThreshold:    0.7
+  DqDsAverageThreshold:  90000
   
   DebugMode:             true
 
@@ -21,7 +24,7 @@ CandidateConsistency: {
 
 CandidateConsistency_mc: @local::CandidateConsistency
 
-CandidateConsistency_data: @local::CandidateConsistency
+CandidateConsistency_data:                  @local::CandidateConsistency
 CandidateConsistency_data.CosmicTagManager: @local::cosmictag_config_data
 
 END_PROLOG

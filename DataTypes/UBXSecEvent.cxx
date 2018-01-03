@@ -125,6 +125,7 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_mult_track_tolerance.resize(vsize, _default_value);
   slc_geocosmictag.resize(vsize, false);
   slc_consistency.resize(vsize, true);
+  slc_consistency_score.resize(vsize, 0.);
 
 }
 

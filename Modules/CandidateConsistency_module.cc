@@ -92,9 +92,13 @@ private:
   std::string _tpcobject_producer;
   std::string _shower_producer;
   std::string _track_producer;
+  
   double      _tolerance;
   double      _dqds_threshold;
+  double      _distance_cut;
+  double      _perc_losen_hit_cut;
   double      _linearity_threshold;
+  double      _dqds_average_cut;
   bool        _debug;
 
   void ContainPoint(double *);
@@ -116,7 +120,10 @@ CandidateConsistency::CandidateConsistency(fhicl::ParameterSet const & p)
 
   _tolerance           = p.get<double>("Tolerance", 5.);
   _dqds_threshold      = p.get<double>("DqDsThreshold", 60000);
+  _distance_cut        = p.get<double>("DistanceCut", 8);
+  _perc_losen_hit_cut  = p.get<double>("PercentageLosenHits", 30);
   _linearity_threshold = p.get<double>("LinearityThreshold", 0.7);
+  _dqds_average_cut    = p.get<double>("DqDsAverageThreshold", 90000);
 
   _debug               = p.get<bool>("DebugMode", true);
 
@@ -168,6 +175,8 @@ void CandidateConsistency::produce(art::Event & e)
     if (_debug) std::cout << "[StoppingMuonTagger] >>>>> TPCObject " << i << std::endl;
 
     bool consistency_failed = false;
+    bool _1pfp_1track_case_failed = false;
+    double dqds_average = -999;
 
     art::Ptr<ubana::TPCObject> tpcobj = tpcobj_v.at(i);
 
@@ -180,7 +189,19 @@ void CandidateConsistency::produce(art::Event & e)
     vertex.XYZ(xyz);
     TVector3 vtx_xyz(xyz[0], xyz[1], xyz[2]);
 
+
+    //
+    // Check if 2 PFP and 1 track case (one pfp is always the neutrino pfs)
+    //
+    bool _1pfp_1track_case = false;
+    if (pfps.size() == 2 && tracks.size() == 1) 
+      _1pfp_1track_case = true;
+
+
+
+    //
     // Collect objects that are close to the vertex
+    //
     std::vector<art::Ptr<recob::Track>>  selected_tracks;
     std::vector<TVector3>                selected_tracks_vertex;
     std::vector<art::Ptr<recob::Shower>> selected_showers;
@@ -257,7 +278,7 @@ void CandidateConsistency::produce(art::Event & e)
       cosmictag::SimpleCluster sc(simple_hit_v);
       _ct_manager.Emplace(std::move(sc));
 
-      // Creating an approximate start hit
+      // Creating an approximate start hit given the TPCObject vertex
       double vertex[3] = {selected_tracks_vertex.at(i).X(), selected_tracks_vertex.at(i).Y(), selected_tracks_vertex.at(i).Z()};
       this->ContainPoint(vertex);
       double vertex_t = fDetectorProperties->ConvertXToTicks(vertex[0], geo::PlaneID(0,0,2))/4.;
@@ -286,6 +307,31 @@ void CandidateConsistency::produce(art::Event & e)
       double dqds_trunc = UBXSecHelper::GetDqDxTruncatedMean(dqds_v);
       if(_debug) std::cout << "[CandidateConsistency] dqds_trunc is " << dqds_trunc << std::endl;
 
+      if(_1pfp_1track_case) {
+
+        std::vector<double> linearity_v = processed_cluster._linearity_v;
+
+        bool is_linear = true;
+        for (size_t l = 2; l < linearity_v.size()-2; l++) {
+          if (linearity_v.at(l) < _linearity_threshold)
+            is_linear = false;
+        }
+
+        // Calculate dqds average of first 5 hits
+        double n_hits = 5;
+        dqds_average = 0.;
+        for (int i = 0; i < n_hits; i++) {
+          dqds_average += processed_cluster._dqds_v.at(i);
+        }
+        dqds_average /= n_hits;
+        if(_debug) std::cout << "[CandidateConsistency] dqds average on first " 
+                             << n_hits << " is: " << dqds_average << std::endl;
+
+        if (dqds_average < _dqds_average_cut && is_linear) 
+          _1pfp_1track_case_failed = true;
+
+      } // pfp_1track_case ends
+
     } // selected tracks loop
 
 
@@ -307,6 +353,7 @@ void CandidateConsistency::produce(art::Event & e)
 
       // Take only collection plane hits
       std::vector<cosmictag::SimpleHit> simple_hit_v;
+      int n_hits_original = 0;
       for (auto h : hits) {
 
         if (h->View() != 2) continue;
@@ -322,6 +369,7 @@ void CandidateConsistency::produce(art::Event & e)
         sh.wire = h->WireID().Wire;
 
         simple_hit_v.emplace_back(sh);
+        n_hits_original ++;
 
       }
 
@@ -351,8 +399,25 @@ void CandidateConsistency::produce(art::Event & e)
         continue;
       }
 
+
       cosmictag::SimpleCluster processed_cluster = _ct_manager.GetCluster();
       std::vector<double> dqds_v = processed_cluster._dqds_slider;
+      std::vector<cosmictag::SimpleHit> hit_v = processed_cluster._s_hit_v;
+
+
+      // Check that vertex-start-hit and start hit in cluster are close
+      bool are_close = false;
+      TVector3 vertex_hit (vertex_w, vertex_t, 0);
+      TVector3 start_hit (hit_v.at(0).wire, hit_v.at(0).time, 0);
+      if ( (vertex_hit-start_hit).Mag() < _distance_cut )
+        are_close = true;
+      if(_debug) std::cout << "[CandidateConsistency] Distance is " << (vertex_hit-start_hit).Mag() << std::endl;
+
+      // Check the percentage of non clustered hits
+      double n_hit_ratio = (double)hit_v.size() / (double)n_hits_original * 100.;
+      bool enough_hits = true;
+      if (n_hit_ratio < _perc_losen_hit_cut)
+        enough_hits = false;
 
       // Calulated the trunc median
       double dqds_trunc = UBXSecHelper::GetDqDxTruncatedMean(dqds_v);
@@ -361,14 +426,14 @@ void CandidateConsistency::produce(art::Event & e)
       // Verify linearity
       std::vector<double> linearity_v = processed_cluster._linearity_v;
       bool linearity_failed = false;
-      for (auto l : linearity_v) {
-        if (l < _linearity_threshold)
+      for (size_t l = 2; l < linearity_v.size()-2; l++) {
+        if (linearity_v.at(l) < _linearity_threshold)
           linearity_failed = true;
       }
 
       // If we have a shower, with low dqds, and whose hits
       // are not linear, then this is likely an electron
-      if (dqds_trunc < _dqds_threshold && linearity_failed) {
+      if (dqds_trunc < _dqds_threshold && linearity_failed && are_close && enough_hits) {
         consistency_failed = true;
         if(_debug) std::cout << "[CandidateConsistency] Consistency Failed." << std::endl;
       }
@@ -378,10 +443,18 @@ void CandidateConsistency::produce(art::Event & e)
 
     double cosmicScore = 0.;
     anab::CosmicTagID_t tag_id = anab::CosmicTagID_t::kNotTagged;
+
     if (consistency_failed) {
       cosmicScore = 1.;
       tag_id = anab::CosmicTagID_t::kGeometry_Y; // ... don't have a proper id for these
     }
+
+    if (_1pfp_1track_case_failed) {
+      cosmicScore = 1.;
+      tag_id = anab::CosmicTagID_t::kGeometry_Z; // ... don't have a proper id for these
+    }
+    cosmicScore = dqds_average;
+
     if (_debug) std::cout << "[CandidateConsistency] Cosmic Score is " << cosmicScore << std::endl;
     cosmicTagVector->emplace_back(endPt1, endPt2, cosmicScore, tag_id); 
     util::CreateAssn(*this, e, *cosmicTagVector, tpcobj, *assnOutCosmicTagTPCObject);

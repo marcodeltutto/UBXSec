@@ -19,9 +19,9 @@ ACPTTagger: {
   AnodeTime:             0.53
   CathodeTime:           2291
   DtResolutionAnode:     7
-  DzResolutionAnode:     80
+  DzResolutionAnode:     30
   DtResolutionCathode:   7
-  DzResolutionCathode:   80
+  DzResolutionCathode:   30
   MinTrackLength:        0
  
   PEMin:                 0

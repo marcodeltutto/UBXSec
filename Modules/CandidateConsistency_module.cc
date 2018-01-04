@@ -92,7 +92,7 @@ private:
   std::string _tpcobject_producer;
   std::string _shower_producer;
   std::string _track_producer;
-  
+
   double      _tolerance;
   double      _dqds_threshold;
   double      _distance_cut;
@@ -327,8 +327,22 @@ void CandidateConsistency::produce(art::Event & e)
         if(_debug) std::cout << "[CandidateConsistency] dqds average on first " 
                              << n_hits << " is: " << dqds_average << std::endl;
 
-        if (dqds_average < _dqds_average_cut && is_linear) 
+
+        // Bump Finder
+        double ratio_1 = processed_cluster._dqds_v.at(1) / processed_cluster._dqds_v.at(0);
+        double ratio_2 = processed_cluster._dqds_v.at(2) / processed_cluster._dqds_v.at(1);
+
+        std::cout << "ratio_1: " << ratio_1 << std::endl;
+        std::cout << "ratio_2: " << ratio_2 << std::endl;
+
+        if (ratio_1 > 1.3 && ratio_2 < 0.95 && is_linear)
+          _1pfp_1track_case_failed = false;
+        else if (is_linear)
           _1pfp_1track_case_failed = true;
+
+
+        //if (dqds_average < _dqds_average_cut && is_linear) 
+          //_1pfp_1track_case_failed = true;
 
       } // pfp_1track_case ends
 
@@ -450,10 +464,10 @@ void CandidateConsistency::produce(art::Event & e)
     }
 
     if (_1pfp_1track_case_failed) {
-      cosmicScore = 1.;
+      cosmicScore = 0.5;
       tag_id = anab::CosmicTagID_t::kGeometry_Z; // ... don't have a proper id for these
     }
-    cosmicScore = dqds_average;
+    //cosmicScore = dqds_average;
 
     if (_debug) std::cout << "[CandidateConsistency] Cosmic Score is " << cosmicScore << std::endl;
     cosmicTagVector->emplace_back(endPt1, endPt2, cosmicScore, tag_id); 

@@ -144,9 +144,9 @@ ubxsec_mc_reco.pandoraNu.GeantModuleLabel:                       "largeant"
 ubxsec_mc_reco.pandoraNu.HitFinderModuleLabel:                   "pandoraCosmicHitRemoval::UBXSec"
 ubxsec_mc_reco.pandoraNu.ConfigFile:                             "PandoraSettings_MicroBooNE_Neutrino.xml"
 
-ubxsec_mc_reco.pandoraNuAll.GeantModuleLabel:                    "largeant"
-ubxsec_mc_reco.pandoraNuAll.HitFinderModuleLabel:                "gaushit"
-ubxsec_mc_reco.pandoraNuAll.ConfigFile:                          "PandoraSettings_MicroBooNE_Neutrino.xml"
+#ubxsec_mc_reco.pandoraNuAll.GeantModuleLabel:                    "largeant"
+#ubxsec_mc_reco.pandoraNuAll.HitFinderModuleLabel:                "gaushit"
+#ubxsec_mc_reco.pandoraNuAll.ConfigFile:                          "PandoraSettings_MicroBooNE_Neutrino.xml"
 
 ubxsec_mc_reco.pandoraNucalo.TrackModuleLabel:                   "pandoraNu::UBXSec"
 ubxsec_mc_reco.pandoraNucalo.SpacePointModuleLabel:              "pandoraNu::UBXSec"

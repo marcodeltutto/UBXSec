@@ -15,13 +15,14 @@ ACPTTagger: {
   UseTracks:             true
   UseSpacePoints:        false
   UseHits:               true
+  MergePlanes:           true
 
   AnodeTime:             0.53
   CathodeTime:           2291
   DtResolutionAnode:     7
-  DzResolutionAnode:     30
+  DzResolutionAnode:     50
   DtResolutionCathode:   7
-  DzResolutionCathode:   30
+  DzResolutionCathode:   50
   MinTrackLength:        0
  
   PEMin:                 0

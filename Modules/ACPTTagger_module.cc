@@ -84,6 +84,7 @@ private:
   bool _use_tracks; ///< If true, uses tracks to get start and end points of a PFP
   bool _use_spacepoints; ///< If true, uses spacepoints to get start and end points of a PFP
   bool _use_hits; ///< If true, uses hits on the collection plane to get start x and end x points of a PFP 
+  bool _merge_planes; ///< If true, merges hits from 3 planes (works if _use_hits is true, otherwise ignored)
 
   double _min_track_length;
 
@@ -139,6 +140,7 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
   _use_tracks          = p.get<bool>("UseSpaceTracks", true);
   _use_spacepoints     = p.get<bool>("UseSpacePoints", false);
   _use_hits            = p.get<bool>("UseHits", false);
+  _merge_planes        = p.get<bool>("MergePlanes", false);
 
   _min_track_length    = p.get<double>("MinTrackLength", 0.0);
 
@@ -376,6 +378,9 @@ void ACPTTagger::produce(art::Event & e)
     std::vector<std::vector<TVector3>> sorted_points_v;
     sorted_points_v.clear();
 
+    std::vector<TVector3> highest_points;
+    std::vector<TVector3> lowest_points;
+
     if (_use_spacepoints) {
       if(_debug) std::cout << "Using Spacepoints" << std::endl;
       if(spacepoint_v.size() >= 2) {
@@ -400,7 +405,9 @@ void ACPTTagger::produce(art::Event & e)
           z_start = pts.at(0).Z();
           z_end = pts.at(1).Z();
           if(_debug) std::cout << "Empacing end points for hits on plane 2" << std::endl;
-          sorted_points_v.emplace_back(pts);
+          //sorted_points_v.emplace_back(pts);
+          highest_points.push_back(pts[0]);
+          lowest_points.push_back(pts[1]);
         } else {
           if(_debug) std::cout << "Not enough hits on plane 2" << std::endl;
         }
@@ -412,7 +419,9 @@ void ACPTTagger::produce(art::Event & e)
           pts.at(0).SetZ(z_start);
           pts.at(1).SetZ(z_end);
           if(_debug) std::cout << "Empacing end points for hits on plane 1" << std::endl;
-          sorted_points_v.emplace_back(pts); 
+          //sorted_points_v.emplace_back(pts); 
+          highest_points.push_back(pts[0]);
+          lowest_points.push_back(pts[1]);
         } else {
           if(_debug) std::cout << "Not enough hits on plane 1" << std::endl;
         }
@@ -424,12 +433,76 @@ void ACPTTagger::produce(art::Event & e)
           pts.at(0).SetZ(z_start);
           pts.at(1).SetZ(z_end);
           if(_debug) std::cout << "Empacing end points for hits on plane 0" << std::endl;
-          sorted_points_v.emplace_back(pts);
+          //sorted_points_v.emplace_back(pts);
+          highest_points.push_back(pts[0]);
+          lowest_points.push_back(pts[1]);
         } else {
           if(_debug) std::cout << "Not enough hits on plane 0" << std::endl;
         }
       }
+
+      if (_merge_planes && highest_points.size() > 0) {
+        // Look for the point with the highest X and the lowest X
+        if (highest_points.at(0).X() > lowest_points.at(0).X()) {
+
+            std::sort(highest_points.begin(), highest_points.end(),
+                      [](TVector3 a, TVector3 b) -> bool
+                      {
+                        return a.X() > b.X();
+                      });
+            std::sort(lowest_points.begin(), lowest_points.end(),
+                      [](TVector3 a, TVector3 b) -> bool
+                      {
+                        return a.X() < b.X();
+                      });
+
+            std::vector<TVector3> temp;
+            temp.emplace_back(highest_points.at(0));
+            temp.emplace_back(lowest_points.at(0));
+            sorted_points_v.emplace_back(temp);
+        }
+        if (highest_points.at(0).X() < lowest_points.at(0).X()) {
+
+            std::sort(highest_points.begin(), highest_points.end(),
+                      [](TVector3 a, TVector3 b) -> bool
+                      {
+                        return a.X() < b.X();
+                      });
+            std::sort(lowest_points.begin(), lowest_points.end(),
+                      [](TVector3 a, TVector3 b) -> bool
+                      {
+                        return a.X() > b.X();
+                      });
+
+            std::vector<TVector3> temp;
+            temp.emplace_back(highest_points.at(0));
+            temp.emplace_back(lowest_points.at(0));
+            sorted_points_v.emplace_back(temp);
+        }
+
+        if (_debug) {
+          std::cout << "After Plane Merging:" << std::endl;
+          std::cout << "\t Highest point: " << sorted_points_v.back().at(0).X() 
+                                    << ", " << sorted_points_v.back().at(0).Y()
+                                    << ", " << sorted_points_v.back().at(0).Z() << std::endl;
+          std::cout << "\t Lowest point:  " << sorted_points_v.back().at(1).X() 
+                                    << ", " << sorted_points_v.back().at(1).Y()
+                                    << ", " << sorted_points_v.back().at(1).Z() << std::endl;
+
+        }
+      } else {
+        // Just emplace the last points
+        for (size_t i = 0; i < highest_points.size(); i++){
+          std::vector<TVector3> temp;
+          temp.emplace_back(highest_points.at(0));
+          temp.emplace_back(lowest_points.at(0));
+          sorted_points_v.emplace_back(temp);
+        }  
+      }
+
     }
+
+
 
     if (_use_tracks) {
       if(_debug) std::cout << "Using Tracks" << std::endl;

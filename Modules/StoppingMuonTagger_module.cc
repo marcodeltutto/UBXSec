@@ -399,10 +399,6 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     if (_debug) std::cout << "[StoppingMuonTagger] Simple hit vector size " << simple_hit_v.size() << std::endl;
 
-    if (collection_coplanar) {
-      if (_debug) std::cout << "[StoppingMuonTagger] This object is collection coplanar" << std::endl;
-    }
-
     _ct_manager.Reset();
 
     // Emplacing simple hits to the manager
@@ -415,6 +411,11 @@ void StoppingMuonTagger::produce(art::Event & e) {
     start.wire = highest_w;
     start.plane = 2;
     _ct_manager.SetStartHit(std::move(start));
+
+    if (collection_coplanar) {
+      if (_debug) std::cout << "[StoppingMuonTagger] This object is collection coplanar" << std::endl;
+      _ct_manager.CollectionCoplanar(true);
+    }
 
     // Running the cluster analyser
     bool passed = _ct_manager.Run();

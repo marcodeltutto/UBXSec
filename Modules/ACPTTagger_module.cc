@@ -443,7 +443,7 @@ void ACPTTagger::produce(art::Event & e)
 
       if (_merge_planes && highest_points.size() > 0) {
         // Look for the point with the highest X and the lowest X
-        if (highest_points.at(0).X() > lowest_points.at(0).X()) {
+        if (highest_points.at(0).X() >= lowest_points.at(0).X()) {
 
             std::sort(highest_points.begin(), highest_points.end(),
                       [](TVector3 a, TVector3 b) -> bool

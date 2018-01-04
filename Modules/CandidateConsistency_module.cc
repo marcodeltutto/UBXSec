@@ -172,7 +172,7 @@ void CandidateConsistency::produce(art::Event & e)
 
   for (size_t i = 0; i < tpcobj_v.size(); i++) {
 
-    if (_debug) std::cout << "[StoppingMuonTagger] >>>>> TPCObject " << i << std::endl;
+    if (_debug) std::cout << "[CandidateConsistency] >>>>> TPCObject " << i << std::endl;
 
     bool consistency_failed = false;
     bool _1pfp_1track_case_failed = false;

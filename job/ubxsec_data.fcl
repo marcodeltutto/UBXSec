@@ -47,9 +47,9 @@ microboone_reco_data_services:
 
 ubxsec_data_reco:
 {
-  saturationTest:                 @local::correct_saturation
-  ophitBeamTest:                  @local::microboone_ophit_saturation_beam
-  simpleFlashBeamTest:            @local::UBFlashBeam
+  #saturationTest:                 @local::correct_saturation
+  #ophitBeamTest:                  @local::microboone_ophit_saturation_beam
+  #simpleFlashBeamTest:            @local::UBFlashBeam
 
   pandoraCosmicTPCObj:            @local::TPCObjectMakerCosmic
 
@@ -92,9 +92,9 @@ ubxsec_data_ana:
 }
 
 
-ubxsec_data_producers: [ saturationTest,
-                         ophitBeamTest,
-                         simpleFlashBeamTest,
+ubxsec_data_producers: [ #saturationTest,
+                         #ophitBeamTest,
+                         #simpleFlashBeamTest,
                          pandoraCosmicTPCObj,
                          pandoraCosmicTrackPFPart,
                          pandoraCosmicFlashTag,

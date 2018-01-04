@@ -41,9 +41,9 @@ BEGIN_PROLOG
 ubxsec_mc_reco:
 {
 
-  saturationTest:                 @local::correct_saturation_mc
-  ophitBeamTest:                  @local::microboone_ophit_saturation_cosmic
-  simpleFlashBeamTest:            @local::UBFlashBeamMC
+  #saturationTest:                 @local::correct_saturation_mc
+  #ophitBeamTest:                  @local::microboone_ophit_saturation_cosmic
+  #simpleFlashBeamTest:            @local::UBFlashBeamMC
 
   pandoraCosmicTPCObj:            @local::TPCObjectMakerCosmic
 
@@ -54,7 +54,7 @@ ubxsec_mc_reco:
   pandoraCosmicHitRemoval:        @local::microboone_crhitremoval
 
   pandoraNu:                      @local::microboone_pandora
-  pandoraNuAll:                   @local::microboone_pandora
+  #pandoraNuAll:                   @local::microboone_pandora
 
   pandoraNuGeoCosmicTag:          @local::GeoCosmicTagger
 
@@ -93,9 +93,9 @@ ubxsec_mc_ana:
 }
 
 
-ubxsec_mc_producers: [ saturationTest, 
-                       ophitBeamTest,
-                       simpleFlashBeamTest,
+ubxsec_mc_producers: [ #saturationTest, 
+                       #ophitBeamTest,
+                       #simpleFlashBeamTest,
                        pandoraCosmicTPCObj,
                        pandoraCosmicTrackPFPart,
                        pandoraCosmicFlashTag,
@@ -103,7 +103,7 @@ ubxsec_mc_producers: [ saturationTest,
                        pandoraCosmicStoppingMu,
                        pandoraCosmicHitRemoval,
                        pandoraNu,
-                       pandoraNuAll,
+                       #pandoraNuAll,
                        pandoraNucalo,
                        pandoraNupid,
                        pandoraNuMCSMu,

@@ -10,12 +10,13 @@ CandidateConsistency: {
   TrackProducer:         "pandoraNu::UBXSec"
   ShowerProducer:        "pandoraNu::UBXSec"
 
-  Tolerance:             5.
-  DqDsThreshold:         60000
-  DistanceCut:           8
-  PercentageLosenHits:   30
-  LinearityThreshold:    0.7
-  DqDsAverageThreshold:  90000
+  Tolerance:               5.
+  DqDsThreshold:           70000
+  DistanceCut:             8
+  PercentageLosenHits:     30
+  LinearityThreshold:      0.7
+  LinearityThresholdTrack: 0.9
+  DqDsAverageThreshold:    90000
   
   DebugMode:             true
 

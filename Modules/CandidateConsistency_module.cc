@@ -98,6 +98,7 @@ private:
   double      _distance_cut;
   double      _perc_losen_hit_cut;
   double      _linearity_threshold;
+  double      _linearity_threshold_track;
   double      _dqds_average_cut;
   bool        _debug;
 
@@ -114,18 +115,19 @@ private:
 CandidateConsistency::CandidateConsistency(fhicl::ParameterSet const & p)
 {
 
-  _tpcobject_producer  = p.get<std::string>("TPCObjectProducer",  "TPCObjectMaker::UBXSec");
-  _shower_producer     = p.get<std::string>("ShowerProducer",     "pandoraNu::UBXSec");
-  _track_producer      = p.get<std::string>("TrackProducer",      "pandoraNu::UBXSec");
+  _tpcobject_producer        = p.get<std::string>("TPCObjectProducer",  "TPCObjectMaker::UBXSec");
+  _shower_producer           = p.get<std::string>("ShowerProducer",     "pandoraNu::UBXSec");
+  _track_producer            = p.get<std::string>("TrackProducer",      "pandoraNu::UBXSec");
 
-  _tolerance           = p.get<double>("Tolerance", 5.);
-  _dqds_threshold      = p.get<double>("DqDsThreshold", 60000);
-  _distance_cut        = p.get<double>("DistanceCut", 8);
-  _perc_losen_hit_cut  = p.get<double>("PercentageLosenHits", 30);
-  _linearity_threshold = p.get<double>("LinearityThreshold", 0.7);
-  _dqds_average_cut    = p.get<double>("DqDsAverageThreshold", 90000);
+  _tolerance                 = p.get<double>("Tolerance", 5.);
+  _dqds_threshold            = p.get<double>("DqDsThreshold", 60000);
+  _distance_cut              = p.get<double>("DistanceCut", 8);
+  _perc_losen_hit_cut        = p.get<double>("PercentageLosenHits", 30);
+  _linearity_threshold       = p.get<double>("LinearityThreshold", 0.7);
+  _linearity_threshold_track = p.get<double>("LinearityThresholdTrack", 0.9);
+  _dqds_average_cut          = p.get<double>("DqDsAverageThreshold", 90000);
 
-  _debug               = p.get<bool>("DebugMode", true);
+  _debug                     = p.get<bool>("DebugMode", true);
 
   _ct_manager.Configure(p.get<cosmictag::Config_t>("CosmicTagManager"));
 
@@ -313,7 +315,7 @@ void CandidateConsistency::produce(art::Event & e)
 
         bool is_linear = true;
         for (size_t l = 2; l < linearity_v.size()-2; l++) {
-          if (linearity_v.at(l) < _linearity_threshold)
+          if (linearity_v.at(l) < _linearity_threshold_track)
             is_linear = false;
         }
 
@@ -335,10 +337,21 @@ void CandidateConsistency::produce(art::Event & e)
         std::cout << "ratio_1: " << ratio_1 << std::endl;
         std::cout << "ratio_2: " << ratio_2 << std::endl;
 
-        if (ratio_1 > 1.3 && ratio_2 < 0.95 && is_linear)
+        bool case_1 = ratio_1 > 1.3 && ratio_2 < 0.95 && is_linear;
+        bool case_2 = dqds_average > 100000 && is_linear;
+
+        if (case_1) {
+          if(_debug) std::cout << "[CandidateConsistency] Consistency OK, passed case 1" << std::endl;
           _1pfp_1track_case_failed = false;
-        else if (is_linear)
+        }
+        else if (case_2) {
+          if(_debug) std::cout << "[CandidateConsistency] Consistency OK, passed case 2" << std::endl;
+          _1pfp_1track_case_failed = false;
+        }
+        else if (is_linear) {
+          if(_debug) std::cout << "[CandidateConsistency] Consistency FAILED" << std::endl;
           _1pfp_1track_case_failed = true;
+        }
 
 
         //if (dqds_average < _dqds_average_cut && is_linear) 
@@ -430,8 +443,10 @@ void CandidateConsistency::produce(art::Event & e)
       // Check the percentage of non clustered hits
       double n_hit_ratio = (double)hit_v.size() / (double)n_hits_original * 100.;
       bool enough_hits = true;
-      if (n_hit_ratio < _perc_losen_hit_cut)
+      if (n_hit_ratio < _perc_losen_hit_cut) {
+        if(_debug) std::cout << "[CandidateConsistency] Too many losen hits" << std::endl;
         enough_hits = false;
+      }
 
       // Calulated the trunc median
       double dqds_trunc = UBXSecHelper::GetDqDxTruncatedMean(dqds_v);
@@ -442,6 +457,7 @@ void CandidateConsistency::produce(art::Event & e)
       bool linearity_failed = false;
       for (size_t l = 2; l < linearity_v.size()-2; l++) {
         if (linearity_v.at(l) < _linearity_threshold)
+          if(_debug) std::cout << "[CandidateConsistency] Linearity is below threshold: " << linearity_v.at(l) << std::endl;
           linearity_failed = true;
       }
 

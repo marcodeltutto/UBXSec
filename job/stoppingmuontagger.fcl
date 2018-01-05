@@ -13,7 +13,7 @@ StoppingMuonTagger: {
   TrackProducer:           "pandoraNu::UBXSec"
   DebugMode:               true
 
-  CoplanarCut:             5.
+  CoplanarCut:             6.
   MCSDeltaLLCut:           -5.
 
   CosmicTagManager: @local::cosmictag_config_mc

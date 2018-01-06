@@ -71,6 +71,7 @@
 #include "larevt/CalibrationDBI/Interface/DetPedestalProvider.h"
 #include "larevt/CalibrationDBI/Interface/ChannelStatusService.h"
 #include "larevt/CalibrationDBI/Interface/ChannelStatusProvider.h"
+#include "larevt/SpaceChargeServices/SpaceChargeService.h"
 
 
 // LArSoft include
@@ -810,15 +811,31 @@ void UBXSec::produce(art::Event & e) {
     recob::Vertex tpcobj_nu_vtx = tpcobj.GetVertex();
     tpcobj_nu_vtx.XYZ(reco_nu_vtx_raw);
 
-    // X position correction
+    // X position correction (time offset)
     double reco_nu_vtx[3];
     UBXSecHelper::GetTimeCorrectedPoint(reco_nu_vtx_raw, reco_nu_vtx, ubxsec_event->candidate_flash_time, _drift_velocity);
+
+    // Space Charge correction
+    auto const* SCE = lar::providerFrom<spacecharge::SpaceChargeService>();
+    std::vector<double> sce_corr = SCE->GetPosOffsets(reco_nu_vtx[0],
+                                                      reco_nu_vtx[1],
+                                                      reco_nu_vtx[2]);
+    std::cout << "[UBXSec] \t SCE correction in x, y, z = " << sce_corr.at(0) 
+                                                    << ", " << sce_corr.at(1) 
+                                                    << ", " << sce_corr.at(2) << std::endl;
+    reco_nu_vtx[0] += sce_corr.at(0);
+    reco_nu_vtx[1] -= sce_corr.at(1);
+    reco_nu_vtx[2] -= sce_corr.at(2);
+
+    // Emplacing reco vertex
     ubxsec_event->slc_nuvtx_x[slice] = reco_nu_vtx[0];
     ubxsec_event->slc_nuvtx_y[slice] = reco_nu_vtx[1];
     ubxsec_event->slc_nuvtx_z[slice] = reco_nu_vtx[2];
     ubxsec_event->slc_nuvtx_fv[slice] = (_fiducial_volume.InFV(reco_nu_vtx) ? 1 : 0);
     std::cout << "[UBXSec] \t Reco vertex is " << ubxsec_event->slc_nuvtx_x[slice] << ", " << ubxsec_event->slc_nuvtx_y[slice] << ", " << ubxsec_event->slc_nuvtx_z[slice] << std::endl; 
     std::cout << "[UBXSec] \t Reco vertex is " << (ubxsec_event->slc_nuvtx_fv[slice]==1 ? "in" : "ouside") << " the FV." << std::endl;
+
+    
 
     // Through-going?
     ubxsec_event->slc_geocosmictag[slice] = false;
@@ -1326,56 +1343,7 @@ void UBXSec::produce(art::Event & e) {
   }
 
 
-
-
-  /* MCHits
-  ::art::Handle< std::vector<sim::MCHitCollection> > mcHit_h;
-  e.getByLabel("mchitfinder",mcHit_h);
-  if( !mcHit_h.isValid() || mcHit_h->empty() ) {
-    std::cerr << "Don't have MCHits." << std::endl;
-    return;
-  }
-
-  std::map<int,int> geantTrackIDToNumberOfMCHit;
-
-  std::cout << "Number of MCHits: " << mcHit_h->size() << std::endl;
-  for (auto const & mchit_v : *mcHit_h){
-    std::cout << "CHANNEL " << mchit_v.Channel() << std::endl;
-    auto iter = geantTrackIDToNumberOfMCHit.find(1480857);
-    if (iter != geantTrackIDToNumberOfMCHit.end())
-      std::cout << "   For this channel the muon has # of MCHits = " << (*iter).second << std::endl;
-    for (auto const & mchit : mchit_v){
-      //std::cout << "Hit track id: " << mchit.PartTrackId() << std::endl;
-      auto iter = geantTrackIDToNumberOfMCHit.find(mchit.PartTrackId());
-      if (iter != geantTrackIDToNumberOfMCHit.end()) (*iter).second += 1;
-      else geantTrackIDToNumberOfMCHit[mchit.PartTrackId()] = 1;
-      if (mchit.PartTrackId() == 1480857)
-        std::cout << "From mchit I get that the muon has energy: " << mchit.PartEnergy() << " and the hit time is " << mchit.PeakTime() << std::endl;
-    }
-  }
-
-  //for(auto const& key_value : geantTrackIDToNumberOfMCHit){
-    //std::cout << "Track id: " << key_value.first << "  number of hits: " << key_value.second << std::endl;
-  //} 
-
-
-  std::cout << "The muon MC particle track id is: " << muonMCParticle->TrackId() << std::endl;
-  auto iter = geantTrackIDToNumberOfMCHit.find(muonMCParticle->TrackId());
-  if (iter != geantTrackIDToNumberOfMCHit.end()) {
-    const simb::MCParticle * mcpar_bt = bt->TrackIDToParticle((*iter).first);
-    std::cout << "Number of MCHits for the muon: " << (*iter).second << std::endl;
-    std::cout << "The backtracked particle has pdg: " << mcpar_bt->PdgCode() << std::endl;
-  }
-
-  auto titer = matchedParticleHits.find(muonMCParticle);
-  if (titer != matchedParticleHits.end()){
-    std::cout << "Number of muon recon hits: " << ((*titer).second).size() << std::endl;
-  }
-  */
-
-
   // POT
-
   art::Handle< sumdata::POTSummary > potsum_h;
   if(e.getByLabel(_potsum_producer, potsum_h))
     ubxsec_event->pot = potsum_h->totpot;
@@ -1523,6 +1491,14 @@ void UBXSec::PrintMC(std::vector<art::Ptr<simb::MCTruth>> mclist) {
     std::cout << "\tVx       " << mclist[iList]->GetNeutrino().Nu().Vx() << std::endl;
     std::cout << "\tVy       " << mclist[iList]->GetNeutrino().Nu().Vy() << std::endl;
     std::cout << "\tVz       " << mclist[iList]->GetNeutrino().Nu().Vz() << std::endl;
+
+    auto const* SCE = lar::providerFrom<spacecharge::SpaceChargeService>();
+    std::vector<double> sce_corr = SCE->GetPosOffsets(mclist[iList]->GetNeutrino().Nu().Vx(),
+                                                      mclist[iList]->GetNeutrino().Nu().Vy(),
+                                                      mclist[iList]->GetNeutrino().Nu().Vz());
+    std::cout << "\t\t SCE correction in x, y, z = " << sce_corr.at(0) 
+                                                     << ", " << sce_corr.at(1) 
+                                                     << ", " << sce_corr.at(2) << std::endl;
   } else
     std::cout << "\t---No Neutrino information---" << std::endl;
 

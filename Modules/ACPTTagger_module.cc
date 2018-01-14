@@ -27,12 +27,14 @@
 #include "lardataobj/RecoBase/SpacePoint.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/OpFlash.h"
+#include "lardataobj/RecoBase/OpHit.h"
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "lardataobj/AnalysisBase/T0.h"
 #include "lardataobj/AnalysisBase/CosmicTag.h"
 #include "lardata/Utilities/AssociationUtil.h"
 #include "uboone/RawData/utils/ubdaqSoftwareTriggerData.h"
 #include "larevt/SpaceChargeServices/SpaceChargeService.h"
+#include "uboone/UBFlashFinder/PECalib.h"
 
 #include "TVector3.h"
 #include "TTree.h"
@@ -66,12 +68,17 @@ private:
   bool GetClosestDtDz(TVector3 _end, double _value, double trk_z_start, double trk_z_end, std::vector<double> &_dt, std::vector<double> &_dz, bool fill_histo);
   /// Returns true if sign is positive, negative otherwise
   bool GetSign(std::vector<TVector3> sorted_points);
+  /// ?
+  double GetClosestDt_OpHits(std::vector<TVector3>&);
+  /// ?
+  double RunOpHitFinder(double the_time, double trk_z_start, double trk_z_end);
   void SortTrackPoints(const recob::Track& track, std::vector<TVector3>& sorted_points);
   void SortSpacePoints(std::vector<art::Ptr<recob::SpacePoint>> sp_v, std::vector<TVector3>& sorted_points);
   void SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vector<TVector3>& sorted_points, TVector3 highest_point, size_t planeno);
   TVector3 ContainPoint(TVector3 p);
  
   std::string _flash_producer;
+  std::string _ophit_producer;
   std::string _pfp_producer;
   std::string _track_producer;
   std::string _spacepoint_producer;
@@ -81,10 +88,13 @@ private:
   ::detinfo::DetectorProperties const* fDetectorProperties;
   ::art::ServiceHandle<geo::Geometry> geo;
 
-  bool _use_tracks; ///< If true, uses tracks to get start and end points of a PFP
+  ::pmtana::PECalib _pecalib;
+
+  bool _use_tracks;      ///< If true, uses tracks to get start and end points of a PFP
   bool _use_spacepoints; ///< If true, uses spacepoints to get start and end points of a PFP
-  bool _use_hits; ///< If true, uses hits on the collection plane to get start x and end x points of a PFP 
-  bool _merge_planes; ///< If true, merges hits from 3 planes (works if _use_hits is true, otherwise ignored)
+  bool _use_hits;        ///< If true, uses hits on the collection plane to get start x and end x points of a PFP 
+  bool _merge_planes;    ///< If true, merges hits from 3 planes (works if _use_hits is true, otherwise ignored)
+  bool _use_ophits;      ///< If tagging fails with flashes, also tries with OpHits
 
   double _min_track_length;
 
@@ -94,11 +104,19 @@ private:
   double _dt_resolution_a, _dz_resolution_a;
   double _dt_resolution_c, _dz_resolution_c;
 
+  double _dt_resolution_ophit;
+  double _ophit_time_res = 15.;
+  double _ophit_pos_res = 180.;
+  size_t _n_ophit = 2;
+  double _ophit_pe = 20;
+
+
   // vector to hold flash-times for the event
   std::vector<double> _flash_times;
   std::vector<size_t> _flash_idx_v;
   std::vector<double> _flash_zcenter;
   std::vector<double> _flash_zwidth;
+  std::vector<art::Ptr<recob::OpHit>> ophit_v;
   double _pe_min;
 
   bool _debug, _create_histo, _create_tree;
@@ -128,34 +146,44 @@ private:
 
 ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
 
-  _flash_producer      = p.get<std::string>("FlashProducer", "simpleFlashCosmic");
-  _pfp_producer        = p.get<std::string>("PFPartProducer", "pandoraCosmic");
-  _track_producer      = p.get<std::string>("TrackProducer", "pandoraCosmic");
-  _spacepoint_producer = p.get<std::string>("SpacePointProducer", "pandoraCosmic");
-  _cluster_producer    = p.get<std::string>("ClusterProducer", "pandoraCosmic");
-  _swtrigger_producer  = p.get<std::string>("SWTriggerProducer", "swtrigger");
+  _flash_producer        = p.get<std::string>("FlashProducer", "simpleFlashCosmic");
+  _ophit_producer        = p.get<std::string>("OpHitProducer", "ophitCosmic");
+  _pfp_producer          = p.get<std::string>("PFPartProducer", "pandoraCosmic");
+  _track_producer        = p.get<std::string>("TrackProducer", "pandoraCosmic");
+  _spacepoint_producer   = p.get<std::string>("SpacePointProducer", "pandoraCosmic");
+  _cluster_producer      = p.get<std::string>("ClusterProducer", "pandoraCosmic");
+  _swtrigger_producer    = p.get<std::string>("SWTriggerProducer", "swtrigger");
 
-  fDetectorProperties = lar::providerFrom<detinfo::DetectorPropertiesService>(); 
+  fDetectorProperties    = lar::providerFrom<detinfo::DetectorPropertiesService>(); 
 
-  _use_tracks          = p.get<bool>("UseSpaceTracks", true);
-  _use_spacepoints     = p.get<bool>("UseSpacePoints", false);
-  _use_hits            = p.get<bool>("UseHits", false);
-  _merge_planes        = p.get<bool>("MergePlanes", false);
+  _use_tracks            = p.get<bool>("UseSpaceTracks", true);
+  _use_spacepoints       = p.get<bool>("UseSpacePoints", false);
+  _use_hits              = p.get<bool>("UseHits", false);
+  _merge_planes          = p.get<bool>("MergePlanes", false);
+  _use_ophits            = p.get<bool>("UseOpHits", false);
 
-  _min_track_length    = p.get<double>("MinTrackLength", 0.0);
+  _min_track_length      = p.get<double>("MinTrackLength", 0.0);
 
-  _anodeTime           = p.get<double>("AnodeTime",   0.53);
-  _cathodeTime         = p.get<double>("CathodeTime", 2291);
+  _anodeTime             = p.get<double>("AnodeTime",   0.53);
+  _cathodeTime           = p.get<double>("CathodeTime", 2291);
 
-  _dt_resolution_a     = p.get<double>("DtResolutionAnode", 5); 
-  _dz_resolution_a     = p.get<double>("DzResolutionAnode", 80);
-  _dt_resolution_c     = p.get<double>("DtResolutionCathode", 5);
-  _dz_resolution_c     = p.get<double>("DzResolutionCathode", 80);
+  _dt_resolution_a       = p.get<double>("DtResolutionAnode", 5); 
+  _dz_resolution_a       = p.get<double>("DzResolutionAnode", 80);
+  _dt_resolution_c       = p.get<double>("DtResolutionCathode", 5);
+  _dz_resolution_c       = p.get<double>("DzResolutionCathode", 80);
 
-  _pe_min              = p.get<double> ("PEMin", 0);
-  _debug               = p.get<bool>("Debug", false);
-  _create_histo        = p.get<bool>("CreateHisto", false); 
-  _create_tree         = p.get<bool>("CreateTree", false);
+  _dt_resolution_ophit   = p.get<double>("DtResolutionOpHit", 15);
+  _ophit_time_res        = p.get<double>("OpHitTimeRes", 15);
+  _ophit_pos_res         = p.get<double>("OpHitPosRes", 180);
+  _n_ophit               = p.get<size_t>("MinOpHit", 2);
+  _ophit_pe              = p.get<double>("MinOpHitPE", 20);
+
+  _pe_min                = p.get<double> ("PEMin", 0);
+  _debug                 = p.get<bool>("Debug", false);
+  _create_histo          = p.get<bool>("CreateHisto", false); 
+  _create_tree           = p.get<bool>("CreateTree", false);
+
+  _pecalib.Configure(p.get<fhicl::ParameterSet>("PECalib"));
 
   //_csvfile.open ("acpt.csv", std::ofstream::out | std::ofstream::trunc);
   //_csvfile << "trk_x_up,trk_x_down,fls_time" << std::endl;
@@ -260,6 +288,21 @@ void ACPTTagger::produce(art::Event & e)
     return; //throw std::exception();
   }
 
+  // load OpHits
+  if (_debug) { std::cout << "Loading ophits from producer " << _ophit_producer << std::endl; }
+  art::Handle<std::vector<recob::OpHit>> ophit_h;
+  e.getByLabel(_ophit_producer, ophit_h);
+  art::fill_ptr_vector(ophit_v, ophit_h);
+
+  // make sure ophits look good
+  if(!ophit_h.isValid()) {
+    std::cerr<<"\033[93m[ERROR]\033[00m ... could not locate OpHit!"<<std::endl;
+    e.put(std::move(cosmicTagTrackVector));
+    e.put(std::move(assnOutCosmicTagTrack));
+    e.put(std::move(assnOutCosmicTagPFParticle));
+    return; //throw std::exception();
+  }
+
   // load PFParticles for which T0 reconstruction should occur
   if (_debug) { std::cout << "Loading PFParticles from producer " << _pfp_producer << std::endl; }
   art::Handle<std::vector<recob::PFParticle> > pfp_h;
@@ -353,7 +396,7 @@ void ACPTTagger::produce(art::Event & e)
 
     // grab associated tracks
     std::vector<art::Ptr<recob::Track>> track_v = pfp_track_assn_v.at(i);
-    if(_debug) std::cout << "Number of associated tracks: " << track_v.size() << std::endl;
+    if(_debug) std::cout << "[ACPTTagger] Number of associated tracks: " << track_v.size() << std::endl;
 
     // grab associated spacepoints
     std::vector<art::Ptr<recob::SpacePoint>> spacepoint_v = pfp_spacepoint_assn_v.at(i);
@@ -382,7 +425,7 @@ void ACPTTagger::produce(art::Event & e)
     std::vector<TVector3> lowest_points;
 
     if (_use_spacepoints) {
-      if(_debug) std::cout << "Using Spacepoints" << std::endl;
+      if(_debug) std::cout << "[ACPTTagger] -> Using Spacepoints" << std::endl;
       if(spacepoint_v.size() >= 2) {
         std::vector<TVector3> pts;
         this->SortSpacePoints(spacepoint_v, pts);
@@ -391,7 +434,7 @@ void ACPTTagger::produce(art::Event & e)
     }
 
     if (_use_hits) {
-      if(_debug) std::cout << "Using Hits" << std::endl;
+      if(_debug) std::cout << "[ACPTTagger] -> Using Hits" << std::endl;
       std::vector<TVector3> pts;
       this->SortSpacePoints(spacepoint_v, pts);
       if (pts.size() > 0) {
@@ -404,12 +447,12 @@ void ACPTTagger::produce(art::Event & e)
         if (pts.size() == 2) {
           z_start = pts.at(0).Z();
           z_end = pts.at(1).Z();
-          if(_debug) std::cout << "Empacing end points for hits on plane 2" << std::endl;
+          if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for hits on plane 2" << std::endl;
           //sorted_points_v.emplace_back(pts);
           highest_points.push_back(pts[0]);
           lowest_points.push_back(pts[1]);
         } else {
-          if(_debug) std::cout << "Not enough hits on plane 2" << std::endl;
+          if(_debug) std::cout << "[ACPTTagger] \t Not enough hits on plane 2" << std::endl;
         }
 
         // Plane 1
@@ -418,12 +461,12 @@ void ACPTTagger::produce(art::Event & e)
           // Hack z pos untill I know how to do it
           pts.at(0).SetZ(z_start);
           pts.at(1).SetZ(z_end);
-          if(_debug) std::cout << "Empacing end points for hits on plane 1" << std::endl;
+          if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for hits on plane 1" << std::endl;
           //sorted_points_v.emplace_back(pts); 
           highest_points.push_back(pts[0]);
           lowest_points.push_back(pts[1]);
         } else {
-          if(_debug) std::cout << "Not enough hits on plane 1" << std::endl;
+          if(_debug) std::cout << "[ACPTTagger] \t Not enough hits on plane 1" << std::endl;
         }
 
         // Plane 0
@@ -432,16 +475,19 @@ void ACPTTagger::produce(art::Event & e)
           // Hack z pos untill I know how to do it
           pts.at(0).SetZ(z_start);
           pts.at(1).SetZ(z_end);
-          if(_debug) std::cout << "Empacing end points for hits on plane 0" << std::endl;
+          if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for hits on plane 0" << std::endl;
           //sorted_points_v.emplace_back(pts);
           highest_points.push_back(pts[0]);
           lowest_points.push_back(pts[1]);
         } else {
-          if(_debug) std::cout << "Not enough hits on plane 0" << std::endl;
+          if(_debug) std::cout << "[ACPTTagger] \t Not enough hits on plane 0" << std::endl;
         }
       }
 
       if (_merge_planes && highest_points.size() > 0) {
+
+        if(_debug) std::cout << "[ACPTTagger] -> Merging planes" << std::endl;
+
         // Look for the point with the highest X and the lowest X
         if (highest_points.at(0).X() >= lowest_points.at(0).X()) {
 
@@ -481,11 +527,11 @@ void ACPTTagger::produce(art::Event & e)
         }
 
         if (_debug) {
-          std::cout << "After Plane Merging:" << std::endl;
-          std::cout << "\t Highest point: " << sorted_points_v.back().at(0).X() 
+          std::cout << "[ACPTTagger] \t After Plane Merging:" << std::endl;
+          std::cout << "\t\t Highest point: " << sorted_points_v.back().at(0).X() 
                                     << ", " << sorted_points_v.back().at(0).Y()
                                     << ", " << sorted_points_v.back().at(0).Z() << std::endl;
-          std::cout << "\t Lowest point:  " << sorted_points_v.back().at(1).X() 
+          std::cout << "\t\t Lowest point:  " << sorted_points_v.back().at(1).X() 
                                     << ", " << sorted_points_v.back().at(1).Y()
                                     << ", " << sorted_points_v.back().at(1).Z() << std::endl;
 
@@ -505,7 +551,7 @@ void ACPTTagger::produce(art::Event & e)
 
 
     if (_use_tracks) {
-      if(_debug) std::cout << "Using Tracks" << std::endl;
+      if(_debug) std::cout << "[ACPTTagger] -> Using Tracks" << std::endl;
       for (auto t : track_v) {
         if (t->Length() < _min_track_length) continue;   
         std::vector<TVector3> pts;
@@ -525,21 +571,24 @@ void ACPTTagger::produce(art::Event & e)
           pts.resize(2);
           pts.at(0) = start;
           pts.at(1) = end;
-          if(_debug) std::cout << "Empacing end points for tracks." << std::endl;
+          if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for tracks." << std::endl;
           sorted_points_v.emplace_back(pts);
         } 
       }
     }
       
 
+    //
+    // CORE: Here the decision is made
+    //
 
     size_t loop_max = sorted_points_v.size();
 
-    if(_debug) std::cout << "The loop will be " << loop_max << std::endl;
+    if(_debug) std::cout << "[ACPTTagger] The loop will be " << loop_max << std::endl;
 
     for (size_t i = 0; i < loop_max; i ++) {
 
-      if(_debug) std::cout << "At loop stage " << i << std::endl;
+      if(_debug) std::cout << "[ACPTTagger] >>> At loop stage " << i << std::endl;
 
       std::vector<TVector3> sorted_points = sorted_points_v.at(i);
      
@@ -558,7 +607,7 @@ void ACPTTagger::produce(art::Event & e)
       std::vector<double> sce_corr = SCE->GetPosOffsets(256.35,
                                     sorted_points[sorted_points.size()-1].Y(),
                                     sorted_points[sorted_points.size()-1].Z());
-      std::cout << "x_corr is " << sce_corr.at(0) << std::endl;
+      std::cout << "[ACPTTagger] \t Eventual SCE X corretion: " << sce_corr.at(0) << std::endl;
 
       bool sign = this->GetSign(sorted_points);
       
@@ -582,7 +631,7 @@ void ACPTTagger::produce(art::Event & e)
        && _dz_d_cathode.back() > -_dz_resolution_a && _dz_d_cathode.back() < _dz_resolution_a
        && sign) isCosmic = true;
 
-      if (_create_histo) {
+      if (_create_histo && i == 0) {
         _h_dt_u_anode->Fill(_dt_u_anode.back());
         _h_dt_d_anode->Fill(_dt_d_anode.back());
         _h_dt_u_cathode->Fill(_dt_u_cathode.back());
@@ -595,19 +644,32 @@ void ACPTTagger::produce(art::Event & e)
       }
 
       if (_debug) {
-         
-        std::cout << "\n_dt_u_anode " << _dt_u_anode.back() << std::endl;
-        std::cout << "_dt_d_anode " << _dt_d_anode.back() << std::endl;
-        std::cout << "_dt_u_cathode " << _dt_u_cathode.back() << std::endl;
-        std::cout << "_dt_d_cathode " << _dt_d_cathode.back() << std::endl;
-        std::cout << "_dz_u_anode " << _dz_u_anode.back() << std::endl;
-        std::cout << "_dz_d_anode " << _dz_d_anode.back() << std::endl;
-        std::cout << "_dz_u_cathode " << _dz_u_cathode.back() << std::endl;
-        std::cout << "_dz_d_cathode " << _dz_d_cathode.back() << std::endl;
-        if (isCosmic) std::cout << "> Tagged!\n" << std::endl;
+        
+        std::cout << "[ACPTTagger] " << std::endl;
+        std::cout << "[ACPTTagger] \t _dt_u_anode " << _dt_u_anode.back() << std::endl;
+        std::cout << "[ACPTTagger] \t _dt_d_anode " << _dt_d_anode.back() << std::endl;
+        std::cout << "[ACPTTagger] \t _dt_u_cathode " << _dt_u_cathode.back() << std::endl;
+        std::cout << "[ACPTTagger] \t _dt_d_cathode " << _dt_d_cathode.back() << std::endl;
+        std::cout << "[ACPTTagger] \t _dz_u_anode " << _dz_u_anode.back() << std::endl;
+        std::cout << "[ACPTTagger] \t _dz_d_anode " << _dz_d_anode.back() << std::endl;
+        std::cout << "[ACPTTagger] \t _dz_u_cathode " << _dz_u_cathode.back() << std::endl;
+        std::cout << "[ACPTTagger] \t _dz_d_cathode " << _dz_d_cathode.back() << std::endl;
+        if (isCosmic) std::cout << "[ACPTTagger] \t ===> Tagged!" << std::endl;
+        std::cout << "[ACPTTagger] " << std::endl;
       }
       
     } // Points loop
+
+    // If was not tagged, try with OpHits now
+    if (!isCosmic && _use_ophits && sorted_points_v.size() != 0) {
+      double dt_ophits = this->GetClosestDt_OpHits(sorted_points_v.at(0));
+      std::cout << "[ACPTTagger] \t dt_ophits is " << dt_ophits << std::endl;
+      if (dt_ophits != -9999 && std::abs(dt_ophits < _dt_resolution_ophit)) {
+        isCosmic = true;
+        std::cout << "[ACPTTagger] \t ===> Tagged! (ophit)" << std::endl;
+      }
+
+    }
 
     float cosmicScore = 0;
     if (isCosmic) {
@@ -636,6 +698,8 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_start
   double min_dist = 1e9;
   double min_diff = 1e9;
   double theflash = -1;
+
+  // Loop over flashes to find dt and dz
 
   for (size_t f = 0; f < _flash_times.size(); f++) {
 
@@ -682,7 +746,7 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_start
   }
 
 
-  if (_debug) std::cout << "Flash index " << theflash 
+  if (_debug) std::cout << "[ACPTTagger] \t Flash index " << theflash 
                         << ", flashtime " << _flash_times.at(theflash) 
                         << ", flashcenter " << _flash_zcenter.at(theflash) 
                         << ", trackstart " << trk_z_start 
@@ -696,6 +760,142 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_start
   return true;
 
 }
+
+
+double ACPTTagger::GetClosestDt_OpHits(std::vector<TVector3> & sorted_points) {
+
+  double flash_time_anode_u = sorted_points.at(0).X() / _drift_vel - _anodeTime;
+  double flash_time_anode_d = sorted_points.at(sorted_points.size()-1).X() / _drift_vel - _anodeTime;
+  double flash_time_cathode_u = sorted_points.at(0).X() / _drift_vel - _cathodeTime;
+  double flash_time_cathode_d = sorted_points.at(sorted_points.size()-1).X() / _drift_vel - _cathodeTime;
+
+  if (_debug) {
+    std::cout << "[ACPTTagger] >>> Using OpHits." << std::endl;
+    std::cout << "[ACPTTagger] \t Estimated times we will be looking for: " 
+              << "\t flash_time_anode_u: " << flash_time_anode_u 
+              << "\t flash_time_anode_d: " << flash_time_anode_d 
+              << "\t flash_time_cathode_u: " << flash_time_cathode_u 
+              << "\t flash_time_cathode_d: " << flash_time_cathode_d << std::endl;
+  }
+
+  double trk_z_start = sorted_points.at(0).Z();
+  double trk_z_end = sorted_points.at(sorted_points.size()-1).Z();
+
+  if (trk_z_start > trk_z_end)
+    std::swap(trk_z_start, trk_z_end);
+
+  bool sign = this->GetSign(sorted_points);
+  if (_debug) std::cout << "[ACPTTagger] \t Sign is " << (sign ? "positive." : "negative.") << std::endl;
+
+  std::vector<double> dt_v;
+  dt_v.resize(2);
+  if (sign) {
+    if (_debug) std::cout << "[ACPTTagger] \t Only looking at anode-up and cathode-down" << std::endl;
+    dt_v.at(0) = this->RunOpHitFinder(flash_time_anode_u, trk_z_start, trk_z_end);
+    dt_v.at(1) = this->RunOpHitFinder(flash_time_cathode_d, trk_z_start, trk_z_end);
+  } else {
+    if (_debug) std::cout << "[ACPTTagger] \t Only looking at anode-down and cathode-up" << std::endl;
+    dt_v.at(0) = this->RunOpHitFinder(flash_time_anode_d, trk_z_start, trk_z_end);
+    dt_v.at(1) = this->RunOpHitFinder(flash_time_cathode_u, trk_z_start, trk_z_end);
+  }
+
+  double min_dt = 1e9;
+  bool min_dt_found = false;
+  for (auto dt : dt_v) {
+    if (dt == -9999) continue;
+    if (dt < min_dt) {
+      min_dt = dt;
+      min_dt_found = true;
+    }
+  }
+
+  if (_debug && min_dt_found) std::cout << "[ACPTTagger] \t Found dt min from OpHits, dt min is " << min_dt << std::endl;
+
+  if (min_dt_found)
+    return min_dt;
+  else 
+    return -9999;
+
+}
+
+
+double ACPTTagger::RunOpHitFinder(double the_time, double trk_z_start, double trk_z_end) {
+
+
+  if (_debug) {
+    //std::cout << "_ophit_time_res is " << _ophit_time_res << std::endl;
+    //std::cout << "_ophit_pos_res is " << _ophit_pos_res << std::endl;
+    //std::cout << "_n_ophit is " << _n_ophit << std::endl;
+    //std::cout << "_ophit_pe is " << _ophit_pe << std::endl;
+  }
+
+  std::vector<double> ophit_sel_time;
+  std::vector<double> ophit_sel_pe;
+
+  for (auto oh : ophit_v) {
+
+    double time_diff = std::abs(oh->PeakTime() - the_time);
+
+    if (!geo->IsValidOpChannel(oh->OpChannel())) continue;
+    if (oh->OpChannel() < 200 || oh->OpChannel() > 231) continue;
+
+    size_t opdet = geo->OpDetFromOpChannel(oh->OpChannel());
+
+    double pmt_xyz[3];
+    geo->OpDetGeoFromOpChannel(oh->OpChannel()).GetCenter(pmt_xyz);
+    double pmt_z = pmt_xyz[2];
+
+    double dz = 1e9;
+    if (pmt_z > trk_z_start && pmt_z < trk_z_end) {
+      dz = 0.;
+    } else {
+      if (pmt_z < trk_z_start)
+        dz = std::abs(pmt_z - trk_z_start);
+      if (pmt_z > trk_z_end)
+        dz = std::abs(pmt_z - trk_z_end);
+    }
+
+ 
+    if(time_diff < _ophit_time_res && dz < _ophit_pos_res) {
+      if (_debug) std::cout << "[ACPTTagger] \t\t Found ophit, time is " << oh->PeakTime() 
+                            << ", pmt_z is " << pmt_z 
+                            << ", dz is " << dz 
+                            << ", opchannel is " << oh->OpChannel()
+                            << ", PE is " << _pecalib.CosmicPE(opdet,oh->Area(),oh->Amplitude()) << std::endl;
+
+      ophit_sel_time.push_back(oh->PeakTime());
+      ophit_sel_pe.push_back(_pecalib.CosmicPE(opdet,oh->Area(),oh->Amplitude()));
+    }
+
+  }
+
+  if (ophit_sel_time.size() < _n_ophit) {
+    if (_debug) std::cout << "[ACPTTagger] \t Not enough ophits" << std::endl;
+    return -9999;
+  }
+
+  double total_pe = std::accumulate(ophit_sel_pe.begin(), ophit_sel_pe.end(), 0.);
+
+  if (total_pe < _ophit_pe) {
+    if (_debug) std::cout << "[ACPTTagger] \t Not enough pe" << std::endl;
+    return -9999;
+  }
+
+  // Calculate and return average time
+  double time_average = 0.;
+  for (size_t i = 0; i < ophit_sel_time.size(); i++) {
+    time_average += ophit_sel_time.at(i) * ophit_sel_pe.at(i);
+  }
+  time_average /= total_pe;
+
+  if (_debug) std::cout << "[ACPTTagger] \t time_average: " << time_average << ", the_time: " << the_time << std::endl;
+
+  return std::abs(time_average - the_time);
+
+
+}
+
+
 
 void ACPTTagger::SortSpacePoints(std::vector<art::Ptr<recob::SpacePoint>> sp_v, std::vector<TVector3>& sorted_points) {
 
@@ -757,7 +957,7 @@ void ACPTTagger::SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vec
   double time_highest = fDetectorProperties->ConvertXToTicks(highest_point.X(), geo::PlaneID(0,0,2));
   int wire_highest = geo->NearestWire(highest_point, planeno);
 
-  std::cout << "[ACPTTagger] wire_highest " << wire_highest << ", time_highest " << time_highest << std::endl;
+  std::cout << "[ACPTTagger] \t wire_highest " << wire_highest << ", time_highest " << time_highest << std::endl;
 
   TVector3 pt0 (wire_highest,                             time_highest,                         0);
   TVector3 pt_1 (hit_v.at(0)->WireID().Wire,              hit_v.at(0)->PeakTime(),              0);
@@ -769,8 +969,8 @@ void ACPTTagger::SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vec
     hit_v.at(hit_v.size()-1) = temp;
   }
 
-  std::cout << "first pt wire " << hit_v.at(0)->WireID().Wire << ", time " << hit_v.at(0)->PeakTime() << ", which is x " << fDetectorProperties->ConvertTicksToX(hit_v.at(0)->PeakTime(), geo::PlaneID(0,0,2)) << std::endl;   
-  std::cout << "second pt wire " << hit_v.at(hit_v.size()-1)->WireID().Wire << ", time " << hit_v.at(hit_v.size()-1)->PeakTime() << ", which is x " << fDetectorProperties->ConvertTicksToX(hit_v.at(hit_v.size()-1)->PeakTime(), geo::PlaneID(0,0,2)) << std::endl; 
+  std::cout << "[ACPTTagger] \t first pt wire " << hit_v.at(0)->WireID().Wire << ", time " << hit_v.at(0)->PeakTime() << ", which is x " << fDetectorProperties->ConvertTicksToX(hit_v.at(0)->PeakTime(), geo::PlaneID(0,0,2)) << std::endl;   
+  std::cout << "[ACPTTagger] \t second pt wire " << hit_v.at(hit_v.size()-1)->WireID().Wire << ", time " << hit_v.at(hit_v.size()-1)->PeakTime() << ", which is x " << fDetectorProperties->ConvertTicksToX(hit_v.at(hit_v.size()-1)->PeakTime(), geo::PlaneID(0,0,2)) << std::endl; 
      
   // Just save start and end point
   sorted_points.resize(2);
@@ -800,13 +1000,13 @@ void ACPTTagger::SortTrackPoints(const recob::Track& track, std::vector<TVector3
   // the track starts at the top                                                                                                     
   // which point is further up in Y coord?                                                                                                                  
   // start or end?                                                                                                                 
-  auto const&N = track.NumberTrajectoryPoints();
+  auto const&N     = track.NumberTrajectoryPoints();
   auto const&start = track.LocationAtPoint(0);
   auto const&end   = track.LocationAtPoint( N - 1 );
 
   if (_debug) {
-    std::cout << "[ACPTTagger] Track start " << start.X() << " " << start.Y() << " " << start.Z() << std::endl;
-    std::cout << "[ACPTTagger] Track end   " << end.X() << " " << end.Y() << " " << end.Z() << std::endl;
+    std::cout << "[ACPTTagger] \t Track start " << start.X() << " " << start.Y() << " " << start.Z() << std::endl;
+    std::cout << "[ACPTTagger] \t Track end   " << end.X() << " " << end.Y() << " " << end.Z() << std::endl;
   }
 
   // if points are ordered correctly                                                                                                                                       
@@ -817,7 +1017,7 @@ void ACPTTagger::SortTrackPoints(const recob::Track& track, std::vector<TVector3
 
   // otherwise flip order                                                                                                                                                 
   else {
-    if (_debug) std::cout << "[ACPTTagger] \t These thos points will be flipped" << std::endl;
+    if (_debug) std::cout << "[ACPTTagger] \t\t These two points will be flipped" << std::endl;
     for (size_t i=0; i < N; i++)
       sorted_points.push_back( track.LocationAtPoint( N - i - 1) );
   }

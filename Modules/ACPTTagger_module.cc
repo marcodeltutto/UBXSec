@@ -69,9 +69,13 @@ private:
   /// Returns true if sign is positive, negative otherwise
   bool GetSign(std::vector<TVector3> sorted_points);
   /// ?
-  double GetClosestDt_OpHits(std::vector<TVector3>&);
+  double GetClosestDt_OpHits(std::vector<TVector3>&, double y_up, double y_down);
   /// ?
   double RunOpHitFinder(double the_time, double trk_z_start, double trk_z_end);
+  /// ?
+  bool IsInUpperDet(double y_up);
+  /// ?
+  bool IsInLowerDet(double y_down);
   void SortTrackPoints(const recob::Track& track, std::vector<TVector3>& sorted_points);
   void SortSpacePoints(std::vector<art::Ptr<recob::SpacePoint>> sp_v, std::vector<TVector3>& sorted_points);
   void SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vector<TVector3>& sorted_points, TVector3 highest_point, size_t planeno);
@@ -109,6 +113,8 @@ private:
   double _ophit_pos_res = 180.;
   size_t _n_ophit = 2;
   double _ophit_pe = 20;
+  double _UP = 25.;
+  double _DOWN = 25.;
 
 
   // vector to hold flash-times for the event
@@ -197,8 +203,8 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
  
     _h_dt_u_anode   = fs->make<TH1D>("h_dt_u_anode",   ";Reco time - Flash time [#mus];Events", 200, -20, 20);
     _h_dt_d_anode   = fs->make<TH1D>("h_dt_d_anode",   ";Reco time - Flash time [#mus];Events", 200, -20, 20);
-    _h_dt_u_cathode = fs->make<TH1D>("h_dt_u_cathode", ";Reco time - Flash time [#mus];Events", 300, 2200, 3000);
-    _h_dt_d_cathode = fs->make<TH1D>("h_dt_d_cathode", ";Reco time - Flash time [#mus];Events", 300, 2200, 3000);
+    _h_dt_u_cathode = fs->make<TH1D>("h_dt_u_cathode", ";Reco time - Flash time [#mus];Events", 500, 2250, 2350);
+    _h_dt_d_cathode = fs->make<TH1D>("h_dt_d_cathode", ";Reco time - Flash time [#mus];Events", 500, 2250, 2350);
     _h_dz_u_anode   = fs->make<TH1D>("h_dz_u_anode",   ";Track Z - Flash Z [cm];Events", 200, -200, 200);
     _h_dz_d_anode   = fs->make<TH1D>("h_dz_d_anode",   ";Track Z - Flash Z [cm];Events", 200, -200, 200);
     _h_dz_u_cathode = fs->make<TH1D>("h_dz_u_cathode", ";Track Z - Flash Z [cm];Events", 200, -200, 200);
@@ -394,6 +400,8 @@ void ACPTTagger::produce(art::Event & e)
     bool isCosmic = false;
     auto pfp = PFPVec.at(i);
 
+    double y_up = -9999., y_down = -9999.;
+
     // grab associated tracks
     std::vector<art::Ptr<recob::Track>> track_v = pfp_track_assn_v.at(i);
     if(_debug) std::cout << "[ACPTTagger] Number of associated tracks: " << track_v.size() << std::endl;
@@ -415,9 +423,9 @@ void ACPTTagger::produce(art::Event & e)
     }
 
     // Will store sorted points for the object [assuming downwards going]
-    // The first vector is two consider end points estimated via different methods
+    // The first vector is to consider end points estimated via different methods
     // (spacepoints, hits, tracks). The second vector has length==2, and
-    // contains the start and end point of the track
+    // contains the start and end points of the track
     std::vector<std::vector<TVector3>> sorted_points_v;
     sorted_points_v.clear();
 
@@ -571,8 +579,10 @@ void ACPTTagger::produce(art::Event & e)
           pts.resize(2);
           pts.at(0) = start;
           pts.at(1) = end;
+          y_up = pts.at(0).Y();
+          y_down = pts.at(1).Y();
           if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for tracks." << std::endl;
-          sorted_points_v.emplace_back(pts);
+          sorted_points_v.emplace_back(pts); 
         } 
       }
     }
@@ -661,8 +671,8 @@ void ACPTTagger::produce(art::Event & e)
     } // Points loop
 
     // If was not tagged, try with OpHits now
-    if (!isCosmic && _use_ophits && sorted_points_v.size() != 0) {
-      double dt_ophits = this->GetClosestDt_OpHits(sorted_points_v.at(0));
+    if (!isCosmic && _use_ophits && sorted_points_v.size() != 0 && y_up != -9999 && y_down != -9999) {
+      double dt_ophits = this->GetClosestDt_OpHits(sorted_points_v.at(0), y_up, y_down);
       std::cout << "[ACPTTagger] \t dt_ophits is " << dt_ophits << std::endl;
       if (dt_ophits != -9999 && std::abs(dt_ophits < _dt_resolution_ophit)) {
         isCosmic = true;
@@ -762,7 +772,7 @@ bool ACPTTagger::GetClosestDtDz(TVector3 _end, double _value, double trk_z_start
 }
 
 
-double ACPTTagger::GetClosestDt_OpHits(std::vector<TVector3> & sorted_points) {
+double ACPTTagger::GetClosestDt_OpHits(std::vector<TVector3> & sorted_points, double y_up, double y_down) {
 
   double flash_time_anode_u = sorted_points.at(0).X() / _drift_vel - _anodeTime;
   double flash_time_anode_d = sorted_points.at(sorted_points.size()-1).X() / _drift_vel - _anodeTime;
@@ -787,6 +797,31 @@ double ACPTTagger::GetClosestDt_OpHits(std::vector<TVector3> & sorted_points) {
   bool sign = this->GetSign(sorted_points);
   if (_debug) std::cout << "[ACPTTagger] \t Sign is " << (sign ? "positive." : "negative.") << std::endl;
 
+  if (_debug) std::cout << "[ACPTTagger] \t y_up = " << y_up << ", y_down = " << y_down << std::endl;
+  bool upper_det = this->IsInUpperDet(y_up);
+  bool lower_det = this->IsInLowerDet(y_down);
+
+  std::vector<double> dt_v;
+  dt_v.clear();
+
+  if (sign && upper_det){
+    if (_debug) std::cout << "[ACPTTagger] \t Looking at cathode-down" << std::endl;
+    dt_v.emplace_back(this->RunOpHitFinder(flash_time_cathode_d, trk_z_start, trk_z_end));
+  }
+  if (sign && lower_det){
+    if (_debug) std::cout << "[ACPTTagger] \t Looking at anode-up" << std::endl;
+    dt_v.emplace_back(this->RunOpHitFinder(flash_time_anode_u, trk_z_start, trk_z_end));
+  }
+  if (!sign && upper_det){
+    if (_debug) std::cout << "[ACPTTagger] \t Looking at anode-down" << std::endl;
+    dt_v.emplace_back(this->RunOpHitFinder(flash_time_anode_d, trk_z_start, trk_z_end));
+  }
+  if (!sign && lower_det){
+    if (_debug) std::cout << "[ACPTTagger] \t Looking at cathode-up" << std::endl;
+    dt_v.emplace_back(this->RunOpHitFinder(flash_time_cathode_u, trk_z_start, trk_z_end));
+  }
+
+  /*
   std::vector<double> dt_v;
   dt_v.resize(2);
   if (sign) {
@@ -798,6 +833,7 @@ double ACPTTagger::GetClosestDt_OpHits(std::vector<TVector3> & sorted_points) {
     dt_v.at(0) = this->RunOpHitFinder(flash_time_anode_d, trk_z_start, trk_z_end);
     dt_v.at(1) = this->RunOpHitFinder(flash_time_cathode_u, trk_z_start, trk_z_end);
   }
+  */
 
   double min_dt = 1e9;
   bool min_dt_found = false;
@@ -832,6 +868,9 @@ double ACPTTagger::RunOpHitFinder(double the_time, double trk_z_start, double tr
   std::vector<double> ophit_sel_time;
   std::vector<double> ophit_sel_pe;
 
+  ophit_sel_time.clear();
+  ophit_sel_pe.clear();
+
   for (auto oh : ophit_v) {
 
     double time_diff = std::abs(oh->PeakTime() - the_time);
@@ -841,7 +880,7 @@ double ACPTTagger::RunOpHitFinder(double the_time, double trk_z_start, double tr
 
     size_t opdet = geo->OpDetFromOpChannel(oh->OpChannel());
 
-    double pmt_xyz[3];
+    double pmt_xyz[3] = {-9999, -9999, -9999};
     geo->OpDetGeoFromOpChannel(oh->OpChannel()).GetCenter(pmt_xyz);
     double pmt_z = pmt_xyz[2];
 
@@ -863,8 +902,8 @@ double ACPTTagger::RunOpHitFinder(double the_time, double trk_z_start, double tr
                             << ", opchannel is " << oh->OpChannel()
                             << ", PE is " << _pecalib.CosmicPE(opdet,oh->Area(),oh->Amplitude()) << std::endl;
 
-      ophit_sel_time.push_back(oh->PeakTime());
-      ophit_sel_pe.push_back(_pecalib.CosmicPE(opdet,oh->Area(),oh->Amplitude()));
+      ophit_sel_time.emplace_back(oh->PeakTime());
+      ophit_sel_pe.emplace_back(_pecalib.CosmicPE(opdet,oh->Area(),oh->Amplitude()));
     }
 
   }
@@ -1033,6 +1072,24 @@ bool ACPTTagger::GetSign(std::vector<TVector3> sorted_points)
 
   return is_positive;
 
+}
+
+bool ACPTTagger::IsInUpperDet(double y_up) {
+
+  if (y_up > geo->DetHalfHeight() - _UP) {
+    return true;
+  }
+
+  return false;
+}
+
+bool ACPTTagger::IsInLowerDet(double y_down) {
+
+  if (y_down < -geo->DetHalfHeight() + _DOWN) {
+    return true;
+  }
+
+  return false;
 }
 
 TVector3 ACPTTagger::ContainPoint(TVector3 p) {

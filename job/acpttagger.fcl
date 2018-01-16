@@ -28,7 +28,7 @@ ACPTTagger: {
   DzResolutionCathode:   50
   MinTrackLength:        0
 
-  DtResolutionOpHit:     15 
+  DtResolutionOpHit:     11
   OpHitTimeRes:          15
   OpHitPosRes:           180
   MinOpHit:              2
@@ -36,12 +36,17 @@ ACPTTagger: {
  
   PEMin:                 0
   Debug:                 true
-  CreateHisto:           false
+  CreateHisto:           true
   CreateTree:            false
 
   PECalib:               @local::SPECalib
 }
 
-microboone_acpttagger: @local::ACPTTagger
+microboone_acpttagger_mc: @local::ACPTTagger
+
+microboone_acpttagger_data: @local::ACPTTagger
+microboone_acpttagger_data.AnodeTime:   -5
+microboone_acpttagger_data.CathodeTime: 2317
+
 
 END_PROLOG

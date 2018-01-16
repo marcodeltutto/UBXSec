@@ -11,10 +11,14 @@ StoppingMuonTagger: {
   PFParticleProducer:      "pandoraNu::UBXSec"
   ClusterProducer:         "pandoraNu::UBXSec"
   TrackProducer:           "pandoraNu::UBXSec"
+
+  UseMCS:                  true
+  MCSDeltaLLCut:           -0.4
+
   DebugMode:               true
+  CreateTree:              true
 
   CoplanarCut:             6.
-  MCSDeltaLLCut:           -5.
 
   CosmicTagManager: @local::cosmictag_config_mc
 

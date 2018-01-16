@@ -114,7 +114,8 @@ ubxsec_data_producers: [ #saturationTest,
                          CandidateConsistency,
                          UBXSec ] 
 
-ubxsec_data_analyzers: [ CosmicTaggerAna ]
+ubxsec_data_analyzers: [ #CosmicTaggerAna 
+                       ]
 
 
 # Set reco properties

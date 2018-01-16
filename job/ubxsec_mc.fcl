@@ -117,7 +117,8 @@ ubxsec_mc_producers: [ #saturationTest,
                        CandidateConsistency,
                        UBXSec ] 
 
-ubxsec_mc_analyzers: [ SimpleAna, CosmicTaggerAna ]
+ubxsec_mc_analyzers: [ SimpleAna #, CosmicTaggerAna 
+                     ]
 
 
 
@@ -139,6 +140,8 @@ ubxsec_mc_reco.pandoraCosmicHitRemoval.AssnProducerLabels:       ["pandoraCosmic
 ubxsec_mc_reco.pandoraCosmicHitRemoval.CosmicTagThresholds:      [0.6,                                0.99,                            0.99,                              0.99                              ]
 ubxsec_mc_reco.pandoraCosmicHitRemoval.PFParticleProducerLabel:  "pandoraCosmic"
 ubxsec_mc_reco.pandoraCosmicHitRemoval.EndTickPadding:           75
+ubxsec_mc_reco.pandoraCosmicHitRemoval.CopyHitMCParticleAssns:   true
+ubxsec_mc_reco.pandoraCosmicHitRemoval.HitMCParticleAssnLabel:   "gaushitTruthMatch"
 
 ubxsec_mc_reco.pandoraNu.GeantModuleLabel:                       "largeant"
 ubxsec_mc_reco.pandoraNu.HitFinderModuleLabel:                   "pandoraCosmicHitRemoval::UBXSec"

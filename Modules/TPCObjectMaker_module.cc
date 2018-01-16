@@ -140,6 +140,9 @@ private:
   std::string _hitfinderLabel;
   std::string _geantModuleLabel;
   std::string _spacepointLabel;
+  std::string _mcpHitAssLabel;
+
+  bool _use_premade_ass;
   bool _do_filter;
   bool _pandora_cosmic_mode;
   bool _debug;
@@ -155,6 +158,9 @@ ubana::TPCObjectMaker::TPCObjectMaker(fhicl::ParameterSet const & p)
   _hitfinderLabel      = p.get<std::string>("HitProducer");
   _geantModuleLabel    = p.get<std::string>("GeantModule");
   _spacepointLabel     = p.get<std::string>("SpacePointProducer");
+  _mcpHitAssLabel      = p.get<std::string>("MCPHitAssProducer", "pandoraCosmicHitRemoval");
+
+  _use_premade_ass     = p.get<bool>       ("UsePremadeMCPHitAss");
   _do_filter           = p.get<bool>       ("FilterObjects");
   _pandora_cosmic_mode = p.get<bool>       ("PandoraCosmicMode", "false"); 
   _debug               = p.get<bool>       ("Debug");
@@ -173,7 +179,10 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
  
   _is_mc = !e.isRealData();
 
-  if (_is_mc) mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+  if (_is_mc && _use_premade_ass) 
+    mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel, _mcpHitAssLabel, lar_pandora::LArPandoraHelper::kAddDaughters);
+  else if (_is_mc)
+    mcpfpMatcher.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
 
   // Instantiate the output
   std::unique_ptr< std::vector< ubana::TPCObject > >                tpcObjectVector        (new std::vector<ubana::TPCObject>);
@@ -182,7 +191,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
   std::unique_ptr< art::Assns<ubana::TPCObject, recob::PFParticle>> assnOutTPCObjectPFP    (new art::Assns<ubana::TPCObject, recob::PFParticle> );
 
   // Get the needed services
-  ::art::ServiceHandle<cheat::BackTracker> bt;
+  //::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
 
   // Is nc?
@@ -250,7 +259,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
     art::Ptr<recob::PFParticle> pf_par = iter1->first;    // The PFParticle 
     art::Ptr<simb::MCParticle>  mc_par = iter1->second;   // The matched MCParticle 
 
-    const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
+    const art::Ptr<simb::MCTruth> mc_truth = UBXSecHelper::TrackIDToMCTruth(e, "largeant", mc_par->TrackId()); //bt->TrackIDToMCTruth(mc_par->TrackId());
 
     if (!mc_truth) {
       std::cerr << "[TPCObjectMaker] Problem with MCTruth pointer." << std::endl;
@@ -259,6 +268,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
 
     // Cosmic origin
     if (mc_truth->Origin() == COSMIC_ORIGIN) {
+      std::cout << "PFP " << pf_par->Self() << " has cosmic origin" << std::endl;
       cosmicOriginPFP.emplace_back(pf_par);
 
       // Check if this is a stopping muon in the TPC 
@@ -275,6 +285,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
 
     // Neutrino origin
     if (mc_truth->Origin() == NEUTRINO_ORIGIN) {
+      std::cout << "PFP " << pf_par->Self() << " has neutrino origin" << std::endl;
       neutrinoOriginPFP.emplace_back(pf_par);
 
       // Check if this is a stopping muon in the TPC

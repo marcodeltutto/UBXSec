@@ -252,7 +252,7 @@ private:
 
 UBXSec::UBXSec(fhicl::ParameterSet const & p) {
 
-  ::art::ServiceHandle<cheat::BackTracker> bt;
+  //::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
 
   _pfp_producer                   = p.get<std::string>("PFParticleProducer");
@@ -436,7 +436,7 @@ void UBXSec::produce(art::Event & e) {
     _use_genie_info = false;
   }
 
-  ::art::ServiceHandle<cheat::BackTracker> bt;
+  //::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
 
   // Prepare the dead region finder
@@ -778,7 +778,8 @@ void UBXSec::produce(art::Event & e) {
     auto mcghosts = mcghost_from_pfp.at(p.key());
     if (mcghosts.size() > 0) {
       art::Ptr<simb::MCParticle> mcpar = mcpar_from_mcghost.at(mcghosts.at(0).key()).at(0);
-      const auto mc_truth = bt->TrackIDToMCTruth(mcpar->TrackId());
+      const auto mc_truth = UBXSecHelper::TrackIDToMCTruth(e, "largeant", mcpar->TrackId());
+      //const auto mc_truth = bt->TrackIDToMCTruth(mcpar->TrackId());
       if (mc_truth) {
         if (mc_truth->Origin() == simb::kBeamNeutrino 
             && mcpar->PdgCode() == 13 && mcpar->Mother() == 0) {
@@ -1139,7 +1140,8 @@ void UBXSec::produce(art::Event & e) {
       const auto mcghosts = mcghost_from_pfp.at(candidate_pfp.key());
       if (mcghosts.size() > 0) {
         art::Ptr<simb::MCParticle> mcpar = mcpar_from_mcghost.at(mcghost_from_pfp.at(candidate_pfp.key()).at(0).key()).at(0);
-        const auto mc_truth = bt->TrackIDToMCTruth(mcpar->TrackId());
+        const auto mc_truth = UBXSecHelper::TrackIDToMCTruth(e, "largeant", mcpar->TrackId());
+        //const auto mc_truth = bt->TrackIDToMCTruth(mcpar->TrackId());
         ubxsec_event->slc_muoncandidate_truepdg[slice] = mcpar->PdgCode();
         if (mc_truth) {
           if (mc_truth->Origin() == simb::kBeamNeutrino && mcpar->PdgCode() == 13 && mcpar->Mother() == 0) {
@@ -1218,7 +1220,8 @@ void UBXSec::produce(art::Event & e) {
       mcpars = mcpar_from_mcghost.at(mcghosts[0].key());
       pdg = mcpars[0]->PdgCode();
       std::cout << "[UBXSec] \t\t MCPar has pdg " << pdg << std::endl;
-      const auto mc_truth = bt->TrackIDToMCTruth(mcpars[0]->TrackId()); 
+      const auto mc_truth = UBXSecHelper::TrackIDToMCTruth(e, "largeant", mcpars[0]->TrackId());
+      //const auto mc_truth = bt->TrackIDToMCTruth(mcpars[0]->TrackId()); 
       if (!mc_truth) {
         std::cerr << "[UBXSec] Problem with MCTruth pointer." << std::endl;
         continue;
@@ -1230,7 +1233,7 @@ void UBXSec::produce(art::Event & e) {
         //ubxsec_event->muon_reco_pur = ubxsec_event->muon_reco_eff = -9999;
         auto iter = recoParticlesToHits.find(pfp);
         if (iter != recoParticlesToHits.end()) {
-          UBXSecHelper::GetTrackPurityAndEfficiency((*iter).second, ubxsec_event->muon_reco_pur, ubxsec_event->muon_reco_eff);
+          //CHECK! UBXSecHelper::GetTrackPurityAndEfficiency((*iter).second, ubxsec_event->muon_reco_pur, ubxsec_event->muon_reco_eff);
         }
         ubxsec_event->true_muon_mom_matched = mcpars[0]->P();
 

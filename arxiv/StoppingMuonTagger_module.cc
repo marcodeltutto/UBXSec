@@ -62,7 +62,7 @@ public:
 
 private:
 
-  ::art::ServiceHandle<cheat::BackTracker> bt;
+  //::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
   ::ubana::FiducialVolume _fiducial_volume;
 
@@ -123,15 +123,15 @@ void StoppingMuonTagger::produce(art::Event & e) {
     art::Ptr<simb::MCParticle>mcpar = mcpar_from_mcghost.at(mcghosts[0].key())[0];
     pdg = mcpar->PdgCode();
     std::cout << "[StoppingMuonTagger] \t\t MCPar has pdg " << pdg << std::endl;
-    const auto mc_truth = bt->TrackIDToMCTruth(mcpar->TrackId());
+    //const auto mc_truth = bt->TrackIDToMCTruth(mcpar->TrackId());
     if (!mc_truth) {
       std::cerr << "[StoppingMuonTagger] Problem with MCTruth pointer." << std::endl;
       continue;
     }
 
-    if (!mc_truth->Origin() == simb::kCosmicRay) continue;                             // A cosmic ray
-    if (!(mcpar->PdgCode() == 13 || mcpar->PdgCode() == -13)) continue;                // A muon
-    if (!_fiducial_volume.InFV(mcpar->EndX(), mcpar->EndY(), mcpar->EndZ())) continue; // That truly stops in the TPC
+    //if (!mc_truth->Origin() == simb::kCosmicRay) continue;                             // A cosmic ray
+    //if (!(mcpar->PdgCode() == 13 || mcpar->PdgCode() == -13)) continue;                // A muon
+    //if (!_fiducial_volume.InFV(mcpar->EndX(), mcpar->EndY(), mcpar->EndZ())) continue; // That truly stops in the TPC
 
 
   }

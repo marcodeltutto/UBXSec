@@ -4,6 +4,7 @@
 #include "cetlib/exception.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "art/Framework/Principal/Handle.h"
+#include "canvas/Persistency/Common/FindMany.h"
 #include "canvas/Persistency/Common/FindManyP.h"
 #include "canvas/Persistency/Common/FindOneP.h"
 
@@ -34,11 +35,12 @@
 #include "nusimdata/SimulationBase/MCTruth.h"
 #include "larcoreobj/SimpleTypesAndConstants/RawTypes.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
-#include "lardataobj/Simulation/SimChannel.h"
+//#include "lardataobj/Simulation/SimChannel.h"
 #include "larsim/MCCheater/BackTracker.h"
+#include "lardataobj/AnalysisBase/BackTrackerMatchingData.h"
 
 #include "McPfpMatch.h"
-
+#include "UBXSecHelper.h"
 
 
 namespace ubana {
@@ -56,6 +58,7 @@ namespace ubana {
 
   }
 
+   
   void McPfpMatch::Configure(art::Event const & e, 
                              std::string _pfp_producer, 
                              std::string _spacepoint_producer, 
@@ -125,16 +128,135 @@ namespace ubana {
                   << " has " << (iter.second).size() << " hits ass." << std::endl;
         if (mc_truth->Origin() == 1) {
           lar_pandora::HitVector hits = (iter.second);
-          /*
-          for (const auto & hit : hits){
-            std::cout << "[McPfpMatch]   > Hit on plane " << hit->View() 
-                      << " on wire " << hit->WireID() 
-                      << " with time " << hit->PeakTime() << std::endl;
-          } 
-      */    
         }        
       }
     }
+
+    _configured = true;
+  }
+
+
+
+
+
+  void McPfpMatch::Configure(art::Event const & e,
+                             std::string _pfp_producer,
+                             std::string _spacepoint_producer,
+                             std::string _hitfinder_producer,
+                             std::string _geant_producer,
+                             std::string _hit_mcp_producer,
+                             lar_pandora::LArPandoraHelper::DaughterMode daughterMode) {
+
+    // Collect hits
+    lar_pandora::HitVector hitVector;
+    //lar_pandora::LArPandoraHelper::CollectHits(e, _hitfinder_producer, hitVector);
+    art::Handle<std::vector<recob::Hit>> hit_h;
+    e.getByLabel(_hitfinder_producer, hit_h);
+    if (!hit_h.isValid()) {
+      std::cout << "[McPfpMatch] Hit Handle is not valid." << std::endl;
+      throw std::exception();
+    }
+    art::fill_ptr_vector(hitVector, hit_h);
+    art::FindManyP<simb::MCParticle,anab::BackTrackerHitMatchingData> mcps_from_hit(hit_h, e, _hit_mcp_producer);
+
+    // Collect PFParticles and match Reco Particles to Hits
+    lar_pandora::PFParticleVector  recoParticleVector;
+    lar_pandora::PFParticleVector  recoNeutrinoVector;
+    lar_pandora::PFParticlesToHits pfp_to_hits_map;
+    lar_pandora::HitsToPFParticles recoHitsToParticles;
+
+    lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
+    lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
+    lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e,
+                                                          _pfp_producer,
+                                                          _spacepoint_producer,
+                                                          pfp_to_hits_map,
+                                                          recoHitsToParticles,
+                                                          daughterMode,
+                                                          true); // Use clusters to go from pfp to hits
+
+    if (_verbose) {
+      std::cout << "[McPfpMatch] RecoNeutrinos: " << recoNeutrinoVector.size() << std::endl;
+      std::cout << "[McPfpMatch] RecoParticles: " << recoParticleVector.size() << std::endl;
+    }
+
+    // Collect MCParticles and match True Particles to Hits
+    lar_pandora::MCParticleVector     trueParticleVector;
+    lar_pandora::MCTruthToMCParticles truthToParticles;
+    lar_pandora::MCParticlesToMCTruth particlesToTruth;
+    lar_pandora::MCParticlesToHits    trueParticlesToHits;
+    lar_pandora::HitsToMCParticles    hit_to_mcps_map;
+
+    if (!e.isRealData()) {
+      lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geant_producer, trueParticleVector);
+      lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geant_producer, truthToParticles, particlesToTruth);
+
+      // Construct a Particle Map (trackID to MCParticle)
+      lar_pandora::MCParticleMap particleMap;
+
+      for (lar_pandora::MCTruthToMCParticles::const_iterator iter1 = truthToParticles.begin(), iterEnd1 = truthToParticles.end(); iter1 != iterEnd1; ++iter1)
+      {
+          const lar_pandora::MCParticleVector &particleVector = iter1->second;
+          for (lar_pandora::MCParticleVector::const_iterator iter2 = particleVector.begin(), iterEnd2 = particleVector.end(); iter2 != iterEnd2; ++iter2)
+          {
+              const art::Ptr<simb::MCParticle> particle = *iter2;
+              particleMap[particle->TrackId()] = particle;
+          }
+      }
+
+      // Loop over the hits, get the ass MCP, and then tru to link 
+
+      std::vector<art::Ptr<simb::MCParticle>> mcp_v;
+      std::vector<anab::BackTrackerHitMatchingData const*> match_v;
+
+      for (auto hit : hitVector) {
+
+        mcp_v.clear(); match_v.clear();
+        mcps_from_hit.get(hit.key(), mcp_v, match_v);
+
+        double max_energy = -1;
+        int best_match_id = -1;
+
+        for (size_t m = 0; m < match_v.size(); m++) {
+          double this_energy = match_v[m]->energy;
+          if (this_energy > max_energy) {
+            best_match_id = m;
+            max_energy = this_energy;
+          }
+        }
+        
+        if (best_match_id > -1) {
+
+          try {
+
+            const art::Ptr<simb::MCParticle> thisParticle = mcp_v.at(best_match_id);
+            const art::Ptr<simb::MCParticle> primaryParticle(lar_pandora::LArPandoraHelper::GetFinalStateMCParticle(particleMap, thisParticle));
+            const art::Ptr<simb::MCParticle> selectedParticle((lar_pandora::LArPandoraHelper::kAddDaughters == daughterMode) ? primaryParticle : thisParticle);
+
+            if ((lar_pandora::LArPandoraHelper::kIgnoreDaughters == daughterMode) && (selectedParticle != primaryParticle))
+              continue;
+
+            if (!(lar_pandora::LArPandoraHelper::IsVisible(selectedParticle)))
+              continue;
+
+            hit_to_mcps_map[hit] = selectedParticle;
+
+          } catch (cet::exception &e) {
+          }
+          //const auto mct = UBXSecHelper::TrackIDToMCTruth(e, "largeant", selectedParticle->TrackId());
+          //if (mct->Origin() == simb::kBeamNeutrino && selectedParticle->PdgCode() == 13 && selectedParticle->Mother() == 0) {
+            //std::cout << "Muon from neutrino ass to hit " << hit->PeakTime() << ", "<< hit->WireID () << std::endl;
+          //}
+        }
+
+      }
+    }
+
+    // Now set the things we need for the future
+    _hit_to_mcps_map = hit_to_mcps_map;
+    _pfp_to_hits_map = pfp_to_hits_map;
+
+    std::cout << "hit_to_mcps_map size " << hit_to_mcps_map.size() << std::endl;
 
     _configured = true;
   }

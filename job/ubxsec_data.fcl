@@ -19,6 +19,7 @@
 #include "cosmictaggerana.fcl"
 #include "geocosmictagger.fcl"
 #include "stoppingmuontagger.fcl"
+#include "candidateconsistency.fcl"
 
 #include "opticaldetectormodules_microboone.fcl"
 #include "ubflashfinder.fcl"
@@ -37,16 +38,25 @@ BEGIN_PROLOG
 # Module configuration
 #
 
+microboone_reco_data_services:
+{
+  PhotonVisibilityService:    @local::microboone_photonvisibilityservice
+  OpDigiProperties:           @local::microboone_opdigiproperties
+                              @table::microboone_services_reco
+}
 
 ubxsec_data_reco:
 {
-  saturationTest:                 @local::correct_saturation
-  ophitBeamTest:                  @local::microboone_ophit_saturation_beam
-  simpleFlashBeamTest:            @local::UBFlashBeam
+  #saturationTest:                 @local::correct_saturation
+  #ophitCosmicTest:                @local::microboone_ophit_saturation_beam
+  simpleFlashCosmicTest:          @local::UBFlashCosmic
+
+  pandoraCosmicTPCObj:            @local::TPCObjectMakerCosmic
 
   pandoraCosmicTrackPFPart:       @local::microboone_cosmicpfparticletagger
   pandoraCosmicFlashTag:          @local::microboone_cosmicpfpflashtagger
-  pandoraCosmicACPTTagger:        @local::microboone_acpttagger
+  pandoraCosmicACPTTagger:        @local::microboone_acpttagger_data
+  pandoraCosmicStoppingMu:        @local::microboone_cosmicstoppingmutagger_data 
   pandoraCosmicHitRemoval:        @local::microboone_crhitremoval
 
   pandoraNu:                      @local::microboone_pandora  
@@ -66,10 +76,12 @@ ubxsec_data_flashmatch:
 
    pandoraNuGeoCosmicTag:         @local::GeoCosmicTagger
 
-   pandoraNuStoppingMuonTag:      @local::StoppingMuonTagger
+   #pandoraNuStoppingMuonTag:      @local::StoppingMuonTagger
 
    NeutrinoFlashMatch:            @local::NeutrinoFlashMatch
    #CosmicFlashMatch:              @local::CosmicFlashMatch
+
+   CandidateConsistency:          @local::CandidateConsistency_data
 
    UBXSec:                        @local::UBXSec
 }
@@ -80,12 +92,14 @@ ubxsec_data_ana:
 }
 
 
-ubxsec_data_producers: [ saturationTest,
-                         ophitBeamTest,
-                         simpleFlashBeamTest,
+ubxsec_data_producers: [ #saturationTest,
+                         #ophitCosmicTest,
+                         simpleFlashCosmicTest,
+                         pandoraCosmicTPCObj,
                          pandoraCosmicTrackPFPart,
                          pandoraCosmicFlashTag,
                          pandoraCosmicACPTTagger,
+                         pandoraCosmicStoppingMu,
                          pandoraCosmicHitRemoval,
                          pandoraNu,
                          pandoraNucalo,
@@ -95,8 +109,9 @@ ubxsec_data_producers: [ saturationTest,
                          RecoTrueMatcher,
                          TPCObjectMaker,
                          pandoraNuGeoCosmicTag,
-                         pandoraNuStoppingMuonTag,
+                         #pandoraNuStoppingMuonTag,
                          NeutrinoFlashMatch,
+                         CandidateConsistency,
                          UBXSec ] 
 
 ubxsec_data_analyzers: [ #CosmicTaggerAna 
@@ -104,23 +119,23 @@ ubxsec_data_analyzers: [ #CosmicTaggerAna
 
 
 # Set reco properties
+
+ubxsec_data_reco.simpleFlashCosmicTest.AlgoConfig.DebugMode: true
+
 ubxsec_data_reco.pandoraCosmicTrackPFPart.PFParticleModuleLabel:   "pandoraCosmic"
 ubxsec_data_reco.pandoraCosmicTrackPFPart.TrackModuleLabel:        "pandoraCosmic"
 ubxsec_data_reco.pandoraCosmicTrackPFPart.EndTickPadding:          75
 ubxsec_data_reco.pandoraCosmicTrackPFPart.TPCXBoundary:            10
-ubxsec_data_reco.pandoraCosmicTrackPFPart.TPCYBoundary:            20
-ubxsec_data_reco.pandoraCosmicTrackPFPart.TPCZBoundary:            10
+ubxsec_data_reco.pandoraCosmicTrackPFPart.TPCYBoundary:            30
+ubxsec_data_reco.pandoraCosmicTrackPFPart.TPCZBoundary:            20
 ubxsec_data_reco.pandoraCosmicTrackPFPart.Debug:                   false
 
 ubxsec_data_reco.pandoraCosmicFlashTag.DebugMode:                  false
 
-ubxsec_data_reco.pandoraCosmicACPTTagger.AnodeTime:                -5
-ubxsec_data_reco.pandoraCosmicACPTTagger.CathodeTime:              2318
-
-ubxsec_data_reco.pandoraCosmicHitRemoval.CosmicProducerLabels:     ["pandoraCosmicTrackPFPart::UBXSec", "pandoraCosmicFlashTag::UBXSec", "pandoraCosmicACPTTagger::UBXSec" ]
-ubxsec_data_reco.pandoraCosmicHitRemoval.TrackProducerLabels:      ["pandoraCosmic",                    "pandoraCosmic",                 "pandoraCosmicKHit"               ]
-ubxsec_data_reco.pandoraCosmicHitRemoval.AssnProducerLabels:       ["pandoraCosmic",                    "pandoraCosmic",                 "pandoraCosmicKHit"               ]
-ubxsec_data_reco.pandoraCosmicHitRemoval.CosmicTagThresholds:      [0.6,                                0.99,                            0.99                              ]
+ubxsec_data_reco.pandoraCosmicHitRemoval.CosmicProducerLabels:     ["pandoraCosmicTrackPFPart::UBXSec", "pandoraCosmicFlashTag::UBXSec", "pandoraCosmicACPTTagger::UBXSec", "pandoraCosmicStoppingMu::UBXSec" ]
+ubxsec_data_reco.pandoraCosmicHitRemoval.TrackProducerLabels:      ["pandoraCosmic",                    "pandoraCosmic",                 "pandoraCosmic",                   "pandoraCosmic"                   ]
+ubxsec_data_reco.pandoraCosmicHitRemoval.AssnProducerLabels:       ["pandoraCosmic",                    "pandoraCosmic",                 "pandoraCosmic",                   "pandoraCosmic"                   ]
+ubxsec_data_reco.pandoraCosmicHitRemoval.CosmicTagThresholds:      [0.6,                                0.99,                            0.99,                              0.99                              ]
 ubxsec_data_reco.pandoraCosmicHitRemoval.PFParticleProducerLabel:  "pandoraCosmic"
 ubxsec_data_reco.pandoraCosmicHitRemoval.EndTickPadding:           75
 
@@ -130,7 +145,8 @@ ubxsec_data_reco.pandoraNu.ConfigFile:                             "PandoraSetti
 
 ubxsec_data_reco.pandoraNucalo.TrackModuleLabel:                   "pandoraNu::UBXSec"
 ubxsec_data_reco.pandoraNucalo.SpacePointModuleLabel:              "pandoraNu::UBXSec"
-ubxsec_data_reco.pandoraNucalo.Flip_dQdx:                          false
+ubxsec_data_reco.pandoraNucalo.FlipTrack_dQdx:                     false
+ubxsec_data_reco.pandoraNucalo.Flip_dQdx:                          false 
 
 ubxsec_data_reco.pandoraNupid.CalorimetryModuleLabel:              "pandoraNucalo::UBXSec"
 ubxsec_data_reco.pandoraNupid.TrackModuleLabel:                    "pandoraNu::UBXSec"

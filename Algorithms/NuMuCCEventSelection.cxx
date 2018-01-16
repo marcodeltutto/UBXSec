@@ -134,8 +134,6 @@ namespace ubana {
       failure_map["beam_spill_flash"] = true;
     }
     
-    if (_verbose) std::cout << "[NuMuCCEventSelection] 1" << std::endl;
-
     // *******************************
     // Find slice with maximum score
     // *******************************
@@ -180,8 +178,6 @@ namespace ubana {
       failure_map["flash_match_score"] = true;
     }
 
-    if (_verbose) std::cout << "[NuMuCCEventSelection] 2" << std::endl;
-
     // Delta X
     if(_ubxsec_event->slc_flsmatch_qllx.at(scl_ll_max) - _ubxsec_event->slc_flsmatch_tpcx.at(scl_ll_max) > _deltax_cut_up) {
       reason = "fail_flash_match_deltax_up";
@@ -217,7 +213,6 @@ namespace ubana {
     } else {
       failure_map["fiducial_volume"] = true;
     }
-if (_verbose) std::cout << "[NuMuCCEventSelection] 3" << std::endl;
 
     // Vertex Check   
     if(_ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) > _vtxcheck_angle_cut_up) {
@@ -257,8 +252,6 @@ if (_verbose) std::cout << "[NuMuCCEventSelection] 3" << std::endl;
     } else {
       failure_map["vertex_quality"] = true;
     }
-
-    if (_verbose) std::cout << "[NuMuCCEventSelection] 4" << std::endl;
 
     slice_index = scl_ll_max;
 

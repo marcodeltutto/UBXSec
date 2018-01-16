@@ -100,6 +100,8 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_n_intime_pe_closestpmt; ///< Not used
   vector<double>   slc_maxdistance_vtxtrack; ///< Not used
   vector<bool>     slc_geocosmictag; ///< Is true if the TPCObject is through-going as a whole
+  vector<bool>     slc_consistency; ///< Is false if the TPCObject is not a consistent candidate
+  vector<double>   slc_consistency_score; ///< Temporary
   vector<int>      slc_npfp; ///< Number of PFP in the TPCObject
   vector<int>      slc_ntrack; ///< Number of tracks in the TPCObject
   vector<int>      slc_nshower; ///< Number of showers in the TPCObject

@@ -3,8 +3,8 @@ BEGIN_PROLOG
 UBXSecFiducialVolumeSettings: {
   BorderXLow:   12
   BorderXHigh:  12
-  BorderYLow:   25
-  BorderYHigh:  25
+  BorderYLow:   35
+  BorderYHigh:  35
   BorderZLow:   25
   BorderZHigh:  85
 }

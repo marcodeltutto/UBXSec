@@ -1,0 +1,34 @@
+#include "cosmictagalgo.fcl"
+
+BEGIN_PROLOG
+#
+# Module configuration
+#
+CandidateConsistency: {
+  module_type:           "CandidateConsistency"
+  TPCObjectProducer:     "TPCObjectMaker::UBXSec"
+  TrackProducer:         "pandoraNu::UBXSec"
+  ShowerProducer:        "pandoraNu::UBXSec"
+
+  Tolerance:               5.
+  DqDsThreshold:           70000
+  DistanceCut:             8
+  PercentageLosenHits:     30
+  LinearityThreshold:      0.7
+  LinearityThresholdTrack: 0.9
+  DqDsAverageThreshold:    90000
+  GoodChannelStatus:       4
+  
+  DebugMode:             true
+
+  CosmicTagManager: @local::cosmictag_config_mc
+
+  FlashMatchConfig: @local::flashmatch_config
+}
+
+CandidateConsistency_mc: @local::CandidateConsistency
+
+CandidateConsistency_data:                  @local::CandidateConsistency
+CandidateConsistency_data.CosmicTagManager: @local::cosmictag_config_data
+
+END_PROLOG

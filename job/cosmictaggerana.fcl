@@ -12,10 +12,12 @@ CosmicTaggerAna: {
   CosmicFlashTagProducer: "pandoraCosmicFlashTag"
   CosmicGeoTagProducer:   "pandoraCosmicTrackPFPart"
   CosmicACPTTagProducer:  "pandoraCosmicACPTTagger"
+  CosmicStopMuTagProducer:"pandoraCosmicStoppingMu"
   CosmicFlashTagScoreCut: 0.99
   CosmicGeoTagScoreCut:   0.6
   CosmicACPTTagScoreCut:  0.99 
-  DebugMode:              false
+  CosmicStopMuTagScoreCut:0.99
+  DebugMode:              true
 }
 
 END_PROLOG

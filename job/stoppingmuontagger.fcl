@@ -1,4 +1,5 @@
 #include "fiducial_volume_settings.fcl"
+#include "cosmictagalgo.fcl"
 
 BEGIN_PROLOG
 #
@@ -7,8 +8,66 @@ BEGIN_PROLOG
 StoppingMuonTagger: {
   module_type:             "StoppingMuonTagger"
   TPCObjectProducer:       "TPCObjectMaker"
+  PFParticleProducer:      "pandoraNu::UBXSec"
+  ClusterProducer:         "pandoraNu::UBXSec"
+  TrackProducer:           "pandoraNu::UBXSec"
+
+  UseMCS:                  true
+  MCSDeltaLLCut:           -0.4
+
+  DebugMode:               true
+  CreateTree:              true
+
+  CoplanarCut:             6.
+
+  CosmicTagManager: @local::cosmictag_config_mc
+
+  AlgorithmConfiguration:  {
+    WireToCmConstant:        0.3
+    TimeToCmConstant:        0.0557
+    GainCalib:               198
+    SliderWindow:            10
+    MaxAllowedHitDistance:   6
+    SlopeThreshold:          0.25
+    HitsToRemove:            3
+    PrePostWindow:           10
+    PercDiffCut:             35 #50
+    LocalLinerityThreshold:  0.9
+    MinMuonHits:             20           
+    MaxMuonHits:             2000
+    MinMichelHits:           2
+    MaxMichelHits:           70
+    MaxEndHits:              100
+    DebugMode:               true
+  }
+
+  MCSFitter: {
+    pIdHypothesis: 13
+    minNumSegments: 3
+    segmentLength: 14.0
+    minHitsPerSegment: 2
+    nElossSteps: 10
+    eLossMode: 0
+    pMin: 0.01
+    pMax: 7.50
+    pStep: 0.01
+    angResol: 3.0
+  }
+
 
   FiducialVolumeSettings:  @local::UBXSecFiducialVolumeSettings  
 }
+
+microboone_cosmicstoppingmutagger: @local::StoppingMuonTagger
+microboone_cosmicstoppingmutagger.TPCObjectProducer:  "pandoraCosmicTPCObj" 
+microboone_cosmicstoppingmutagger.PFParticleProducer: "pandoraCosmic"
+microboone_cosmicstoppingmutagger.ClusterProducer:    "pandoraCosmic"
+microboone_cosmicstoppingmutagger.TrackProducer:      "pandoraCosmic"
+
+microboone_cosmicstoppingmutagger_mc: @local::microboone_cosmicstoppingmutagger
+
+microboone_cosmicstoppingmutagger_data: @local::microboone_cosmicstoppingmutagger
+microboone_cosmicstoppingmutagger_data.AlgorithmConfiguration.GainCalib: 243
+microboone_cosmicstoppingmutagger_data.CosmicTagManager: @local::cosmictag_config_data
 
 END_PROLOG

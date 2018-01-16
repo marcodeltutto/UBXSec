@@ -42,8 +42,23 @@ public:
   /// Configure function parameters
   void Configure(fhicl::ParameterSet const& p);
 
+  /// Set the channel status
+  void SetChannelStatus(unsigned int ch, int status);
+
+  /// Loads the wire geometry from either a txt file or the geo service
+  void LoadWireGeometry();
+
+  /// Loads the ch statues from either a txt file or the db
+  void LoadChannelStatus();
+
+  /// Creates BWires
+  void CreateBWires();
+
   /// Returns true if the passed point is close to a dead region given a tolerance considering two planes only
   bool NearDeadReg2P(float yVal, float zVal, float tolerance);
+
+  /// Returns true if the passed point is close to a dead region given a tolerance considering the collection plane only
+  bool NearDeadRegCollection(float zVal, float tolerance);
 
   /// Returns true if the passed point is close to a dead region given a tolerance considering all three planes
   bool NearDeadReg3P(float yVal, float zVal, float tolerance);
@@ -62,11 +77,24 @@ public:
 
 private:
 
-  void LoadBWires();
+  //void LoadBWires();
 
   std::vector<BoundaryWire> BWires_U; ///< Contains list of wires marking the boundaries of dead regions (U plane)
   std::vector<BoundaryWire> BWires_V; ///< Contains list of wires marking the boundaries of dead regions (V plane)
   std::vector<BoundaryWire> BWires_Y; ///< Contains list of wires marking the boundaries of dead regions (Y plane)
+
+  std::vector<unsigned int> CSchannelVec;
+  std::vector<bool> CSstatusVec;
+
+  std::vector<unsigned int> channelVec;
+  std::vector<unsigned int> planeVec;
+  std::vector<unsigned int> wireVec;
+  std::vector<float> sxVec;
+  std::vector<float> syVec;
+  std::vector<float> szVec;
+  std::vector<float> exVec;
+  std::vector<float> eyVec;
+  std::vector<float> ezVec;
 
   bool _use_file = false;  ///< If true, uses input files instad of geometry and database
   double _tolerance = 0.6; ///< Tolerance in cm to claim a point is in a dead region

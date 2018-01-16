@@ -1071,9 +1071,6 @@ void UBXSecHelper::GetTimeCorrectedPoint(double * point_raw, double * point_corr
 //_________________________________________________________________________________
 double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry>> calos) {
 
-  double result = -9999;
-  double n = 1.;
-
   for (auto c : calos) {
     if (!c) continue;
     if (!c->PlaneID().isValid) continue;
@@ -1082,32 +1079,44 @@ double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry
    
     std::vector<double> dqdx_v = c->dQdx(); 
 
-    if (dqdx_v.size() == 0)
-      return result;
-
-    //for (auto q : dqdx_v) {
-    //  std::cout << "dqdx before trim: " << q << std::endl;
-    //}
-
-    double median = GetMedian(dqdx_v);
-    double std    = GetSTD(dqdx_v);
-
-    std::cout << "median " << median << std::endl;
-    std::cout << "std    " << std << std::endl;
-
-    std::vector<double> dqdx_v_trimmed;
-    dqdx_v_trimmed.clear();
-
-    for (auto q : dqdx_v) {
-      if (q > median - n * std && 
-          q < median + n * std) {
-        dqdx_v_trimmed.emplace_back(q);
-        //std::cout << "dqdx after trim: " << q << std::endl;
-      }
-    }
-
-    result = GetMean(dqdx_v_trimmed);
+    return GetDqDxTruncatedMean(dqdx_v);
   }
+
+  return -9999;
+
+}
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetDqDxTruncatedMean(std::vector<double> dqdx_v) {
+
+  double result = -9999;
+  double n = 1.;
+
+  if (dqdx_v.size() == 0)
+    return result;
+
+  //for (auto q : dqdx_v) {
+    //std::cout << "dqdx before trim: " << q * 243 << std::endl;
+  //}
+
+  double median = GetMedian(dqdx_v);
+  double std    = GetSTD(dqdx_v);
+
+  //std::cout << "median " << median << std::endl;
+  //std::cout << "std    " << std << std::endl;
+
+  std::vector<double> dqdx_v_trimmed;
+  dqdx_v_trimmed.clear();
+
+  for (auto q : dqdx_v) {
+    if (q > median - n * std && 
+      q < median + n * std) {
+      dqdx_v_trimmed.emplace_back(q);
+        //std::cout << "dqdx after trim: " << q << std::endl;
+    }
+  }
+
+  result = GetMean(dqdx_v_trimmed);
 
   return result;
 }

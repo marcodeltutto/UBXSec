@@ -61,9 +61,11 @@ private:
   std::string _cosmic_flash_tag_producer;
   std::string _cosmic_geo_tag_producer;
   std::string _cosmic_acpt_tag_producer;
+  std::string _cosmic_stopmu_tag_producer;
   double _cosmic_flash_tag_score_cut; ///< Score cut used in the analysis to consider the PFP as cosmic (applied to flash tagger)
   double _cosmic_geo_tag_score_cut;   ///< Score cut used in the analysis to consider the PFP as cosmic (applied to geo tagger)
   double _cosmic_acpt_tag_score_cut;  ///< Score cut used in the analysis to consider the PFP as cosmic (applied to acpt tagger)
+  double _cosmic_stopmu_tag_score_cut;  ///< Score cut used in the analysis to consider the PFP as cosmic (applied to stopmu tagger)
 
   bool _recursiveMatching = true;
   bool _debug = false;
@@ -116,10 +118,13 @@ private:
   int _nu_pfp_geo_tagged;    ///< Number of neutrino origin PFP tagged by the Geo Tagger algo
   int _n_pfp_acpt_tagged;    ///< Number of PFP tagged by the ACPT Tagger algo
   int _nu_pfp_acpt_tagged;   ///< Number of neutrino origin PFP tagged by the ACPT Tagger algo
+  int _n_pfp_stopmu_tagged;  ///< Number of PFP tagged by the ACPT Tagger algo
+  int _nu_pfp_stopmu_tagged; ///< Number of neutrino origin PFP tagged by the ACPT Tagger algo
   int _nu_pfp_tagged_total;  ///< Number of neutrino origin PFP tagged in total
   int _geo_flash_incommon;   ///< Number of tagged PFP in common between Geo and Flash Tagger algo
   int _acpt_flash_incommon;  ///< Number of tagged PFP in common between ACPT and Flash Tagger algo
   int _acpt_geo_incommon;    ///< Number of tagged PFP in common between ACPT and Geo Tagger algo
+  bool _nu_pfp_is_reco;      ///< Is true if the (a)muon or (a)nue from the nu interaction is recon.
 };
 
 
@@ -134,9 +139,11 @@ CosmicTaggerAna::CosmicTaggerAna(fhicl::ParameterSet const & p)
   _cosmic_flash_tag_producer  = p.get<std::string>("CosmicFlashTagProducer");
   _cosmic_geo_tag_producer    = p.get<std::string>("CosmicGeoTagProducer");
   _cosmic_acpt_tag_producer   = p.get<std::string>("CosmicACPTTagProducer");
+  _cosmic_stopmu_tag_producer = p.get<std::string>("CosmicStopMuTagProducer");
   _cosmic_flash_tag_score_cut = p.get<double>("CosmicFlashTagScoreCut");
   _cosmic_geo_tag_score_cut   = p.get<double>("CosmicGeoTagScoreCut");
   _cosmic_acpt_tag_score_cut  = p.get<double>("CosmicACPTTagScoreCut");
+  _cosmic_stopmu_tag_score_cut= p.get<double>("CosmicStopMuTagScoreCut");
   _debug                      = p.get<bool>("DebugMode"); 
   
   art::ServiceHandle<art::TFileService> fs;
@@ -160,6 +167,9 @@ CosmicTaggerAna::CosmicTaggerAna(fhicl::ParameterSet const & p)
   _tree1->Branch("acpt_geo_incommon",    &_acpt_geo_incommon,    "acpt_geo_incommon/I");
   _tree1->Branch("n_pfp_acpt_tagged",    &_n_pfp_acpt_tagged,    "n_pfp_acpt_tagged/I");
   _tree1->Branch("nu_pfp_acpt_tagged",   &_nu_pfp_acpt_tagged,   "nu_pfp_acpt_tagged/I");
+  _tree1->Branch("n_pfp_stopmu_tagged",  &_n_pfp_stopmu_tagged,  "n_pfp_stopmu_tagged/I");
+  _tree1->Branch("nu_pfp_stopmu_tagged", &_nu_pfp_stopmu_tagged, "nu_pfp_stopmu_tagged/I");
+  _tree1->Branch("nu_pfp_is_reco",       &_nu_pfp_is_reco,       "nu_pfp_is_reco/O");
 }
 
 void CosmicTaggerAna::analyze(art::Event const & e)
@@ -203,6 +213,7 @@ void CosmicTaggerAna::analyze(art::Event const & e)
 
   _n_pfp = recoParticleVector.size();
 
+  _n_pfp_primary = 0;
   for (int i = 0; i < _n_pfp; i++) {
     if (!recoParticleVector.at(i)->IsPrimary()) continue;
     _n_pfp_primary++;
@@ -244,6 +255,8 @@ void CosmicTaggerAna::analyze(art::Event const & e)
   std::vector<art::Ptr<recob::PFParticle>> taggedPFP;
   std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP;
 
+  _nu_pfp_is_reco = false;
+
   // Loop over true particle and find the neutrino related ones
   for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
              iter1 != iterEnd1; ++iter1) {
@@ -279,8 +292,12 @@ void CosmicTaggerAna::analyze(art::Event const & e)
        // esclude neutrons, as they may travel away and be tagged as out-of-time, 
        // but we don't really care about those
        //if (mc_par->PdgCode() != 2112) neutrinoOriginPFP.emplace_back(pf_par);
-       // actually only consider muons
-       if (mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13) neutrinoOriginPFP.emplace_back(pf_par);
+       // actually only consider muons and electrons
+       if (mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13 || 
+           mc_par->PdgCode() == 12 || mc_par->PdgCode() == -12) {
+         neutrinoOriginPFP.emplace_back(pf_par);
+         _nu_pfp_is_reco = true;
+       }
 
        _ccnc = mc_truth->GetNeutrino().CCNC();
        _pdg  = mc_truth->GetNeutrino().Nu().PdgCode();
@@ -292,7 +309,7 @@ void CosmicTaggerAna::analyze(art::Event const & e)
   if (_debug) std::cout << "Neutrino related PFPs in this event: " << neutrinoOriginPFP.size() << std::endl;
 
 
-
+  _nu_pfp_tagged_total = 0;
 
 
   // *******************
@@ -371,6 +388,27 @@ void CosmicTaggerAna::analyze(art::Event const & e)
   if (_debug) std::cout << _acpt_geo_incommon << " PFP are in common between acpt and geo tagger" << std::endl;
 
 
+
+  // ****
+  // StopMu
+  // ****
+
+  lar_pandora::PFParticleVector pfpStopMuTagged;
+  this->GetTaggedPFP(e, _cosmic_stopmu_tag_producer, 0.05, pfpStopMuTagged, tagid_v);
+  if (_debug) std::cout << pfpStopMuTagged.size() << " PFP have been StopMu tagged." << std::endl;
+  _n_pfp_stopmu_tagged = pfpStopMuTagged.size();
+
+   // Loop through the taggedPFP and see if there is a neutrino related one
+  _nu_pfp_stopmu_tagged = 0;
+  for (unsigned int i = 0; i < pfpStopMuTagged.size(); i++) {
+    for (unsigned int j = 0; j < neutrinoOriginPFP.size(); j++) {
+      if(pfpStopMuTagged[i] == neutrinoOriginPFP[j]) {
+        if (_debug) std::cout << ">>>>>>>>>>>>>>>>> STOPMU A neutrino related PFP (with ID " << neutrinoOriginPFP[j]->Self() << ") was tagged by the stopmu tagger with tag " << tagid_v[i] << std::endl;
+        _nu_pfp_stopmu_tagged = 1;
+        _nu_pfp_tagged_total = 1;
+      }
+    }
+  }
 
   _tree1->Fill();
 }
@@ -484,7 +522,7 @@ void CosmicTaggerAna::GetTaggedPFP(art::Event const & e, std::string cosmictag_p
   e.getByLabel(cosmictag_producer, cosmicTagHandle);
 
   if (!cosmicTagHandle.isValid() || cosmicTagHandle->empty()){
-    std::cerr << "Cosmic tag is not valid or empty." << std::endl;
+    std::cerr << "Cosmic tag " << cosmictag_producer << " is not valid or empty." << std::endl;
     return;
   }
 
@@ -498,7 +536,7 @@ void CosmicTaggerAna::GetTaggedPFP(art::Event const & e, std::string cosmictag_p
 
     // Get the cosmic tag
     art::Ptr<anab::CosmicTag> cosmicTag(cosmicTagHandle, ct);
-    //if(_debug) std::cout << "This cosmic tag (" << ct << ") has type: " << cosmicTag->CosmicType() << std::endl;
+    //if(_debug) std::cout << "This cosmic tag (" << ct << ") has type: " << cosmicTag->CosmicType() << " and score: " << cosmicTag->CosmicScore() << std::endl;
 
     // Get the PFP associated with this CT
     std::vector<art::Ptr<recob::PFParticle>> cosmicTagToPFP_v = cosmicPFPAssns.at(cosmicTag.key());

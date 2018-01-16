@@ -1,3 +1,4 @@
+#include "ubflashcalib.fcl"
 
 BEGIN_PROLOG
 #
@@ -6,26 +7,46 @@ BEGIN_PROLOG
 ACPTTagger: {
   module_type:           "ACPTTagger"
   FlashProducer:         "simpleFlashCosmic"
+  OpHitProducer:         "ophitCosmic"
   PFPartProducer:        "pandoraCosmic"
-  TrackProducer:         "pandoraCosmicKHit"
+  TrackProducer:         "pandoraCosmic"
   SpacePointProducer:    "pandoraCosmic"
+  ClusterProducer:       "pandoraCosmic"
   SWTriggerProducer:     "swtrigger"
 
-  UseSpacePoints:        true
+  UseTracks:             false
+  UseSpacePoints:        false
+  UseHits:               true
+  MergePlanes:           true
+  UseOpHits:             true
 
   AnodeTime:             0.53
   CathodeTime:           2291
-  DtResolutionAnode:     5
-  DzResolutionAnode:     80
-  DtResolutionCathode:   5
-  DzResolutionCathode:   80
+  DtResolutionAnode:     7
+  DzResolutionAnode:     50
+  DtResolutionCathode:   7
+  DzResolutionCathode:   50
   MinTrackLength:        0
+
+  DtResolutionOpHit:     11
+  OpHitTimeRes:          15
+  OpHitPosRes:           180
+  MinOpHit:              2
+  MinOpHitPE:            20
  
   PEMin:                 0
-  Debug:                 false
-  CreateHisto:           false
+  Debug:                 true
+  CreateHisto:           true
+  CreateTree:            false
+
+  PECalib:               @local::SPECalib
 }
 
-microboone_acpttagger: @local::ACPTTagger
+microboone_acpttagger_mc: @local::ACPTTagger
+
+microboone_acpttagger_data: @local::ACPTTagger
+microboone_acpttagger_data.AnodeTime:   -5
+microboone_acpttagger_data.CathodeTime: 2317
+
 
 END_PROLOG

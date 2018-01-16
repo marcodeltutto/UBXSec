@@ -27,12 +27,17 @@ services:
   message:                 @local::microboone_message_services_prod_debug
   FileCatalogMetadata:     @local::art_file_catalog_mc
   @table::microboone_simulation_services
+  @table::microboone_reco_data_services 
+  #@table::microboone_services_reco
   #BackTracker:             @local::microboone_backtracker
+  SpaceCharge:             @local::microboone_spacecharge
 }
 
-#services.PmtGainService.PmtGainProvider.UseDB:               true
-services.ChannelStatusService.ChannelStatusProvider.UseDB:   false
-#services.DetPedestalService.DetPedestalRetrievalAlg.UseDB:   false
+#services.DatabaseUtil.ShouldConnect: false
+services.PmtGainService.PmtGainProvider.UseDB:                   false
+services.ChannelStatusService.ChannelStatusProvider.UseDB:       false
+services.DetPedestalService.DetPedestalRetrievalAlg.UseDB:       false
+services.ElectronicsCalibService.ElectronicsCalibProvider.UseDB: false 
 
 services.DetectorPropertiesService.NumberTimeSamples:        6400
 services.DetectorPropertiesService.ReadOutWindowSize:        6400
@@ -40,6 +45,10 @@ services.DetectorClocksService.InheritClockConfig:           false
 services.DetectorClocksService.TriggerOffsetTPC:             -0.400e3
 services.DetectorClocksService.TrigModuleName:               "daq"
 
+services.SpaceCharge.EnableCorrSCE:       true
+services.SpaceCharge.EnableSimEfieldSCE:  true
+services.SpaceCharge.EnableSimSpatialSCE: true
+ 
 #services.Geometry.ForceUseFCLOnly:                           true
 
 services.TimeTracker.printSummary:                           false

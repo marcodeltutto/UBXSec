@@ -2,7 +2,7 @@
 
 process_name: UBXSec
 
-services.TFileService.fileName: "ubxsec_output_data.root"
+services.TFileService.fileName: "ubxsec_output_data_bnbon.root"
 
 physics.reco:          [ @sequence::ubxsec_data_producers ]
 physics.trigger_paths: [ reco ]
@@ -22,6 +22,8 @@ physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   4.90
 
 physics.producers.UBXSec.BeamSpillStart:                 3.30
 physics.producers.UBXSec.BeamSpillEnd:                   4.90
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillStarts: 3.30
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillEnds:   4.90
 
 physics.producers.UBXSec.UseGENIEInfo:                   false
 

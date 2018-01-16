@@ -66,7 +66,7 @@ namespace ubana {
 
     // Construct the fiducial volume
     ::geoalgo::AABox fidvol(_border_x_low, 
-                            -1.*_det_half_height + _border_z_low, 
+                            -1.*_det_half_height + _border_y_low, 
                             _border_z_low,
                             _det_width - _border_x_high, 
                             _det_half_height - _border_y_high, 

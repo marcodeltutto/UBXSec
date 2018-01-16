@@ -2,6 +2,7 @@
 
 ## Modules currently in use
 * ACPTTagger: Tags pandoraCosmic anode or cathode piercing tracks
+* StoppingMuonTagger: Tags pandoraCosmic stopping muons
 * CosmicTaggerAna: Analyses cosmic tags 
 * GeoCosmicTagger: Tags pandoraNu TPCObjects that are through-going
 * NeutrinoFlashMatch: Does the flash matching between the beam spill flash and all the TPCObjects

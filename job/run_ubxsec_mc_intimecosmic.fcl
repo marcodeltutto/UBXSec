@@ -22,5 +22,7 @@ physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   5.25
 
 physics.producers.UBXSec.BeamSpillStart:                 3.65
 physics.producers.UBXSec.BeamSpillEnd:                   5.25
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillStarts: 3.65
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillEnds:   5.25
 
 physics.producers.UBXSec.UseGENIEInfo:                   false

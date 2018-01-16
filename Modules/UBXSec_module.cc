@@ -61,6 +61,8 @@
 #include "lardataobj/AnalysisBase/CosmicTag.h"
 #include "uboone/UBXSec/DataTypes/TPCObject.h"
 #include "lardataobj/RawData/TriggerData.h"
+#include "lardataobj/RawData/OpDetWaveform.h"
+#include "lardata/DetectorInfo/DetectorClocks.h"
 
 #include "uboone/UBXSec/DataTypes/UBXSecEvent.h"
 #include "uboone/UBXSec/DataTypes/SelectionResult.h"
@@ -72,6 +74,7 @@
 #include "larevt/CalibrationDBI/Interface/ChannelStatusService.h"
 #include "larevt/CalibrationDBI/Interface/ChannelStatusProvider.h"
 #include "larevt/SpaceChargeServices/SpaceChargeService.h"
+#include "lardata/DetectorInfoServices/DetectorClocksService.h"
 
 
 // LArSoft include
@@ -242,7 +245,7 @@ private:
   double _sr_begintime, _sr_endtime;
   double _sr_pot;
 
-  std::ofstream _csvfile;
+  std::ofstream _csvfile, _csvfile2;
   std::ofstream _run_subrun_list_file;
 };
 
@@ -388,6 +391,9 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
 
   _csvfile.open ("pida_trklen.csv", std::ofstream::out | std::ofstream::trunc);
   _csvfile << "pida,trklen,y" << std::endl;
+
+  _csvfile2.open("ophit.csv", std::ofstream::out | std::ofstream::trunc);
+  _csvfile2 << "ophit,opdet,time,pe" << std::endl;
 
   _run_subrun_list_file.open ("run_subrub_list.txt", std::ofstream::out | std::ofstream::trunc);
 
@@ -742,6 +748,30 @@ void UBXSec::produce(art::Event & e) {
     std::cout << "[UBXSec] Cannot locate OpHits." << std::endl;
   }
 
+  art::Handle<std::vector<recob::OpHit>> ophit_cosmic_h;
+  e.getByLabel("ophitCosmic", ophit_cosmic_h);
+  if(!ophit_cosmic_h.isValid()) {
+    std::cout << "[UBXSec] Cannot locate OpHits from ophitCosmic." << std::endl;
+  }
+
+  /*art::Handle<std::vector<raw::OpDetWaveform> > waveform_h;
+  e.getByLabel("saturation", "OpdetCosmicHighGain", waveform_h);
+  if(!waveform_h.isValid()) {
+    std::cout << "[UBXSec] Cannot locate OpDetWaveform from saturation." << std::endl;
+  }
+  std::vector<raw::OpDetWaveform> const& waveform_v(*waveform_h);*/
+
+  auto const& detectorClocks (*lar::providerFrom< detinfo::DetectorClocksService >());
+  std::cout << "Trigger Time: " << detectorClocks.TriggerTime() << std::endl;
+  std::cout << "Tick Period:  " << detectorClocks.OpticalClock().TickPeriod() << std::endl;
+
+  //std::cout << "Printing waveforms" << std::endl;
+  //for (auto w : waveform_v) {
+  //  std::cout << "timestamp: " << w.TimeStamp() 
+  //            << ", relative time: " << w.TimeStamp() - detectorClocks.TriggerTime() 
+  //            << ", channel: " << geo->OpDetFromOpChannel(w.ChannelNumber())<< std::endl;
+  //}
+
 
   // Check if the muon is reconstructed
   for (auto p : pfp_v) {
@@ -1038,16 +1068,28 @@ void UBXSec::produce(art::Event & e) {
     double n_intime_pe = 0;
     for (size_t oh = 0; oh < ophit_h->size(); oh++) {
       auto const & ophit = (*ophit_h)[oh];
+      size_t opdet = geo->OpDetFromOpChannel(ophit.OpChannel());
+      //std::cout << "OpHit::  OpDet: " << opdet
+      //          << ", PeakTime: " << ophit.PeakTime()
+      //          << ", PE: " << _pecalib.BeamPE(opdet,ophit.Area(),ophit.Amplitude()) << std::endl;
+      _csvfile2 << oh << "," << opdet << "," << ophit.PeakTime() << "," << _pecalib.BeamPE(opdet,ophit.Area(),ophit.Amplitude()) << std::endl;
       if (ophit.OpChannel() != this_opch) continue;
       if (ophit.PeakTime() > _beam_spill_start && ophit.PeakTime() < _beam_spill_end) {
         n_intime_ophits ++;
-        size_t opdet = geo->OpDetFromOpChannel(ophit.OpChannel());
         n_intime_pe += _pecalib.BeamPE(opdet,ophit.Area(),ophit.Amplitude());
       }     
     } // end loop ophit
 
     ubxsec_event->slc_n_intime_pe_closestpmt[slice] = n_intime_pe;
 
+    /*for (size_t oh = 0; oh < ophit_cosmic_h->size(); oh++) {
+      auto const & ophit = (*ophit_cosmic_h)[oh];
+      if (ophit.PeakTime() < -150 || ophit.PeakTime() > -50) continue;
+      size_t opdet = geo->OpDetFromOpChannel(ophit.OpChannel());
+      std::cout << "Cosmic Disc OpHit::  OpDet: " << opdet
+                << ", PeakTime: " << ophit.PeakTime()
+                << ", PE: " << _pecalib.CosmicPE(opdet,ophit.Area(),ophit.Amplitude()) << std::endl;
+    }*/
 
     // Distance from recon nu vertex to thefar away track in TPCObject
     //_slc_maxdistance_vtxtrack = UBXSecHelper::GetMaxTrackVertexDistance();

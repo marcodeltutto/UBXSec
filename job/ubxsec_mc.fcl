@@ -49,7 +49,7 @@ ubxsec_mc_reco:
 
   pandoraCosmicTrackPFPart:       @local::microboone_cosmicpfparticletagger
   pandoraCosmicFlashTag:          @local::microboone_cosmicpfpflashtagger
-  pandoraCosmicACPTTagger:        @local::microboone_acpttagger 
+  pandoraCosmicACPTTagger:        @local::microboone_acpttagger_mc
   pandoraCosmicStoppingMu:        @local::microboone_cosmicstoppingmutagger_mc
   pandoraCosmicHitRemoval:        @local::microboone_crhitremoval
 
@@ -134,9 +134,9 @@ ubxsec_mc_reco.pandoraCosmicTrackPFPart.Debug:                   false
 ubxsec_mc_reco.pandoraCosmicFlashTag.DebugMode:                  false
 
 ubxsec_mc_reco.pandoraCosmicHitRemoval.CosmicProducerLabels:     ["pandoraCosmicTrackPFPart::UBXSec", "pandoraCosmicFlashTag::UBXSec", "pandoraCosmicACPTTagger::UBXSec", "pandoraCosmicStoppingMu::UBXSec" ]
-ubxsec_mc_reco.pandoraCosmicHitRemoval.TrackProducerLabels:      ["pandoraCosmic",                    "pandoraCosmic",                 "pandoraCosmic",                   "pandoraCosmic"                    ]
-ubxsec_mc_reco.pandoraCosmicHitRemoval.AssnProducerLabels:       ["pandoraCosmic",                    "pandoraCosmic",                 "pandoraCosmic",                   "pandoraCosmic"                    ]
-ubxsec_mc_reco.pandoraCosmicHitRemoval.CosmicTagThresholds:      [0.6,                                0.99,                            0.99,                              0.99                               ]
+ubxsec_mc_reco.pandoraCosmicHitRemoval.TrackProducerLabels:      ["pandoraCosmic",                    "pandoraCosmic",                 "pandoraCosmic",                   "pandoraCosmic"                   ]
+ubxsec_mc_reco.pandoraCosmicHitRemoval.AssnProducerLabels:       ["pandoraCosmic",                    "pandoraCosmic",                 "pandoraCosmic",                   "pandoraCosmic"                   ]
+ubxsec_mc_reco.pandoraCosmicHitRemoval.CosmicTagThresholds:      [0.6,                                0.99,                            0.99,                              0.99                              ]
 ubxsec_mc_reco.pandoraCosmicHitRemoval.PFParticleProducerLabel:  "pandoraCosmic"
 ubxsec_mc_reco.pandoraCosmicHitRemoval.EndTickPadding:           75
 

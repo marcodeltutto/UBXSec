@@ -765,6 +765,7 @@ void UBXSec::produce(art::Event & e) {
   std::cout << "Trigger Time: " << detectorClocks.TriggerTime() << std::endl;
   std::cout << "Tick Period:  " << detectorClocks.OpticalClock().TickPeriod() << std::endl;
 
+
   //std::cout << "Printing waveforms" << std::endl;
   //for (auto w : waveform_v) {
   //  std::cout << "timestamp: " << w.TimeStamp() 

@@ -17,10 +17,13 @@ CandidateConsistency: {
   LinearityThreshold:      0.7
   LinearityThresholdTrack: 0.9
   DqDsAverageThreshold:    90000
+  GoodChannelStatus:       4
   
   DebugMode:             true
 
   CosmicTagManager: @local::cosmictag_config_mc
+
+  FlashMatchConfig: @local::flashmatch_config
 }
 
 CandidateConsistency_mc: @local::CandidateConsistency

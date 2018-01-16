@@ -48,6 +48,12 @@
 #include "uboone/UBXSec/DataTypes/TPCObject.h"
 #include "larreco/RecoAlg/TrajectoryMCSFitter.h"
 
+#include "uboone/Utilities/SignalShapingServiceMicroBooNE.h"
+#include "larevt/CalibrationDBI/Interface/DetPedestalService.h"
+#include "larevt/CalibrationDBI/Interface/DetPedestalProvider.h"
+#include "larevt/CalibrationDBI/Interface/ChannelStatusService.h"
+#include "larevt/CalibrationDBI/Interface/ChannelStatusProvider.h"
+
 //Algorithms include
 #include "uboone/UBXSec/Algorithms/UBXSecHelper.h"
 #include "uboone/LLBasicTool/GeoAlgo/GeoTrajectory.h"
@@ -58,6 +64,18 @@
 #include "uboone/UBXSec/HitCosmicTag/Algorithms/StopMuMichel.h"
 #include "uboone/UBXSec/HitCosmicTag/Algorithms/StopMuBragg.h"
 #include "uboone/UBXSec/HitCosmicTag/Algorithms/CosmicSimpleMIP.h"
+
+#include "uboone/LLSelectionTool/OpT0Finder/Base/OpT0FinderTypes.h"
+#include "uboone/LLBasicTool/GeoAlgo/GeoTrajectory.h"
+#include "uboone/LLSelectionTool/OpT0Finder/Base/FlashMatchManager.h"
+#include "uboone/LLSelectionTool/OpT0Finder/Algorithms/LightPath.h"
+#include "uboone/LLSelectionTool/OpT0Finder/Algorithms/PhotonLibHypothesis.h"
+#include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
+#include "larcore/Geometry/Geometry.h"
+#include "larcore/Geometry/CryostatGeo.h"
+#include "larcore/Geometry/PlaneGeo.h"
+#include "larcore/Geometry/OpDetGeo.h"
+#include "uboone/Geometry/UBOpReadoutMap.h"
 
 // Root include
 #include "TString.h"
@@ -100,9 +118,14 @@ private:
   double      _linearity_threshold;
   double      _linearity_threshold_track;
   double      _dqds_average_cut;
+  int         _good_ch_status;
   bool        _debug;
 
+  ::flashana::FlashMatchManager       _mgr;
+
   void ContainPoint(double *);
+  std::vector<double> GetFlashHypo(art::Ptr<recob::Track>, double);
+  bool IsCathodeCrossing(art::Ptr<recob::Track>, double &);
 
   ::art::ServiceHandle<geo::Geometry> geo;
   ::detinfo::DetectorProperties const* fDetectorProperties;
@@ -126,10 +149,13 @@ CandidateConsistency::CandidateConsistency(fhicl::ParameterSet const & p)
   _linearity_threshold       = p.get<double>("LinearityThreshold", 0.7);
   _linearity_threshold_track = p.get<double>("LinearityThresholdTrack", 0.9);
   _dqds_average_cut          = p.get<double>("DqDsAverageThreshold", 90000);
+  _good_ch_status            = p.get<double>("GoodChannelStatus", 4);
 
   _debug                     = p.get<bool>("DebugMode", true);
 
   _ct_manager.Configure(p.get<cosmictag::Config_t>("CosmicTagManager"));
+
+  _mgr.Configure(p.get<flashana::Config_t>("FlashMatchConfig"));
 
   fDetectorProperties = lar::providerFrom<detinfo::DetectorPropertiesService>();
 
@@ -146,6 +172,17 @@ void CandidateConsistency::produce(art::Event & e)
   // Instantiate the output
   std::unique_ptr<std::vector<anab::CosmicTag>> cosmicTagVector (new std::vector<anab::CosmicTag>);
   std::unique_ptr<art::Assns<ubana::TPCObject, anab::CosmicTag>> assnOutCosmicTagTPCObject(new art::Assns<ubana::TPCObject, anab::CosmicTag>);
+
+  const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
+  // Construct map wire->channel for collection plane
+  std::map<int,int> wire_to_channel;
+  for (unsigned int ch = 0; ch < 8256; ch++) {
+    for ( auto wire_id : geo->ChannelToWire(ch)) {
+      if (wire_id.Plane == 2) {
+        wire_to_channel[wire_id.Wire] = ch;
+      }
+    }
+  }
 
   // Get TPCObjects from the Event
   art::Handle<std::vector<ubana::TPCObject>> tpcobj_h;
@@ -177,7 +214,6 @@ void CandidateConsistency::produce(art::Event & e)
     if (_debug) std::cout << "[CandidateConsistency] >>>>> TPCObject " << i << std::endl;
 
     bool consistency_failed = false;
-    bool _1pfp_1track_case_failed = false;
     double dqds_average = -999;
 
     art::Ptr<ubana::TPCObject> tpcobj = tpcobj_v.at(i);
@@ -199,6 +235,9 @@ void CandidateConsistency::produce(art::Event & e)
     if (pfps.size() == 2 && tracks.size() == 1) 
       _1pfp_1track_case = true;
 
+    bool _1pfp_1track_case1 = false;
+    bool _1pfp_1track_case2 = false;
+    bool _1pfp_1track_case3 = false;
 
 
     //
@@ -244,6 +283,7 @@ void CandidateConsistency::produce(art::Event & e)
     // 1) Tracks 
 
     if(_debug) std::cout << "[CandidateConsistency] Working of Tracks" << std::endl;
+
 
     for (size_t i = 0; i < selected_tracks.size(); i++) {
 
@@ -311,6 +351,34 @@ void CandidateConsistency::produce(art::Event & e)
 
       if(_1pfp_1track_case) {
 
+        // Flash hypo test
+        double x_offset = 0.;
+        bool is_cathode_crossing = this->IsCathodeCrossing(selected_tracks.at(i), x_offset);
+
+        if (is_cathode_crossing) {
+
+          if (_debug) std::cout << "Is cathode crossing, x_offset set to: " << x_offset << std::endl;
+
+          std::vector<double> pe_v = this->GetFlashHypo(selected_tracks.at(i), x_offset);
+
+          double _pe_threshold = 8.;
+          bool below_threshold = true;
+          for (auto pe : pe_v) {
+            if (pe > _pe_threshold) {
+              below_threshold = false;
+              break;
+            }
+          }
+          if (below_threshold) {
+            if (_debug) std::cout << "Is cathode crossing and produces flash below threshold." << std::endl;
+            _1pfp_1track_case3 = true;
+          }
+        } else {
+          if (_debug) std::cout << "Is not cathode crossing" << std::endl;
+          _1pfp_1track_case3 = false;
+        }
+
+
         std::vector<double> linearity_v = processed_cluster._linearity_v;
 
         bool is_linear = true;
@@ -330,6 +398,21 @@ void CandidateConsistency::produce(art::Event & e)
                              << n_hits << " is: " << dqds_average << std::endl;
 
 
+        // Check start hit not close to dead region
+        bool close_dead_region = false;
+        int start_hit_wire = processed_cluster._s_hit_v.at(0).wire;
+        for (int wire = start_hit_wire - 2; wire <= start_hit_wire + 2; wire ++) {
+          auto iter = wire_to_channel.find(wire);
+          if (iter != wire_to_channel.end()) {
+            if (chanFilt.Status(iter->second) != _good_ch_status) {
+              if(_debug) std::cout << "[CandidateConsistency] Is close to dead wire" << std::endl;
+              close_dead_region = true;
+            }
+          }
+        }
+
+
+
         // Bump Finder
         double ratio_1 = processed_cluster._dqds_v.at(1) / processed_cluster._dqds_v.at(0);
         double ratio_2 = processed_cluster._dqds_v.at(2) / processed_cluster._dqds_v.at(1);
@@ -337,25 +420,8 @@ void CandidateConsistency::produce(art::Event & e)
         std::cout << "ratio_1: " << ratio_1 << std::endl;
         std::cout << "ratio_2: " << ratio_2 << std::endl;
 
-        bool case_1 = ratio_1 > 1.3 && ratio_2 < 0.95 && is_linear;
-        bool case_2 = dqds_average > 100000 && is_linear;
-
-        if (case_1) {
-          if(_debug) std::cout << "[CandidateConsistency] Consistency OK, passed case 1" << std::endl;
-          _1pfp_1track_case_failed = false;
-        }
-        else if (case_2) {
-          if(_debug) std::cout << "[CandidateConsistency] Consistency OK, passed case 2" << std::endl;
-          _1pfp_1track_case_failed = false;
-        }
-        else if (is_linear) {
-          if(_debug) std::cout << "[CandidateConsistency] Consistency FAILED" << std::endl;
-          _1pfp_1track_case_failed = true;
-        }
-
-
-        //if (dqds_average < _dqds_average_cut && is_linear) 
-          //_1pfp_1track_case_failed = true;
+        _1pfp_1track_case1 = !(ratio_1 > 1.3 && ratio_2 < 0.95 && is_linear && close_dead_region);
+        _1pfp_1track_case2 = !(dqds_average > 100000 && is_linear);
 
       } // pfp_1track_case ends
 
@@ -479,8 +545,16 @@ void CandidateConsistency::produce(art::Event & e)
       tag_id = anab::CosmicTagID_t::kGeometry_Y; // ... don't have a proper id for these
     }
 
-    if (_1pfp_1track_case_failed) {
+    if (_1pfp_1track_case1) {
       cosmicScore = 0.5;
+      tag_id = anab::CosmicTagID_t::kGeometry_Z; // ... don't have a proper id for these
+    }
+    if (_1pfp_1track_case2) {
+      cosmicScore = 0.6;
+      tag_id = anab::CosmicTagID_t::kGeometry_Z; // ... don't have a proper id for these
+    }
+    if (_1pfp_1track_case3) {
+      cosmicScore = 0.7;
       tag_id = anab::CosmicTagID_t::kGeometry_Z; // ... don't have a proper id for these
     }
     //cosmicScore = dqds_average;
@@ -522,5 +596,91 @@ void CandidateConsistency::ContainPoint(double * point) {
 
 }
 
+
+
+bool CandidateConsistency::IsCathodeCrossing(art::Ptr<recob::Track> trk_ptr, double &x_offset) {
+
+  x_offset = -1.;
+
+  double _BOTTOM = -geo->DetHalfHeight() + 25.; //cm
+  double _TOP    = geo->DetHalfHeight() - 25.; //cm 
+
+  std::vector<TVector3> sorted_trk;
+
+  // Sort track points first
+  sorted_trk.clear();
+                                                                                                            
+  auto const&N = trk_ptr->NumberTrajectoryPoints();
+  auto const&start = trk_ptr->LocationAtPoint(0);
+  auto const&end   = trk_ptr->LocationAtPoint( N - 1 );
+
+  // if points are ordered correctly                                                                                                                                       
+  if (start.Y() > end.Y()){
+    for (size_t i=0; i < N; i++)
+      sorted_trk.push_back( trk_ptr->LocationAtPoint(i) );
+  }
+  
+  // otherwise flip order                                                                                                                                                 
+  else {
+    for (size_t i=0; i < N; i++)
+      sorted_trk.push_back( trk_ptr->LocationAtPoint( N - i - 1) );
+  }
+
+  // Case 1: track exits bottom
+  if ( sorted_trk.at( sorted_trk.size() - 1).Y() < _BOTTOM ) {
+    auto const& top    = sorted_trk.at(0);
+    auto const& bottom = sorted_trk.at( sorted_trk.size() - 1 );
+
+    if (top.X() > bottom.X()){
+      // Track crosses 
+      x_offset = geo->DetHalfWidth()*2 - top.X();
+      return true;
+    }
+  }
+
+
+  // Case 2: track enters top
+   if (sorted_trk.at(0).Y() > _TOP) {
+    auto const& top    = sorted_trk.at(0);
+    auto const& bottom = sorted_trk.at( sorted_trk.size() - 1 );
+
+    if (top.X() < bottom.X()){
+      // Track crosses 
+      x_offset = geo->DetHalfWidth()*2 - bottom.X();
+      return true;
+    }
+  }
+
+  return false;
+
+}
+
+
+std::vector<double> CandidateConsistency::GetFlashHypo(art::Ptr<recob::Track> trk_ptr, double x_offset) {
+
+  ::geoalgo::Trajectory track_geotrj;
+  track_geotrj.resize(trk_ptr->NumberTrajectoryPoints(),::geoalgo::Vector(0.,0.,0.));
+
+  for (size_t pt_idx=0; pt_idx < trk_ptr->NumberTrajectoryPoints(); ++pt_idx) {
+    auto const& pt = trk_ptr->LocationAtPoint(pt_idx);
+    track_geotrj[pt_idx][0] = pt[0] + x_offset;
+    track_geotrj[pt_idx][1] = pt[1];
+    track_geotrj[pt_idx][2] = pt[2];
+  }        
+
+  flashana::QCluster_t qcluster = ((flashana::LightPath*)(_mgr.GetCustomAlgo("LightPath")))->FlashHypothesis(track_geotrj);
+
+  flashana::Flash_t flashHypo;
+  flashHypo.pe_v.resize(geo->NOpDets());
+  ((flashana::PhotonLibHypothesis*)(_mgr.GetAlgo(flashana::kFlashHypothesis)))->FillEstimate(qcluster,flashHypo);
+
+  if (_debug) {
+    for (auto pe : flashHypo.pe_v) {
+      std::cout << "pe: " << pe << std::endl;
+    }
+  }
+
+  return flashHypo.pe_v;
+}
 
 DEFINE_ART_MODULE(CandidateConsistency)

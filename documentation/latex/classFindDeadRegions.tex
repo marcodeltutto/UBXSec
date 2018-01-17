@@ -7,9 +7,24 @@
 \hypertarget{classFindDeadRegions_a94b207b673c58df861537ead4ec5385a}{void \hyperlink{classFindDeadRegions_a94b207b673c58df861537ead4ec5385a}{Configure} (fhicl\-::\-Parameter\-Set const \&p)}\label{classFindDeadRegions_a94b207b673c58df861537ead4ec5385a}
 
 \begin{DoxyCompactList}\small\item\em Configure function parameters. \end{DoxyCompactList}\item 
+\hypertarget{classFindDeadRegions_ac66a2e50bc8138b3f62284a319e1a60f}{void \hyperlink{classFindDeadRegions_ac66a2e50bc8138b3f62284a319e1a60f}{Set\-Channel\-Status} (unsigned int ch, int status)}\label{classFindDeadRegions_ac66a2e50bc8138b3f62284a319e1a60f}
+
+\begin{DoxyCompactList}\small\item\em Set the channel status. \end{DoxyCompactList}\item 
+\hypertarget{classFindDeadRegions_ab59b2e9e90a69a8bf06dfe7bc299b8ce}{void \hyperlink{classFindDeadRegions_ab59b2e9e90a69a8bf06dfe7bc299b8ce}{Load\-Wire\-Geometry} ()}\label{classFindDeadRegions_ab59b2e9e90a69a8bf06dfe7bc299b8ce}
+
+\begin{DoxyCompactList}\small\item\em Loads the wire geometry from either a txt file or the geo service. \end{DoxyCompactList}\item 
+\hypertarget{classFindDeadRegions_aa16f381183cdd02642e6ae38073dc732}{void \hyperlink{classFindDeadRegions_aa16f381183cdd02642e6ae38073dc732}{Load\-Channel\-Status} ()}\label{classFindDeadRegions_aa16f381183cdd02642e6ae38073dc732}
+
+\begin{DoxyCompactList}\small\item\em Loads the ch statues from either a txt file or the db. \end{DoxyCompactList}\item 
+\hypertarget{classFindDeadRegions_a5e1b035c74beb151bdd2a0315db336b1}{void \hyperlink{classFindDeadRegions_a5e1b035c74beb151bdd2a0315db336b1}{Create\-B\-Wires} ()}\label{classFindDeadRegions_a5e1b035c74beb151bdd2a0315db336b1}
+
+\begin{DoxyCompactList}\small\item\em Creates B\-Wires. \end{DoxyCompactList}\item 
 \hypertarget{classFindDeadRegions_a7a884dc4685e66734b98afea9a2c6c21}{bool \hyperlink{classFindDeadRegions_a7a884dc4685e66734b98afea9a2c6c21}{Near\-Dead\-Reg2\-P} (float y\-Val, float z\-Val, float tolerance)}\label{classFindDeadRegions_a7a884dc4685e66734b98afea9a2c6c21}
 
 \begin{DoxyCompactList}\small\item\em Returns true if the passed point is close to a dead region given a tolerance considering two planes only. \end{DoxyCompactList}\item 
+\hypertarget{classFindDeadRegions_a066953fc9c822dd5696ea9055c9fd7b2}{bool \hyperlink{classFindDeadRegions_a066953fc9c822dd5696ea9055c9fd7b2}{Near\-Dead\-Reg\-Collection} (float z\-Val, float tolerance)}\label{classFindDeadRegions_a066953fc9c822dd5696ea9055c9fd7b2}
+
+\begin{DoxyCompactList}\small\item\em Returns true if the passed point is close to a dead region given a tolerance considering the collection plane only. \end{DoxyCompactList}\item 
 \hypertarget{classFindDeadRegions_a2ef76eca81785361bf95c17e8e1a7574}{bool \hyperlink{classFindDeadRegions_a2ef76eca81785361bf95c17e8e1a7574}{Near\-Dead\-Reg3\-P} (float y\-Val, float z\-Val, float tolerance)}\label{classFindDeadRegions_a2ef76eca81785361bf95c17e8e1a7574}
 
 \begin{DoxyCompactList}\small\item\em Returns true if the passed point is close to a dead region given a tolerance considering all three planes. \end{DoxyCompactList}\item 

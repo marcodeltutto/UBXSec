@@ -96,10 +96,30 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFindDeadRegions.html#a94b207b673c58df861537ead4ec5385a">Configure</a> (fhicl::ParameterSet const &amp;p)</td></tr>
 <tr class="memdesc:a94b207b673c58df861537ead4ec5385a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure function parameters. <br/></td></tr>
 <tr class="separator:a94b207b673c58df861537ead4ec5385a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac66a2e50bc8138b3f62284a319e1a60f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac66a2e50bc8138b3f62284a319e1a60f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFindDeadRegions.html#ac66a2e50bc8138b3f62284a319e1a60f">SetChannelStatus</a> (unsigned int ch, int status)</td></tr>
+<tr class="memdesc:ac66a2e50bc8138b3f62284a319e1a60f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the channel status. <br/></td></tr>
+<tr class="separator:ac66a2e50bc8138b3f62284a319e1a60f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab59b2e9e90a69a8bf06dfe7bc299b8ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab59b2e9e90a69a8bf06dfe7bc299b8ce"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFindDeadRegions.html#ab59b2e9e90a69a8bf06dfe7bc299b8ce">LoadWireGeometry</a> ()</td></tr>
+<tr class="memdesc:ab59b2e9e90a69a8bf06dfe7bc299b8ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the wire geometry from either a txt file or the geo service. <br/></td></tr>
+<tr class="separator:ab59b2e9e90a69a8bf06dfe7bc299b8ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa16f381183cdd02642e6ae38073dc732"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa16f381183cdd02642e6ae38073dc732"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFindDeadRegions.html#aa16f381183cdd02642e6ae38073dc732">LoadChannelStatus</a> ()</td></tr>
+<tr class="memdesc:aa16f381183cdd02642e6ae38073dc732"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the ch statues from either a txt file or the db. <br/></td></tr>
+<tr class="separator:aa16f381183cdd02642e6ae38073dc732"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e1b035c74beb151bdd2a0315db336b1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e1b035c74beb151bdd2a0315db336b1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFindDeadRegions.html#a5e1b035c74beb151bdd2a0315db336b1">CreateBWires</a> ()</td></tr>
+<tr class="memdesc:a5e1b035c74beb151bdd2a0315db336b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates BWires. <br/></td></tr>
+<tr class="separator:a5e1b035c74beb151bdd2a0315db336b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a884dc4685e66734b98afea9a2c6c21"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a884dc4685e66734b98afea9a2c6c21"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFindDeadRegions.html#a7a884dc4685e66734b98afea9a2c6c21">NearDeadReg2P</a> (float yVal, float zVal, float tolerance)</td></tr>
 <tr class="memdesc:a7a884dc4685e66734b98afea9a2c6c21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the passed point is close to a dead region given a tolerance considering two planes only. <br/></td></tr>
 <tr class="separator:a7a884dc4685e66734b98afea9a2c6c21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a066953fc9c822dd5696ea9055c9fd7b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a066953fc9c822dd5696ea9055c9fd7b2"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFindDeadRegions.html#a066953fc9c822dd5696ea9055c9fd7b2">NearDeadRegCollection</a> (float zVal, float tolerance)</td></tr>
+<tr class="memdesc:a066953fc9c822dd5696ea9055c9fd7b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the passed point is close to a dead region given a tolerance considering the collection plane only. <br/></td></tr>
+<tr class="separator:a066953fc9c822dd5696ea9055c9fd7b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ef76eca81785361bf95c17e8e1a7574"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2ef76eca81785361bf95c17e8e1a7574"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFindDeadRegions.html#a2ef76eca81785361bf95c17e8e1a7574">NearDeadReg3P</a> (float yVal, float zVal, float tolerance)</td></tr>
 <tr class="memdesc:a2ef76eca81785361bf95c17e8e1a7574"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the passed point is close to a dead region given a tolerance considering all three planes. <br/></td></tr>

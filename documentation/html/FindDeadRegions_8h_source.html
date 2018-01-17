@@ -118,40 +118,68 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classFindDeadRegions.html#a94b207b673c58df861537ead4ec5385a">Configure</a>(fhicl::ParameterSet <span class="keyword">const</span>&amp; p);</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classFindDeadRegions.html#a7a884dc4685e66734b98afea9a2c6c21">NearDeadReg2P</a>(<span class="keywordtype">float</span> yVal, <span class="keywordtype">float</span> zVal, <span class="keywordtype">float</span> tolerance);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classFindDeadRegions.html#ac66a2e50bc8138b3f62284a319e1a60f">SetChannelStatus</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ch, <span class="keywordtype">int</span> status);</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classFindDeadRegions.html#a2ef76eca81785361bf95c17e8e1a7574">NearDeadReg3P</a>(<span class="keywordtype">float</span> yVal, <span class="keywordtype">float</span> zVal, <span class="keywordtype">float</span> tolerance);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classFindDeadRegions.html#ab59b2e9e90a69a8bf06dfe7bc299b8ce">LoadWireGeometry</a>();</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  TH2F* <a class="code" href="classFindDeadRegions.html#a712767abce6132b0dd6638a335da87fa">GetDeadRegionHisto2P</a>();</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classFindDeadRegions.html#aa16f381183cdd02642e6ae38073dc732">LoadChannelStatus</a>();</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classFindDeadRegions.html#a712767abce6132b0dd6638a335da87fa">GetDeadRegionHisto2P</a>(TH2F *);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classFindDeadRegions.html#a5e1b035c74beb151bdd2a0315db336b1">CreateBWires</a>();</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  TH2F* <a class="code" href="classFindDeadRegions.html#abb378991861e7fdef4cd94a27d52ec07">GetDeadRegionHisto3P</a>();</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classFindDeadRegions.html#a7a884dc4685e66734b98afea9a2c6c21">NearDeadReg2P</a>(<span class="keywordtype">float</span> yVal, <span class="keywordtype">float</span> zVal, <span class="keywordtype">float</span> tolerance);</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classFindDeadRegions.html#abb378991861e7fdef4cd94a27d52ec07">GetDeadRegionHisto3P</a>(TH2F *);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classFindDeadRegions.html#a066953fc9c822dd5696ea9055c9fd7b2">NearDeadRegCollection</a>(<span class="keywordtype">float</span> zVal, <span class="keywordtype">float</span> tolerance);</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keywordtype">void</span> LoadBWires();</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  std::vector&lt;BoundaryWire&gt; BWires_U; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  std::vector&lt;BoundaryWire&gt; BWires_V; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  std::vector&lt;BoundaryWire&gt; BWires_Y; </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <span class="keywordtype">bool</span> _use_file = <span class="keyword">false</span>;  </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  <span class="keywordtype">double</span> _tolerance = 0.6; </div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keywordtype">int</span> _ch_thres = 4;       </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;};</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor"></span> <span class="comment">// end of doxygen group </span></div>
-<div class="ttc" id="classFindDeadRegions_html_abb378991861e7fdef4cd94a27d52ec07"><div class="ttname"><a href="classFindDeadRegions.html#abb378991861e7fdef4cd94a27d52ec07">FindDeadRegions::GetDeadRegionHisto3P</a></div><div class="ttdeci">TH2F * GetDeadRegionHisto3P()</div><div class="ttdoc">Returns a root 2D histogram (y v.s. z) containing the detector dead regions considering all three pla...</div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:579</div></div>
-<div class="ttc" id="classFindDeadRegions_html_a712767abce6132b0dd6638a335da87fa"><div class="ttname"><a href="classFindDeadRegions.html#a712767abce6132b0dd6638a335da87fa">FindDeadRegions::GetDeadRegionHisto2P</a></div><div class="ttdeci">TH2F * GetDeadRegionHisto2P()</div><div class="ttdoc">Returns a root 2D histogram (y v.s. z) containing the detector dead regions considering two planes on...</div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:548</div></div>
-<div class="ttc" id="classFindDeadRegions_html_a94b207b673c58df861537ead4ec5385a"><div class="ttname"><a href="classFindDeadRegions.html#a94b207b673c58df861537ead4ec5385a">FindDeadRegions::Configure</a></div><div class="ttdeci">void Configure(fhicl::ParameterSet const &amp;p)</div><div class="ttdoc">Configure function parameters. </div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:49</div></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classFindDeadRegions.html#a2ef76eca81785361bf95c17e8e1a7574">NearDeadReg3P</a>(<span class="keywordtype">float</span> yVal, <span class="keywordtype">float</span> zVal, <span class="keywordtype">float</span> tolerance);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  TH2F* <a class="code" href="classFindDeadRegions.html#a712767abce6132b0dd6638a335da87fa">GetDeadRegionHisto2P</a>();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classFindDeadRegions.html#a712767abce6132b0dd6638a335da87fa">GetDeadRegionHisto2P</a>(TH2F *);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  TH2F* <a class="code" href="classFindDeadRegions.html#abb378991861e7fdef4cd94a27d52ec07">GetDeadRegionHisto3P</a>();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classFindDeadRegions.html#abb378991861e7fdef4cd94a27d52ec07">GetDeadRegionHisto3P</a>(TH2F *);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="comment">//void LoadBWires();</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  std::vector&lt;BoundaryWire&gt; BWires_U; </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  std::vector&lt;BoundaryWire&gt; BWires_V; </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  std::vector&lt;BoundaryWire&gt; BWires_Y; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  std::vector&lt;unsigned int&gt; CSchannelVec;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  std::vector&lt;bool&gt; CSstatusVec;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  std::vector&lt;unsigned int&gt; channelVec;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  std::vector&lt;unsigned int&gt; planeVec;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  std::vector&lt;unsigned int&gt; wireVec;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  std::vector&lt;float&gt; sxVec;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  std::vector&lt;float&gt; syVec;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  std::vector&lt;float&gt; szVec;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  std::vector&lt;float&gt; exVec;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  std::vector&lt;float&gt; eyVec;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  std::vector&lt;float&gt; ezVec;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <span class="keywordtype">bool</span> _use_file = <span class="keyword">false</span>;  </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keywordtype">double</span> _tolerance = 0.6; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <span class="keywordtype">int</span> _ch_thres = 4;       </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;};</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor"></span> <span class="comment">// end of doxygen group </span></div>
+<div class="ttc" id="classFindDeadRegions_html_abb378991861e7fdef4cd94a27d52ec07"><div class="ttname"><a href="classFindDeadRegions.html#abb378991861e7fdef4cd94a27d52ec07">FindDeadRegions::GetDeadRegionHisto3P</a></div><div class="ttdeci">TH2F * GetDeadRegionHisto3P()</div><div class="ttdoc">Returns a root 2D histogram (y v.s. z) containing the detector dead regions considering all three pla...</div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:625</div></div>
+<div class="ttc" id="classFindDeadRegions_html_ac66a2e50bc8138b3f62284a319e1a60f"><div class="ttname"><a href="classFindDeadRegions.html#ac66a2e50bc8138b3f62284a319e1a60f">FindDeadRegions::SetChannelStatus</a></div><div class="ttdeci">void SetChannelStatus(unsigned int ch, int status)</div><div class="ttdoc">Set the channel status. </div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:57</div></div>
+<div class="ttc" id="classFindDeadRegions_html_a712767abce6132b0dd6638a335da87fa"><div class="ttname"><a href="classFindDeadRegions.html#a712767abce6132b0dd6638a335da87fa">FindDeadRegions::GetDeadRegionHisto2P</a></div><div class="ttdeci">TH2F * GetDeadRegionHisto2P()</div><div class="ttdoc">Returns a root 2D histogram (y v.s. z) containing the detector dead regions considering two planes on...</div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:594</div></div>
+<div class="ttc" id="classFindDeadRegions_html_ab59b2e9e90a69a8bf06dfe7bc299b8ce"><div class="ttname"><a href="classFindDeadRegions.html#ab59b2e9e90a69a8bf06dfe7bc299b8ce">FindDeadRegions::LoadWireGeometry</a></div><div class="ttdeci">void LoadWireGeometry()</div><div class="ttdoc">Loads the wire geometry from either a txt file or the geo service. </div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:67</div></div>
+<div class="ttc" id="classFindDeadRegions_html_a94b207b673c58df861537ead4ec5385a"><div class="ttname"><a href="classFindDeadRegions.html#a94b207b673c58df861537ead4ec5385a">FindDeadRegions::Configure</a></div><div class="ttdeci">void Configure(fhicl::ParameterSet const &amp;p)</div><div class="ttdoc">Configure function parameters. </div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:50</div></div>
+<div class="ttc" id="classFindDeadRegions_html_a066953fc9c822dd5696ea9055c9fd7b2"><div class="ttname"><a href="classFindDeadRegions.html#a066953fc9c822dd5696ea9055c9fd7b2">FindDeadRegions::NearDeadRegCollection</a></div><div class="ttdeci">bool NearDeadRegCollection(float zVal, float tolerance)</div><div class="ttdoc">Returns true if the passed point is close to a dead region given a tolerance considering the collecti...</div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:488</div></div>
 <div class="ttc" id="structBoundaryWire_html"><div class="ttname"><a href="structBoundaryWire.html">BoundaryWire</a></div><div class="ttdef"><b>Definition:</b> FindDeadRegions.h:25</div></div>
-<div class="ttc" id="classFindDeadRegions_html_a7a884dc4685e66734b98afea9a2c6c21"><div class="ttname"><a href="classFindDeadRegions.html#a7a884dc4685e66734b98afea9a2c6c21">FindDeadRegions::NearDeadReg2P</a></div><div class="ttdeci">bool NearDeadReg2P(float yVal, float zVal, float tolerance)</div><div class="ttdoc">Returns true if the passed point is close to a dead region given a tolerance considering two planes o...</div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:391</div></div>
-<div class="ttc" id="classFindDeadRegions_html_a2ef76eca81785361bf95c17e8e1a7574"><div class="ttname"><a href="classFindDeadRegions.html#a2ef76eca81785361bf95c17e8e1a7574">FindDeadRegions::NearDeadReg3P</a></div><div class="ttdeci">bool NearDeadReg3P(float yVal, float zVal, float tolerance)</div><div class="ttdoc">Returns true if the passed point is close to a dead region given a tolerance considering all three pl...</div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:474</div></div>
+<div class="ttc" id="classFindDeadRegions_html_a5e1b035c74beb151bdd2a0315db336b1"><div class="ttname"><a href="classFindDeadRegions.html#a5e1b035c74beb151bdd2a0315db336b1">FindDeadRegions::CreateBWires</a></div><div class="ttdeci">void CreateBWires()</div><div class="ttdoc">Creates BWires. </div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:265</div></div>
+<div class="ttc" id="classFindDeadRegions_html_a7a884dc4685e66734b98afea9a2c6c21"><div class="ttname"><a href="classFindDeadRegions.html#a7a884dc4685e66734b98afea9a2c6c21">FindDeadRegions::NearDeadReg2P</a></div><div class="ttdeci">bool NearDeadReg2P(float yVal, float zVal, float tolerance)</div><div class="ttdoc">Returns true if the passed point is close to a dead region given a tolerance considering two planes o...</div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:407</div></div>
+<div class="ttc" id="classFindDeadRegions_html_a2ef76eca81785361bf95c17e8e1a7574"><div class="ttname"><a href="classFindDeadRegions.html#a2ef76eca81785361bf95c17e8e1a7574">FindDeadRegions::NearDeadReg3P</a></div><div class="ttdeci">bool NearDeadReg3P(float yVal, float zVal, float tolerance)</div><div class="ttdoc">Returns true if the passed point is close to a dead region given a tolerance considering all three pl...</div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:520</div></div>
 <div class="ttc" id="classFindDeadRegions_html"><div class="ttname"><a href="classFindDeadRegions.html">FindDeadRegions</a></div><div class="ttdef"><b>Definition:</b> FindDeadRegions.h:36</div></div>
+<div class="ttc" id="classFindDeadRegions_html_aa16f381183cdd02642e6ae38073dc732"><div class="ttname"><a href="classFindDeadRegions.html#aa16f381183cdd02642e6ae38073dc732">FindDeadRegions::LoadChannelStatus</a></div><div class="ttdeci">void LoadChannelStatus()</div><div class="ttdoc">Loads the ch statues from either a txt file or the db. </div><div class="ttdef"><b>Definition:</b> FindDeadRegions.cxx:199</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

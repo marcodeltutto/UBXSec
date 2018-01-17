@@ -1,6 +1,8 @@
 var searchData=
 [
   ['slc_5facpt_5foutoftime',['slc_acpt_outoftime',['../classUBXSecEvent.html#afd52675b8ca60af2941105f9739909a4',1,'UBXSecEvent']]],
+  ['slc_5fconsistency',['slc_consistency',['../classUBXSecEvent.html#a549ad5d4e82d19528f79d0074cd4a7d4',1,'UBXSecEvent']]],
+  ['slc_5fconsistency_5fscore',['slc_consistency_score',['../classUBXSecEvent.html#af7293625860342c3e57b02da4cacf863',1,'UBXSecEvent']]],
   ['slc_5fcrosses_5ftop_5fboundary',['slc_crosses_top_boundary',['../classUBXSecEvent.html#ae7aee5c97b811d2e867cab5ec4fa1ffd',1,'UBXSecEvent']]],
   ['slc_5fflshypo_5fspec',['slc_flshypo_spec',['../classUBXSecEvent.html#aa82aa9b73994eae31d0f7ab0f47f23fa',1,'UBXSecEvent']]],
   ['slc_5fflshypo_5fxfixed_5fspec',['slc_flshypo_xfixed_spec',['../classUBXSecEvent.html#aff42f5975ca8b7c22f21023ffe8cf2c9',1,'UBXSecEvent']]],

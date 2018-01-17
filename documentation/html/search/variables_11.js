@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['xyz',['xyz',['../classubxsec_1_1ACPTAlgo.html#aa4d1411847dcdd25774e1d28bb3696bf',1,'ubxsec::ACPTAlgo::xyz()'],['../classubxsec_1_1VertexCheck.html#ada7f1e5ea244eb89e725226ed248f2d6',1,'ubxsec::VertexCheck::xyz()']]]
+  ['w',['w',['../structubana_1_1SimpleHit.html#ad9855eb823ac4594af701000035779b9',1,'ubana::SimpleHit']]],
+  ['wire',['wire',['../structubana_1_1SimpleHit.html#abe561083fcd227c4563c62818ecb18a1',1,'ubana::SimpleHit']]]
 ];

@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['vertexcheck',['VertexCheck',['../classubxsec_1_1VertexCheck.html',1,'ubxsec']]],
-  ['vertexcheck',['VertexCheck',['../classubxsec_1_1VertexCheck.html#af6ef46e3fc198a067987f64ef863aa45',1,'ubxsec::VertexCheck::VertexCheck()'],['../classubxsec_1_1VertexCheck.html#af1d0f2f6c434db12aee3c8ae4b810da8',1,'ubxsec::VertexCheck::VertexCheck(lar_pandora::TrackVector, recob::Vertex)']]],
-  ['vertexcheck_2eh',['VertexCheck.h',['../VertexCheck_8h.html',1,'']]],
-  ['vtx_5fresolution',['vtx_resolution',['../classUBXSecEvent.html#aa6c3a4dd22dfd2d39be8fa74b3703230',1,'UBXSecEvent']]]
+  ['ubxsec_2fmodules',['UBXSec/Modules',['../md__home_travis_build_marcodeltutto_UBXSec_Modules_README.html',1,'']]],
+  ['ubxsec',['UBXSec',['../md__home_travis_build_marcodeltutto_UBXSec_README.html',1,'']]],
+  ['ubana',['Ubana',['../group__ubana.html',1,'']]],
+  ['ubxsec',['UBXSec',['../classUBXSec.html',1,'UBXSec'],['../group__UBXSec.html',1,'(Global Namespace)']]],
+  ['ubxsecevent',['UBXSecEvent',['../classUBXSecEvent.html',1,'']]],
+  ['ubxsechelper',['UBXSecHelper',['../classUBXSecHelper.html',1,'']]]
 ];

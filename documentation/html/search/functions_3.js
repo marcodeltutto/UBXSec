@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['fiducialvolume',['FiducialVolume',['../classubana_1_1FiducialVolume.html#a557d2e3c2d7b6151ea0156685bf56d00',1,'ubana::FiducialVolume']]],
-  ['filter',['Filter',['../classubana_1_1TPCObjectFilter.html#ab485fca5770b8a9622d56c294b361ef3',1,'ubana::TPCObjectFilter']]]
+  ['emplace',['Emplace',['../classubana_1_1StoppingMuonTaggerHelper.html#abda52e37500a6934a1903367a643cc1a',1,'ubana::StoppingMuonTaggerHelper']]]
 ];

@@ -149,7 +149,7 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p)
   _cluster_producer   = p.get<std::string>("ClusterProducer",    "pandoraNu::UBXSec");
   _track_producer     = p.get<std::string>("TrackProducer",    "pandoraNu::UBXSec");
  
-  _use_mcs            = p.get<double>("UseMCS", false);
+  _use_mcs            = p.get<bool>("UseMCS", false);
   _mcs_delta_ll_cut   = p.get<double>("MCSDeltaLLCut", -5.);
 
   _coplanar_cut       = p.get<double>("CoplanarCut",   5.);
@@ -410,16 +410,28 @@ void StoppingMuonTagger::produce(art::Event & e) {
     const double *highest_point_c = sp_v.at(0)->XYZ();
     double highest_point[3] = {highest_point_c[0], highest_point_c[1], highest_point_c[2]};
     this->ContainPoint(highest_point);
+
+    // Creating an approximate start hit on plane 2
     int highest_w = geo->NearestWire(highest_point, 2) ;//* geo->WirePitch(geo::PlaneID(0,0,2));
     double highest_t = fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2))/4.;//highest_point[0];
     if (_debug) std::cout << "[StoppingMuonTagger] Highest point: wire: " << geo->NearestWire(highest_point, 2) 
                        << ", time: " << fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,2)) 
                        << std::endl;
-    // Creating an approximate start hit
     cosmictag::SimpleHit start_highest;
     start_highest.time = highest_t;
     start_highest.wire = highest_w;
     start_highest.plane = 2;
+
+    // Creating an approximate start hit on plane 1 (used if collection coplanar)
+    highest_w = geo->NearestWire(highest_point, 1) ;
+    highest_t = fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,1))/4.;
+    if (_debug) std::cout << "[StoppingMuonTagger] Highest point: wire: " << geo->NearestWire(highest_point, 1) 
+                       << ", time: " << fDetectorProperties->ConvertXToTicks(highest_point[0], geo::PlaneID(0,0,1)) 
+                       << std::endl;
+    cosmictag::SimpleHit start_highest_plane1;
+    start_highest_plane1.time = highest_t;
+    start_highest_plane1.wire = highest_w;
+    start_highest_plane1.plane = 1;
 
 
     //
@@ -443,34 +455,48 @@ void StoppingMuonTagger::produce(art::Event & e) {
     start_outfv.wire = outfv_w;
     start_outfv.plane = 2;
 
+    /*
     bool use_outfv_point = false;
      
     TVector3 pt_1 (highest_point[0], highest_point[1], highest_point[2]);
     TVector3 pt_2 (point_outfv[0], point_outfv[1], point_outfv[2]);
     if ((pt_1-pt_2).Mag() > 5 && point_outfv[0] != -999)
       use_outfv_point = true;
+    */
 
     if (_debug) std::cout << "[StoppingMuonTagger] Now create simple hit vector, size " << hit_v.size() << std::endl;
+
+    
+    //std::cout << "Wire inclination for plane 1 (should give 60 degrees): " << geo->WireAngleToVertical(geo::View_t::kV) - 0.5*::util::pi<>()<< std::endl;
+    //std::cout << "Wire pitch for plane 1 (should give 3mm): " << geo->WirePitch(geo::PlaneID(0,0,1)) << std::endl;
 
     //
     // Create SimpleHit vector with hits in collection plane only
     // 
     std::vector<cosmictag::SimpleHit> simple_hit_v;
+    std::vector<cosmictag::SimpleHit> simple_hit_v_plane1;
     for (auto h : hit_v) {
 
+
+      cosmictag::SimpleHit sh;
+
+      sh.t = fDetectorProperties->ConvertTicksToX(h->PeakTime(), geo::PlaneID(0,0,h->View()));
+      sh.w = h->WireID().Wire * geo->WirePitch(geo::PlaneID(0,0,h->View()));
+
+      sh.plane = h->View();
+      sh.integral = h->Integral();
+
+      sh.time = h->PeakTime() / 4;
+      sh.wire = h->WireID().Wire; 
+
       if (h->View() == 2) {
-        cosmictag::SimpleHit sh;
-        sh.t = fDetectorProperties->ConvertTicksToX(h->PeakTime(), geo::PlaneID(0,0,2));
-        sh.w = h->WireID().Wire * geo->WirePitch(geo::PlaneID(0,0,2));
-
-        sh.plane = h->View();
-        sh.integral = h->Integral();
-
-        sh.time = h->PeakTime() / 4;
-        sh.wire = h->WireID().Wire; 
-
         simple_hit_v.emplace_back(sh);
       }
+
+      if (h->View() == 1) {
+        simple_hit_v_plane1.emplace_back(sh);
+      }
+
     }
 
 
@@ -486,16 +512,28 @@ void StoppingMuonTagger::produce(art::Event & e) {
     _ct_manager.Reset();
 
     // Emplacing simple hits to the manager
+    // Generally use plane 2, but use plane 1 
+    // if trak is collection coplanar
     cosmictag::SimpleCluster sc(simple_hit_v);
+    if (collection_coplanar) {
+      if (_debug) std::cout << "[StoppingMuonTagger] Collection coplanar, using hits on plane 1" << std::endl;
+      sc._s_hit_v = simple_hit_v_plane1;
+    }
     _ct_manager.Emplace(std::move(sc));
 
     // Emplace the start hit
-    _ct_manager.SetStartHit(std::move(start_highest));
-
-    if (collection_coplanar) {
-      if (_debug) std::cout << "[StoppingMuonTagger] This object is collection coplanar" << std::endl;
-      _ct_manager.CollectionCoplanar(true);
+    if (!collection_coplanar) {
+      _ct_manager.SetStartHit(std::move(start_highest));
     }
+    else {
+      if (_debug) std::cout << "[StoppingMuonTagger] Collection coplanar, setting start hit from plane 1" << std::endl;
+      _ct_manager.SetStartHit(std::move(start_highest_plane1));
+    }
+
+    //if (collection_coplanar) {
+      //if (_debug) std::cout << "[StoppingMuonTagger] This object is collection coplanar" << std::endl;
+      //_ct_manager.CollectionCoplanar(true);
+    //}
 
     // Running the cluster analyser
     bool passed = _ct_manager.Run();
@@ -532,7 +570,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     }
 
-    if (ct_result_michel || ct_result_bragg || ct_result_simplemip)
+    if (ct_result_michel || ct_result_bragg /*|| ct_result_simplemip*/)
       is_cosmic = true;
 
 
@@ -541,6 +579,8 @@ void StoppingMuonTagger::produce(art::Event & e) {
     //
     // Part II: Running with outfv point as start hit
     //
+    /*
+
 
     if (use_outfv_point) {
 
@@ -597,6 +637,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
         is_cosmic = true;
 
     }
+    */
 
 
     //
@@ -611,7 +652,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     if (_debug) std::cout << "[StoppingMuonTagger] MCS thinks " << (result_mcs ? "is" : "is not") << " a stopping muon" << std::endl;
     
-    if(_create_tree && !e.isRealData()) {
+    if(_create_tree) {
       _origin = tpcobj->GetOrigin();
       _origin_extra = tpcobj->GetOriginExtra();
       _delta_ll = delta_ll;
@@ -619,20 +660,23 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
       _fv = false;
 
-      art::Handle< std::vector<simb::MCTruth> > mctruthListHandle;
-      std::vector<art::Ptr<simb::MCTruth> > mclist;
-      if (e.getByLabel("generator",mctruthListHandle))
-        art::fill_ptr_vector(mclist, mctruthListHandle);
+      if (!e.isRealData()) {
 
-      int iList = 0; // 1 nu int per spill
+        art::Handle< std::vector<simb::MCTruth> > mctruthListHandle;
+        std::vector<art::Ptr<simb::MCTruth> > mclist;
+        if (e.getByLabel("generator",mctruthListHandle))
+          art::fill_ptr_vector(mclist, mctruthListHandle);
 
-      if (mclist[iList]->Origin() == simb::kBeamNeutrino) {
+        int iList = 0; // 1 nu int per spill
 
-        double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),
-                                  mclist[iList]->GetNeutrino().Nu().Vy(),
-                                  mclist[iList]->GetNeutrino().Nu().Vz()};
-        if (_fiducial_volume.InFV(truth_nu_vtx)) 
-          _fv = true;
+        if (mclist[iList]->Origin() == simb::kBeamNeutrino) {
+
+          double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),
+                                    mclist[iList]->GetNeutrino().Nu().Vy(),
+                                    mclist[iList]->GetNeutrino().Nu().Vz()};
+          if (_fiducial_volume.InFV(truth_nu_vtx)) 
+            _fv = true;
+        }
       }
 
       _tree1->Fill();
@@ -704,6 +748,9 @@ bool StoppingMuonTagger::IsStopMuMCS(art::Ptr<recob::Track> t, double & delta_ll
     delta_ll = fwd_ll - bwd_ll;
   else
     delta_ll = bwd_ll - fwd_ll;
+
+  if (delta_ll == -9999)
+    return false;
 
   if (_debug) std::cout <<"[StoppingMuonTagger] DELTA " << delta_ll << ", cut at " << _mcs_delta_ll_cut << std::endl;
   if (delta_ll < _mcs_delta_ll_cut)

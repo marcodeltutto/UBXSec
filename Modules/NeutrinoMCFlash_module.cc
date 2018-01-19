@@ -86,7 +86,7 @@ void NeutrinoMCFlash::produce(art::Event & e)
   e.getByLabel(_trigger_label,evt_trigger_h);
 
   if( !evt_trigger_h.isValid() || evt_trigger_h->empty() ) {
-    std::cerr << "Trigger product is not valid or empty." << std::endl;
+    std::cout << "[NeutrinoMCFlash] Trigger product is not valid or empty." << std::endl;
     e.put(std::move(opflashes));
     return;
   }
@@ -95,7 +95,7 @@ void NeutrinoMCFlash::produce(art::Event & e)
   e.getByLabel(_mctruth_label,evt_mctruth_h);
 
   if( !evt_mctruth_h.isValid() || evt_mctruth_h->empty() ) {
-    std::cerr << "MCTruth product is not valid or empty." << std::endl;
+    std::cerr << "[NeutrinoMCFlash] MCTruth product is not valid or empty." << std::endl;
     e.put(std::move(opflashes));
     return;
   }
@@ -104,7 +104,7 @@ void NeutrinoMCFlash::produce(art::Event & e)
   e.getByLabel(_simphot_label,evt_simphot_h);
 
   if( !evt_simphot_h.isValid() || evt_simphot_h->empty() ) {
-    std::cerr << "SimPhotons product is not valid or empty." << std::endl;
+    std::cerr << "[NeutrinoMCFlash] SimPhotons product is not valid or empty." << std::endl;
     e.put(std::move(opflashes));
     return;
   }
@@ -112,7 +112,7 @@ void NeutrinoMCFlash::produce(art::Event & e)
   ::art::ServiceHandle<geo::Geometry> geo; 
 
   if(evt_simphot_h->size() != geo->NOpDets()) {
-    std::cerr << "Unexpected # of channels in simphotons!" << std::endl;
+    std::cout << "[NeutrinoMCFlash] Unexpected # of channels in simphotons!" << std::endl;
     e.put(std::move(opflashes));
     return;
   }
@@ -126,6 +126,10 @@ void NeutrinoMCFlash::produce(art::Event & e)
   auto const & evt_trigger = (*evt_trigger_h)[0];
   auto const trig_time = evt_trigger.TriggerTime();
   auto const * ts = lar::providerFrom<detinfo::DetectorClocksService>();
+
+  if (_debug) std::cout << "trig_time: " << trig_time << std::endl;
+  if (_debug) std::cout << "ts->G4ToElecTime(0): " << ts->G4ToElecTime(0) << std::endl;
+  if (_debug) std::cout << "ts->G4ToElecTime(1000): " << ts->G4ToElecTime(1000) << std::endl;
 
   double nuTime = -1.e9;
   if (_debug) std::cout << "We have " << evt_mctruth_h->size() << " mctruth events." << std::endl;
@@ -175,7 +179,12 @@ void NeutrinoMCFlash::produce(art::Event & e)
 
       if (oneph.Time > nuTime + 8000 ) continue;
       if (oneph.Time > nuTime - 100){ 
-        if (_debug) std::cout << " photon time " << oneph.Time << std::endl;
+      //if (oneph.Time > -1946030 + 10000) continue;
+      //if (oneph.Time > -1946030 - 10000) {
+      //if(ts->G4ToElecTime(oneph.Time) - trig_time > -1930) continue;
+      //if(ts->G4ToElecTime(oneph.Time) - trig_time > -1960) {
+        //if (_debug) std::cout << " photon time " << oneph.Time << std::endl;
+        if (_debug) std::cout << " photon time " << ts->G4ToElecTime(oneph.Time) - trig_time << std::endl;
         pmt_v[0][opdet2opch[opdet]] += 1;
       }
     }

@@ -6,5 +6,6 @@ BEGIN_PROLOG
 NeutrinoMCFlash: {
   module_type:              "NeutrinoMCFlash"
   MCTruthProduct:           "generator" 
+  DebugMode:                false
 }
 END_PROLOG

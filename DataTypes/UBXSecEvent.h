@@ -120,6 +120,8 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_muoncandidate_mcs_ll; ///< -LL of the MCS fit
   vector<bool>     slc_muoncandidate_contained; ///< Is true if the muon candidate in the TPCObject is fully contained
   vector<double>   slc_muoncandidate_dqdx_trunc; /// dqdx truncated mean for the muon candidate
+  vector<vector<double> > slc_muoncandidate_dqdx_v; /// dqdx for every hit for the muon candidate
+  vector<bool>     slc_muoncandidate_mip_consistency; /// true if the muon candidate pass mip consistency cut
   vector<int>      slc_muoncandidate_truepdg; ///< True pdg code of the candated muon track
   vector<int>      slc_muoncandidate_trueorigin; ///< True origin of the candidate muon track
   vector<double>   slc_muoncandidate_mcs_delta_ll; ///< Delta LL from MCS fit

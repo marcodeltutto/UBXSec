@@ -614,10 +614,14 @@ void ACPTTagger::produce(art::Event & e)
       this->GetClosestDtDz(sorted_points[sorted_points.size()-1], _cathodeTime, trk_z_start, trk_z_end, _dt_d_cathode, _dz_d_cathode, false);
 
       auto const* SCE = lar::providerFrom<spacecharge::SpaceChargeService>();
-      std::vector<double> sce_corr = SCE->GetPosOffsets(256.35,
-                                    sorted_points[sorted_points.size()-1].Y(),
-                                    sorted_points[sorted_points.size()-1].Z());
-      std::cout << "[ACPTTagger] \t Eventual SCE X corretion: " << sce_corr.at(0) << std::endl;
+      std::vector<double> sce_corr_c = SCE->GetPosOffsets(256.35,
+                                       sorted_points[sorted_points.size()-1].Y(),
+                                       sorted_points[sorted_points.size()-1].Z());
+      std::cout << "[ACPTTagger] \t Eventual SCE X corretion at cathode: " << sce_corr_c.at(0) << std::endl;
+      std::vector<double> sce_corr_a = SCE->GetPosOffsets(0.,
+                                       sorted_points[sorted_points.size()-1].Y(),
+                                       sorted_points[sorted_points.size()-1].Z());
+      std::cout << "[ACPTTagger] \t Eventual SCE X corretion at anode: " << sce_corr_a.at(0) << std::endl;
 
       bool sign = this->GetSign(sorted_points);
       
@@ -656,6 +660,8 @@ void ACPTTagger::produce(art::Event & e)
       if (_debug) {
         
         std::cout << "[ACPTTagger] " << std::endl;
+        std::cout << "[ACPTTagger] _anodeTime = " << _anodeTime << std::endl;
+        std::cout << "[ACPTTagger] _cathodeTime = " << _cathodeTime << std::endl;
         std::cout << "[ACPTTagger] \t _dt_u_anode " << _dt_u_anode.back() << std::endl;
         std::cout << "[ACPTTagger] \t _dt_d_anode " << _dt_d_anode.back() << std::endl;
         std::cout << "[ACPTTagger] \t _dt_u_cathode " << _dt_u_cathode.back() << std::endl;
@@ -670,11 +676,11 @@ void ACPTTagger::produce(art::Event & e)
       
     } // Points loop
 
-    // If was not tagged, try with OpHits now
+    // If was not tagged, try with OpHits
     if (!isCosmic && _use_ophits && sorted_points_v.size() != 0 && y_up != -9999 && y_down != -9999) {
       double dt_ophits = this->GetClosestDt_OpHits(sorted_points_v.at(0), y_up, y_down);
       std::cout << "[ACPTTagger] \t dt_ophits is " << dt_ophits << std::endl;
-      if (dt_ophits != -9999 && std::abs(dt_ophits < _dt_resolution_ophit)) {
+      if (dt_ophits != -9999 && dt_ophits < _dt_resolution_ophit) {
         isCosmic = true;
         std::cout << "[ACPTTagger] \t ===> Tagged! (ophit)" << std::endl;
       }

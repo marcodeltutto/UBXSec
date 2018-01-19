@@ -15,6 +15,7 @@
 #define MUONCANDIDATEFINDER_H
 
 #include <iostream>
+#include <math.h>
 #include "fhiclcpp/ParameterSet.h"
 #include "lardataobj/RecoBase/Track.h"
 #include "lardataobj/RecoBase/Vertex.h"
@@ -47,6 +48,9 @@ namespace ubana{
     /// Print the current configuration
     void PrintConfig();
 
+    /// Reset flags
+    void Reset();
+
     /// Set the tracks 
     void SetTracks(std::vector<art::Ptr<recob::Track>> thetracks) {_tracks = thetracks; _tracks_are_set = true;}
 
@@ -55,7 +59,10 @@ namespace ubana{
 
     /// Sets the TPC object
     bool GetCandidateTrack(art::Ptr<recob::Track> &);
-    
+
+    /// Check track is consistent with muon hypothesis
+    bool MIPConsistency(double dqds, double length);
+
   protected:
 
     std::vector<art::Ptr<recob::Track>> _tracks;
@@ -65,6 +72,9 @@ namespace ubana{
 
     bool _tracks_are_set;
     bool _tracktopidmap_is_set;
+
+    std::vector<double> _svm_x;
+
   };
 }
 

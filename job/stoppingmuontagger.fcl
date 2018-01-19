@@ -13,7 +13,7 @@ StoppingMuonTagger: {
   TrackProducer:           "pandoraNu::UBXSec"
 
   UseMCS:                  true
-  MCSDeltaLLCut:           -0.4
+  MCSDeltaLLCut:           -0.1
 
   DebugMode:               true
   CreateTree:              true

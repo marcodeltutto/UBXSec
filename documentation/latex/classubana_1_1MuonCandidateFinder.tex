@@ -20,6 +20,9 @@
 \hypertarget{classubana_1_1MuonCandidateFinder_ae5aaa85fb815cd30fe1048ea5cdd387d}{void \hyperlink{classubana_1_1MuonCandidateFinder_ae5aaa85fb815cd30fe1048ea5cdd387d}{Print\-Config} ()}\label{classubana_1_1MuonCandidateFinder_ae5aaa85fb815cd30fe1048ea5cdd387d}
 
 \begin{DoxyCompactList}\small\item\em Print the current configuration. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_a946f1adda03992caa715afaac8519a7d}{void \hyperlink{classubana_1_1MuonCandidateFinder_a946f1adda03992caa715afaac8519a7d}{Reset} ()}\label{classubana_1_1MuonCandidateFinder_a946f1adda03992caa715afaac8519a7d}
+
+\begin{DoxyCompactList}\small\item\em Reset flags. \end{DoxyCompactList}\item 
 \hypertarget{classubana_1_1MuonCandidateFinder_a1cdd1745117a85bbcfc1de5167c7e688}{void \hyperlink{classubana_1_1MuonCandidateFinder_a1cdd1745117a85bbcfc1de5167c7e688}{Set\-Tracks} (std\-::vector$<$ art\-::\-Ptr$<$ recob\-::\-Track $>$$>$ thetracks)}\label{classubana_1_1MuonCandidateFinder_a1cdd1745117a85bbcfc1de5167c7e688}
 
 \begin{DoxyCompactList}\small\item\em Set the tracks. \end{DoxyCompactList}\item 
@@ -28,7 +31,10 @@
 \begin{DoxyCompactList}\small\item\em Set map from tracks to P\-I\-D for the T\-P\-C object. \end{DoxyCompactList}\item 
 \hypertarget{classubana_1_1MuonCandidateFinder_a8f852194c03bf0b3c04650850271c7d9}{bool \hyperlink{classubana_1_1MuonCandidateFinder_a8f852194c03bf0b3c04650850271c7d9}{Get\-Candidate\-Track} (art\-::\-Ptr$<$ recob\-::\-Track $>$ \&)}\label{classubana_1_1MuonCandidateFinder_a8f852194c03bf0b3c04650850271c7d9}
 
-\begin{DoxyCompactList}\small\item\em Sets the T\-P\-C object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Sets the T\-P\-C object. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_af622d542c3c3932572dc67588e75bcf6}{bool \hyperlink{classubana_1_1MuonCandidateFinder_af622d542c3c3932572dc67588e75bcf6}{M\-I\-P\-Consistency} (double dqds, double length)}\label{classubana_1_1MuonCandidateFinder_af622d542c3c3932572dc67588e75bcf6}
+
+\begin{DoxyCompactList}\small\item\em Check track is consistent with muon hypothesis. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -48,6 +54,9 @@ $<$ anab\-::\-Particle\-I\-D $>$ $>$ {\bfseries \-\_\-track\-\_\-to\-\_\-pid}}\l
 
 \item 
 \hypertarget{classubana_1_1MuonCandidateFinder_a46cb4b649e6d2d9b2e6c7641a9fd548a}{bool {\bfseries \-\_\-tracktopidmap\-\_\-is\-\_\-set}}\label{classubana_1_1MuonCandidateFinder_a46cb4b649e6d2d9b2e6c7641a9fd548a}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_ab09c2e9c8419eb520850e8e8ce3d9518}{std\-::vector$<$ double $>$ {\bfseries \-\_\-svm\-\_\-x}}\label{classubana_1_1MuonCandidateFinder_ab09c2e9c8419eb520850e8e8ce3d9518}
 
 \end{DoxyCompactItemize}
 

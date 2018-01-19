@@ -93,57 +93,67 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define MUONCANDIDATEFINDER_H</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &quot;fhiclcpp/ParameterSet.h&quot;</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;lardataobj/RecoBase/Track.h&quot;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;lardataobj/RecoBase/Vertex.h&quot;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;lardataobj/RecoBase/PFParticle.h&quot;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;larpandora/LArPandoraInterface/LArPandoraHelper.h&quot;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;lardataobj/AnalysisBase/ParticleID.h&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;uboone/UBXSec/DataTypes/TPCObject.h&quot;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span>ubana{</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  </div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="classubana_1_1MuonCandidateFinder.html">   34</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classubana_1_1MuonCandidateFinder.html">MuonCandidateFinder</a> {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <a class="code" href="classubana_1_1MuonCandidateFinder.html#a6dff5780726e46fc5ad43f41bdbc0a97">MuonCandidateFinder</a>();</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classubana_1_1MuonCandidateFinder.html#aa84c2c422211c74d00eb61cc221d8c07">   42</a></span>&#160;    <a class="code" href="classubana_1_1MuonCandidateFinder.html#aa84c2c422211c74d00eb61cc221d8c07">~MuonCandidateFinder</a>(){}</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classubana_1_1MuonCandidateFinder.html#a97d58ef9b5d26a6ccddc18f507ada1b1">Configure</a>(fhicl::ParameterSet <span class="keyword">const</span>&amp; p);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classubana_1_1MuonCandidateFinder.html#ae5aaa85fb815cd30fe1048ea5cdd387d">PrintConfig</a>();</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classubana_1_1MuonCandidateFinder.html#a1cdd1745117a85bbcfc1de5167c7e688">   51</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classubana_1_1MuonCandidateFinder.html#a1cdd1745117a85bbcfc1de5167c7e688">SetTracks</a>(std::vector&lt;art::Ptr&lt;recob::Track&gt;&gt; thetracks) {_tracks = thetracks; _tracks_are_set = <span class="keyword">true</span>;}</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classubana_1_1MuonCandidateFinder.html#adc3333300fec98b692ff12550c3d8d53">   54</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classubana_1_1MuonCandidateFinder.html#adc3333300fec98b692ff12550c3d8d53">SetTrackToPIDMap</a>(std::map&lt;art::Ptr&lt;recob::Track&gt;,art::Ptr&lt;anab::ParticleID&gt;&gt; themap) {_track_to_pid = themap; _tracktopidmap_is_set = <span class="keyword">true</span>;} </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classubana_1_1MuonCandidateFinder.html#a8f852194c03bf0b3c04650850271c7d9">GetCandidateTrack</a>(art::Ptr&lt;recob::Track&gt; &amp;);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    std::vector&lt;art::Ptr&lt;recob::Track&gt;&gt; _tracks;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    std::map&lt;art::Ptr&lt;recob::Track&gt;,art::Ptr&lt;anab::ParticleID&gt;&gt; _track_to_pid;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">bool</span> _use_pida_cut;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;math.h&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;fhiclcpp/ParameterSet.h&quot;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;lardataobj/RecoBase/Track.h&quot;</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;lardataobj/RecoBase/Vertex.h&quot;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;lardataobj/RecoBase/PFParticle.h&quot;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;larpandora/LArPandoraInterface/LArPandoraHelper.h&quot;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;lardataobj/AnalysisBase/ParticleID.h&quot;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &quot;uboone/UBXSec/DataTypes/TPCObject.h&quot;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">namespace </span>ubana{</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  </div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classubana_1_1MuonCandidateFinder.html">   35</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classubana_1_1MuonCandidateFinder.html">MuonCandidateFinder</a> {</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="classubana_1_1MuonCandidateFinder.html#a6dff5780726e46fc5ad43f41bdbc0a97">MuonCandidateFinder</a>();</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="classubana_1_1MuonCandidateFinder.html#aa84c2c422211c74d00eb61cc221d8c07">   43</a></span>&#160;    <a class="code" href="classubana_1_1MuonCandidateFinder.html#aa84c2c422211c74d00eb61cc221d8c07">~MuonCandidateFinder</a>(){}</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classubana_1_1MuonCandidateFinder.html#a97d58ef9b5d26a6ccddc18f507ada1b1">Configure</a>(fhicl::ParameterSet <span class="keyword">const</span>&amp; p);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classubana_1_1MuonCandidateFinder.html#ae5aaa85fb815cd30fe1048ea5cdd387d">PrintConfig</a>();</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classubana_1_1MuonCandidateFinder.html#a946f1adda03992caa715afaac8519a7d">Reset</a>();</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="classubana_1_1MuonCandidateFinder.html#a1cdd1745117a85bbcfc1de5167c7e688">   55</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classubana_1_1MuonCandidateFinder.html#a1cdd1745117a85bbcfc1de5167c7e688">SetTracks</a>(std::vector&lt;art::Ptr&lt;recob::Track&gt;&gt; thetracks) {_tracks = thetracks; _tracks_are_set = <span class="keyword">true</span>;}</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="classubana_1_1MuonCandidateFinder.html#adc3333300fec98b692ff12550c3d8d53">   58</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classubana_1_1MuonCandidateFinder.html#adc3333300fec98b692ff12550c3d8d53">SetTrackToPIDMap</a>(std::map&lt;art::Ptr&lt;recob::Track&gt;,art::Ptr&lt;anab::ParticleID&gt;&gt; themap) {_track_to_pid = themap; _tracktopidmap_is_set = <span class="keyword">true</span>;} </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classubana_1_1MuonCandidateFinder.html#a8f852194c03bf0b3c04650850271c7d9">GetCandidateTrack</a>(art::Ptr&lt;recob::Track&gt; &amp;);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classubana_1_1MuonCandidateFinder.html#af622d542c3c3932572dc67588e75bcf6">MIPConsistency</a>(<span class="keywordtype">double</span> dqds, <span class="keywordtype">double</span> length);</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">bool</span> _tracks_are_set;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">bool</span> _tracktopidmap_is_set;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  };</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;}</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    std::vector&lt;art::Ptr&lt;recob::Track&gt;&gt; _tracks;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    std::map&lt;art::Ptr&lt;recob::Track&gt;,art::Ptr&lt;anab::ParticleID&gt;&gt; _track_to_pid;</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor"></span> <span class="comment">// end of doxygen group </span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">bool</span> _use_pida_cut;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">bool</span> _tracks_are_set;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">bool</span> _tracktopidmap_is_set;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    std::vector&lt;double&gt; _svm_x;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  };</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;}</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="preprocessor"></span> <span class="comment">// end of doxygen group </span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
 <div class="ttc" id="classubana_1_1MuonCandidateFinder_html_a6dff5780726e46fc5ad43f41bdbc0a97"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#a6dff5780726e46fc5ad43f41bdbc0a97">ubana::MuonCandidateFinder::MuonCandidateFinder</a></div><div class="ttdeci">MuonCandidateFinder()</div><div class="ttdoc">Default constructor. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.cxx:9</div></div>
-<div class="ttc" id="classubana_1_1MuonCandidateFinder_html_a8f852194c03bf0b3c04650850271c7d9"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#a8f852194c03bf0b3c04650850271c7d9">ubana::MuonCandidateFinder::GetCandidateTrack</a></div><div class="ttdeci">bool GetCandidateTrack(art::Ptr&lt; recob::Track &gt; &amp;)</div><div class="ttdoc">Sets the TPC object. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.cxx:28</div></div>
-<div class="ttc" id="classubana_1_1MuonCandidateFinder_html_adc3333300fec98b692ff12550c3d8d53"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#adc3333300fec98b692ff12550c3d8d53">ubana::MuonCandidateFinder::SetTrackToPIDMap</a></div><div class="ttdeci">void SetTrackToPIDMap(std::map&lt; art::Ptr&lt; recob::Track &gt;, art::Ptr&lt; anab::ParticleID &gt;&gt; themap)</div><div class="ttdoc">Set map from tracks to PID for the TPC object. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.h:54</div></div>
-<div class="ttc" id="classubana_1_1MuonCandidateFinder_html_ae5aaa85fb815cd30fe1048ea5cdd387d"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#ae5aaa85fb815cd30fe1048ea5cdd387d">ubana::MuonCandidateFinder::PrintConfig</a></div><div class="ttdeci">void PrintConfig()</div><div class="ttdoc">Print the current configuration. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.cxx:21</div></div>
-<div class="ttc" id="classubana_1_1MuonCandidateFinder_html_aa84c2c422211c74d00eb61cc221d8c07"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#aa84c2c422211c74d00eb61cc221d8c07">ubana::MuonCandidateFinder::~MuonCandidateFinder</a></div><div class="ttdeci">~MuonCandidateFinder()</div><div class="ttdoc">Default destructor. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.h:42</div></div>
+<div class="ttc" id="classubana_1_1MuonCandidateFinder_html_a8f852194c03bf0b3c04650850271c7d9"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#a8f852194c03bf0b3c04650850271c7d9">ubana::MuonCandidateFinder::GetCandidateTrack</a></div><div class="ttdeci">bool GetCandidateTrack(art::Ptr&lt; recob::Track &gt; &amp;)</div><div class="ttdoc">Sets the TPC object. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.cxx:40</div></div>
+<div class="ttc" id="classubana_1_1MuonCandidateFinder_html_adc3333300fec98b692ff12550c3d8d53"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#adc3333300fec98b692ff12550c3d8d53">ubana::MuonCandidateFinder::SetTrackToPIDMap</a></div><div class="ttdeci">void SetTrackToPIDMap(std::map&lt; art::Ptr&lt; recob::Track &gt;, art::Ptr&lt; anab::ParticleID &gt;&gt; themap)</div><div class="ttdoc">Set map from tracks to PID for the TPC object. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.h:58</div></div>
+<div class="ttc" id="classubana_1_1MuonCandidateFinder_html_a946f1adda03992caa715afaac8519a7d"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#a946f1adda03992caa715afaac8519a7d">ubana::MuonCandidateFinder::Reset</a></div><div class="ttdeci">void Reset()</div><div class="ttdoc">Reset flags. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.cxx:34</div></div>
+<div class="ttc" id="classubana_1_1MuonCandidateFinder_html_ae5aaa85fb815cd30fe1048ea5cdd387d"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#ae5aaa85fb815cd30fe1048ea5cdd387d">ubana::MuonCandidateFinder::PrintConfig</a></div><div class="ttdeci">void PrintConfig()</div><div class="ttdoc">Print the current configuration. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.cxx:27</div></div>
+<div class="ttc" id="classubana_1_1MuonCandidateFinder_html_af622d542c3c3932572dc67588e75bcf6"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#af622d542c3c3932572dc67588e75bcf6">ubana::MuonCandidateFinder::MIPConsistency</a></div><div class="ttdeci">bool MIPConsistency(double dqds, double length)</div><div class="ttdoc">Check track is consistent with muon hypothesis. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.cxx:99</div></div>
+<div class="ttc" id="classubana_1_1MuonCandidateFinder_html_aa84c2c422211c74d00eb61cc221d8c07"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#aa84c2c422211c74d00eb61cc221d8c07">ubana::MuonCandidateFinder::~MuonCandidateFinder</a></div><div class="ttdeci">~MuonCandidateFinder()</div><div class="ttdoc">Default destructor. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.h:43</div></div>
 <div class="ttc" id="classubana_1_1MuonCandidateFinder_html_a97d58ef9b5d26a6ccddc18f507ada1b1"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#a97d58ef9b5d26a6ccddc18f507ada1b1">ubana::MuonCandidateFinder::Configure</a></div><div class="ttdeci">void Configure(fhicl::ParameterSet const &amp;p)</div><div class="ttdoc">Configure function parameters. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.cxx:16</div></div>
-<div class="ttc" id="classubana_1_1MuonCandidateFinder_html_a1cdd1745117a85bbcfc1de5167c7e688"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#a1cdd1745117a85bbcfc1de5167c7e688">ubana::MuonCandidateFinder::SetTracks</a></div><div class="ttdeci">void SetTracks(std::vector&lt; art::Ptr&lt; recob::Track &gt;&gt; thetracks)</div><div class="ttdoc">Set the tracks. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.h:51</div></div>
-<div class="ttc" id="classubana_1_1MuonCandidateFinder_html"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html">ubana::MuonCandidateFinder</a></div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.h:34</div></div>
+<div class="ttc" id="classubana_1_1MuonCandidateFinder_html_a1cdd1745117a85bbcfc1de5167c7e688"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html#a1cdd1745117a85bbcfc1de5167c7e688">ubana::MuonCandidateFinder::SetTracks</a></div><div class="ttdeci">void SetTracks(std::vector&lt; art::Ptr&lt; recob::Track &gt;&gt; thetracks)</div><div class="ttdoc">Set the tracks. </div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.h:55</div></div>
+<div class="ttc" id="classubana_1_1MuonCandidateFinder_html"><div class="ttname"><a href="classubana_1_1MuonCandidateFinder.html">ubana::MuonCandidateFinder</a></div><div class="ttdef"><b>Definition:</b> MuonCandidateFinder.h:35</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

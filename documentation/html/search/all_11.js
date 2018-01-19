@@ -44,10 +44,12 @@ var searchData=
   ['slc_5fmult_5ftrack',['slc_mult_track',['../classUBXSecEvent.html#a2fe1b939fcaf6ffbeb68c8879239c2c0',1,'UBXSecEvent']]],
   ['slc_5fmult_5ftrack_5ftolerance',['slc_mult_track_tolerance',['../classUBXSecEvent.html#ab49b7199fe07b6ed85017048b685d7bb',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5fcontained',['slc_muoncandidate_contained',['../classUBXSecEvent.html#acece0aff774df48cee7bd4146870c559',1,'UBXSecEvent']]],
+  ['slc_5fmuoncandidate_5fdqdx_5fv',['slc_muoncandidate_dqdx_v',['../classUBXSecEvent.html#ad66a437d850fb4a5f8fd39bffcb540ae',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5fexists',['slc_muoncandidate_exists',['../classUBXSecEvent.html#a77d7addc1e52f51c7697daab275c8bc6',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5flength',['slc_muoncandidate_length',['../classUBXSecEvent.html#aed08b3fea158e50f1f878bb211e7abb6',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5fmcs_5fdelta_5fll',['slc_muoncandidate_mcs_delta_ll',['../classUBXSecEvent.html#a2debf701edaaaf07b40603c5196c9df0',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5fmcs_5fll',['slc_muoncandidate_mcs_ll',['../classUBXSecEvent.html#a7342f551004e2275665345afe33d21a2',1,'UBXSecEvent']]],
+  ['slc_5fmuoncandidate_5fmip_5fconsistency',['slc_muoncandidate_mip_consistency',['../classUBXSecEvent.html#a535d450659bbc041a675b3c602650ce5',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5fmom_5fmcs',['slc_muoncandidate_mom_mcs',['../classUBXSecEvent.html#abfd994bade285f9f67f74f1a210f5422',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5fmom_5fmcs_5fpi',['slc_muoncandidate_mom_mcs_pi',['../classUBXSecEvent.html#a28a09d3ac5399de319c2fb2d31ea0652',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5fmom_5frange',['slc_muoncandidate_mom_range',['../classUBXSecEvent.html#a80cdc2f0c0eaac347f9475e1e04ca68b',1,'UBXSecEvent']]],
@@ -75,8 +77,8 @@ var searchData=
   ['slc_5fpassed_5fmin_5fvertex_5fquality',['slc_passed_min_vertex_quality',['../classUBXSecEvent.html#af2bdc55d1c56cea1c4e3104e262f029c',1,'UBXSecEvent']]],
   ['slc_5fvtxcheck_5fangle',['slc_vtxcheck_angle',['../classUBXSecEvent.html#af9855bb4f1c558d9032c3059beb49015',1,'UBXSecEvent']]],
   ['stoppingmuontagger',['StoppingMuonTagger',['../classStoppingMuonTagger.html',1,'']]],
-  ['stoppingmuontaggerhelper',['StoppingMuonTaggerHelper',['../classubana_1_1StoppingMuonTaggerHelper.html#afd832168d8c9f6c4f70a4dbe65508241',1,'ubana::StoppingMuonTaggerHelper']]],
   ['stoppingmuontaggerhelper',['StoppingMuonTaggerHelper',['../classubana_1_1StoppingMuonTaggerHelper.html',1,'ubana']]],
+  ['stoppingmuontaggerhelper',['StoppingMuonTaggerHelper',['../classubana_1_1StoppingMuonTaggerHelper.html#afd832168d8c9f6c4f70a4dbe65508241',1,'ubana::StoppingMuonTaggerHelper']]],
   ['stoppingmuontaggerhelper_2eh',['StoppingMuonTaggerHelper.h',['../StoppingMuonTaggerHelper_8h.html',1,'']]],
   ['subrun',['subrun',['../classUBXSecEvent.html#a15ac0be3ec941ed67ee78d27da704abb',1,'UBXSecEvent']]]
 ];

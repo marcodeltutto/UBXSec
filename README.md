@@ -6,12 +6,16 @@ Wiki Page: https://github.com/marcodeltutto/UBXSec/wiki
 
 Doxygen Documentation: https://marcodeltutto.github.io/UBXSec/documentation/html/annotated.html 
 
+Clone with `--recursive` option.
+
+Works with MCC8.5 or MCC8.6.
+
 ## How to install
 
 On uboonegpvm, from a fresh terminal session:
 
 ```
-export UBCODE_RELEASE=v06_26_01_07
+export UBCODE_RELEASE=v06_26_01_10
 export QUAL1=e10
 export QUAL2=prof
 
@@ -28,7 +32,7 @@ source localProducts_larsoft_${UBCODE_RELEASE}_${QUAL1}_${QUAL2}/setup
 cd srcs
 mrb g -t $UBCODE_RELEASE uboonecode
 cd uboonecode/uboone/
-git clone git@github.com:marcodeltutto/UBXSec.git
+git clone --recursive git@github.com:marcodeltutto/UBXSec.git
 [add UBXSec to the CMakeLists.txt]
 cd ${MRB_TOP}/build_slf6.x86_64
 mrbsetenv

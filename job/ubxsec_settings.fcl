@@ -1,3 +1,5 @@
+#include "muoncandidatefinder.fcl"
+
 BEGIN_PROLOG
 #
 # Module configuration
@@ -36,6 +38,8 @@ UBXSec: {
   PECalib:                      @local::SPECalib
 
   FiducialVolumeSettings:       @local::UBXSecFiducialVolumeSettings
+
+  MuonCandidateFinderSettings:  @local::MuonCandidateFinder
 
   NuMuCCSelectionSettings:      @local::NuMuCCSelectionSettings
 }

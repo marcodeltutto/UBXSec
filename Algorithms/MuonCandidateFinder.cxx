@@ -15,7 +15,13 @@ namespace ubana {
 
   void MuonCandidateFinder::Configure(fhicl::ParameterSet const& pset)
   {
-    _use_pida_cut   = pset.get< bool > ( "UsePIDACut", false );
+    _use_pida_cut   = pset.get<bool> ( "UsePIDACut", false );
+    _svm_x          = pset.get<std::vector<double>> ("SVM_X");
+
+    if (_svm_x.size() != 1000) {
+      std::cout << "[MuonCandidateFinder] _svm_x size error, is " << _svm_x.size() << ", should be 1000" << std::endl;
+      throw std::exception();
+    }
   }
 
   void MuonCandidateFinder::PrintConfig() {
@@ -23,6 +29,12 @@ namespace ubana {
     std::cout << "--- MuonCandidateFinder configuration:" << std::endl;
     std::cout << "---   _use_pida_cut  = " << _use_pida_cut << std::endl;
 
+  }
+
+  void MuonCandidateFinder::Reset() 
+  {
+    _tracks_are_set = false;
+    _tracktopidmap_is_set = false;    
   }
 
   bool MuonCandidateFinder::GetCandidateTrack(art::Ptr<recob::Track> & out_track) {
@@ -82,6 +94,30 @@ namespace ubana {
     return true;
   }
 
+
+
+  bool MuonCandidateFinder::MIPConsistency(double dqds, double length) {
+
+    if (length > 1000)
+      return true;
+
+    if (length < 0) {
+      std::cout << "[MuonCandidateFinder] Track length < 0?!" << std::endl;
+      return false;
+    }
+
+    int l = std::round(length);
+    double dqds_cut = _svm_x.at(l);
+
+    std::cout << "[MuonCandidateFinder] Track length is " << length << ", dqds_cut is " << dqds_cut << std::endl;
+
+    if (dqds <= dqds_cut)
+      return true;
+  
+
+    return false;
+
+  }
 }
 
 

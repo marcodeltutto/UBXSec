@@ -1068,6 +1068,22 @@ void UBXSecHelper::GetTimeCorrectedPoint(double * point_raw, double * point_corr
 
 }
 
+std::vector<double> UBXSecHelper::GetDqDxVector(std::vector<art::Ptr<anab::Calorimetry>> calos) {
+
+  std::vector<double> temp;
+
+  for (auto c : calos) {
+    if (!c) continue;
+    if (!c->PlaneID().isValid) continue;
+    int planenum = c->PlaneID().Plane;
+    if (planenum != 2) continue;
+   
+    return c->dQdx(); 
+  }
+
+  return temp;
+}
+
 //_________________________________________________________________________________
 double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry>> calos) {
 
@@ -1096,14 +1112,14 @@ double UBXSecHelper::GetDqDxTruncatedMean(std::vector<double> dqdx_v) {
     return result;
 
   //for (auto q : dqdx_v) {
-    //std::cout << "dqdx before trim: " << q * 243 << std::endl;
+    //std::cout << "dqdx before trim: " << q * 198 << std::endl;
   //}
 
   double median = GetMedian(dqdx_v);
   double std    = GetSTD(dqdx_v);
 
-  //std::cout << "median " << median << std::endl;
-  //std::cout << "std    " << std << std::endl;
+  std::cout << "median " << median << std::endl;
+  std::cout << "std    " << std << std::endl;
 
   std::vector<double> dqdx_v_trimmed;
   dqdx_v_trimmed.clear();
@@ -1112,7 +1128,7 @@ double UBXSecHelper::GetDqDxTruncatedMean(std::vector<double> dqdx_v) {
     if (q > median - n * std && 
       q < median + n * std) {
       dqdx_v_trimmed.emplace_back(q);
-        //std::cout << "dqdx after trim: " << q << std::endl;
+      //std::cout << "dqdx after trim: " << q * 198 << std::endl;
     }
   }
 

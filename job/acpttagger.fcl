@@ -28,8 +28,8 @@ ACPTTagger: {
   DzResolutionCathode:   50
   MinTrackLength:        0
 
-  DtResolutionOpHit:     11
-  OpHitTimeRes:          15
+  DtResolutionOpHit:     15
+  OpHitTimeRes:          20
   OpHitPosRes:           180
   MinOpHit:              2
   MinOpHitPE:            20

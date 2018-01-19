@@ -147,6 +147,7 @@ private:
   FindDeadRegions deadRegionsFinder;
   //ubxsec::McPfpMatch mcpfpMatcher;
   ::ubana::FiducialVolume _fiducial_volume;
+  ::ubana::MuonCandidateFinder _muon_finder;
   ::ubana::NuMuCCEventSelection _event_selection;
   ::pmtana::PECalib _pecalib;
   ::trkf::TrackMomentumCalculator _trk_mom_calculator;
@@ -295,6 +296,10 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
                              geo->DetLength());
 
   _fiducial_volume.PrintConfig();
+
+  _muon_finder.Configure(p.get<fhicl::ParameterSet>("MuonCandidateFinderSettings"));
+
+  _muon_finder.PrintConfig();
 
   _event_selection.Configure(p.get<fhicl::ParameterSet>("NuMuCCSelectionSettings"));
 
@@ -765,6 +770,7 @@ void UBXSec::produce(art::Event & e) {
   std::cout << "Trigger Time: " << detectorClocks.TriggerTime() << std::endl;
   std::cout << "Tick Period:  " << detectorClocks.OpticalClock().TickPeriod() << std::endl;
 
+
   //std::cout << "Printing waveforms" << std::endl;
   //for (auto w : waveform_v) {
   //  std::cout << "timestamp: " << w.TimeStamp() 
@@ -854,9 +860,9 @@ void UBXSec::produce(art::Event & e) {
     std::cout << "[UBXSec] \t SCE correction in x, y, z = " << sce_corr.at(0) 
                                                     << ", " << sce_corr.at(1) 
                                                     << ", " << sce_corr.at(2) << std::endl;
-    reco_nu_vtx[0] += sce_corr.at(0);
-    reco_nu_vtx[1] -= sce_corr.at(1);
-    reco_nu_vtx[2] -= sce_corr.at(2);
+    //reco_nu_vtx[0] += sce_corr.at(0);
+    //reco_nu_vtx[1] -= sce_corr.at(1);
+    //reco_nu_vtx[2] -= sce_corr.at(2);
 
     // Emplacing reco vertex
     ubxsec_event->slc_nuvtx_x[slice] = reco_nu_vtx[0];
@@ -1096,12 +1102,12 @@ void UBXSec::produce(art::Event & e) {
     //_slc_maxdistance_vtxtrack = UBXSecHelper::GetMaxTrackVertexDistance();
 
     // Muon Candidate
-    ubana::MuonCandidateFinder muon_finder;
-    muon_finder.SetTracks(track_v_v[slice]);
-    muon_finder.SetTrackToPIDMap(track_to_pid_map);
+    _muon_finder.Reset();
+    _muon_finder.SetTracks(track_v_v[slice]);
+    _muon_finder.SetTrackToPIDMap(track_to_pid_map);
     art::Ptr<recob::Track> candidate_track;
 
-    bool muon_cand_exists = muon_finder.GetCandidateTrack(candidate_track);
+    bool muon_cand_exists = _muon_finder.GetCandidateTrack(candidate_track);
 
     if (muon_cand_exists) {
 
@@ -1122,18 +1128,26 @@ void UBXSec::produce(art::Event & e) {
         ubxsec_event->slc_muoncandidate_mom_mcs[slice] = mcsfitresult_mu_v.at(candidate_track.key())->fwdMomentum();
         ubxsec_event->slc_muoncandidate_mcs_ll[slice]  = mcsfitresult_mu_v.at(candidate_track.key())->fwdLogLikelihood();
         ubxsec_event->slc_muoncandidate_mom_mcs_pi[slice] = mcsfitresult_pi_v.at(candidate_track.key())->fwdMomentum();
+        std::cout << "Muon MCS LL: " << mcsfitresult_mu_v.at(candidate_track.key())->fwdLogLikelihood() << std::endl;
+        std::cout << "Pion MCS LL: " << mcsfitresult_pi_v.at(candidate_track.key())->fwdLogLikelihood() << std::endl;
       } else {
         ubxsec_event->slc_muoncandidate_mom_mcs[slice] = mcsfitresult_mu_v.at(candidate_track.key())->bwdMomentum();
         ubxsec_event->slc_muoncandidate_mcs_ll[slice]  = mcsfitresult_mu_v.at(candidate_track.key())->bwdLogLikelihood();
         ubxsec_event->slc_muoncandidate_mom_mcs_pi[slice] = mcsfitresult_pi_v.at(candidate_track.key())->bwdMomentum();
+        std::cout << "Muon MCS LL: " << mcsfitresult_mu_v.at(candidate_track.key())->bwdLogLikelihood() << std::endl;
+        std::cout << "Pion MCS LL: " << mcsfitresult_pi_v.at(candidate_track.key())->bwdLogLikelihood() << std::endl;
       }
       // Also see if the track is recon going downwards (for cosmic studies)
       bool track_going_down = candidate_track->Vertex().Y() > candidate_track->End().Y();
 
       // Look at calorimetry for the muon candidate
       std::vector<art::Ptr<anab::Calorimetry>> calos = calos_from_track.at(candidate_track.key());
+      ubxsec_event->slc_muoncandidate_dqdx_v[slice] = UBXSecHelper::GetDqDxVector(calos);
       ubxsec_event->slc_muoncandidate_dqdx_trunc[slice] = UBXSecHelper::GetDqDxTruncatedMean(calos);
+      ubxsec_event->slc_muoncandidate_mip_consistency[slice] = _muon_finder.MIPConsistency(ubxsec_event->slc_muoncandidate_dqdx_trunc[slice],
+                                                                                           ubxsec_event->slc_muoncandidate_length[slice]);
       std::cout << "[UBXSec] \t Truncated mean dQ/ds for candidate is: " << ubxsec_event->slc_muoncandidate_dqdx_trunc[slice] << std::endl;
+      std::cout << "[UBXSec] \t MIP consistent ? : " << (ubxsec_event->slc_muoncandidate_mip_consistency[slice] ? "YES" : "NO") << std::endl;
 
       // Get the related PFP
       art::Ptr<recob::PFParticle> candidate_pfp = pfp_from_track.at(candidate_track.key()).at(0);
@@ -1144,8 +1158,16 @@ void UBXSec::produce(art::Event & e) {
         //const auto mc_truth = bt->TrackIDToMCTruth(mcpar->TrackId());
         ubxsec_event->slc_muoncandidate_truepdg[slice] = mcpar->PdgCode();
         if (mc_truth) {
-          if (mc_truth->Origin() == simb::kBeamNeutrino && mcpar->PdgCode() == 13 && mcpar->Mother() == 0) {
+
+          // Check the true origin of the candidate PFP
+          if (mc_truth->Origin() == simb::kBeamNeutrino) {
             ubxsec_event->slc_muoncandidate_trueorigin[slice] = ubana::kBeamNeutrino;
+          } else if (mc_truth->Origin() == simb::kCosmicRay) {
+            ubxsec_event->slc_muoncandidate_trueorigin[slice] = ubana::kCosmicRay;
+          }
+
+          // Now make momentum distributions
+          if (mc_truth->Origin() == simb::kBeamNeutrino && mcpar->PdgCode() == 13 && mcpar->Mother() == 0) {
             _h_mom_true_mcs->Fill(mcpar->P(), ubxsec_event->slc_muoncandidate_mom_mcs[slice]);
             if (fully_contained) {
               _mom_true_contained = mcpar->P();
@@ -1164,7 +1186,6 @@ void UBXSec::produce(art::Event & e) {
             }
           }
           if (mc_truth->Origin() == simb::kCosmicRay && (mcpar->PdgCode() == 13 || mcpar->PdgCode() == -13)) {
-            ubxsec_event->slc_muoncandidate_trueorigin[slice] = ubana::kCosmicRay;
             _mom_cosmic_true = mcpar->P();
             _mom_cosmic_mcs = ubxsec_event->slc_muoncandidate_mom_mcs[slice];
             _mom_cosmic_mcs_downforced = track_going_down ?   mcsfitresult_mu_v.at(candidate_track.key())->fwdMomentum() 

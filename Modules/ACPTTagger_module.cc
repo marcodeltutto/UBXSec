@@ -999,8 +999,16 @@ void ACPTTagger::SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vec
               return a->PeakTime() > b->PeakTime();
             });
 
+  // Find wire no and time of the highest point
   double time_highest = fDetectorProperties->ConvertXToTicks(highest_point.X(), geo::PlaneID(0,0,2));
-  int wire_highest = geo->NearestWire(highest_point, planeno);
+  int wire_highest = -1;
+  try {
+    wire_highest = geo->NearestWire(highest_point, planeno);
+  } catch (cet::exception &e) {
+  }
+
+  if (wire_highest == -1)
+    return;
 
   std::cout << "[ACPTTagger] \t wire_highest " << wire_highest << ", time_highest " << time_highest << std::endl;
 

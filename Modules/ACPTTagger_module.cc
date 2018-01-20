@@ -617,11 +617,11 @@ void ACPTTagger::produce(art::Event & e)
       std::vector<double> sce_corr_c = SCE->GetPosOffsets(256.35,
                                        sorted_points[sorted_points.size()-1].Y(),
                                        sorted_points[sorted_points.size()-1].Z());
-      std::cout << "[ACPTTagger] \t Eventual SCE X corretion at cathode: " << sce_corr_c.at(0) << std::endl;
+      if (_debug) std::cout << "[ACPTTagger] \t Eventual SCE X corretion at cathode: " << sce_corr_c.at(0) << std::endl;
       std::vector<double> sce_corr_a = SCE->GetPosOffsets(0.,
                                        sorted_points[sorted_points.size()-1].Y(),
                                        sorted_points[sorted_points.size()-1].Z());
-      std::cout << "[ACPTTagger] \t Eventual SCE X corretion at anode: " << sce_corr_a.at(0) << std::endl;
+      if (_debug) std::cout << "[ACPTTagger] \t Eventual SCE X corretion at anode: " << sce_corr_a.at(0) << std::endl;
 
       bool sign = this->GetSign(sorted_points);
       
@@ -679,10 +679,10 @@ void ACPTTagger::produce(art::Event & e)
     // If was not tagged, try with OpHits
     if (!isCosmic && _use_ophits && sorted_points_v.size() != 0 && y_up != -9999 && y_down != -9999) {
       double dt_ophits = this->GetClosestDt_OpHits(sorted_points_v.at(0), y_up, y_down);
-      std::cout << "[ACPTTagger] \t dt_ophits is " << dt_ophits << std::endl;
+      if (_debug) std::cout << "[ACPTTagger] \t dt_ophits is " << dt_ophits << std::endl;
       if (dt_ophits != -9999 && dt_ophits < _dt_resolution_ophit) {
         isCosmic = true;
-        std::cout << "[ACPTTagger] \t ===> Tagged! (ophit)" << std::endl;
+        if (_debug) std::cout << "[ACPTTagger] \t ===> Tagged! (ophit)" << std::endl;
       }
 
     }
@@ -1010,7 +1010,7 @@ void ACPTTagger::SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vec
   if (wire_highest == -1)
     return;
 
-  std::cout << "[ACPTTagger] \t wire_highest " << wire_highest << ", time_highest " << time_highest << std::endl;
+  if (_debug) std::cout << "[ACPTTagger] \t wire_highest " << wire_highest << ", time_highest " << time_highest << std::endl;
 
   TVector3 pt0 (wire_highest,                             time_highest,                         0);
   TVector3 pt_1 (hit_v.at(0)->WireID().Wire,              hit_v.at(0)->PeakTime(),              0);
@@ -1022,8 +1022,8 @@ void ACPTTagger::SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vec
     hit_v.at(hit_v.size()-1) = temp;
   }
 
-  std::cout << "[ACPTTagger] \t first pt wire " << hit_v.at(0)->WireID().Wire << ", time " << hit_v.at(0)->PeakTime() << ", which is x " << fDetectorProperties->ConvertTicksToX(hit_v.at(0)->PeakTime(), geo::PlaneID(0,0,2)) << std::endl;   
-  std::cout << "[ACPTTagger] \t second pt wire " << hit_v.at(hit_v.size()-1)->WireID().Wire << ", time " << hit_v.at(hit_v.size()-1)->PeakTime() << ", which is x " << fDetectorProperties->ConvertTicksToX(hit_v.at(hit_v.size()-1)->PeakTime(), geo::PlaneID(0,0,2)) << std::endl; 
+  if (_debug) std::cout << "[ACPTTagger] \t first pt wire " << hit_v.at(0)->WireID().Wire << ", time " << hit_v.at(0)->PeakTime() << ", which is x " << fDetectorProperties->ConvertTicksToX(hit_v.at(0)->PeakTime(), geo::PlaneID(0,0,2)) << std::endl;   
+  if (_debug) std::cout << "[ACPTTagger] \t second pt wire " << hit_v.at(hit_v.size()-1)->WireID().Wire << ", time " << hit_v.at(hit_v.size()-1)->PeakTime() << ", which is x " << fDetectorProperties->ConvertTicksToX(hit_v.at(hit_v.size()-1)->PeakTime(), geo::PlaneID(0,0,2)) << std::endl; 
      
   // Just save start and end point
   sorted_points.resize(2);

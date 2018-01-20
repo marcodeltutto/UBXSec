@@ -7,6 +7,26 @@
 // from cetlib version v2_03_00.
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ * \class ACPTTagger
+ *
+ * \ingroup UBXSec
+ *
+ * \brief Art producer module that tags particle piercing anode or cathode
+ * 
+ *
+ * \author Marco Del Tutto <marco.deltutto@physics.ox.ac.uk>
+ *
+ * \version producer (art v2_06_03)
+ *
+ * \date 2017/03/10
+ *
+ * Contact: marco.deltutto@physics.ox.ac.uk
+ *
+ * Created on: Thu Jun  8 06:01:57 2017
+ *
+ */
+
 #include "art/Framework/Core/EDProducer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"

@@ -8,13 +8,23 @@
 ////////////////////////////////////////////////////////////////////////
 
 /**
- * \file TPCObjectMaker_module.cc
+ * \class TPCObjectMaker
  *
  * \ingroup UBXSec
- * 
- * \brief LArSoft plugin to generate TPC Objects
  *
- * @author Marco Del Tutto
+ * \brief Art producer module that creates TPCObjects
+ * 
+ *
+ * \author Marco Del Tutto <marco.deltutto@physics.ox.ac.uk>
+ *
+ * \version producer (art v2_05_00)
+ *
+ * \date 2017/03/10
+ *
+ * Contact: marco.deltutto@physics.ox.ac.uk
+ *
+ * Created on: Mon May 15 10:56:05 2017
+ *
  */
 
 /** \addtogroup UBXSec

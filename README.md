@@ -8,7 +8,7 @@ Doxygen Documentation: https://marcodeltutto.github.io/UBXSec/documentation/html
 
 Clone with `--recursive` option.
 
-Works with MCC8.5 or MCC8.6.
+Works with MCC8.6.
 
 ## How to install
 

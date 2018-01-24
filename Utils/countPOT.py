@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# usage: python countPOT.py -f /path/to/ubxsec_output.root
+
 import argparse
 parser = argparse.ArgumentParser(description='Counts POT.')
 parser.add_argument('-f', action='store', dest='infile',

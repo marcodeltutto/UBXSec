@@ -15,11 +15,11 @@
  * \brief Art producer module
  * 
  *
- * \author $Author: Marco Del Tutto<marco.deltutto@physics.ox.ac.uk> $
+ * \author Marco Del Tutto <marco.deltutto@physics.ox.ac.uk>
  *
- * \version $Revision: 1.0 $
+ * \version producer 
  *
- * \date $Date: 2017/03/10 $
+ * \date 2017/03/10
  *
  * Contact: marco.deltutto@physics.ox.ac.uk
  *

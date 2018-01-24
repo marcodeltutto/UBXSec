@@ -7,6 +7,26 @@
 // from cetlib version v2_03_00.
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ * \class ACPTTagger
+ *
+ * \ingroup UBXSec
+ *
+ * \brief Art producer module that tags particles piercing the anode or cathode
+ * 
+ *
+ * \author Marco Del Tutto <marco.deltutto@physics.ox.ac.uk>
+ *
+ * \version producer (art v2_06_03)
+ *
+ * \date 2017/03/10
+ *
+ * Contact: marco.deltutto@physics.ox.ac.uk
+ *
+ * Created on: Thu Jun  8 06:01:57 2017
+ *
+ */
+
 #include "art/Framework/Core/EDProducer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
@@ -68,17 +88,21 @@ private:
   bool GetClosestDtDz(TVector3 _end, double _value, double trk_z_start, double trk_z_end, std::vector<double> &_dt, std::vector<double> &_dz, bool fill_histo);
   /// Returns true if sign is positive, negative otherwise
   bool GetSign(std::vector<TVector3> sorted_points);
-  /// ?
+  /// Returns the dt to closest OpHits in time with being ACPT and in Z position
   double GetClosestDt_OpHits(std::vector<TVector3>&, double y_up, double y_down);
-  /// ?
+  /// Given the time of anode/cathode crossing, and track z start and end, returns the average dt to closest OpHits 
   double RunOpHitFinder(double the_time, double trk_z_start, double trk_z_end);
-  /// ?
+  /// Checks if the passed point is outside the FV in the upper part of the detector
   bool IsInUpperDet(double y_up);
-  /// ?
+  /// Checks if the passed point is outside the FV in the lower part of the detector
   bool IsInLowerDet(double y_down);
+  /// Orders track points from highest to lowest (along Y coordinate)
   void SortTrackPoints(const recob::Track& track, std::vector<TVector3>& sorted_points);
+  /// Orders spacepoints from highest to lowest (along Y coordinate)
   void SortSpacePoints(std::vector<art::Ptr<recob::SpacePoint>> sp_v, std::vector<TVector3>& sorted_points);
+  /// Orders spacepoints from highest to lowest (in terms of recorded time, so from highest X to lowest X)
   void SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vector<TVector3>& sorted_points, TVector3 highest_point, size_t planeno);
+  /// Takes a point as input and, if outside the TPC, returns a points on the borser of the TPC, returns the same point if in the TPC
   TVector3 ContainPoint(TVector3 p);
  
   std::string _flash_producer;
@@ -162,7 +186,7 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
 
   fDetectorProperties    = lar::providerFrom<detinfo::DetectorPropertiesService>(); 
 
-  _use_tracks            = p.get<bool>("UseSpaceTracks", true);
+  _use_tracks            = p.get<bool>("UseTracks", true);
   _use_spacepoints       = p.get<bool>("UseSpacePoints", false);
   _use_hits              = p.get<bool>("UseHits", false);
   _merge_planes          = p.get<bool>("MergePlanes", false);
@@ -456,7 +480,6 @@ void ACPTTagger::produce(art::Event & e)
           z_start = pts.at(0).Z();
           z_end = pts.at(1).Z();
           if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for hits on plane 2" << std::endl;
-          //sorted_points_v.emplace_back(pts);
           highest_points.push_back(pts[0]);
           lowest_points.push_back(pts[1]);
         } else {
@@ -466,11 +489,10 @@ void ACPTTagger::produce(art::Event & e)
         // Plane 1
         this->SortHitPoints(hit_v, pts, hp, 1);
         if (pts.size() == 2) {
-          // Hack z pos untill I know how to do it
+          // Hack z pos 
           pts.at(0).SetZ(z_start);
           pts.at(1).SetZ(z_end);
           if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for hits on plane 1" << std::endl;
-          //sorted_points_v.emplace_back(pts); 
           highest_points.push_back(pts[0]);
           lowest_points.push_back(pts[1]);
         } else {
@@ -480,11 +502,10 @@ void ACPTTagger::produce(art::Event & e)
         // Plane 0
         this->SortHitPoints(hit_v, pts, hp, 0);
         if (pts.size() == 2) {
-          // Hack z pos untill I know how to do it
+          // Hack z pos 
           pts.at(0).SetZ(z_start);
           pts.at(1).SetZ(z_end);
           if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for hits on plane 0" << std::endl;
-          //sorted_points_v.emplace_back(pts);
           highest_points.push_back(pts[0]);
           lowest_points.push_back(pts[1]);
         } else {
@@ -548,8 +569,8 @@ void ACPTTagger::produce(art::Event & e)
         // Just emplace the last points
         for (size_t i = 0; i < highest_points.size(); i++){
           std::vector<TVector3> temp;
-          temp.emplace_back(highest_points.at(0));
-          temp.emplace_back(lowest_points.at(0));
+          temp.emplace_back(highest_points.at(i));
+          temp.emplace_back(lowest_points.at(i));
           sorted_points_v.emplace_back(temp);
         }  
       }
@@ -560,32 +581,37 @@ void ACPTTagger::produce(art::Event & e)
 
     if (_use_tracks) {
       if(_debug) std::cout << "[ACPTTagger] -> Using Tracks" << std::endl;
-      for (auto t : track_v) {
-        if (t->Length() < _min_track_length) continue;   
-        std::vector<TVector3> pts;
-        this->SortTrackPoints(*t, pts);
-        if (pts.size() >= 2) {
-          _trk_len.emplace_back(t->Length());
-          _trk_x_up.emplace_back(pts[0].X());
-          _trk_x_down.emplace_back(pts[pts.size()-1].X());
-          double z_center = pts[0].Z();
-          z_center += pts[pts.size()-1].Z();
-          z_center /= 2.;
-          _trk_z_center.emplace_back(z_center);
+    }
+    // Need to look at tracks anyway to get y_up and y_down...
+    for (auto t : track_v) {
+      if (t->Length() < _min_track_length) continue;   
+      std::vector<TVector3> pts;
+      this->SortTrackPoints(*t, pts);
+      if (pts.size() >= 2) {
+        _trk_len.emplace_back(t->Length());
+        _trk_x_up.emplace_back(pts[0].X());
+        _trk_x_down.emplace_back(pts[pts.size()-1].X());
+        double z_center = pts[0].Z();
+        z_center += pts[pts.size()-1].Z();
+        z_center /= 2.;
+        _trk_z_center.emplace_back(z_center);
 
-          TVector3 start = pts[0];
-
-          TVector3 end = pts[pts.size()-1];
-          pts.resize(2);
-          pts.at(0) = start;
-          pts.at(1) = end;
-          y_up = pts.at(0).Y();
-          y_down = pts.at(1).Y();
+        TVector3 start = pts[0];
+        TVector3 end = pts[pts.size()-1];
+        pts.clear();
+        pts.resize(2);
+        pts.at(0) = start;
+        pts.at(1) = end;
+        y_up = pts.at(0).Y();
+        y_down = pts.at(1).Y();
+        if (_use_tracks) {
+          // ...but only emplace them if we want them!
           if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for tracks." << std::endl;
           sorted_points_v.emplace_back(pts); 
-        } 
-      }
+        }
+      } 
     }
+  
       
 
     //
@@ -617,11 +643,11 @@ void ACPTTagger::produce(art::Event & e)
       std::vector<double> sce_corr_c = SCE->GetPosOffsets(256.35,
                                        sorted_points[sorted_points.size()-1].Y(),
                                        sorted_points[sorted_points.size()-1].Z());
-      std::cout << "[ACPTTagger] \t Eventual SCE X corretion at cathode: " << sce_corr_c.at(0) << std::endl;
+      if (_debug) std::cout << "[ACPTTagger] \t Eventual SCE X corretion at cathode: " << sce_corr_c.at(0) << std::endl;
       std::vector<double> sce_corr_a = SCE->GetPosOffsets(0.,
                                        sorted_points[sorted_points.size()-1].Y(),
                                        sorted_points[sorted_points.size()-1].Z());
-      std::cout << "[ACPTTagger] \t Eventual SCE X corretion at anode: " << sce_corr_a.at(0) << std::endl;
+      if (_debug) std::cout << "[ACPTTagger] \t Eventual SCE X corretion at anode: " << sce_corr_a.at(0) << std::endl;
 
       bool sign = this->GetSign(sorted_points);
       
@@ -679,10 +705,10 @@ void ACPTTagger::produce(art::Event & e)
     // If was not tagged, try with OpHits
     if (!isCosmic && _use_ophits && sorted_points_v.size() != 0 && y_up != -9999 && y_down != -9999) {
       double dt_ophits = this->GetClosestDt_OpHits(sorted_points_v.at(0), y_up, y_down);
-      std::cout << "[ACPTTagger] \t dt_ophits is " << dt_ophits << std::endl;
+      if (_debug) std::cout << "[ACPTTagger] \t dt_ophits is " << dt_ophits << std::endl;
       if (dt_ophits != -9999 && dt_ophits < _dt_resolution_ophit) {
         isCosmic = true;
-        std::cout << "[ACPTTagger] \t ===> Tagged! (ophit)" << std::endl;
+        if (_debug) std::cout << "[ACPTTagger] \t ===> Tagged! (ophit)" << std::endl;
       }
 
     }
@@ -827,19 +853,6 @@ double ACPTTagger::GetClosestDt_OpHits(std::vector<TVector3> & sorted_points, do
     dt_v.emplace_back(this->RunOpHitFinder(flash_time_cathode_u, trk_z_start, trk_z_end));
   }
 
-  /*
-  std::vector<double> dt_v;
-  dt_v.resize(2);
-  if (sign) {
-    if (_debug) std::cout << "[ACPTTagger] \t Only looking at anode-up and cathode-down" << std::endl;
-    dt_v.at(0) = this->RunOpHitFinder(flash_time_anode_u, trk_z_start, trk_z_end);
-    dt_v.at(1) = this->RunOpHitFinder(flash_time_cathode_d, trk_z_start, trk_z_end);
-  } else {
-    if (_debug) std::cout << "[ACPTTagger] \t Only looking at anode-down and cathode-up" << std::endl;
-    dt_v.at(0) = this->RunOpHitFinder(flash_time_anode_d, trk_z_start, trk_z_end);
-    dt_v.at(1) = this->RunOpHitFinder(flash_time_cathode_u, trk_z_start, trk_z_end);
-  }
-  */
 
   double min_dt = 1e9;
   bool min_dt_found = false;
@@ -865,10 +878,10 @@ double ACPTTagger::RunOpHitFinder(double the_time, double trk_z_start, double tr
 
 
   if (_debug) {
-    //std::cout << "_ophit_time_res is " << _ophit_time_res << std::endl;
-    //std::cout << "_ophit_pos_res is " << _ophit_pos_res << std::endl;
-    //std::cout << "_n_ophit is " << _n_ophit << std::endl;
-    //std::cout << "_ophit_pe is " << _ophit_pe << std::endl;
+    std::cout << "[ACPTTagger] \t _ophit_time_res is " << _ophit_time_res << std::endl;
+    std::cout << "[ACPTTagger] \t _ophit_pos_res is " << _ophit_pos_res << std::endl;
+    std::cout << "[ACPTTagger] \t _n_ophit is " << _n_ophit << std::endl;
+    std::cout << "[ACPTTagger] \t _ophit_pe is " << _ophit_pe << std::endl;
   }
 
   std::vector<double> ophit_sel_time;
@@ -967,7 +980,6 @@ void ACPTTagger::SortSpacePoints(std::vector<art::Ptr<recob::SpacePoint>> sp_v, 
   sorted_points.at(0) = std::move(pt1);
   sorted_points.at(1) = std::move(pt2);
   
-
 }
 
 
@@ -999,10 +1011,18 @@ void ACPTTagger::SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vec
               return a->PeakTime() > b->PeakTime();
             });
 
+  // Find wire no and time of the highest point
   double time_highest = fDetectorProperties->ConvertXToTicks(highest_point.X(), geo::PlaneID(0,0,2));
-  int wire_highest = geo->NearestWire(highest_point, planeno);
+  int wire_highest = -1;
+  try {
+    wire_highest = geo->NearestWire(highest_point, planeno);
+  } catch (cet::exception &e) {
+  }
 
-  std::cout << "[ACPTTagger] \t wire_highest " << wire_highest << ", time_highest " << time_highest << std::endl;
+  if (wire_highest == -1)
+    return;
+
+  if (_debug) std::cout << "[ACPTTagger] \t wire_highest " << wire_highest << ", time_highest " << time_highest << std::endl;
 
   TVector3 pt0 (wire_highest,                             time_highest,                         0);
   TVector3 pt_1 (hit_v.at(0)->WireID().Wire,              hit_v.at(0)->PeakTime(),              0);
@@ -1014,8 +1034,8 @@ void ACPTTagger::SortHitPoints(std::vector<art::Ptr<recob::Hit>> hit_v, std::vec
     hit_v.at(hit_v.size()-1) = temp;
   }
 
-  std::cout << "[ACPTTagger] \t first pt wire " << hit_v.at(0)->WireID().Wire << ", time " << hit_v.at(0)->PeakTime() << ", which is x " << fDetectorProperties->ConvertTicksToX(hit_v.at(0)->PeakTime(), geo::PlaneID(0,0,2)) << std::endl;   
-  std::cout << "[ACPTTagger] \t second pt wire " << hit_v.at(hit_v.size()-1)->WireID().Wire << ", time " << hit_v.at(hit_v.size()-1)->PeakTime() << ", which is x " << fDetectorProperties->ConvertTicksToX(hit_v.at(hit_v.size()-1)->PeakTime(), geo::PlaneID(0,0,2)) << std::endl; 
+  if (_debug) std::cout << "[ACPTTagger] \t first pt wire " << hit_v.at(0)->WireID().Wire << ", time " << hit_v.at(0)->PeakTime() << ", which is x " << fDetectorProperties->ConvertTicksToX(hit_v.at(0)->PeakTime(), geo::PlaneID(0,0,2)) << std::endl;   
+  if (_debug) std::cout << "[ACPTTagger] \t second pt wire " << hit_v.at(hit_v.size()-1)->WireID().Wire << ", time " << hit_v.at(hit_v.size()-1)->PeakTime() << ", which is x " << fDetectorProperties->ConvertTicksToX(hit_v.at(hit_v.size()-1)->PeakTime(), geo::PlaneID(0,0,2)) << std::endl; 
      
   // Just save start and end point
   sorted_points.resize(2);
@@ -1080,7 +1100,8 @@ bool ACPTTagger::GetSign(std::vector<TVector3> sorted_points)
 
 }
 
-bool ACPTTagger::IsInUpperDet(double y_up) {
+bool ACPTTagger::IsInUpperDet(double y_up) 
+{
 
   if (y_up > geo->DetHalfHeight() - _UP) {
     return true;
@@ -1089,7 +1110,8 @@ bool ACPTTagger::IsInUpperDet(double y_up) {
   return false;
 }
 
-bool ACPTTagger::IsInLowerDet(double y_down) {
+bool ACPTTagger::IsInLowerDet(double y_down) 
+{
 
   if (y_down < -geo->DetHalfHeight() + _DOWN) {
     return true;
@@ -1098,7 +1120,8 @@ bool ACPTTagger::IsInLowerDet(double y_down) {
   return false;
 }
 
-TVector3 ACPTTagger::ContainPoint(TVector3 p) {
+TVector3 ACPTTagger::ContainPoint(TVector3 p) 
+{
 
   TVector3 p_out = p;
 

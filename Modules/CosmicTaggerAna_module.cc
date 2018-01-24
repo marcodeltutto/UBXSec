@@ -7,6 +7,26 @@
 // from cetlib version v1_21_00.
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ * \class CosmicTaggerAna
+ *
+ * \ingroup UBXSec
+ *
+ * \brief Art analyzer module that analyzes cosmic tags created for cosmic removal
+ * 
+ *
+ * \author Marco Del Tutto <marco.deltutto@physics.ox.ac.uk>
+ *
+ * \version analyzer (art v2_05_00)
+ *
+ * \date 2017/03/10
+ *
+ * Contact: marco.deltutto@physics.ox.ac.uk
+ *
+ * Created on: Fri Dec  9 09:44:39 2016
+ *
+ */
+
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"

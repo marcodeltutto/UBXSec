@@ -118,6 +118,20 @@ namespace ubana {
     return false;
 
   }
+
+  /*
+  bool MuonCandidateFinder::SVMPredict(double dqds, double length) {
+
+    double gamma = 0.1;
+    double degree = 2.;
+    double r = 0.;
+
+    double rho = 14.96135081;
+
+    int loop = 374;
+
+  }
+  */
 }
 
 

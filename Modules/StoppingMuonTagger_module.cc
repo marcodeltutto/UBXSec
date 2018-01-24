@@ -7,6 +7,26 @@
 // from cetlib version v1_21_00.
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ * \class StoppingMuonTagger
+ *
+ * \ingroup UBXSec
+ *
+ * \brief Art producer module that tags stopping muons
+ * 
+ *
+ * \author Marco Del Tutto <marco.deltutto@physics.ox.ac.uk>
+ *
+ * \version producer (art v2_05_00)
+ *
+ * \date 2017/03/10
+ *
+ * Contact: marco.deltutto@physics.ox.ac.uk
+ *
+ * Created on: Fri Oct  6 15:55:20 2017
+ *
+ */
+
 #include "art/Framework/Core/EDProducer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"
@@ -99,6 +119,7 @@ private:
   ::ubana::StoppingMuonTaggerHelper _helper;
 
   ::trkf::TrajectoryMCSFitter _mcs_fitter;
+  ::recob::MCSFitResult _result;
 
   /// Takes a pointer to a point, and, if outside the dector, puts it at the det border
   void ContainPoint(double * point);
@@ -403,7 +424,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
               });
 
     if (sp_v.size() == 0) {
-      std::cout << "[StoppingMuonTagger] Not enough spacepoints." << std::endl;
+      if (_debug) std::cout << "[StoppingMuonTagger] Not enough spacepoints." << std::endl;
       continue;
     }
 
@@ -540,7 +561,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
     bool ct_result_michel = false;
     bool ct_result_bragg = false;
-    bool ct_result_simplemip = false;
+   // bool ct_result_simplemip = false;
 
     if (passed) {
 
@@ -548,12 +569,14 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
       if (_debug) _ct_manager.PrintOnFile(i);
 
+
       cosmictag::SimpleCluster processed_cluster = _ct_manager.GetCluster();
 
       // Michel algo
       //((cosmictag::StopMuMichel*)(_ct_manager.GetCustomAlgo("StopMuMichel")))->PrintConfig();
       ct_result_michel = ((cosmictag::StopMuMichel*)(_ct_manager.GetCustomAlgo("StopMuMichel")))->IsStopMuMichel(processed_cluster);
       if(_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (michel)? " << (ct_result_michel ? "YES" : "NO") << std::endl;
+
 
 
       // Bragg algo
@@ -565,8 +588,8 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
       // CosmicSimpleMIP
       //((cosmictag::CosmicSimpleMIP*)(_ct_manager.GetCustomAlgo("CosmicSimpleMIP")))->PrintConfig();
-      ct_result_simplemip = ((cosmictag::CosmicSimpleMIP*)(_ct_manager.GetCustomAlgo("CosmicSimpleMIP")))->IsCosmicSimpleMIP(processed_cluster);
-      if(_debug) std::cout << "[StoppingMuonTagger] Is simple MIP? " << (ct_result_simplemip ? "YES" : "NO") << std::endl;
+      //ct_result_simplemip = ((cosmictag::CosmicSimpleMIP*)(_ct_manager.GetCustomAlgo("CosmicSimpleMIP")))->IsCosmicSimpleMIP(processed_cluster);
+      //if(_debug) std::cout << "[StoppingMuonTagger] Is simple MIP? " << (ct_result_simplemip ? "YES" : "NO") << std::endl;
 
     }
 
@@ -737,10 +760,10 @@ bool StoppingMuonTagger::IsStopMuMCS(art::Ptr<recob::Track> t, double & delta_ll
     return false;
   }
 
-  recob::MCSFitResult result = _mcs_fitter.fitMcs(*t);
+  _result = _mcs_fitter.fitMcs(*t);
 
-  double fwd_ll = result.fwdLogLikelihood();
-  double bwd_ll = result.bwdLogLikelihood(); 
+  double fwd_ll = _result.fwdLogLikelihood();
+  double bwd_ll = _result.bwdLogLikelihood(); 
 
   if (_debug) std::cout <<"[StoppingMuonTagger] FWD " << fwd_ll << ", BWD " << bwd_ll << std::endl;
 

@@ -10,7 +10,7 @@
 <!ENTITY file_type "data">
 <!ENTITY run_type "physics">
 <!ENTITY PNFSpath "/pnfs/uboone/persistent/users/mdeltutt/">
-<!ENTITY ubxsec_version "v2.0.2">
+<!ENTITY ubxsec_version "mcc8.3_stopmu_test14">
 ]>
 
 
@@ -33,7 +33,7 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Oct26_22_06.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.3_stopmu_test14.tgz</local>
   </larsoft>
 
   <!-- Project stages -->

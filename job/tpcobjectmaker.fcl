@@ -29,6 +29,8 @@ TPCObjectMakerCosmic: {
   HitProducer:                "gaushit"
   GeantModule:                "largeant"
   SpacePointProducer:         "pandoraCosmic"
+  MCPHitAssProducer:          "gaushitTruthMatch"
+  UsePremadeMCPHitAss:        true
   FilterObjects:              false
   PandorCosmicMode:           true
   Debug:                      true

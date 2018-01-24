@@ -15,7 +15,7 @@ StoppingMuonTagger: {
   UseMCS:                  false
   MCSDeltaLLCut:           -0.1
 
-  DebugMode:               true
+  DebugMode:               false
   CreateTree:              true
 
   CoplanarCut:             6.

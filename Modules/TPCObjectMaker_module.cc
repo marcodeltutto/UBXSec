@@ -278,7 +278,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
 
     // Cosmic origin
     if (mc_truth->Origin() == COSMIC_ORIGIN) {
-      std::cout << "PFP " << pf_par->Self() << " has cosmic origin" << std::endl;
+      if (_debug) std::cout << "[TPCObjectMaker] PFP " << pf_par->Self() << " has cosmic origin" << std::endl;
       cosmicOriginPFP.emplace_back(pf_par);
 
       // Check if this is a stopping muon in the TPC 
@@ -295,7 +295,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
 
     // Neutrino origin
     if (mc_truth->Origin() == NEUTRINO_ORIGIN) {
-      std::cout << "PFP " << pf_par->Self() << " has neutrino origin" << std::endl;
+      if (_debug) std::cout << "[TPCObjectMaker] PFP " << pf_par->Self() << " has neutrino origin" << std::endl;
       neutrinoOriginPFP.emplace_back(pf_par);
 
       // Check if this is a stopping muon in the TPC

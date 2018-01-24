@@ -35,7 +35,7 @@ ACPTTagger: {
   MinOpHitPE:            20
  
   PEMin:                 0
-  Debug:                 true
+  Debug:                 false
   CreateHisto:           true
   CreateTree:            false
 

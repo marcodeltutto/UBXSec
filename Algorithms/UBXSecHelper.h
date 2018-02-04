@@ -283,9 +283,9 @@ class UBXSecHelper {
    *  @param drift_velocity The drift velocity */
   static void GetTimeCorrectedPoint(double * point_raw, double * point_corrected, double interaction_time, double drift_velocity);
 
-  static std::vector<double> GetDqDxVector(std::vector<art::Ptr<anab::Calorimetry>> calos);
+  static std::vector<double> GetDqDxVector(std::vector<art::Ptr<anab::Calorimetry>> calos, int plane_no = 2);
 
-  static double GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry>> calos);
+  static double GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry>> calos, int plane_no = 2);
 
   static double GetDqDxTruncatedMean(std::vector<double> dqdx_v);
 

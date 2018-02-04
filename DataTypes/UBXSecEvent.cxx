@@ -46,6 +46,7 @@ void UBXSecEvent::Init()
   lep_phi = _default_value;
   genie_mult = _default_value;
   genie_mult_ch = _default_value;
+  bnb_weight = _default_value;
   
   mc_muon_contained = _default_value;
   is_swtriggered = _default_value;
@@ -101,11 +102,19 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_muoncandidate_mcs_ll.resize(vsize, _default_value);
   slc_muoncandidate_contained.resize(vsize, _default_value);
   slc_muoncandidate_dqdx_trunc.resize(vsize, _default_value);
+  slc_muoncandidate_dqdx_u_trunc.resize(vsize);
+  slc_muoncandidate_dqdx_v_trunc.resize(vsize);
   slc_muoncandidate_dqdx_v.resize(vsize);
   slc_muoncandidate_mip_consistency.resize(vsize, true);
   slc_muoncandidate_truepdg.resize(vsize, _default_value);
   slc_muoncandidate_trueorigin.resize(vsize, _default_value);
   slc_muoncandidate_mcs_delta_ll.resize(vsize, _default_value);
+  slc_muoncandidate_residuals_mean.resize(vsize, _default_value);
+  slc_muoncandidate_residuals_std.resize(vsize, _default_value);
+  slc_muoncandidate_wiregap.resize(vsize, _default_value);
+  slc_muoncandidate_wiregap_dead.resize(vsize, _default_value);
+  slc_muoncandidate_linearity.resize(vsize, _default_value);
+  slc_muoncandidate_perc_used_hits_in_cluster.resize(vsize, _default_value);
   slc_acpt_outoftime.resize(vsize, _default_value);
   slc_crosses_top_boundary.resize(vsize, _default_value);
   slc_nuvtx_closetodeadregion_u.resize(vsize, _default_value);

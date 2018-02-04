@@ -1068,7 +1068,7 @@ void UBXSecHelper::GetTimeCorrectedPoint(double * point_raw, double * point_corr
 
 }
 
-std::vector<double> UBXSecHelper::GetDqDxVector(std::vector<art::Ptr<anab::Calorimetry>> calos) {
+std::vector<double> UBXSecHelper::GetDqDxVector(std::vector<art::Ptr<anab::Calorimetry>> calos, int plane_no) {
 
   std::vector<double> temp;
 
@@ -1076,7 +1076,7 @@ std::vector<double> UBXSecHelper::GetDqDxVector(std::vector<art::Ptr<anab::Calor
     if (!c) continue;
     if (!c->PlaneID().isValid) continue;
     int planenum = c->PlaneID().Plane;
-    if (planenum != 2) continue;
+    if (planenum != plane_no) continue;
    
     return c->dQdx(); 
   }
@@ -1085,13 +1085,13 @@ std::vector<double> UBXSecHelper::GetDqDxVector(std::vector<art::Ptr<anab::Calor
 }
 
 //_________________________________________________________________________________
-double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry>> calos) {
+double UBXSecHelper::GetDqDxTruncatedMean(std::vector<art::Ptr<anab::Calorimetry>> calos, int plane_no) {
 
   for (auto c : calos) {
     if (!c) continue;
     if (!c->PlaneID().isValid) continue;
     int planenum = c->PlaneID().Plane;
-    if (planenum != 2) continue;
+    if (planenum != plane_no) continue;
    
     std::vector<double> dqdx_v = c->dQdx(); 
 

@@ -40,6 +40,7 @@
   <stage name="ubxsec">
     <fcl>run_ubxsec_data_extbnb.fcl</fcl>
     <inputdef>prod_reco_optfilter_extbnb_v11_mcc8b</inputdef>
+    <schema>root</schema>
     <defname>&name;_&tag;_ana</defname>
     <maxfilesperjob>12</maxfilesperjob>
     <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_data_extbnb_b</outdir>

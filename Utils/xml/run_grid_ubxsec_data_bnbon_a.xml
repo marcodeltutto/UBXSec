@@ -41,6 +41,7 @@
   <stage name="ubxsec">
     <fcl>run_ubxsec_data_bnbon.fcl</fcl>
     <inputdef>prod_reco_optfilter_bnb_v11_unblind_mcc8a</inputdef>
+    <schema>root</schema>
     <defname>&name;_&tag;_ana</defname>
     <maxfilesperjob>1</maxfilesperjob>
     <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_data_bnbon_a</outdir>

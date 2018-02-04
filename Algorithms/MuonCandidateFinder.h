@@ -63,7 +63,16 @@ namespace ubana{
     /// Check track is consistent with muon hypothesis
     bool MIPConsistency(double dqds, double length);
 
+    /// Check track is consistent with muon hypothesis
+    bool SVMPredict(double dqds, double length);
+
   protected:
+
+    /// SVM Polynomial Kernel
+    double _SVM_kernel(std::pair<double, double> support_vector, std::pair<double, double> user_vector);
+
+    /// Feature Scaling
+    std::pair<double, double>  _SVM_feature_scaling(double dqds, double length);
 
     std::vector<art::Ptr<recob::Track>> _tracks;
     std::map<art::Ptr<recob::Track>,art::Ptr<anab::ParticleID>> _track_to_pid;
@@ -74,6 +83,18 @@ namespace ubana{
     bool _tracktopidmap_is_set;
 
     std::vector<double> _svm_x;
+    std::vector<double> _alpha;     
+    std::vector<double> _support_vectors_x;
+    std::vector<double> _support_vectors_y;
+    double _rho;
+    double _loop;
+    double _gamma;
+    double _degree;
+    double _r;
+    double _x1_mean;
+    double _x2_mean;
+    double _x1_range;
+    double _x2_range;
 
   };
 }

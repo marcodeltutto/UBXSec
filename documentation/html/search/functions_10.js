@@ -8,5 +8,6 @@ var searchData=
   ['_7enumucceventselection',['~NuMuCCEventSelection',['../classubana_1_1NuMuCCEventSelection.html#a02e9e44da798b1ab984e373abf6fb795',1,'ubana::NuMuCCEventSelection']]],
   ['_7estoppingmuontaggerhelper',['~StoppingMuonTaggerHelper',['../classubana_1_1StoppingMuonTaggerHelper.html#a935a1d7fe295306f56d07a3c6402958b',1,'ubana::StoppingMuonTaggerHelper']]],
   ['_7etpcobjectfilter',['~TPCObjectFilter',['../classubana_1_1TPCObjectFilter.html#ad8a3f726f247b5651272397ee344ef1e',1,'ubana::TPCObjectFilter']]],
+  ['_7etrackquality',['~TrackQuality',['../classubana_1_1TrackQuality.html#a62e28a7dc1aee9bda05245e8ec5f2c59',1,'ubana::TrackQuality']]],
   ['_7evertexcheck',['~VertexCheck',['../classubxsec_1_1VertexCheck.html#a31f02bd272b70d96d3e20be2519c5b74',1,'ubxsec::VertexCheck']]]
 ];

@@ -4,5 +4,6 @@ var searchData=
   ['beamfls_5fspec',['beamfls_spec',['../classUBXSecEvent.html#a672e817e5a574c0a1ff50ec81862bc1f',1,'UBXSecEvent']]],
   ['beamfls_5ftime',['beamfls_time',['../classUBXSecEvent.html#aff5ca08ec3a193029979e23b73d49d85',1,'UBXSecEvent']]],
   ['beamfls_5fz',['beamfls_z',['../classUBXSecEvent.html#ac30df357368262d7a103ae9cd0bbd0d3',1,'UBXSecEvent']]],
+  ['bnb_5fweight',['bnb_weight',['../classUBXSecEvent.html#a38aa9da115c68ecd02cfa2da1f2d50a2',1,'UBXSecEvent']]],
   ['boundarywire',['BoundaryWire',['../structBoundaryWire.html',1,'']]]
 ];

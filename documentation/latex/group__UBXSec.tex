@@ -4,8 +4,6 @@
 \subsection*{Files}
 \begin{DoxyCompactItemize}
 \item 
-file \hyperlink{TPCObjectMaker__module_8cc}{T\-P\-C\-Object\-Maker\-\_\-module.\-cc}
-\begin{DoxyCompactList}\small\item\em L\-Ar\-Soft plugin to generate T\-P\-C Objects. \end{DoxyCompactList}\item 
 file \hyperlink{ACPTAlgo_8h}{A\-C\-P\-T\-Algo.\-h}
 \begin{DoxyCompactList}\small\item\em Class def header for a class A\-C\-P\-T\-Algo. \end{DoxyCompactList}\item 
 file \hyperlink{FiducialVolume_8h}{Fiducial\-Volume.\-h}
@@ -16,6 +14,8 @@ file \hyperlink{StoppingMuonTaggerHelper_8h}{Stopping\-Muon\-Tagger\-Helper.\-h}
 \begin{DoxyCompactList}\small\item\em Class def header for a class Stopping\-Muon\-Tagger\-Helper. \end{DoxyCompactList}\item 
 file \hyperlink{TPCObjectFilter_8h}{T\-P\-C\-Object\-Filter.\-h}
 \begin{DoxyCompactList}\small\item\em Class def header for a class T\-P\-C\-Object\-Filter. \end{DoxyCompactList}\item 
+file \hyperlink{TrackQuality_8h}{Track\-Quality.\-h}
+\begin{DoxyCompactList}\small\item\em Class def header for a class Track\-Quality. \end{DoxyCompactList}\item 
 file \hyperlink{VertexCheck_8h}{Vertex\-Check.\-h}
 \begin{DoxyCompactList}\small\item\em Class def header for a class Vertex\-Check. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Classes}
@@ -23,6 +23,22 @@ file \hyperlink{VertexCheck_8h}{Vertex\-Check.\-h}
 \item 
 class \hyperlink{classubana_1_1TPCObjectMaker}{ubana\-::\-T\-P\-C\-Object\-Maker}
 \item 
+class \hyperlink{classACPTTagger}{A\-C\-P\-T\-Tagger}
+\begin{DoxyCompactList}\small\item\em Art producer module that tags particles piercing the anode or cathode. \end{DoxyCompactList}\item 
+class \hyperlink{classCandidateConsistency}{Candidate\-Consistency}
+\begin{DoxyCompactList}\small\item\em Art producer module that tags T\-P\-C\-Objects if thet are not cosntistent with being neutrino candidate. \end{DoxyCompactList}\item 
+class \hyperlink{classCosmicTaggerAna}{Cosmic\-Tagger\-Ana}
+\begin{DoxyCompactList}\small\item\em Art analyzer module that analyzes cosmic tags created for cosmic removal. \end{DoxyCompactList}\item 
+class \hyperlink{classNeutrinoFlashMatch}{Neutrino\-Flash\-Match}
+\begin{DoxyCompactList}\small\item\em Art producer module that performs the T\-P\-Object-\/\-Flash matching for neutrinos. \end{DoxyCompactList}\item 
+class \hyperlink{classNeutrinoMCFlash}{Neutrino\-M\-C\-Flash}
+\begin{DoxyCompactList}\small\item\em Art producer module that creates an M\-C flash, as it would be created by the nu interaction. \end{DoxyCompactList}\item 
+class \hyperlink{classRecoTrueMatcher}{Reco\-True\-Matcher}
+\begin{DoxyCompactList}\small\item\em Art producer module that performs the P\-F\-Particle-\/\-M\-C\-Particle matching. \end{DoxyCompactList}\item 
+class \hyperlink{classSimpleAna}{Simple\-Ana}
+\begin{DoxyCompactList}\small\item\em Art producer module with simple example to retrieve results. \end{DoxyCompactList}\item 
+class \hyperlink{classStoppingMuonTagger}{Stopping\-Muon\-Tagger}
+\begin{DoxyCompactList}\small\item\em Art producer module that tags stopping muons. \end{DoxyCompactList}\item 
 class \hyperlink{classUBXSec}{U\-B\-X\-Sec}
 \begin{DoxyCompactList}\small\item\em Art producer module. \end{DoxyCompactList}\item 
 class \hyperlink{classubana_1_1FlashMatch}{ubana\-::\-Flash\-Match}
@@ -49,21 +65,21 @@ class \hyperlink{classUBXSecHelper}{U\-B\-X\-Sec\-Helper}
 \hypertarget{group__UBXSec_gae1b37c26bb8e5744f5747d6cd6505356}{int {\bfseries factorial} (int n)}\label{group__UBXSec_gae1b37c26bb8e5744f5747d6cd6505356}
 
 \item 
-\hypertarget{group__UBXSec_gae030804e6aa4085bef6be52e9618fee9}{{\bfseries ubana\-::\-T\-P\-C\-Object\-Maker\-::\-T\-P\-C\-Object\-Maker} (fhicl\-::\-Parameter\-Set const \&p)}\label{group__UBXSec_gae030804e6aa4085bef6be52e9618fee9}
+\hypertarget{group__UBXSec_ga2fa2477aabeb4c23aa6093ab805356dc}{{\bfseries ubana\-::\-T\-P\-C\-Object\-Maker\-::\-T\-P\-C\-Object\-Maker} (fhicl\-::\-Parameter\-Set const \&p)}\label{group__UBXSec_ga2fa2477aabeb4c23aa6093ab805356dc}
 
 \item 
-\hypertarget{group__UBXSec_ga07c03a811bbaccdbeb20b2b7714034c9}{void {\bfseries ubana\-::\-T\-P\-C\-Object\-Maker\-::produce} (art\-::\-Event \&e) override}\label{group__UBXSec_ga07c03a811bbaccdbeb20b2b7714034c9}
+\hypertarget{group__UBXSec_ga89833cfc129f7410afb7622a8dbf45b3}{void {\bfseries ubana\-::\-T\-P\-C\-Object\-Maker\-::produce} (art\-::\-Event \&e) override}\label{group__UBXSec_ga89833cfc129f7410afb7622a8dbf45b3}
 
 \item 
-art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ \hyperlink{group__UBXSec_ga6a47470b5f5690a3626e14bc9f6f360c}{ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Get\-Nu\-P\-F\-P} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v)
+art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ \hyperlink{group__UBXSec_gaf2a3603228fdfebf073653770c7ebb84}{ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Get\-Nu\-P\-F\-P} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v)
 \begin{DoxyCompactList}\small\item\em Returns the nu P\-F\-P from a T\-P\-C object. \end{DoxyCompactList}\item 
-void \hyperlink{group__UBXSec_gab15442d6254937d3930ea046a93321b9}{ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Get\-T\-P\-C\-Objects} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pf\-Particle\-List, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks pf\-Particle\-To\-Track\-Map, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Showers pf\-Particle\-To\-Shower\-Map, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Vertices pf\-Particle\-To\-Vertex\-Map, std\-::vector$<$ lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector $>$ \&pfp\-\_\-v\-\_\-v, std\-::vector$<$ lar\-\_\-pandora\-::\-Track\-Vector $>$ \&track\-\_\-v\-\_\-v, std\-::vector$<$ lar\-\_\-pandora\-::\-Shower\-Vector $>$ \&shower\-\_\-v\-\_\-v, std\-::vector$<$ int $>$ \&p\-\_\-v, std\-::vector$<$ int $>$ \&t\-\_\-v, std\-::vector$<$ int $>$ \&s\-\_\-v)
+void \hyperlink{group__UBXSec_ga4265f9226b84aa982bdb5039bdd7738a}{ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Get\-T\-P\-C\-Objects} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pf\-Particle\-List, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks pf\-Particle\-To\-Track\-Map, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Showers pf\-Particle\-To\-Shower\-Map, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Vertices pf\-Particle\-To\-Vertex\-Map, std\-::vector$<$ lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector $>$ \&pfp\-\_\-v\-\_\-v, std\-::vector$<$ lar\-\_\-pandora\-::\-Track\-Vector $>$ \&track\-\_\-v\-\_\-v, std\-::vector$<$ lar\-\_\-pandora\-::\-Shower\-Vector $>$ \&shower\-\_\-v\-\_\-v, std\-::vector$<$ int $>$ \&p\-\_\-v, std\-::vector$<$ int $>$ \&t\-\_\-v, std\-::vector$<$ int $>$ \&s\-\_\-v)
 \begin{DoxyCompactList}\small\item\em Constructs T\-P\-C objects using Pandora P\-F\-P slices. \end{DoxyCompactList}\item 
-void \hyperlink{group__UBXSec_ga9572bb5f180624d28ed9055591d633eb}{ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Collect\-P\-F\-P} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pf\-Particle\-List, art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ particle, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector \&pfp\-\_\-v)
+void \hyperlink{group__UBXSec_gab55f5535163da51b4aeef1805041876b}{ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Collect\-P\-F\-P} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pf\-Particle\-List, art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ particle, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector \&pfp\-\_\-v)
 \begin{DoxyCompactList}\small\item\em Gets all the P\-F\-Ps for a single Pandora slice, given the neutrino P\-F\-P as input. \end{DoxyCompactList}\item 
-void \hyperlink{group__UBXSec_ga4742f34e12ae8d756648f606123fe810}{ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Collect\-Tracks\-And\-Showers} (lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks pf\-Particle\-To\-Track\-Map, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Showers pf\-Particle\-To\-Shower\-Map, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v, lar\-\_\-pandora\-::\-Track\-Vector \&track\-\_\-v, lar\-\_\-pandora\-::\-Shower\-Vector \&shower\-\_\-v)
+void \hyperlink{group__UBXSec_ga3634deb340ab0cc3c9f00b34386bfa72}{ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Collect\-Tracks\-And\-Showers} (lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks pf\-Particle\-To\-Track\-Map, lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Showers pf\-Particle\-To\-Shower\-Map, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v, lar\-\_\-pandora\-::\-Track\-Vector \&track\-\_\-v, lar\-\_\-pandora\-::\-Shower\-Vector \&shower\-\_\-v)
 \begin{DoxyCompactList}\small\item\em Gets all the tracks and P\-F\-P for a single Pandora slice. \end{DoxyCompactList}\item 
-void \hyperlink{group__UBXSec_gaedb13816ca0eb0d775755a93c593443e}{ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Get\-Multiplicity} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pf\-Particle\-List, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v, art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ particle, int \&p, int \&t, int \&s)
+void \hyperlink{group__UBXSec_ga437689da2d66221826a17fece49e581c}{ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Get\-Multiplicity} (lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pf\-Particle\-List, lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector pfp\-\_\-v, art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ particle, int \&p, int \&t, int \&s)
 \begin{DoxyCompactList}\small\item\em Gets the pfp, track and shower multiplicity for a neutrino P\-F\-P. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
@@ -80,15 +96,15 @@ void \hyperlink{group__UBXSec_gaedb13816ca0eb0d775755a93c593443e}{ubana\-::\-T\-
 
 
 \subsection{Function Documentation}
-\hypertarget{group__UBXSec_ga9572bb5f180624d28ed9055591d633eb}{\index{U\-B\-X\-Sec@{U\-B\-X\-Sec}!Collect\-P\-F\-P@{Collect\-P\-F\-P}}
+\hypertarget{group__UBXSec_gab55f5535163da51b4aeef1805041876b}{\index{U\-B\-X\-Sec@{U\-B\-X\-Sec}!Collect\-P\-F\-P@{Collect\-P\-F\-P}}
 \index{Collect\-P\-F\-P@{Collect\-P\-F\-P}!UBXSec@{U\-B\-X\-Sec}}
-\subsubsection[{Collect\-P\-F\-P}]{\setlength{\rightskip}{0pt plus 5cm}void ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Collect\-P\-F\-P (
+\subsubsection[{Collect\-P\-F\-P}]{\setlength{\rightskip}{0pt plus 5cm}void T\-P\-C\-Object\-Maker\-::\-Collect\-P\-F\-P (
 \begin{DoxyParamCaption}
 \item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pf\-Particle\-List, }
 \item[{art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$}]{particle, }
 \item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector \&}]{pfp\-\_\-v}
 \end{DoxyParamCaption}
-)}}\label{group__UBXSec_ga9572bb5f180624d28ed9055591d633eb}
+)}}\label{group__UBXSec_gab55f5535163da51b4aeef1805041876b}
 
 
 Gets all the P\-F\-Ps for a single Pandora slice, given the neutrino P\-F\-P as input. 
@@ -102,9 +118,9 @@ Gets all the P\-F\-Ps for a single Pandora slice, given the neutrino P\-F\-P as 
 {\em pfp\-\_\-v} & output, a vector of P\-F\-P (the T\-P\-C object) \\
 \hline
 \end{DoxyParams}
-\hypertarget{group__UBXSec_ga4742f34e12ae8d756648f606123fe810}{\index{U\-B\-X\-Sec@{U\-B\-X\-Sec}!Collect\-Tracks\-And\-Showers@{Collect\-Tracks\-And\-Showers}}
+\hypertarget{group__UBXSec_ga3634deb340ab0cc3c9f00b34386bfa72}{\index{U\-B\-X\-Sec@{U\-B\-X\-Sec}!Collect\-Tracks\-And\-Showers@{Collect\-Tracks\-And\-Showers}}
 \index{Collect\-Tracks\-And\-Showers@{Collect\-Tracks\-And\-Showers}!UBXSec@{U\-B\-X\-Sec}}
-\subsubsection[{Collect\-Tracks\-And\-Showers}]{\setlength{\rightskip}{0pt plus 5cm}void ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Collect\-Tracks\-And\-Showers (
+\subsubsection[{Collect\-Tracks\-And\-Showers}]{\setlength{\rightskip}{0pt plus 5cm}void T\-P\-C\-Object\-Maker\-::\-Collect\-Tracks\-And\-Showers (
 \begin{DoxyParamCaption}
 \item[{lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks}]{pf\-Particle\-To\-Track\-Map, }
 \item[{lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Showers}]{pf\-Particle\-To\-Shower\-Map, }
@@ -112,7 +128,7 @@ Gets all the P\-F\-Ps for a single Pandora slice, given the neutrino P\-F\-P as 
 \item[{lar\-\_\-pandora\-::\-Track\-Vector \&}]{track\-\_\-v, }
 \item[{lar\-\_\-pandora\-::\-Shower\-Vector \&}]{shower\-\_\-v}
 \end{DoxyParamCaption}
-)}}\label{group__UBXSec_ga4742f34e12ae8d756648f606123fe810}
+)}}\label{group__UBXSec_ga3634deb340ab0cc3c9f00b34386bfa72}
 
 
 Gets all the tracks and P\-F\-P for a single Pandora slice. 
@@ -130,9 +146,9 @@ Gets all the tracks and P\-F\-P for a single Pandora slice.
 {\em shower\-\_\-v} & output, a vector of showers (the T\-P\-C object) \\
 \hline
 \end{DoxyParams}
-\hypertarget{group__UBXSec_gaedb13816ca0eb0d775755a93c593443e}{\index{U\-B\-X\-Sec@{U\-B\-X\-Sec}!Get\-Multiplicity@{Get\-Multiplicity}}
+\hypertarget{group__UBXSec_ga437689da2d66221826a17fece49e581c}{\index{U\-B\-X\-Sec@{U\-B\-X\-Sec}!Get\-Multiplicity@{Get\-Multiplicity}}
 \index{Get\-Multiplicity@{Get\-Multiplicity}!UBXSec@{U\-B\-X\-Sec}}
-\subsubsection[{Get\-Multiplicity}]{\setlength{\rightskip}{0pt plus 5cm}void ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Get\-Multiplicity (
+\subsubsection[{Get\-Multiplicity}]{\setlength{\rightskip}{0pt plus 5cm}void T\-P\-C\-Object\-Maker\-::\-Get\-Multiplicity (
 \begin{DoxyParamCaption}
 \item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pf\-Particle\-List, }
 \item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pfp\-\_\-v, }
@@ -141,7 +157,7 @@ Gets all the tracks and P\-F\-P for a single Pandora slice.
 \item[{int \&}]{t, }
 \item[{int \&}]{s}
 \end{DoxyParamCaption}
-)}}\label{group__UBXSec_gaedb13816ca0eb0d775755a93c593443e}
+)}}\label{group__UBXSec_ga437689da2d66221826a17fece49e581c}
 
 
 Gets the pfp, track and shower multiplicity for a neutrino P\-F\-P. 
@@ -161,13 +177,13 @@ Gets the pfp, track and shower multiplicity for a neutrino P\-F\-P.
 {\em s} & output, multiplicity in number of showers \\
 \hline
 \end{DoxyParams}
-\hypertarget{group__UBXSec_ga6a47470b5f5690a3626e14bc9f6f360c}{\index{U\-B\-X\-Sec@{U\-B\-X\-Sec}!Get\-Nu\-P\-F\-P@{Get\-Nu\-P\-F\-P}}
+\hypertarget{group__UBXSec_gaf2a3603228fdfebf073653770c7ebb84}{\index{U\-B\-X\-Sec@{U\-B\-X\-Sec}!Get\-Nu\-P\-F\-P@{Get\-Nu\-P\-F\-P}}
 \index{Get\-Nu\-P\-F\-P@{Get\-Nu\-P\-F\-P}!UBXSec@{U\-B\-X\-Sec}}
-\subsubsection[{Get\-Nu\-P\-F\-P}]{\setlength{\rightskip}{0pt plus 5cm}art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Get\-Nu\-P\-F\-P (
+\subsubsection[{Get\-Nu\-P\-F\-P}]{\setlength{\rightskip}{0pt plus 5cm}art\-::\-Ptr$<$ recob\-::\-P\-F\-Particle $>$ T\-P\-C\-Object\-Maker\-::\-Get\-Nu\-P\-F\-P (
 \begin{DoxyParamCaption}
 \item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pfp\-\_\-v}
 \end{DoxyParamCaption}
-)}}\label{group__UBXSec_ga6a47470b5f5690a3626e14bc9f6f360c}
+)}}\label{group__UBXSec_gaf2a3603228fdfebf073653770c7ebb84}
 
 
 Returns the nu P\-F\-P from a T\-P\-C object. 
@@ -177,9 +193,9 @@ Returns the nu P\-F\-P from a T\-P\-C object.
 {\em pfp\-\_\-v} & the T\-P\-C object (vector of P\-F\-P) \\
 \hline
 \end{DoxyParams}
-\hypertarget{group__UBXSec_gab15442d6254937d3930ea046a93321b9}{\index{U\-B\-X\-Sec@{U\-B\-X\-Sec}!Get\-T\-P\-C\-Objects@{Get\-T\-P\-C\-Objects}}
+\hypertarget{group__UBXSec_ga4265f9226b84aa982bdb5039bdd7738a}{\index{U\-B\-X\-Sec@{U\-B\-X\-Sec}!Get\-T\-P\-C\-Objects@{Get\-T\-P\-C\-Objects}}
 \index{Get\-T\-P\-C\-Objects@{Get\-T\-P\-C\-Objects}!UBXSec@{U\-B\-X\-Sec}}
-\subsubsection[{Get\-T\-P\-C\-Objects}]{\setlength{\rightskip}{0pt plus 5cm}void ubana\-::\-T\-P\-C\-Object\-Maker\-::\-Get\-T\-P\-C\-Objects (
+\subsubsection[{Get\-T\-P\-C\-Objects}]{\setlength{\rightskip}{0pt plus 5cm}void T\-P\-C\-Object\-Maker\-::\-Get\-T\-P\-C\-Objects (
 \begin{DoxyParamCaption}
 \item[{lar\-\_\-pandora\-::\-P\-F\-Particle\-Vector}]{pf\-Particle\-List, }
 \item[{lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-Tracks}]{pf\-Particle\-To\-Track\-Map, }
@@ -192,7 +208,7 @@ Returns the nu P\-F\-P from a T\-P\-C object.
 \item[{std\-::vector$<$ int $>$ \&}]{t\-\_\-v, }
 \item[{std\-::vector$<$ int $>$ \&}]{s\-\_\-v}
 \end{DoxyParamCaption}
-)}}\label{group__UBXSec_gab15442d6254937d3930ea046a93321b9}
+)}}\label{group__UBXSec_ga4265f9226b84aa982bdb5039bdd7738a}
 
 
 Constructs T\-P\-C objects using Pandora P\-F\-P slices. 

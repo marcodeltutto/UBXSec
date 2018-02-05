@@ -1,0 +1,79 @@
+\hypertarget{classubana_1_1TrackQuality}{\section{ubana\-:\-:Track\-Quality Class Reference}
+\label{classubana_1_1TrackQuality}\index{ubana\-::\-Track\-Quality@{ubana\-::\-Track\-Quality}}
+}
+
+
+{\ttfamily \#include $<$Track\-Quality.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classubana_1_1TrackQuality_abffed8f958f75e68d808267094861ab0}{\hyperlink{classubana_1_1TrackQuality_abffed8f958f75e68d808267094861ab0}{Track\-Quality} ()}\label{classubana_1_1TrackQuality_abffed8f958f75e68d808267094861ab0}
+
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1TrackQuality_a62e28a7dc1aee9bda05245e8ec5f2c59}{\hyperlink{classubana_1_1TrackQuality_a62e28a7dc1aee9bda05245e8ec5f2c59}{$\sim$\-Track\-Quality} ()}\label{classubana_1_1TrackQuality_a62e28a7dc1aee9bda05245e8ec5f2c59}
+
+\begin{DoxyCompactList}\small\item\em Default destructor. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1TrackQuality_a96f8496645624aadfdfe0dcc800fde4c}{void \hyperlink{classubana_1_1TrackQuality_a96f8496645624aadfdfe0dcc800fde4c}{Configure} (fhicl\-::\-Parameter\-Set const \&p)}\label{classubana_1_1TrackQuality_a96f8496645624aadfdfe0dcc800fde4c}
+
+\begin{DoxyCompactList}\small\item\em Configure function parameters. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1TrackQuality_aed0775802a41ff5a2ed7dd125eabc31b}{void \hyperlink{classubana_1_1TrackQuality_aed0775802a41ff5a2ed7dd125eabc31b}{Print\-Config} ()}\label{classubana_1_1TrackQuality_aed0775802a41ff5a2ed7dd125eabc31b}
+
+\begin{DoxyCompactList}\small\item\em Printd the current configuration. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1TrackQuality_a082ceeef0c8dacf7ed1a0f3011ed6675}{void \hyperlink{classubana_1_1TrackQuality_a082ceeef0c8dacf7ed1a0f3011ed6675}{Set\-Track\-Points} (std\-::vector$<$ T\-Vector3 $>$)}\label{classubana_1_1TrackQuality_a082ceeef0c8dacf7ed1a0f3011ed6675}
+
+\begin{DoxyCompactList}\small\item\em Set track points (projected to collection plane) \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1TrackQuality_aec2fa3a1e167aab0434cbd214b54d999}{void \hyperlink{classubana_1_1TrackQuality_aec2fa3a1e167aab0434cbd214b54d999}{Set\-Hit\-Collection} (std\-::vector$<$ T\-Vector3 $>$)}\label{classubana_1_1TrackQuality_aec2fa3a1e167aab0434cbd214b54d999}
+
+\begin{DoxyCompactList}\small\item\em Set hits in collection plane assns to track. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1TrackQuality_adfa289c8c8863cb916399d03e12f0a8d}{void \hyperlink{classubana_1_1TrackQuality_adfa289c8c8863cb916399d03e12f0a8d}{Clear} ()}\label{classubana_1_1TrackQuality_adfa289c8c8863cb916399d03e12f0a8d}
+
+\begin{DoxyCompactList}\small\item\em Restores flags. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1TrackQuality_a4f0ec2ee0c8960d35b56ccdf11c77a8e}{std\-::pair$<$ double, double $>$ \hyperlink{classubana_1_1TrackQuality_a4f0ec2ee0c8960d35b56ccdf11c77a8e}{Get\-Residuals} ()}\label{classubana_1_1TrackQuality_a4f0ec2ee0c8960d35b56ccdf11c77a8e}
+
+\begin{DoxyCompactList}\small\item\em Returns the residuals value (mean, std) \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1TrackQuality_a9b49aa65c3b139e8445ee6f2f0ea7d84}{std\-::pair$<$ double, int $>$ {\bfseries Get\-Track\-Gap} ()}\label{classubana_1_1TrackQuality_a9b49aa65c3b139e8445ee6f2f0ea7d84}
+
+\item 
+\hypertarget{classubana_1_1TrackQuality_a11375fbd08fd9f313de50aaf18aecc65}{double {\bfseries Get\-R} ()}\label{classubana_1_1TrackQuality_a11375fbd08fd9f313de50aaf18aecc65}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classubana_1_1TrackQuality_a3531c526766c41252ee2d23efca61fd3}{double {\bfseries mean} (const std\-::vector$<$ double $>$ \&data)}\label{classubana_1_1TrackQuality_a3531c526766c41252ee2d23efca61fd3}
+
+\item 
+\hypertarget{classubana_1_1TrackQuality_a38b40e1148782496b9c1896476eeae63}{double {\bfseries stdev} (const std\-::vector$<$ double $>$ \&data)}\label{classubana_1_1TrackQuality_a38b40e1148782496b9c1896476eeae63}
+
+\item 
+\hypertarget{classubana_1_1TrackQuality_a66bce548876df8a07ba4cfa78dadf721}{double {\bfseries cov} (const std\-::vector$<$ double $>$ \&data1, const std\-::vector$<$ double $>$ \&data2)}\label{classubana_1_1TrackQuality_a66bce548876df8a07ba4cfa78dadf721}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classubana_1_1TrackQuality_a11971e9f972bc27655fd61c4dbb1a968}{std\-::vector$<$ T\-Vector3 $>$ \hyperlink{classubana_1_1TrackQuality_a11971e9f972bc27655fd61c4dbb1a968}{\-\_\-track\-\_\-v}}\label{classubana_1_1TrackQuality_a11971e9f972bc27655fd61c4dbb1a968}
+
+\begin{DoxyCompactList}\small\item\em The track. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1TrackQuality_a1975a23a4dda1608199d4566321df300}{std\-::vector$<$ T\-Vector3 $>$ \hyperlink{classubana_1_1TrackQuality_a1975a23a4dda1608199d4566321df300}{\-\_\-hit\-\_\-v}}\label{classubana_1_1TrackQuality_a1975a23a4dda1608199d4566321df300}
+
+\begin{DoxyCompactList}\small\item\em The hits. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1TrackQuality_ac11597aa4ac7214c06676cc4aa72d212}{bool {\bfseries \-\_\-track\-\_\-is\-\_\-set} = false}\label{classubana_1_1TrackQuality_ac11597aa4ac7214c06676cc4aa72d212}
+
+\item 
+\hypertarget{classubana_1_1TrackQuality_abd09b403297a31dce86e6a8e14c0aa15}{bool {\bfseries \-\_\-hits\-\_\-are\-\_\-set} = false}\label{classubana_1_1TrackQuality_abd09b403297a31dce86e6a8e14c0aa15}
+
+\item 
+\hypertarget{classubana_1_1TrackQuality_a891d785096de70af161e8e31b50ed706}{bool {\bfseries \-\_\-debug} = true}\label{classubana_1_1TrackQuality_a891d785096de70af161e8e31b50ed706}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+User defined class \hyperlink{classubana_1_1TrackQuality}{Track\-Quality} ... these comments are used to generate doxygen documentation! 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/travis/build/marcodeltutto/\-U\-B\-X\-Sec/\-Algorithms/\hyperlink{TrackQuality_8h}{Track\-Quality.\-h}\item 
+/home/travis/build/marcodeltutto/\-U\-B\-X\-Sec/\-Algorithms/Track\-Quality.\-cxx\end{DoxyCompactItemize}

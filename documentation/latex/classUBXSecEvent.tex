@@ -94,6 +94,9 @@ Data product to store a \hyperlink{classUBXSec}{U\-B\-X\-Sec} Event.
 \hypertarget{classUBXSecEvent_a6a73137488dc2af0dc6abd5868fbbe4d}{Int\-\_\-t \hyperlink{classUBXSecEvent_a6a73137488dc2af0dc6abd5868fbbe4d}{genie\-\_\-mult\-\_\-ch}}\label{classUBXSecEvent_a6a73137488dc2af0dc6abd5868fbbe4d}
 
 \begin{DoxyCompactList}\small\item\em Number of stable charged G\-E\-N\-I\-E final state particles. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a38aa9da115c68ecd02cfa2da1f2d50a2}{Double\-\_\-t \hyperlink{classUBXSecEvent_a38aa9da115c68ecd02cfa2da1f2d50a2}{bnb\-\_\-weight}}\label{classUBXSecEvent_a38aa9da115c68ecd02cfa2da1f2d50a2}
+
+\begin{DoxyCompactList}\small\item\em B\-N\-B correction weight to correct nue flux. \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a350303f94db8bcfdbc2e517713d7ebf9}{Int\-\_\-t \hyperlink{classUBXSecEvent_a350303f94db8bcfdbc2e517713d7ebf9}{mc\-\_\-muon\-\_\-contained}}\label{classUBXSecEvent_a350303f94db8bcfdbc2e517713d7ebf9}
 
 \begin{DoxyCompactList}\small\item\em Is 1 if the true mc muon is fully contained. \end{DoxyCompactList}\item 
@@ -274,23 +277,51 @@ Data product to store a \hyperlink{classUBXSec}{U\-B\-X\-Sec} Event.
 \hypertarget{classUBXSecEvent_acece0aff774df48cee7bd4146870c559}{vector$<$ bool $>$ \hyperlink{classUBXSecEvent_acece0aff774df48cee7bd4146870c559}{slc\-\_\-muoncandidate\-\_\-contained}}\label{classUBXSecEvent_acece0aff774df48cee7bd4146870c559}
 
 \begin{DoxyCompactList}\small\item\em Is true if the muon candidate in the T\-P\-C\-Object is fully contained. \end{DoxyCompactList}\item 
-\hypertarget{classUBXSecEvent_aec6e2338e43e8cd376f3eb7f9785b744}{vector$<$ double $>$ {\bfseries slc\-\_\-muoncandidate\-\_\-dqdx\-\_\-trunc}}\label{classUBXSecEvent_aec6e2338e43e8cd376f3eb7f9785b744}
+\hypertarget{classUBXSecEvent_aec6e2338e43e8cd376f3eb7f9785b744}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_aec6e2338e43e8cd376f3eb7f9785b744}{slc\-\_\-muoncandidate\-\_\-dqdx\-\_\-trunc}}\label{classUBXSecEvent_aec6e2338e43e8cd376f3eb7f9785b744}
 
-\item 
+\begin{DoxyCompactList}\small\item\em dqdx truncated mean for the muon candidate, plane 2 \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_adcc89b6ddd486fd6c1eb19c8fb710a04}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_adcc89b6ddd486fd6c1eb19c8fb710a04}{slc\-\_\-muoncandidate\-\_\-dqdx\-\_\-u\-\_\-trunc}}\label{classUBXSecEvent_adcc89b6ddd486fd6c1eb19c8fb710a04}
+
+\begin{DoxyCompactList}\small\item\em dqdx truncated mean for the muon candidate, plane 0 \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a9640dedc7adeef5eb840fc49b1ce1a33}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a9640dedc7adeef5eb840fc49b1ce1a33}{slc\-\_\-muoncandidate\-\_\-dqdx\-\_\-v\-\_\-trunc}}\label{classUBXSecEvent_a9640dedc7adeef5eb840fc49b1ce1a33}
+
+\begin{DoxyCompactList}\small\item\em dqdx truncated mean for the muon candidate, plane 1 \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_ad66a437d850fb4a5f8fd39bffcb540ae}{vector$<$ vector$<$ double $>$ $>$ \hyperlink{classUBXSecEvent_ad66a437d850fb4a5f8fd39bffcb540ae}{slc\-\_\-muoncandidate\-\_\-dqdx\-\_\-v}}\label{classUBXSecEvent_ad66a437d850fb4a5f8fd39bffcb540ae}
 
-\begin{DoxyCompactList}\small\item\em dqdx truncated mean for the muon candidate \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em dqdx for every hit for the muon candidate \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a535d450659bbc041a675b3c602650ce5}{vector$<$ bool $>$ \hyperlink{classUBXSecEvent_a535d450659bbc041a675b3c602650ce5}{slc\-\_\-muoncandidate\-\_\-mip\-\_\-consistency}}\label{classUBXSecEvent_a535d450659bbc041a675b3c602650ce5}
 
-\begin{DoxyCompactList}\small\item\em dqdx for every hit for the muon candidate \end{DoxyCompactList}\item 
-vector$<$ int $>$ \hyperlink{classUBXSecEvent_a861fa153e7ab975f01780edfaf8f280c}{slc\-\_\-muoncandidate\-\_\-truepdg}
 \begin{DoxyCompactList}\small\item\em true if the muon candidate pass mip consistency cut \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_aeeaf9707b06c88065ce6a7ce56bcbbec}{vector$<$ bool $>$ {\bfseries slc\-\_\-muoncandidate\-\_\-mip\-\_\-consistency2}}\label{classUBXSecEvent_aeeaf9707b06c88065ce6a7ce56bcbbec}
+
+\item 
+\hypertarget{classUBXSecEvent_a861fa153e7ab975f01780edfaf8f280c}{vector$<$ int $>$ \hyperlink{classUBXSecEvent_a861fa153e7ab975f01780edfaf8f280c}{slc\-\_\-muoncandidate\-\_\-truepdg}}\label{classUBXSecEvent_a861fa153e7ab975f01780edfaf8f280c}
+
+\begin{DoxyCompactList}\small\item\em True pdg code of the candated muon track. \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a6013262692b0ae27bd36a28dde410c72}{vector$<$ int $>$ \hyperlink{classUBXSecEvent_a6013262692b0ae27bd36a28dde410c72}{slc\-\_\-muoncandidate\-\_\-trueorigin}}\label{classUBXSecEvent_a6013262692b0ae27bd36a28dde410c72}
 
 \begin{DoxyCompactList}\small\item\em True origin of the candidate muon track. \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a2debf701edaaaf07b40603c5196c9df0}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a2debf701edaaaf07b40603c5196c9df0}{slc\-\_\-muoncandidate\-\_\-mcs\-\_\-delta\-\_\-ll}}\label{classUBXSecEvent_a2debf701edaaaf07b40603c5196c9df0}
 
 \begin{DoxyCompactList}\small\item\em Delta L\-L from M\-C\-S fit. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a11364cce51cab53e8b49e2238d8b3ad9}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a11364cce51cab53e8b49e2238d8b3ad9}{slc\-\_\-muoncandidate\-\_\-residuals\-\_\-mean}}\label{classUBXSecEvent_a11364cce51cab53e8b49e2238d8b3ad9}
+
+\begin{DoxyCompactList}\small\item\em Mean of the residuals (between hits and track) \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_aa2788c59b677811df5ed22223a7b0fe8}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_aa2788c59b677811df5ed22223a7b0fe8}{slc\-\_\-muoncandidate\-\_\-residuals\-\_\-std}}\label{classUBXSecEvent_aa2788c59b677811df5ed22223a7b0fe8}
+
+\begin{DoxyCompactList}\small\item\em Standard Deviation of the residuals (between hits and track) \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a2d4129ec5151ca996a427ddb7026978c}{vector$<$ int $>$ \hyperlink{classUBXSecEvent_a2d4129ec5151ca996a427ddb7026978c}{slc\-\_\-muoncandidate\-\_\-wiregap}}\label{classUBXSecEvent_a2d4129ec5151ca996a427ddb7026978c}
+
+\begin{DoxyCompactList}\small\item\em Biggest wire gap found in track path. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_af5c4c1f7a954e46c752c3f323adade2b}{vector$<$ int $>$ \hyperlink{classUBXSecEvent_af5c4c1f7a954e46c752c3f323adade2b}{slc\-\_\-muoncandidate\-\_\-wiregap\-\_\-dead}}\label{classUBXSecEvent_af5c4c1f7a954e46c752c3f323adade2b}
+
+\begin{DoxyCompactList}\small\item\em Number of dead wires in the biggest wire gap found in track path. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_aa385ab36f52d07e5cdd303e82ae8035f}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_aa385ab36f52d07e5cdd303e82ae8035f}{slc\-\_\-muoncandidate\-\_\-linearity}}\label{classUBXSecEvent_aa385ab36f52d07e5cdd303e82ae8035f}
+
+\begin{DoxyCompactList}\small\item\em Linearity of the hit the track is made out of. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a946ace636527632fed09f2d9e075e87e}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a946ace636527632fed09f2d9e075e87e}{slc\-\_\-muoncandidate\-\_\-perc\-\_\-used\-\_\-hits\-\_\-in\-\_\-cluster}}\label{classUBXSecEvent_a946ace636527632fed09f2d9e075e87e}
+
+\begin{DoxyCompactList}\small\item\em Number of used hits in the cluster to make the track. \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a2bf72740213db9d50d45c603eb3c549e}{Int\-\_\-t \hyperlink{classUBXSecEvent_a2bf72740213db9d50d45c603eb3c549e}{nbeamfls}}\label{classUBXSecEvent_a2bf72740213db9d50d45c603eb3c549e}
 
 \begin{DoxyCompactList}\small\item\em Number of beam flashes in the event. \end{DoxyCompactList}\item 
@@ -371,16 +402,6 @@ Marco Del Tutto\href{mailto:marco.deltutto@physics.ox.ac.uk}{\tt marco.\-deltutt
 Contact\-: \href{mailto:marco.deltutto@physics.ox.ac.uk}{\tt marco.\-deltutto@physics.\-ox.\-ac.\-uk}
 
 Created on\-: Sunday, October 08, 2017 at 14\-:53\-:36 
-
-\subsection{Member Data Documentation}
-\hypertarget{classUBXSecEvent_a861fa153e7ab975f01780edfaf8f280c}{\index{U\-B\-X\-Sec\-Event@{U\-B\-X\-Sec\-Event}!slc\-\_\-muoncandidate\-\_\-truepdg@{slc\-\_\-muoncandidate\-\_\-truepdg}}
-\index{slc\-\_\-muoncandidate\-\_\-truepdg@{slc\-\_\-muoncandidate\-\_\-truepdg}!UBXSecEvent@{U\-B\-X\-Sec\-Event}}
-\subsubsection[{slc\-\_\-muoncandidate\-\_\-truepdg}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$int$>$ U\-B\-X\-Sec\-Event\-::slc\-\_\-muoncandidate\-\_\-truepdg}}\label{classUBXSecEvent_a861fa153e7ab975f01780edfaf8f280c}
-
-
-true if the muon candidate pass mip consistency cut 
-
-True pdg code of the candated muon track 
 
 The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 

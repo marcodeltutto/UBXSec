@@ -34,7 +34,19 @@
 \begin{DoxyCompactList}\small\item\em Sets the T\-P\-C object. \end{DoxyCompactList}\item 
 \hypertarget{classubana_1_1MuonCandidateFinder_af622d542c3c3932572dc67588e75bcf6}{bool \hyperlink{classubana_1_1MuonCandidateFinder_af622d542c3c3932572dc67588e75bcf6}{M\-I\-P\-Consistency} (double dqds, double length)}\label{classubana_1_1MuonCandidateFinder_af622d542c3c3932572dc67588e75bcf6}
 
+\begin{DoxyCompactList}\small\item\em Check track is consistent with muon hypothesis. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_a7139d4b040678249e402111d6adcc03c}{bool \hyperlink{classubana_1_1MuonCandidateFinder_a7139d4b040678249e402111d6adcc03c}{S\-V\-M\-Predict} (double dqds, double length)}\label{classubana_1_1MuonCandidateFinder_a7139d4b040678249e402111d6adcc03c}
+
 \begin{DoxyCompactList}\small\item\em Check track is consistent with muon hypothesis. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_a62077bd56d0005c80113d1da9ef9c48e}{double \hyperlink{classubana_1_1MuonCandidateFinder_a62077bd56d0005c80113d1da9ef9c48e}{\-\_\-\-S\-V\-M\-\_\-kernel} (std\-::pair$<$ double, double $>$ support\-\_\-vector, std\-::pair$<$ double, double $>$ user\-\_\-vector)}\label{classubana_1_1MuonCandidateFinder_a62077bd56d0005c80113d1da9ef9c48e}
+
+\begin{DoxyCompactList}\small\item\em S\-V\-M Polynomial Kernel. \end{DoxyCompactList}\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_a535c37ad2b554fe540f596a0b389ec32}{std\-::pair$<$ double, double $>$ \hyperlink{classubana_1_1MuonCandidateFinder_a535c37ad2b554fe540f596a0b389ec32}{\-\_\-\-S\-V\-M\-\_\-feature\-\_\-scaling} (double dqds, double length)}\label{classubana_1_1MuonCandidateFinder_a535c37ad2b554fe540f596a0b389ec32}
+
+\begin{DoxyCompactList}\small\item\em Feature Scaling. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -57,6 +69,42 @@ $<$ anab\-::\-Particle\-I\-D $>$ $>$ {\bfseries \-\_\-track\-\_\-to\-\_\-pid}}\l
 
 \item 
 \hypertarget{classubana_1_1MuonCandidateFinder_ab09c2e9c8419eb520850e8e8ce3d9518}{std\-::vector$<$ double $>$ {\bfseries \-\_\-svm\-\_\-x}}\label{classubana_1_1MuonCandidateFinder_ab09c2e9c8419eb520850e8e8ce3d9518}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_acb4356a1692fa77c2784d09599ce8fa1}{std\-::vector$<$ double $>$ {\bfseries \-\_\-alpha}}\label{classubana_1_1MuonCandidateFinder_acb4356a1692fa77c2784d09599ce8fa1}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_a77c96b071b39a3ce14e00d0b233d4cc4}{std\-::vector$<$ double $>$ {\bfseries \-\_\-support\-\_\-vectors\-\_\-x}}\label{classubana_1_1MuonCandidateFinder_a77c96b071b39a3ce14e00d0b233d4cc4}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_a26ff1388fd925432f3b3ddcef36866d5}{std\-::vector$<$ double $>$ {\bfseries \-\_\-support\-\_\-vectors\-\_\-y}}\label{classubana_1_1MuonCandidateFinder_a26ff1388fd925432f3b3ddcef36866d5}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_ac8585a19ce1861eb280fd0b7654c0fa3}{double {\bfseries \-\_\-rho}}\label{classubana_1_1MuonCandidateFinder_ac8585a19ce1861eb280fd0b7654c0fa3}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_afe47e105b7c1de947c6c550e5efe6d28}{double {\bfseries \-\_\-loop}}\label{classubana_1_1MuonCandidateFinder_afe47e105b7c1de947c6c550e5efe6d28}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_ad0de746d1b274f4adbad51371a673a86}{double {\bfseries \-\_\-gamma}}\label{classubana_1_1MuonCandidateFinder_ad0de746d1b274f4adbad51371a673a86}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_aa428d088ef4709d0ed7452e5841c7c75}{double {\bfseries \-\_\-degree}}\label{classubana_1_1MuonCandidateFinder_aa428d088ef4709d0ed7452e5841c7c75}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_a97841e76770881e6537500b772a09a4a}{double {\bfseries \-\_\-r}}\label{classubana_1_1MuonCandidateFinder_a97841e76770881e6537500b772a09a4a}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_a659f7e59f05d5247e8c0f1468054d73c}{double {\bfseries \-\_\-x1\-\_\-mean}}\label{classubana_1_1MuonCandidateFinder_a659f7e59f05d5247e8c0f1468054d73c}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_a5da0362ad15013f47fc304b36142f992}{double {\bfseries \-\_\-x2\-\_\-mean}}\label{classubana_1_1MuonCandidateFinder_a5da0362ad15013f47fc304b36142f992}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_aaa42e26f99367921ead9841a03875567}{double {\bfseries \-\_\-x1\-\_\-range}}\label{classubana_1_1MuonCandidateFinder_aaa42e26f99367921ead9841a03875567}
+
+\item 
+\hypertarget{classubana_1_1MuonCandidateFinder_a7b4f49b181b746f2f28ed41a793a38e6}{double {\bfseries \-\_\-x2\-\_\-range}}\label{classubana_1_1MuonCandidateFinder_a7b4f49b181b746f2f28ed41a793a38e6}
 
 \end{DoxyCompactItemize}
 

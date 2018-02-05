@@ -88,6 +88,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classubana_1_1MuonCandidateFinder-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -135,6 +136,21 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1MuonCandidateFinder.html#af622d542c3c3932572dc67588e75bcf6">MIPConsistency</a> (double dqds, double length)</td></tr>
 <tr class="memdesc:af622d542c3c3932572dc67588e75bcf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check track is consistent with muon hypothesis. <br/></td></tr>
 <tr class="separator:af622d542c3c3932572dc67588e75bcf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7139d4b040678249e402111d6adcc03c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7139d4b040678249e402111d6adcc03c"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1MuonCandidateFinder.html#a7139d4b040678249e402111d6adcc03c">SVMPredict</a> (double dqds, double length)</td></tr>
+<tr class="memdesc:a7139d4b040678249e402111d6adcc03c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check track is consistent with muon hypothesis. <br/></td></tr>
+<tr class="separator:a7139d4b040678249e402111d6adcc03c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a62077bd56d0005c80113d1da9ef9c48e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a62077bd56d0005c80113d1da9ef9c48e"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1MuonCandidateFinder.html#a62077bd56d0005c80113d1da9ef9c48e">_SVM_kernel</a> (std::pair&lt; double, double &gt; support_vector, std::pair&lt; double, double &gt; user_vector)</td></tr>
+<tr class="memdesc:a62077bd56d0005c80113d1da9ef9c48e"><td class="mdescLeft">&#160;</td><td class="mdescRight">SVM Polynomial Kernel. <br/></td></tr>
+<tr class="separator:a62077bd56d0005c80113d1da9ef9c48e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a535c37ad2b554fe540f596a0b389ec32"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a535c37ad2b554fe540f596a0b389ec32"></a>
+std::pair&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classubana_1_1MuonCandidateFinder.html#a535c37ad2b554fe540f596a0b389ec32">_SVM_feature_scaling</a> (double dqds, double length)</td></tr>
+<tr class="memdesc:a535c37ad2b554fe540f596a0b389ec32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Feature Scaling. <br/></td></tr>
+<tr class="separator:a535c37ad2b554fe540f596a0b389ec32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -159,6 +175,42 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>_tracktopidmap_is_set
 <tr class="memitem:ab09c2e9c8419eb520850e8e8ce3d9518"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab09c2e9c8419eb520850e8e8ce3d9518"></a>
 std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_svm_x</b></td></tr>
 <tr class="separator:ab09c2e9c8419eb520850e8e8ce3d9518"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb4356a1692fa77c2784d09599ce8fa1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb4356a1692fa77c2784d09599ce8fa1"></a>
+std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_alpha</b></td></tr>
+<tr class="separator:acb4356a1692fa77c2784d09599ce8fa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77c96b071b39a3ce14e00d0b233d4cc4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a77c96b071b39a3ce14e00d0b233d4cc4"></a>
+std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_support_vectors_x</b></td></tr>
+<tr class="separator:a77c96b071b39a3ce14e00d0b233d4cc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26ff1388fd925432f3b3ddcef36866d5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26ff1388fd925432f3b3ddcef36866d5"></a>
+std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_support_vectors_y</b></td></tr>
+<tr class="separator:a26ff1388fd925432f3b3ddcef36866d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8585a19ce1861eb280fd0b7654c0fa3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac8585a19ce1861eb280fd0b7654c0fa3"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>_rho</b></td></tr>
+<tr class="separator:ac8585a19ce1861eb280fd0b7654c0fa3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe47e105b7c1de947c6c550e5efe6d28"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afe47e105b7c1de947c6c550e5efe6d28"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>_loop</b></td></tr>
+<tr class="separator:afe47e105b7c1de947c6c550e5efe6d28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0de746d1b274f4adbad51371a673a86"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad0de746d1b274f4adbad51371a673a86"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>_gamma</b></td></tr>
+<tr class="separator:ad0de746d1b274f4adbad51371a673a86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa428d088ef4709d0ed7452e5841c7c75"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa428d088ef4709d0ed7452e5841c7c75"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>_degree</b></td></tr>
+<tr class="separator:aa428d088ef4709d0ed7452e5841c7c75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97841e76770881e6537500b772a09a4a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a97841e76770881e6537500b772a09a4a"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>_r</b></td></tr>
+<tr class="separator:a97841e76770881e6537500b772a09a4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a659f7e59f05d5247e8c0f1468054d73c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a659f7e59f05d5247e8c0f1468054d73c"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>_x1_mean</b></td></tr>
+<tr class="separator:a659f7e59f05d5247e8c0f1468054d73c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5da0362ad15013f47fc304b36142f992"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5da0362ad15013f47fc304b36142f992"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>_x2_mean</b></td></tr>
+<tr class="separator:a5da0362ad15013f47fc304b36142f992"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa42e26f99367921ead9841a03875567"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa42e26f99367921ead9841a03875567"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>_x1_range</b></td></tr>
+<tr class="separator:aaa42e26f99367921ead9841a03875567"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b4f49b181b746f2f28ed41a793a38e6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b4f49b181b746f2f28ed41a793a38e6"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>_x2_range</b></td></tr>
+<tr class="separator:a7b4f49b181b746f2f28ed41a793a38e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>User defined class <a class="el" href="classubana_1_1MuonCandidateFinder.html">MuonCandidateFinder</a> ... these comments are used to generate doxygen documentation! </p>

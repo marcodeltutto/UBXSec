@@ -1181,6 +1181,8 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_muoncandidate_dqdx_v_trunc[slice] = UBXSecHelper::GetDqDxTruncatedMean(calos, 1);
       ubxsec_event->slc_muoncandidate_mip_consistency[slice] = _muon_finder.MIPConsistency(ubxsec_event->slc_muoncandidate_dqdx_trunc[slice],
                                                                                            ubxsec_event->slc_muoncandidate_length[slice]);
+      ubxsec_event->slc_muoncandidate_mip_consistency2[slice] = _muon_finder.SVMPredict(ubxsec_event->slc_muoncandidate_dqdx_trunc[slice],
+                                                                                        ubxsec_event->slc_muoncandidate_length[slice]);
       std::cout << "[UBXSec] \t Truncated mean dQ/ds for candidate is (plane 0): " << ubxsec_event->slc_muoncandidate_dqdx_trunc[slice] << std::endl;
       std::cout << "[UBXSec] \t Truncated mean dQ/ds for candidate is (plane 1): " << ubxsec_event->slc_muoncandidate_dqdx_u_trunc[slice] << std::endl;
       std::cout << "[UBXSec] \t Truncated mean dQ/ds for candidate is (plane 2): " << ubxsec_event->slc_muoncandidate_dqdx_v_trunc[slice] << std::endl;

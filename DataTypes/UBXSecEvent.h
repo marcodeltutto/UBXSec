@@ -125,6 +125,7 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_muoncandidate_dqdx_v_trunc; ///< dqdx truncated mean for the muon candidate, plane 1
   vector<vector<double> > slc_muoncandidate_dqdx_v; ///< dqdx for every hit for the muon candidate
   vector<bool>     slc_muoncandidate_mip_consistency; ///< true if the muon candidate pass mip consistency cut
+  vector<bool>     slc_muoncandidate_mip_consistency2;
   vector<int>      slc_muoncandidate_truepdg; ///< True pdg code of the candated muon track
   vector<int>      slc_muoncandidate_trueorigin; ///< True origin of the candidate muon track
   vector<double>   slc_muoncandidate_mcs_delta_ll; ///< Delta LL from MCS fit

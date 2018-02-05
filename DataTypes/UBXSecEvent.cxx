@@ -106,6 +106,7 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_muoncandidate_dqdx_v_trunc.resize(vsize);
   slc_muoncandidate_dqdx_v.resize(vsize);
   slc_muoncandidate_mip_consistency.resize(vsize, true);
+  slc_muoncandidate_mip_consistency2.resize(vsize, true);
   slc_muoncandidate_truepdg.resize(vsize, _default_value);
   slc_muoncandidate_trueorigin.resize(vsize, _default_value);
   slc_muoncandidate_mcs_delta_ll.resize(vsize, _default_value);

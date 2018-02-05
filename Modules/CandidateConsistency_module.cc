@@ -7,6 +7,26 @@
 // from cetlib version v1_21_00.
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ * \class CandidateConsistency
+ *
+ * \ingroup UBXSec
+ *
+ * \brief Art producer module that tags TPCObjects if thet are not cosntistent with being neutrino candidate
+ * 
+ *
+ * \author Marco Del Tutto <marco.deltutto@physics.ox.ac.uk>
+ *
+ * \version producer (art v2_05_00)
+ *
+ * \date 2017/03/10
+ *
+ * Contact: marco.deltutto@physics.ox.ac.uk
+ *
+ * Created on: Sun Dec 31 07:59:34 2017
+ *
+ */
+
 #include "art/Framework/Core/EDProducer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"

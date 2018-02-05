@@ -15,11 +15,34 @@ namespace ubana {
 
   void MuonCandidateFinder::Configure(fhicl::ParameterSet const& pset)
   {
-    _use_pida_cut   = pset.get<bool> ( "UsePIDACut", false );
-    _svm_x          = pset.get<std::vector<double>> ("SVM_X");
+    _use_pida_cut      = pset.get<bool> ( "UsePIDACut", false );
+    _svm_x             = pset.get<std::vector<double>> ("SVM_X");
+    _alpha             = pset.get<std::vector<double>> ("SVM_alpha");
+    _support_vectors_x = pset.get<std::vector<double>> ("SVM_SupportVectorX");
+    _support_vectors_y = pset.get<std::vector<double>> ("SVM_SupportVectorY");
+    _rho               = pset.get<double> ("SVM_Rho");
+    _loop              = pset.get<double> ("SVM_Loop");
+    _gamma             = pset.get<double> ("SVM_Gamma");
+    _degree            = pset.get<double> ("SVM_Degree");
+    _r                 = pset.get<double> ("SVM_R");
+    _x1_mean           = pset.get<double> ("SVM_X1Mean");
+    _x2_mean           = pset.get<double> ("SVM_X2Mean");
+    _x1_range          = pset.get<double> ("SVM_X1Range");
+    _x2_range          = pset.get<double> ("SVM_X2Range");
 
     if (_svm_x.size() != 1000) {
       std::cout << "[MuonCandidateFinder] _svm_x size error, is " << _svm_x.size() << ", should be 1000" << std::endl;
+      throw std::exception();
+    }
+
+    if (_alpha.size() != _support_vectors_x.size() 
+      && _support_vectors_x.size() != _support_vectors_y.size() 
+      && _support_vectors_y.size() != _loop) {
+      std::cout << "[MuonCandidateFinder] Vector size mismatch: " 
+                << "alpha: " << _alpha.size()
+                << "sv x: " << _support_vectors_x.size()
+                << "sv y: " << _support_vectors_y.size() 
+                << "loop: " << _loop << std::endl;
       throw std::exception();
     }
   }
@@ -118,6 +141,50 @@ namespace ubana {
     return false;
 
   }
+
+  
+  bool MuonCandidateFinder::SVMPredict(double dqds, double length) {
+
+    // Feature scaling first
+    std::pair<double, double> user_vector = this->_SVM_feature_scaling(dqds, length);
+
+    // Check decision from classifier function
+    double decision_argument = 0;
+
+    for (size_t i = 0; i < _loop; i++) {
+
+      decision_argument += _alpha.at(i) * this->_SVM_kernel(std::make_pair(_support_vectors_x.at(i), _support_vectors_y.at(i)), user_vector);
+    }
+
+    decision_argument += _rho;
+
+    return (decision_argument > 0);
+
+  }
+
+  double MuonCandidateFinder::_SVM_kernel(std::pair<double, double> support_vector, std::pair<double, double> user_vector) {
+
+    double result = support_vector.first * user_vector.first + support_vector.second * user_vector.second;
+
+    result *= _gamma;
+
+    result += _r;
+
+    result = pow(result, _degree);
+
+    return result;
+  }
+
+  std::pair<double, double>  MuonCandidateFinder::_SVM_feature_scaling(double dqds, double length) {
+
+
+    double new_dqds = ((dqds - _x1_mean) / _x1_range + 1) * 10;
+    double new_length = ((length - _x2_mean) / _x2_range + 1) * 10;
+
+    return std::make_pair(new_dqds, new_length);
+
+  }
+  
 }
 
 

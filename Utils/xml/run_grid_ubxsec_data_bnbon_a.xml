@@ -3,14 +3,14 @@
 <!-- Production Project -->
 
 <!DOCTYPE project [
-<!ENTITY release "v06_26_01_07">
+<!ENTITY release "v06_26_01_10">
 <!ENTITY releasetag "e10:prof">
-<!ENTITY name "ubxsec_data_bnbon">
+<!ENTITY name "ubxsec_data_bnbon_a">
 <!ENTITY tag "ubxsec">
 <!ENTITY file_type "data">
 <!ENTITY run_type "physics">
 <!ENTITY PNFSpath "/pnfs/uboone/persistent/users/mdeltutt/">
-<!ENTITY ubxsec_version "v2.0.2">
+<!ENTITY ubxsec_version "mcc8.6_stopmu_test15">
 ]>
 
 
@@ -33,23 +33,24 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_v06_26_01_07_2017Oct26_22_06.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test15.tgz</local>
   </larsoft>
 
   <!-- Project stages -->
 
   <stage name="ubxsec">
     <fcl>run_ubxsec_data_bnbon.fcl</fcl>
-    <inputdef>prod_reco2_bnb_v9_mcc8</inputdef>
+    <inputdef>prod_reco_optfilter_bnb_v11_unblind_mcc8a</inputdef>
+    <schema>root</schema>
     <defname>&name;_&tag;_ana</defname>
-    <maxfilesperjob>15</maxfilesperjob>
-    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_data_bnbon</outdir>
-    <workdir>&PNFSpath;grid_workdir_ubxsec_data_bnbon</workdir>
-    <numjobs>920</numjobs> 
+    <maxfilesperjob>1</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_data_bnbon_a</outdir>
+    <workdir>&PNFSpath;grid_workdir_ubxsec_data_bnbon_a</workdir>
+    <numjobs>258</numjobs> 
     <datatier>ubana</datatier>
     <jobsub> --expected-lifetime=24h --mail_never --generate-email-summary </jobsub>
-    <memory>6000</memory>
-    <disk>80GB</disk>
+    <memory>3500</memory>
+    <disk>10GB</disk>
   </stage>
 
   <!-- file type -->

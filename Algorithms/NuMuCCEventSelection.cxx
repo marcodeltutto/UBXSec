@@ -19,6 +19,7 @@ namespace ubana {
     _flsmatch_score_cut       = pset.get< double > ( "FlsMatchScoreCut" );
     _vtxcheck_angle_cut_down  = pset.get< double > ( "VtxCheckAngleCutDown" );
     _vtxcheck_angle_cut_up    = pset.get< double > ( "VtxCheckAngleCutUp" );
+    _mcs_length_cut           = pset.get< double > ( "MCSLengthCut" );
     _ntrack_cut               = pset.get< double > ( "NTrackCut" );
     _pe_cut                   = pset.get< double > ( "PECut" );
     _beamSpillStarts          = pset.get< double > ( "BeamSpillStarts" );
@@ -39,6 +40,7 @@ namespace ubana {
     std::cout << "---   _flsmatch_score_cut       = " << _flsmatch_score_cut << std::endl;
     std::cout << "---   _vtxcheck_angle_cut_down  = " << _vtxcheck_angle_cut_down << std::endl;
     std::cout << "---   _vtxcheck_angle_cut_up    = " << _vtxcheck_angle_cut_up << std::endl;
+    std::cout << "---   _mcs_length_cut           = " << _mcs_length_cut << std::endl;
     std::cout << "---   _ntrack_cut               = " << _ntrack_cut << std::endl;
     std::cout << "---   _pe_cut                   = " << _pe_cut << std::endl;
     std::cout << "---   _beamSpillStarts          = " << _beamSpillStarts << std::endl;
@@ -83,6 +85,9 @@ namespace ubana {
       failure_map["fiducial_volume"] = false;
       failure_map["vertex_check_up"] = false;
       failure_map["vertex_check_down"] = false;
+      failure_map["vertex_quality"] = false;
+      failure_map["mcs_length_quality"] = false;
+      failure_map["mip_consistency"] = false;
       failure_map["ntrack"] = false;
       failure_map["track_quality"] = false;
       failure_map["vertex_quality"] = false;
@@ -123,6 +128,9 @@ namespace ubana {
       failure_map["fiducial_volume"] = false;
       failure_map["vertex_check_up"] = false;
       failure_map["vertex_check_down"] = false;
+      failure_map["vertex_quality"] = false;
+      failure_map["mcs_length_quality"] = false;
+      failure_map["mip_consistency"] = false;
       failure_map["ntrack"] = false;
       failure_map["track_quality"] = false;
       failure_map["vertex_quality"] = false;
@@ -160,6 +168,9 @@ namespace ubana {
       failure_map["fiducial_volume"] = false;
       failure_map["vertex_check_up"] = false;
       failure_map["vertex_check_down"] = false;
+      failure_map["vertex_quality"] = false;
+      failure_map["mcs_length_quality"] = false;
+      failure_map["mip_consistency"] = false;
       failure_map["ntrack"] = false;
       failure_map["track_quality"] = false;
       failure_map["vertex_quality"] = false;
@@ -251,6 +262,24 @@ namespace ubana {
       failure_map["vertex_quality"] = false;
     } else {
       failure_map["vertex_quality"] = true;
+    }
+
+    // MCS-Length Quality Cut
+    if(_ubxsec_event->slc_muoncandidate_contained.at(scl_ll_max) 
+      && (_ubxsec_event->slc_muoncandidate_mom_mcs.at(scl_ll_max) 
+        - _ubxsec_event->slc_muoncandidate_mom_range.at(scl_ll_max) > _mcs_length_cut)) {
+      reason = "fail_mcs_length_quality";
+      failure_map["mcs_length_quality"] = false;
+    } else {
+      failure_map["mcs_length_quality"] = true;
+    }
+
+    // MIP Consistency Cut
+    if(_ubxsec_event->slc_muoncandidate_mip_consistency.at(scl_ll_max)) {
+      reason = "fail_mip_consistency";
+      failure_map["mip_consistency"] = false;
+    } else {
+      failure_map["mip_consistency"] = true;
     }
 
     slice_index = scl_ll_max;

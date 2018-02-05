@@ -15,11 +15,11 @@
  * \brief Art producer module
  * 
  *
- * \author $Author: Marco Del Tutto<marco.deltutto@physics.ox.ac.uk> $
+ * \author Marco Del Tutto <marco.deltutto@physics.ox.ac.uk>
  *
- * \version $Revision: 1.0 $
+ * \version producer 
  *
- * \date $Date: 2017/03/10 $
+ * \date 2017/03/10
  *
  * Contact: marco.deltutto@physics.ox.ac.uk
  *
@@ -63,6 +63,7 @@
 #include "lardataobj/RawData/TriggerData.h"
 #include "lardataobj/RawData/OpDetWaveform.h"
 #include "lardata/DetectorInfo/DetectorClocks.h"
+#include "uboone/EventWeight/MCEventWeight.h"
 
 #include "uboone/UBXSec/DataTypes/UBXSecEvent.h"
 #include "uboone/UBXSec/DataTypes/SelectionResult.h"
@@ -95,6 +96,7 @@
 #include "uboone/UBXSec/Algorithms/MuonCandidateFinder.h"
 #include "uboone/UBXSec/Algorithms/FiducialVolume.h"
 #include "uboone/UBXSec/Algorithms/NuMuCCEventSelection.h"
+#include "uboone/UBXSec/Algorithms/TrackQuality.h"
 
 #include "larreco/RecoAlg/TrackMomentumCalculator.h"
 
@@ -155,6 +157,9 @@ private:
   // Database to understand particle pdg
   const TDatabasePDG* _database_pdg;
 
+  // Detector info service
+  ::detinfo::DetectorProperties const* fDetectorProperties;
+
   // To be set via fcl parameters
   std::string _hitfinderLabel;
   std::string _pfp_producer;
@@ -175,6 +180,7 @@ private:
   std::string _mcsfitresult_mu_producer;
   std::string _mcsfitresult_pi_producer;
   std::string _calorimetry_producer;
+  std::string _eventweight_producer;
   bool _debug = true;                   ///< Debug mode
   int _minimumHitRequirement;           ///< Minimum number of hits in at least a plane for a track
   double _minimumDistDeadReg;           ///< Minimum distance the track end points can have to a dead region
@@ -274,6 +280,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _mcsfitresult_mu_producer       = p.get<std::string>("MCSFitResultMuProducer");
   _mcsfitresult_pi_producer       = p.get<std::string>("MCSFitResultPiProducer");
   _calorimetry_producer           = p.get<std::string>("CalorimetryProducer");
+  _eventweight_producer           = p.get<std::string>("EventWeightProducer");
 
   _use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
   _minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
@@ -308,6 +315,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _trk_mom_calculator.SetMinLength(_min_track_len);
 
   _database_pdg = new TDatabasePDG;
+
+  fDetectorProperties = lar::providerFrom<detinfo::DetectorPropertiesService>(); 
 
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
@@ -464,7 +473,9 @@ void UBXSec::produce(art::Event & e) {
   // Collect tracks
   lar_pandora::TrackVector            allPfParticleTracks;
   lar_pandora::PFParticlesToTracks    pfParticleToTrackMap;
+  lar_pandora::TracksToHits           trackToHitsMap;
   lar_pandora::LArPandoraHelper::CollectTracks(e, _pfp_producer, allPfParticleTracks, pfParticleToTrackMap);
+  lar_pandora::LArPandoraHelper::CollectTracks(e, _pfp_producer, allPfParticleTracks, trackToHitsMap);
 
   // Collect PFParticles and match Reco Particles to Hits
   //lar_pandora::PFParticleVector  recoParticleVector;
@@ -474,7 +485,7 @@ void UBXSec::produce(art::Event & e) {
 
   //lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
   //lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
-  lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, _spacepointLabel, recoParticlesToHits, recoHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
+  lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, _spacepointLabel, recoParticlesToHits, recoHitsToParticles, lar_pandora::LArPandoraHelper::kUseDaughters, true);
 
   // Get TPCObjects from the Event
   art::Handle<std::vector<ubana::TPCObject>> tpcobj_h;
@@ -602,6 +613,28 @@ void UBXSec::produce(art::Event & e) {
   std::cout << "mcsfitresult_mu_v.at(0)->deltaLogLikelihood(): " << mcsfitresult_mu_v.at(0)->deltaLogLikelihood() << std::endl;  
   */
 
+  // Get the BNB Correction Weights
+  art::Handle<std::vector<evwgh::MCEventWeight>> eventweight_h;
+  e.getByLabel(_eventweight_producer, eventweight_h);
+  if(!eventweight_h.isValid()){
+    std::cout << "[UBXSec] MCEventWeight product " << _eventweight_producer << " not found..." << std::endl;
+    //throw std::exception();
+  }
+  std::vector<art::Ptr<evwgh::MCEventWeight>> eventweight_v;
+  art::fill_ptr_vector(eventweight_v, eventweight_h);
+  double bnb_weight = 1.;
+  if (eventweight_v.size() > 0) {
+    art::Ptr<evwgh::MCEventWeight> evt_wgt = eventweight_v.at(0);
+    for (auto entry : evt_wgt->fWeight) {
+      if (entry.first.find("bnbcorrection") != std::string::npos) {
+        bnb_weight *= entry.second.at(0);
+        std::cout << "[UBXSec] BNB Correction Weight: " << bnb_weight << std::endl;
+      }
+    }
+  }
+
+  ubxsec_event->bnb_weight = bnb_weight;
+  
   // pandoraCosmic PFPs (for cosmic removal studies)
   art::Handle<std::vector<recob::PFParticle>> pfp_cosmic_h;
   e.getByLabel("pandoraCosmic",pfp_cosmic_h);
@@ -1144,9 +1177,15 @@ void UBXSec::produce(art::Event & e) {
       std::vector<art::Ptr<anab::Calorimetry>> calos = calos_from_track.at(candidate_track.key());
       ubxsec_event->slc_muoncandidate_dqdx_v[slice] = UBXSecHelper::GetDqDxVector(calos);
       ubxsec_event->slc_muoncandidate_dqdx_trunc[slice] = UBXSecHelper::GetDqDxTruncatedMean(calos);
+      ubxsec_event->slc_muoncandidate_dqdx_u_trunc[slice] = UBXSecHelper::GetDqDxTruncatedMean(calos, 0);
+      ubxsec_event->slc_muoncandidate_dqdx_v_trunc[slice] = UBXSecHelper::GetDqDxTruncatedMean(calos, 1);
       ubxsec_event->slc_muoncandidate_mip_consistency[slice] = _muon_finder.MIPConsistency(ubxsec_event->slc_muoncandidate_dqdx_trunc[slice],
                                                                                            ubxsec_event->slc_muoncandidate_length[slice]);
-      std::cout << "[UBXSec] \t Truncated mean dQ/ds for candidate is: " << ubxsec_event->slc_muoncandidate_dqdx_trunc[slice] << std::endl;
+      ubxsec_event->slc_muoncandidate_mip_consistency2[slice] = _muon_finder.SVMPredict(ubxsec_event->slc_muoncandidate_dqdx_trunc[slice],
+                                                                                        ubxsec_event->slc_muoncandidate_length[slice]);
+      std::cout << "[UBXSec] \t Truncated mean dQ/ds for candidate is (plane 0): " << ubxsec_event->slc_muoncandidate_dqdx_trunc[slice] << std::endl;
+      std::cout << "[UBXSec] \t Truncated mean dQ/ds for candidate is (plane 1): " << ubxsec_event->slc_muoncandidate_dqdx_u_trunc[slice] << std::endl;
+      std::cout << "[UBXSec] \t Truncated mean dQ/ds for candidate is (plane 2): " << ubxsec_event->slc_muoncandidate_dqdx_v_trunc[slice] << std::endl;
       std::cout << "[UBXSec] \t MIP consistent ? : " << (ubxsec_event->slc_muoncandidate_mip_consistency[slice] ? "YES" : "NO") << std::endl;
 
       // Get the related PFP
@@ -1211,6 +1250,104 @@ void UBXSec::produce(art::Event & e) {
       double b_ll = mcsfitresult_mu_v.at(candidate_track.key())->bwdLogLikelihood();
       ubxsec_event->slc_muoncandidate_mcs_delta_ll[slice] = f_ll - b_ll;
       if (!down_track) ubxsec_event->slc_muoncandidate_mcs_delta_ll[slice] = b_ll - f_ll;
+
+
+      //
+      // Look at residuals
+      //
+      std::vector<TVector3> hit_v; // a vec of hits from coll plane
+      std::vector<TVector3> track_v; // a vec of hits from coll plane
+
+      // Collect hits
+      auto iter = trackToHitsMap.find(candidate_track);
+      if (iter != trackToHitsMap.end()) {
+        std::vector<art::Ptr<recob::Hit>> hits = iter->second;
+        for (auto hit : hits) {
+          if (hit->View() == 2) {
+            TVector3 h (hit->WireID().Wire, hit->PeakTime(), 0);
+            //std::cout << "emplacing hit with wire " << h.X() << ", and time " << h.Y() << std::endl;
+            hit_v.emplace_back(h);
+          }
+        }
+      }
+
+      // Collect track points
+      for (size_t i = 0; i < candidate_track->NumberTrajectoryPoints(); i++) {
+        try {
+          if (candidate_track->HasValidPoint(i)) {
+            TVector3 trk_pt = candidate_track->LocationAtPoint(i);
+            double wire = geo->NearestWire(trk_pt, 2);
+            double time = fDetectorProperties->ConvertXToTicks(trk_pt.X(), geo::PlaneID(0,0,2));
+            TVector3 p (wire, time, 0.);
+            //std::cout << "emplacing track point on wire " << p.X() << ", and time " << p.Y() << std::endl;
+            track_v.emplace_back(p);
+          }
+        } catch (...) {
+          continue;
+        }
+      }
+      
+      std::cout << ">>>hit points: " << hit_v.size() << ", track points: " << track_v.size() << std::endl;
+      ubana::TrackQuality _track_quality;
+      _track_quality.SetTrackPoints(track_v);
+      _track_quality.SetHitCollection(hit_v);
+      std::pair<double, double> residual_mean_std = _track_quality.GetResiduals();
+      std::cout << ">>>residuals, mean " << residual_mean_std.first << ", std " << residual_mean_std.second << std::endl;
+      std::pair<double,int> dist_wire_pair = _track_quality.GetTrackGap();
+
+      int start_wire = dist_wire_pair.second;
+      int end_wire = dist_wire_pair.second + dist_wire_pair.first;
+
+      if (start_wire > end_wire) 
+        std::swap(start_wire, end_wire);
+
+      // Create a channel to wire map
+      std::map<int, int> wire_to_channel;
+      for (unsigned int ch = 0; ch < 8256; ch++) {
+        std::vector< geo::WireID > wire_v = geo->ChannelToWire(ch);
+        wire_to_channel[wire_v[0].Wire] = ch;
+      }
+
+      int n_dead_wires = 0;
+
+      for (int wire = start_wire; wire < end_wire; wire++) {
+
+        int channel = wire_to_channel[wire];
+
+        // Channel statuses: 1=dead, 3=noisy, 4=good
+        if (chanFilt.Status(channel) < 4) {
+          n_dead_wires++;
+        }
+      }
+
+      std::cout << "Gap of " << end_wire-start_wire << ", n of dead wires in it: " << n_dead_wires << std::endl;
+      double r = _track_quality.GetR();
+      std::cout << "The r value is: " << r << std::endl;
+
+
+      double n_hits_in_cluster = 0;
+      auto it = recoParticlesToHits.find(candidate_pfp);
+      if (it != recoParticlesToHits.end()) {
+        for (auto h : it->second) {
+          if (h->View() == 2) {
+            n_hits_in_cluster++;
+          }
+        }
+      }
+
+      double ratio = (double)hit_v.size()/n_hits_in_cluster;
+
+      std::cout << "Percentage of used hit in cluster = " << ratio << std::endl;
+
+      ubxsec_event->slc_muoncandidate_residuals_mean[slice] = residual_mean_std.first;
+      ubxsec_event->slc_muoncandidate_residuals_std[slice] = residual_mean_std.second;
+      ubxsec_event->slc_muoncandidate_wiregap[slice] = end_wire-start_wire;
+      ubxsec_event->slc_muoncandidate_wiregap_dead[slice] = n_dead_wires;
+      ubxsec_event->slc_muoncandidate_linearity[slice] = r;
+      ubxsec_event->slc_muoncandidate_perc_used_hits_in_cluster[slice] = ratio;
+
+
+
 
 
     } else {

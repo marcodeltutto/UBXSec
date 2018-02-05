@@ -7,6 +7,26 @@
 // from cetlib version v1_21_00.
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ * \class NeutrinoMCFlash
+ *
+ * \ingroup UBXSec
+ *
+ * \brief Art producer module that creates an MC flash, as it would be created by the nu interaction
+ * 
+ *
+ * \author Marco Del Tutto <marco.deltutto@physics.ox.ac.uk>
+ *
+ * \version producer (art v2_05_00)
+ *
+ * \date 2017/03/10
+ *
+ * Contact: marco.deltutto@physics.ox.ac.uk
+ *
+ * Created on: Fri Jan 20 09:58:07 2017
+ *
+ */
+
 #include "art/Framework/Core/EDProducer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/Event.h"

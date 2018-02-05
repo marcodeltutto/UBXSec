@@ -5,12 +5,12 @@
 <!DOCTYPE project [
 <!ENTITY release "v06_26_01_10">
 <!ENTITY releasetag "e10:prof">
-<!ENTITY name "ubxsec_mc_bnbcosmic">
+<!ENTITY name "ubxsec_data_extbnb_a">
 <!ENTITY tag "ubxsec">
-<!ENTITY file_type "mc">
+<!ENTITY file_type "data">
 <!ENTITY run_type "physics">
 <!ENTITY PNFSpath "/pnfs/uboone/persistent/users/mdeltutt/">
-<!ENTITY ubxsec_version "mcc8.6_stopmu_test17">
+<!ENTITY ubxsec_version "mcc8.6_stopmu_test15">
 ]>
 
 
@@ -20,37 +20,36 @@
   <group>uboone</group>
 
   <!-- Project size -->
-  <numevents>50000</numevents>
+  <numevents>1000</numevents>
 
   <!-- Operating System -->
   <os>SL5,SL6</os>
 
   <!-- Batch resources -->
-  <resource>DEDICATED,OPPORTUNISTIC</resource>
+  <resource>DEDICATED,OPPORTUNISTIC,OFFSITE</resource>
 
   <!-- Larsoft information -->
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test17.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test15.tgz</local>
   </larsoft>
 
   <!-- Project stages -->
 
   <stage name="ubxsec">
-    <fcl>run_ubxsec_mc_bnbcosmic.fcl</fcl>
-    <inputdef>prodgenie_bnb_nu_cosmic_uboone_mcc8.6_reco2</inputdef>
+    <fcl>run_ubxsec_data_extbnb.fcl</fcl>
+    <inputdef>prod_reco_optfilter_extbnb_v11_mcc8a</inputdef>
     <schema>root</schema>
-    <!--<inputlist>&PNFSpath;bnb_cosmic_files_mcc8.3.list</inputlist>-->
     <defname>&name;_&tag;_ana</defname>
-    <maxfilesperjob>5</maxfilesperjob>
-    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_mc_bnbcosmic</outdir>
-    <workdir>&PNFSpath;grid_workdir_ubxsec_mc_bnbcosmic</workdir>
-    <numjobs>500</numjobs>
+    <maxfilesperjob>7</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_data_extbnb_a</outdir>
+    <workdir>&PNFSpath;grid_workdir_ubxsec_data_extbnb_a</workdir>
+    <numjobs>996</numjobs>
     <datatier>ubana</datatier>
-    <memory>3000</memory>
-    <jobsub> --expected-lifetime=20h -q --generate-email-summary </jobsub>
-    <disk>60GB</disk>
+    <memory>3500</memory>
+    <jobsub> --expected-lifetime=24h --mail_never --generate-email-summary </jobsub>
+    <disk>40GB</disk>
   </stage>
 
   <!-- file type -->

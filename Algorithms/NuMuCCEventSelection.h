@@ -68,6 +68,7 @@ namespace ubana{
     double _flsmatch_score_cut;
     double _vtxcheck_angle_cut_down;
     double _vtxcheck_angle_cut_up;
+    double _mcs_length_cut;
     double _ntrack_cut;
     double _pe_cut;
     double _beamSpillStarts;

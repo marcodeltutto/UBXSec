@@ -29,13 +29,13 @@ ACPTTagger: {
   MinTrackLength:        0
 
   DtResolutionOpHit:     15
-  OpHitTimeRes:          20
+  OpHitTimeRes:          15
   OpHitPosRes:           180
   MinOpHit:              2
   MinOpHitPE:            20
  
   PEMin:                 0
-  Debug:                 true
+  Debug:                 false
   CreateHisto:           true
   CreateTree:            false
 

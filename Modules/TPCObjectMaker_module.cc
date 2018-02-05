@@ -8,13 +8,23 @@
 ////////////////////////////////////////////////////////////////////////
 
 /**
- * \file TPCObjectMaker_module.cc
+ * \class TPCObjectMaker
  *
  * \ingroup UBXSec
- * 
- * \brief LArSoft plugin to generate TPC Objects
  *
- * @author Marco Del Tutto
+ * \brief Art producer module that creates TPCObjects
+ * 
+ *
+ * \author Marco Del Tutto <marco.deltutto@physics.ox.ac.uk>
+ *
+ * \version producer (art v2_05_00)
+ *
+ * \date 2017/03/10
+ *
+ * Contact: marco.deltutto@physics.ox.ac.uk
+ *
+ * Created on: Mon May 15 10:56:05 2017
+ *
  */
 
 /** \addtogroup UBXSec
@@ -268,7 +278,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
 
     // Cosmic origin
     if (mc_truth->Origin() == COSMIC_ORIGIN) {
-      std::cout << "PFP " << pf_par->Self() << " has cosmic origin" << std::endl;
+      if (_debug) std::cout << "[TPCObjectMaker] PFP " << pf_par->Self() << " has cosmic origin" << std::endl;
       cosmicOriginPFP.emplace_back(pf_par);
 
       // Check if this is a stopping muon in the TPC 
@@ -285,7 +295,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
 
     // Neutrino origin
     if (mc_truth->Origin() == NEUTRINO_ORIGIN) {
-      std::cout << "PFP " << pf_par->Self() << " has neutrino origin" << std::endl;
+      if (_debug) std::cout << "[TPCObjectMaker] PFP " << pf_par->Self() << " has neutrino origin" << std::endl;
       neutrinoOriginPFP.emplace_back(pf_par);
 
       // Check if this is a stopping muon in the TPC

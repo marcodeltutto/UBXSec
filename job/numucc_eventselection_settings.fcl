@@ -9,6 +9,7 @@ NuMuCCSelectionSettings: {
   FlsMatchScoreCut:      3e-4
   VtxCheckAngleCutDown:  0.05
   VtxCheckAngleCutUp:    2.9
+  MCSLengthCut:          0.2
   NTrackCut:             1
   PECut:                 50
   BeamSpillStarts:       3.2

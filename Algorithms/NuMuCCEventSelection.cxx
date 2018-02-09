@@ -275,7 +275,7 @@ namespace ubana {
     }
 
     // MIP Consistency Cut
-    if(_ubxsec_event->slc_muoncandidate_mip_consistency.at(scl_ll_max)) {
+    if(!_ubxsec_event->slc_muoncandidate_mip_consistency.at(scl_ll_max)) {
       reason = "fail_mip_consistency";
       failure_map["mip_consistency"] = false;
     } else {

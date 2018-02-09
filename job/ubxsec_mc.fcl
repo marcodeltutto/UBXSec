@@ -81,7 +81,7 @@ ubxsec_mc_flashmatch:
 
    CandidateConsistency:           @local::CandidateConsistency_mc
 
-   UBXSec:                         @local::UBXSec
+   UBXSec:                         @local::UBXSec_mc
 
 }
 

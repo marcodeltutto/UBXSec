@@ -76,7 +76,7 @@ namespace ubana{
     bool _track_is_set = false;
     bool _hits_are_set = false;
 
-    bool _debug = true;
+    bool _debug = false;
 
   };
 }

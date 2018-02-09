@@ -116,6 +116,7 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_muoncandidate_wiregap_dead.resize(vsize, _default_value);
   slc_muoncandidate_linearity.resize(vsize, _default_value);
   slc_muoncandidate_perc_used_hits_in_cluster.resize(vsize, _default_value);
+  slc_muoncandidate_maxscatteringangle.resize(vsize, _default_value);
   slc_acpt_outoftime.resize(vsize, _default_value);
   slc_crosses_top_boundary.resize(vsize, _default_value);
   slc_nuvtx_closetodeadregion_u.resize(vsize, _default_value);

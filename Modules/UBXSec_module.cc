@@ -614,21 +614,23 @@ void UBXSec::produce(art::Event & e) {
   */
 
   // Get the BNB Correction Weights
-  art::Handle<std::vector<evwgh::MCEventWeight>> eventweight_h;
-  e.getByLabel(_eventweight_producer, eventweight_h);
-  if(!eventweight_h.isValid()){
-    std::cout << "[UBXSec] MCEventWeight product " << _eventweight_producer << " not found..." << std::endl;
-    //throw std::exception();
-  }
-  std::vector<art::Ptr<evwgh::MCEventWeight>> eventweight_v;
-  art::fill_ptr_vector(eventweight_v, eventweight_h);
   double bnb_weight = 1.;
-  if (eventweight_v.size() > 0) {
-    art::Ptr<evwgh::MCEventWeight> evt_wgt = eventweight_v.at(0);
-    for (auto entry : evt_wgt->fWeight) {
-      if (entry.first.find("bnbcorrection") != std::string::npos) {
-        bnb_weight *= entry.second.at(0);
-        std::cout << "[UBXSec] BNB Correction Weight: " << bnb_weight << std::endl;
+  if (_is_mc) {
+    art::Handle<std::vector<evwgh::MCEventWeight>> eventweight_h;
+    e.getByLabel(_eventweight_producer, eventweight_h);
+    if(!eventweight_h.isValid()){
+      std::cout << "[UBXSec] MCEventWeight product " << _eventweight_producer << " not found..." << std::endl;
+      //throw std::exception();
+    }
+    std::vector<art::Ptr<evwgh::MCEventWeight>> eventweight_v;
+    art::fill_ptr_vector(eventweight_v, eventweight_h);
+    if (eventweight_v.size() > 0) {
+      art::Ptr<evwgh::MCEventWeight> evt_wgt = eventweight_v.at(0);
+      for (auto entry : evt_wgt->fWeight) {
+        if (entry.first.find("bnbcorrection") != std::string::npos) {
+          bnb_weight *= entry.second.at(0);
+          std::cout << "[UBXSec] BNB Correction Weight: " << bnb_weight << std::endl;
+        }
       }
     }
   }
@@ -1287,12 +1289,12 @@ void UBXSec::produce(art::Event & e) {
         }
       }
       
-      std::cout << ">>>hit points: " << hit_v.size() << ", track points: " << track_v.size() << std::endl;
+      if (_debug) std::cout << "[UBXSec] \t \t Hit points: " << hit_v.size() << ", track points: " << track_v.size() << std::endl;
       ubana::TrackQuality _track_quality;
       _track_quality.SetTrackPoints(track_v);
       _track_quality.SetHitCollection(hit_v);
       std::pair<double, double> residual_mean_std = _track_quality.GetResiduals();
-      std::cout << ">>>residuals, mean " << residual_mean_std.first << ", std " << residual_mean_std.second << std::endl;
+      if (_debug) std::cout << "[UBXSec] \t \t Residuals, mean " << residual_mean_std.first << ", std " << residual_mean_std.second << std::endl;
       std::pair<double,int> dist_wire_pair = _track_quality.GetTrackGap();
 
       int start_wire = dist_wire_pair.second;
@@ -1339,15 +1341,33 @@ void UBXSec::produce(art::Event & e) {
 
       std::cout << "Percentage of used hit in cluster = " << ratio << std::endl;
 
+      // Also look at the scattering angle
+      std::vector<TVector3> dir_v;
+      for (size_t p = 0; p < candidate_track->NumberTrajectoryPoints(); p++) {
+        if (!candidate_track->HasValidPoint(p)) continue;
+        dir_v.push_back(candidate_track->DirectionAtPoint(p));
+      }
+      std::vector<double> angle_v;
+      for (size_t p = 0; p < dir_v.size()-1; p++) {
+        double angle = dir_v.at(p).Angle(dir_v.at(p+1));
+        angle_v.push_back(angle);
+      }
+      std::sort(angle_v.begin(), angle_v.end());
+
+      double max_angle = -1;
+      if (angle_v.size() != 0)
+        max_angle = angle_v.at(angle_v.size()-1) / TMath::Pi() * 180.;
+
+      std::cout << "Max scattering angle = " << max_angle << std::endl;
+
+
       ubxsec_event->slc_muoncandidate_residuals_mean[slice] = residual_mean_std.first;
       ubxsec_event->slc_muoncandidate_residuals_std[slice] = residual_mean_std.second;
       ubxsec_event->slc_muoncandidate_wiregap[slice] = end_wire-start_wire;
       ubxsec_event->slc_muoncandidate_wiregap_dead[slice] = n_dead_wires;
       ubxsec_event->slc_muoncandidate_linearity[slice] = r;
       ubxsec_event->slc_muoncandidate_perc_used_hits_in_cluster[slice] = ratio;
-
-
-
+      ubxsec_event->slc_muoncandidate_maxscatteringangle[slice] = max_angle;
 
 
     } else {

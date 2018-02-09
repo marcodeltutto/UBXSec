@@ -135,6 +135,7 @@ class UBXSecEvent /*: public TObject*/{
   vector<int>      slc_muoncandidate_wiregap_dead; ///< Number of dead wires in the biggest wire gap found in track path
   vector<double>   slc_muoncandidate_linearity; ///< Linearity of the hit the track is made out of
   vector<double>   slc_muoncandidate_perc_used_hits_in_cluster; ///< Number of used hits in the cluster to make the track
+  vector<double>   slc_muoncandidate_maxscatteringangle; ///< Maximum scattering angle along track
   Int_t            nbeamfls; ///< Number of beam flashes in the event
   vector<double>   beamfls_time; ///< Time of the beam flash
   vector<double>   beamfls_pe; ///< PE of the beam flash

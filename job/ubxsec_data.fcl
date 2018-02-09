@@ -120,7 +120,7 @@ ubxsec_data_analyzers: [ #CosmicTaggerAna
 
 # Set reco properties
 
-ubxsec_data_reco.simpleFlashCosmicTest.AlgoConfig.DebugMode: true
+#ubxsec_data_reco.simpleFlashCosmicTest.AlgoConfig.DebugMode: true
 
 ubxsec_data_reco.pandoraCosmicTrackPFPart.PFParticleModuleLabel:   "pandoraCosmic"
 ubxsec_data_reco.pandoraCosmicTrackPFPart.TrackModuleLabel:        "pandoraCosmic"

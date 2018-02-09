@@ -16,6 +16,9 @@ namespace ubana {
   void MuonCandidateFinder::Configure(fhicl::ParameterSet const& pset)
   {
     _use_pida_cut      = pset.get<bool> ( "UsePIDACut", false );
+
+    _gain_calib        = pset.get<double> ("GainCalib", 1);
+
     _svm_x             = pset.get<std::vector<double>> ("SVM_X");
     _alpha             = pset.get<std::vector<double>> ("SVM_alpha");
     _support_vectors_x = pset.get<std::vector<double>> ("SVM_SupportVectorX");
@@ -51,6 +54,16 @@ namespace ubana {
 
     std::cout << "--- MuonCandidateFinder configuration:" << std::endl;
     std::cout << "---   _use_pida_cut  = " << _use_pida_cut << std::endl;
+    std::cout << "---   _gain_calib    = " << _gain_calib << std::endl;
+    std::cout << "---   _rho           = " << _rho << std::endl;
+    std::cout << "---   _loop          = " << _loop << std::endl;
+    std::cout << "---   _gamma         = " << _gamma << std::endl;
+    std::cout << "---   _degree        = " << _degree << std::endl;
+    std::cout << "---   _r             = " << _r << std::endl;
+    std::cout << "---   _x1_mean       = " << _x1_mean << std::endl;
+    std::cout << "---   _x2_mean       = " << _x2_mean << std::endl;
+    std::cout << "---   _x1_range      = " << _x1_range << std::endl;
+    std::cout << "---   _x2_range      = " << _x2_range << std::endl;
 
   }
 
@@ -129,10 +142,12 @@ namespace ubana {
       return false;
     }
 
+    dqds *= _gain_calib;
+
     int l = std::round(length);
     double dqds_cut = _svm_x.at(l);
 
-    std::cout << "[MuonCandidateFinder] Track length is " << length << ", dqds_cut is " << dqds_cut << std::endl;
+    std::cout << "[MuonCandidateFinder] Track length is " << length << " cm, dqds_cut is " << dqds_cut << " e-/cm" << std::endl;
 
     if (dqds <= dqds_cut)
       return true;
@@ -144,6 +159,8 @@ namespace ubana {
 
   
   bool MuonCandidateFinder::SVMPredict(double dqds, double length) {
+
+    dqds *= _gain_calib;
 
     // Feature scaling first
     std::pair<double, double> user_vector = this->_SVM_feature_scaling(dqds, length);

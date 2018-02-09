@@ -40,9 +40,14 @@ UBXSec: {
 
   FiducialVolumeSettings:       @local::UBXSecFiducialVolumeSettings
 
-  MuonCandidateFinderSettings:  @local::MuonCandidateFinder
+  MuonCandidateFinderSettings:  @local::MuonCandidateFinder_mc
 
   NuMuCCSelectionSettings:      @local::NuMuCCSelectionSettings
 }
+
+UBXSec_mc: @local::UBXSec
+
+UBXSec_data: @local::UBXSec
+UBXSec_data.MuonCandidateFinderSettings: @local::MuonCandidateFinder_data
 
 END_PROLOG

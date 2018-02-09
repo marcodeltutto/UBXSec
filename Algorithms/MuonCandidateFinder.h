@@ -79,6 +79,8 @@ namespace ubana{
 
     bool _use_pida_cut;
 
+    double _gain_calib;
+
     bool _tracks_are_set;
     bool _tracktopidmap_is_set;
 

@@ -83,7 +83,7 @@ ubxsec_data_flashmatch:
 
    CandidateConsistency:          @local::CandidateConsistency_data
 
-   UBXSec:                        @local::UBXSec
+   UBXSec:                        @local::UBXSec_data
 }
 
 ubxsec_data_ana:

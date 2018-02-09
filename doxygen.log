@@ -323,8 +323,8 @@ Generating code for file /home/travis/build/marco/home/travis/build/marcodeltutt
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:138: warning: Member operator=(UBXSec &&)=delete (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:141: warning: Member produce(art::Event &e) override (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:142: warning: Member endSubRun(art::SubRun &sr) override (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:160: warning: Member Init() (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:161: warning: Member ResizeVectors(int) (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:161: warning: Member Init() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:162: warning: Member ResizeVectors(int) (function) of class UBXSecEvent is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:128: warning: Member slc_muoncandidate_mip_consistency2 (variable) of class UBXSecEvent is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:72: warning: Member GetRecoToTrueMatches(art::Event const &e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits) (function) of class UBXSecHelper is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:286: warning: Member GetDqDxVector(std::vector< art::Ptr< anab::Calorimetry >> calos, int plane_no=2) (function) of class UBXSecHelper is not documented.
@@ -463,21 +463,22 @@ Generating docs for compound ub/home/travis/build/marcodeltutto/UBXSec/Algorithm
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:77: warning: Member _tracks (variable) of class ubana::MuonCandidateFinder is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:78: warning: Member _track_to_pid (variable) of class ubana::MuonCandidateFinder is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:80: warning: Member _use_pida_cut (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:82: warning: Member _tracks_are_set (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:83: warning: Member _tracktopidmap_is_set (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:85: warning: Member _svm_x (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:86: warning: Member _alpha (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:87: warning: Member _support_vectors_x (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:88: warning: Member _support_vectors_y (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:89: warning: Member _rho (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:90: warning: Member _loop (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:91: warning: Member _gamma (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:92: warning: Member _degree (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:93: warning: Member _r (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:94: warning: Member _x1_mean (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:95: warning: Member _x2_mean (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:96: warning: Member _x1_range (variable) of class ubana::MuonCandidateFinder is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:97: warning: Member _x2_range (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:82: warning: Member _gain_calib (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:84: warning: Member _tracks_are_set (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:85: warning: Member _tracktopidmap_is_set (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:87: warning: Member _svm_x (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:88: warning: Member _alpha (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:89: warning: Member _support_vectors_x (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:90: warning: Member _support_vectors_y (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:91: warning: Member _rho (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:92: warning: Member _loop (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:93: warning: Member _gamma (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:94: warning: Member _degree (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:95: warning: Member _r (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:96: warning: Member _x1_mean (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:97: warning: Member _x2_mean (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:98: warning: Member _x1_range (variable) of class ubana::MuonCandidateFinder is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:99: warning: Member _x2_range (variable) of class ubana::MuonCandidateFinder is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/NuMuCCEventSelection.h:58: warning: Member _ubxsec_event (variable) of class ubana::NuMuCCEventSelection is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/NuMuCCEventSelection.h:59: warning: Member _event_is_set (variable) of class ubana::NuMuCCEventSelection is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/NuMuCCEventSelection.h:60: warning: Member _configured (variable) of class ubana::NuMuCCEventSelection is not documented.
@@ -580,5 +581,5 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-lookup cache used 466/65536 hits=2030 misses=482
+lookup cache used 467/65536 hits=2033 misses=483
 finished...

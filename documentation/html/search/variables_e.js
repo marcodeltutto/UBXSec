@@ -36,6 +36,7 @@ var searchData=
   ['slc_5fmuoncandidate_5fexists',['slc_muoncandidate_exists',['../classUBXSecEvent.html#a77d7addc1e52f51c7697daab275c8bc6',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5flength',['slc_muoncandidate_length',['../classUBXSecEvent.html#aed08b3fea158e50f1f878bb211e7abb6',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5flinearity',['slc_muoncandidate_linearity',['../classUBXSecEvent.html#aa385ab36f52d07e5cdd303e82ae8035f',1,'UBXSecEvent']]],
+  ['slc_5fmuoncandidate_5fmaxscatteringangle',['slc_muoncandidate_maxscatteringangle',['../classUBXSecEvent.html#ad1f8e0086022ff8db9be1bbe8860c6d1',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5fmcs_5fdelta_5fll',['slc_muoncandidate_mcs_delta_ll',['../classUBXSecEvent.html#a2debf701edaaaf07b40603c5196c9df0',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5fmcs_5fll',['slc_muoncandidate_mcs_ll',['../classUBXSecEvent.html#a7342f551004e2275665345afe33d21a2',1,'UBXSecEvent']]],
   ['slc_5fmuoncandidate_5fmip_5fconsistency',['slc_muoncandidate_mip_consistency',['../classUBXSecEvent.html#a535d450659bbc041a675b3c602650ce5',1,'UBXSecEvent']]],

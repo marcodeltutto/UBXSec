@@ -89,6 +89,13 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_longesttrack_phi; ///< Phi angle of the longest track
   vector<double>   slc_longesttrack_theta; ///< Cos(theta) of the longest track
   vector<bool>     slc_longesttrack_iscontained; ///< Is true if the longest track if fully contained
+  vector<double>   slc_longestshower_length; ///< Length of the longest shower
+  vector<double>   slc_longestshower_phi; ///< Phi angle of the longest shower
+  vector<double>   slc_longestshower_theta; ///< Cos(theta) of the longest shower
+  vector<double>   slc_longestshower_openangle; ///< Opening angle of the longest shower
+  vector<double>   slc_longestshower_startx; ///< Start oiint in X of the longest shower
+  vector<double>   slc_longestshower_starty; ///< Start oiint in Y of the longest shower
+  vector<double>   slc_longestshower_startz; ///< Start oiint in Z of the longest shower
   vector<int>      slc_acpt_outoftime; ///< Not used
   vector<int>      slc_crosses_top_boundary; ///< Is 1 if the track crosses the top roof of the TPC
   vector<int>      slc_nuvtx_closetodeadregion_u; ///< Is 1 if the recon nu vertex is close to a dead region on the U plane

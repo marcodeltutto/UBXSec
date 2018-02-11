@@ -47,6 +47,7 @@
 #include "lardataobj/RecoBase/OpHit.h"
 #include "lardataobj/RecoBase/OpFlash.h"
 #include "lardataobj/RecoBase/Track.h"
+#include "lardataobj/RecoBase/Shower.h"
 #include "lardataobj/RecoBase/Cluster.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/SpacePoint.h"
@@ -468,7 +469,7 @@ void UBXSec::produce(art::Event & e) {
   double temp   = _detp -> Temperature();
   // Determine the drift velocity from 'efield' and 'temp'
   _drift_velocity = _detp -> DriftVelocity(efield,temp);
-  if (_debug) std::cout << "Using drift velocity = " << _drift_velocity << " cm/us, with E = " << efield << ", and T = " << temp << std::endl;
+  if (_debug) std::cout << "[UBXSec] Using drift velocity = " << _drift_velocity << " cm/us, with E = " << efield << ", and T = " << temp << std::endl;
 
   // Collect tracks
   lar_pandora::TrackVector            allPfParticleTracks;
@@ -476,6 +477,11 @@ void UBXSec::produce(art::Event & e) {
   lar_pandora::TracksToHits           trackToHitsMap;
   lar_pandora::LArPandoraHelper::CollectTracks(e, _pfp_producer, allPfParticleTracks, pfParticleToTrackMap);
   lar_pandora::LArPandoraHelper::CollectTracks(e, _pfp_producer, allPfParticleTracks, trackToHitsMap);
+
+  // Collect showers
+  //lar_pandora::ShowerVector           _shower_v;
+  //lar_pandora::PFParticlesToTracks    _pfp_to_shower_map;;
+  //lar_pandora::LArPandoraHelper::CollectShowers(e, _pfp_producer, _shower_v, _pfp_to_shower_map);
 
   // Collect PFParticles and match Reco Particles to Hits
   //lar_pandora::PFParticleVector  recoParticleVector;
@@ -495,6 +501,7 @@ void UBXSec::produce(art::Event & e) {
   }
   art::FindManyP<ubana::FlashMatch> tpcobjToFlashMatchAssns(tpcobj_h, e, _neutrino_flash_match_producer);
   art::FindManyP<recob::Track>      tpcobjToTrackAssns(tpcobj_h, e, _tpcobject_producer);
+  art::FindManyP<recob::Shower>     tpcobjToShowerAssns(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<anab::CosmicTag>   tpcobjToCosmicTagAssns(tpcobj_h, e, _geocosmictag_producer);
   art::FindManyP<anab::CosmicTag>   tpcobjToConsistency(tpcobj_h, e, _candidateconsistency_producer);
@@ -831,9 +838,11 @@ void UBXSec::produce(art::Event & e) {
   }
  
   std::vector<lar_pandora::TrackVector     > track_v_v;
+  std::vector<lar_pandora::ShowerVector    > shower_v_v;
   std::vector<lar_pandora::PFParticleVector> pfp_v_v;
   for (size_t slice = 0; slice < tpcobj_h->size(); slice++) {
     track_v_v.push_back(tpcobjToTrackAssns.at(slice));
+    shower_v_v.push_back(tpcobjToShowerAssns.at(slice));
     pfp_v_v.push_back(tpcobjToPFPAssns.at(slice));
   }
 
@@ -993,6 +1002,18 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_crosses_top_boundary[slice] = (UBXSecHelper::IsCrossingTopBoundary(lt, vtx_ok) ? 1 : 0);
     } else {
       ubxsec_event->slc_longesttrack_length[slice] = -9999;
+    }
+
+    // Longest shower
+    recob::Shower ls;
+    if (UBXSecHelper::GetLongestShowerFromTPCObj(shower_v_v[slice], ls)) {
+      ubxsec_event->slc_longestshower_length[slice] = ls.Length();
+      ubxsec_event->slc_longestshower_openangle[slice] = ls.OpenAngle();
+      ubxsec_event->slc_longestshower_startx[slice] = ls.ShowerStart().X();
+      ubxsec_event->slc_longestshower_starty[slice] = ls.ShowerStart().Y();
+      ubxsec_event->slc_longestshower_startz[slice] = ls.ShowerStart().Z();
+      ubxsec_event->slc_longestshower_phi[slice]   = UBXSecHelper::GetPhi(ls.Direction());
+      ubxsec_event->slc_longestshower_theta[slice] = UBXSecHelper::GetCosTheta(ls.Direction());
     }
 
     // ACPT

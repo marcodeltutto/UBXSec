@@ -92,6 +92,13 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_longesttrack_phi.resize(vsize, _default_value);
   slc_longesttrack_theta.resize(vsize, _default_value);
   slc_longesttrack_iscontained.resize(vsize, _default_value);
+  slc_longestshower_length.resize(vsize, _default_value);
+  slc_longestshower_phi.resize(vsize, _default_value);
+  slc_longestshower_theta.resize(vsize, _default_value);
+  slc_longestshower_openangle.resize(vsize, _default_value);
+  slc_longestshower_startx.resize(vsize, _default_value);
+  slc_longestshower_starty.resize(vsize, _default_value);
+  slc_longestshower_startz.resize(vsize, _default_value);
   slc_muoncandidate_exists.resize(vsize, _default_value);
   slc_muoncandidate_length.resize(vsize, _default_value);
   slc_muoncandidate_phi.resize(vsize, _default_value);

@@ -792,6 +792,37 @@ bool UBXSecHelper::GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v, r
 
 }
 
+
+//_________________________________________________________________________________
+bool UBXSecHelper::GetLongestShowerFromTPCObj(lar_pandora::ShowerVector shower_v, recob::Shower & out_shower) {
+
+  if (shower_v.size() == 0) {
+    return false;
+  }
+
+  int length = -1;
+  int longest_shower = -1;
+  for (unsigned int t = 0; t < shower_v.size(); t++){
+
+    if (shower_v[t]->Length() > length){
+
+      length = shower_v[t]->Length();
+      longest_shower  = t;
+
+    }
+
+  }
+
+  if (longest_shower > -1){
+    out_shower = (*shower_v[longest_shower]);
+    return true;
+  } else {
+    return false;
+  }
+
+
+}
+
 //_________________________________________________________________________________
 bool UBXSecHelper::TracksAreContained(std::vector<recob::Track> tracks){
 
@@ -893,6 +924,12 @@ double UBXSecHelper::GetCorrectedPhi(recob::Track t, recob::Vertex tpcobj_nu_vtx
   TVector3 dir = pt2 - pt1;
   if (reverse) dir = pt1 - pt2;
 
+  return GetPhi(dir);
+}
+
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetPhi(TVector3 dir) {
   // We are in the plane Z = 0
   dir.SetZ(0);
   TVector3 phi_versor (1, 0, 0);
@@ -935,6 +972,12 @@ double UBXSecHelper::GetCorrectedCosTheta(recob::Track t, recob::Vertex tpcobj_n
 
   TVector3 dir = pt2 - pt1;
   if (reverse) dir = pt1 - pt2;
+
+  return GetCosTheta(dir);
+}
+
+//_________________________________________________________________________________
+double UBXSecHelper::GetCosTheta(TVector3 dir) {
 
   TVector3 theta_versor (0, 0, 1);
   

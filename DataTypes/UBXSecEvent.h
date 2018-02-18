@@ -6,11 +6,11 @@
  * \brief Data product to store a UBXSec Event
  * 
  *
- * \author $Author: Marco Del Tutto<marco.deltutto@physics.ox.ac.uk> $
+ * \author Marco Del Tutto <marco.deltutto@physics.ox.ac.uk>
  *
- * \version $Revision: 1.0 $
+ * \version 1.0
  *
- * \date $Date: 2017/10/08 $
+ * \date 2017/10/08
  *
  * Contact: marco.deltutto@physics.ox.ac.uk
  *
@@ -118,6 +118,7 @@ class UBXSecEvent /*: public TObject*/{
   vector<int>      slc_mult_track; ///< Track multiplicity
   vector<int>      slc_mult_shower; ///< Shower multiplicity
   vector<int>      slc_mult_track_tolerance; ///< Track multiplicity considering tracks n cm close from the reco vtx (default n=5)
+
   vector<bool>     slc_muoncandidate_exists; ///< Is true if we found a muon candidate for the TPCObject
   vector<double>   slc_muoncandidate_length; ///< Track length for the muon candidate in the TPCObject
   vector<double>   slc_muoncandidate_phi; ///< Phi angle for the muon candidate in the TPCObject
@@ -143,11 +144,37 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_muoncandidate_linearity; ///< Linearity of the hit the track is made out of
   vector<double>   slc_muoncandidate_perc_used_hits_in_cluster; ///< Number of used hits in the cluster to make the track
   vector<double>   slc_muoncandidate_maxscatteringangle; ///< Maximum scattering angle along track
+
+  vector<double>   slc_othershowers_longest_length; ///< Length of longest shower not in the TPCObject
+  vector<double>   slc_othershowers_longest_startx; ///< Start x of longest shower not in the TPCObject
+  vector<double>   slc_othershowers_longest_starty; ///< Start y of longest shower not in the TPCObject
+  vector<double>   slc_othershowers_longest_startz; ///< Start z of longest shower not in the TPCObject
+  vector<double>   slc_othershowers_longest_phi; ///< Phi of longest shower not in the TPCObject
+  vector<double>   slc_othershowers_longest_theta; ///< CosTheta of longest shower not in the TPCObject
+  vector<double>   slc_othershowers_longest_openangle; ///< Opening angle of longest shower not in the TPCObject
+
+  vector<double>   slc_othershowers_forward_length; ///< Length of most forward shower not in the TPCObject
+  vector<double>   slc_othershowers_forward_startx; ///< Start x of most forward shower not in the TPCObject
+  vector<double>   slc_othershowers_forward_starty; ///< Start y of most forward shower not in the TPCObject
+  vector<double>   slc_othershowers_forward_startz; ///< Start z of most forward shower not in the TPCObject
+  vector<double>   slc_othershowers_forward_phi; ///< Phi of most forward shower not in the TPCObject
+  vector<double>   slc_othershowers_forward_theta; ///< CosTheta of most forward shower not in the TPCObject
+  vector<double>   slc_othershowers_forward_openangle; ///< Opening angle of most forward shower not in the TPCObject
+
+  vector<double>   slc_othershowers_flashmatch_length; ///< Length of most flash matched shower not in the TPCObject
+  vector<double>   slc_othershowers_flashmatch_startx; ///< Start x of most flash matched shower not in the TPCObject
+  vector<double>   slc_othershowers_flashmatch_starty; ///< Start y of most flash matched shower not in the TPCObject
+  vector<double>   slc_othershowers_flashmatch_startz; ///< Start z of most flash matched shower not in the TPCObject
+  vector<double>   slc_othershowers_flashmatch_phi; ///< Phi of most flash matched shower not in the TPCObject
+  vector<double>   slc_othershowers_flashmatch_theta; ///< CosTheta of most flash matched shower not in the TPCObject
+  vector<double>   slc_othershowers_flashmatch_openangle; ///< Opening angle of most flash matched shower not in the TPCObject
+
   Int_t            nbeamfls; ///< Number of beam flashes in the event
   vector<double>   beamfls_time; ///< Time of the beam flash
   vector<double>   beamfls_pe; ///< PE of the beam flash
   vector<double>   beamfls_z; ///< Z centre of the beam flash
   Int_t            candidate_flash_time; ///< Not used
+  Double_t         candidate_flash_z; ///< Z position of flash in beam spill
   Bool_t           no_mcflash_but_op_activity; ///< Not used
   vector<vector<double> > beamfls_spec; ///< PE per PMT of the beam flashe
   vector<double>   numc_flash_spec; ///< PE per PMT of the neutrino MC flash

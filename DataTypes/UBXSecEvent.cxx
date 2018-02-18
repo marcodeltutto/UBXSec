@@ -147,6 +147,30 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_consistency.resize(vsize, true);
   slc_consistency_score.resize(vsize, 0.);
 
+  slc_othershowers_longest_length.resize(vsize, _default_value); 
+  slc_othershowers_longest_startx.resize(vsize, _default_value); 
+  slc_othershowers_longest_starty.resize(vsize, _default_value); 
+  slc_othershowers_longest_startz.resize(vsize, _default_value); 
+  slc_othershowers_longest_phi.resize(vsize, _default_value); 
+  slc_othershowers_longest_theta.resize(vsize, _default_value); 
+  slc_othershowers_longest_openangle.resize(vsize, _default_value); 
+
+  slc_othershowers_forward_length.resize(vsize, _default_value); 
+  slc_othershowers_forward_startx.resize(vsize, _default_value); 
+  slc_othershowers_forward_starty.resize(vsize, _default_value); 
+  slc_othershowers_forward_startz.resize(vsize, _default_value); 
+  slc_othershowers_forward_phi.resize(vsize, _default_value); 
+  slc_othershowers_forward_theta.resize(vsize, _default_value); 
+  slc_othershowers_forward_openangle.resize(vsize, _default_value); 
+  
+  slc_othershowers_flashmatch_length.resize(vsize, _default_value); 
+  slc_othershowers_flashmatch_startx.resize(vsize, _default_value); 
+  slc_othershowers_flashmatch_starty.resize(vsize, _default_value); 
+  slc_othershowers_flashmatch_startz.resize(vsize, _default_value); 
+  slc_othershowers_flashmatch_phi.resize(vsize, _default_value); 
+  slc_othershowers_flashmatch_theta.resize(vsize, _default_value); 
+  slc_othershowers_flashmatch_openangle.resize(vsize, _default_value); 
+
 }
 
 #endif

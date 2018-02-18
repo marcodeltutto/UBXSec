@@ -10,7 +10,7 @@
 <!ENTITY file_type "mc">
 <!ENTITY run_type "physics">
 <!ENTITY PNFSpath "/pnfs/uboone/persistent/users/mdeltutt/">
-<!ENTITY ubxsec_version "mcc8.6_stopmu_test18">
+<!ENTITY ubxsec_version "mcc8.6_stopmu_test20">
 ]>
 
 
@@ -32,14 +32,14 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test18.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test20.tgz</local>
   </larsoft>
 
   <!-- Project stages -->
 
   <stage name="ubxsec">
     <fcl>run_ubxsec_mc_bnbcosmic.fcl</fcl>
-    <inputdef>prodgenie_bnb_intrinsic_nue_cosmic_uboone_mcc8.6_reco2</inputdef>
+    <inputdef>prodgenie_bnb_intrinsic_nue_cosmic_uboone_mcc8.6_reco2_dev</inputdef>
     <schema>root</schema>
     <!--<inputlist>&PNFSpath;bnb_cosmic_files_mcc8.3.list</inputlist>-->
     <defname>&name;_&tag;_ana</defname>

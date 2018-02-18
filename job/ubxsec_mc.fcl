@@ -89,7 +89,7 @@ ubxsec_mc_flashmatch:
 
 ubxsec_mc_filter: 
 {
-   tpcneutrinoidfilter:            @local::microboone_tpcneutrinoidfilter   
+   tpcneutrinoidfilter_numuccinc:  @local::microboone_tpcneutrinoidfilter   
 }
 
 ubxsec_mc_ana:

@@ -70,6 +70,12 @@ namespace ubana{
     double _vtxcheck_angle_cut_up;
     double _mcs_length_cut;
     double _ntrack_cut;
+    double _residuals_std_down_cut;
+    double _residuals_std_up_cut;
+    double _residuals_mean_down_cut;
+    double _residuals_mean_up_cut;
+    double _perc_used_hits_in_cluster_cut;
+
     double _pe_cut;
     double _beamSpillStarts;
     double _beamSpillEnds;

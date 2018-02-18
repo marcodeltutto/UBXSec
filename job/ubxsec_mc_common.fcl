@@ -75,6 +75,11 @@ physics:
    #@table::ubxsec_acpt
  }
 
+ filters:
+ {
+   @table::ubxsec_mc_filter 
+ }
+
  analyzers:
  {
    @table::ubxsec_mc_ana

@@ -418,6 +418,10 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   produces<std::vector<ubana::SelectionResult>>();
   produces<art::Assns<ubana::SelectionResult, ubana::TPCObject>>();
 
+  // For the neutrino id filter
+  produces<art::Assns<recob::Vertex, recob::Track>>();
+  produces< art::Assns<recob::Vertex, recob::PFParticle>>();
+
 }
 
 
@@ -434,6 +438,8 @@ void UBXSec::produce(art::Event & e) {
   std::unique_ptr< std::vector<ubana::SelectionResult>>                   selectionResultVector           (new std::vector<ubana::SelectionResult>);
   std::unique_ptr< art::Assns<ubana::SelectionResult, ubana::TPCObject>>  assnOutSelectionResultTPCObject (new art::Assns<ubana::SelectionResult, ubana::TPCObject>);
 
+  std::unique_ptr<art::Assns<recob::Vertex, recob::Track>>      vertexTrackAssociations(new art::Assns<recob::Vertex, recob::Track>);
+  std::unique_ptr<art::Assns<recob::Vertex, recob::PFParticle>> vertexPFParticleAssociations(new art::Assns<recob::Vertex, recob::PFParticle>);
 
   // Initialize the UBXSecEvent
   ubxsec_event->Init();
@@ -479,9 +485,9 @@ void UBXSec::produce(art::Event & e) {
   lar_pandora::LArPandoraHelper::CollectTracks(e, _pfp_producer, allPfParticleTracks, trackToHitsMap);
 
   // Collect showers
-  //lar_pandora::ShowerVector           _shower_v;
-  //lar_pandora::PFParticlesToTracks    _pfp_to_shower_map;;
-  //lar_pandora::LArPandoraHelper::CollectShowers(e, _pfp_producer, _shower_v, _pfp_to_shower_map);
+  lar_pandora::ShowerVector           _shower_v;
+  lar_pandora::PFParticlesToShowers   _pfp_to_shower_map;;
+  lar_pandora::LArPandoraHelper::CollectShowers(e, _pfp_producer, _shower_v, _pfp_to_shower_map);
 
   // Collect PFParticles and match Reco Particles to Hits
   //lar_pandora::PFParticleVector  recoParticleVector;
@@ -503,6 +509,7 @@ void UBXSec::produce(art::Event & e) {
   art::FindManyP<recob::Track>      tpcobjToTrackAssns(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<recob::Shower>     tpcobjToShowerAssns(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
+  art::FindManyP<recob::Vertex>     tpcobjToVertexAssns(tpcobj_h, e, _tpcobject_producer);
   art::FindManyP<anab::CosmicTag>   tpcobjToCosmicTagAssns(tpcobj_h, e, _geocosmictag_producer);
   art::FindManyP<anab::CosmicTag>   tpcobjToConsistency(tpcobj_h, e, _candidateconsistency_producer);
 
@@ -680,6 +687,7 @@ void UBXSec::produce(art::Event & e) {
 
     ubxsec_event->beamfls_spec[n].resize(32);
     ubxsec_event->candidate_flash_time = 0.;
+    ubxsec_event->candidate_flash_z = 0.;
     double min_pe = -1;
     //if (_debug) std::cout << "[UBXSec] Reco beam flash pe: " << std::endl;
     for (unsigned int i = 0; i < 32; i++) {
@@ -689,6 +697,7 @@ void UBXSec::produce(art::Event & e) {
         // Find largest flash above threshold
         if (flash.TotalPE() > _total_pe_cut && flash.TotalPE() > min_pe) { 
           ubxsec_event->candidate_flash_time = flash.Time();
+          ubxsec_event->candidate_flash_z = flash.ZCenter();
           min_pe = flash.TotalPE();
         }
         //if (_debug) std::cout << "\t PMT " << opdet << ": " << ubxsec_event->beamfls_spec[n][opdet] << std::endl;
@@ -857,12 +866,21 @@ void UBXSec::produce(art::Event & e) {
   ubxsec_event->n_tpcobj_nu_origin = 0;
   ubxsec_event->n_tpcobj_cosmic_origin = 0;
 
+  std::vector<art::Ptr<recob::Track>> muon_candidate_track_per_slice_v; 
+  std::vector<art::Ptr<recob::PFParticle>> muon_candidate_pfparticle_per_slice_v;
+  std::vector<art::Ptr<recob::Vertex>> neutrino_candidate_vertex_per_slice_v;
+  muon_candidate_track_per_slice_v.resize(ubxsec_event->nslices);
+  muon_candidate_pfparticle_per_slice_v.resize(ubxsec_event->nslices);
+  neutrino_candidate_vertex_per_slice_v.resize(ubxsec_event->nslices);
+
+
   //
   // THIS IS THE MAIN LOOP OVER THE 
   // TPCOBJECTS CANDIDATES IN THIS EVENT
   //
 
   for (unsigned int slice = 0; slice < tpcobj_h->size(); slice++){
+
     std::cout << "[UBXSec] >>> SLICE " << slice << std::endl;
 
     ubana::TPCObject tpcobj = (*tpcobj_h)[slice];
@@ -890,7 +908,14 @@ void UBXSec::produce(art::Event & e) {
     // Reco vertex
     double reco_nu_vtx_raw[3];
     recob::Vertex tpcobj_nu_vtx = tpcobj.GetVertex();
-    tpcobj_nu_vtx.XYZ(reco_nu_vtx_raw);
+    //tpcobj_nu_vtx.XYZ(reco_nu_vtx_raw);
+    std::vector<art::Ptr<recob::Vertex>> recob_vtx_v = tpcobjToVertexAssns.at(slice);
+    if (recob_vtx_v.size() > 0) {
+      recob_vtx_v.at(0)->XYZ(reco_nu_vtx_raw);
+      neutrino_candidate_vertex_per_slice_v.at(slice) = recob_vtx_v.at(0);
+    } else {
+      reco_nu_vtx_raw[0] = reco_nu_vtx_raw[1] = reco_nu_vtx_raw[2] = -9999;
+    }
 
     // X position correction (time offset)
     double reco_nu_vtx[3];
@@ -1157,6 +1182,105 @@ void UBXSec::produce(art::Event & e) {
     // Distance from recon nu vertex to thefar away track in TPCObject
     //_slc_maxdistance_vtxtrack = UBXSecHelper::GetMaxTrackVertexDistance();
 
+    // Other showers in the event
+    std::vector<art::Ptr<recob::Shower>> other_showers;
+    bool ignore_shower = false;
+    for (size_t s = 0; s < _shower_v.size(); s++) {
+
+      ignore_shower = false;
+
+      // Check this shower is not in this TPCObject
+      for (size_t this_s = 0; this_s < shower_v_v.at(slice).size(); this_s++) {
+        if (_shower_v.at(s).key() == shower_v_v.at(slice).at(this_s).key()) {
+          ignore_shower = true;
+          continue;
+        }
+      }
+
+      if (ignore_shower) continue;
+     
+      other_showers.push_back(_shower_v.at(s));
+    }
+
+    double max_length = -1, index_max_length = -1;
+    double max_costheta = -1, index_max_costheta = -1;
+    double min_flashvtxdistance = 1e9, index_min_flashvtxdistance = -1;
+
+    for (size_t s = 0; s < other_showers.size(); s++) {
+
+      if (other_showers.at(s)->Length() > max_length) {
+        max_length = other_showers.at(s)->Length();
+        index_max_length = s;
+      }
+
+      double costheta = UBXSecHelper::GetCosTheta(other_showers.at(s)->Direction());
+      if (costheta > max_costheta) {
+        costheta = max_costheta;
+        index_max_costheta = s;
+      }
+
+      double distance = std::abs(other_showers.at(s)->ShowerStart().Z() - ubxsec_event->candidate_flash_z);
+      if (distance < min_flashvtxdistance) {
+        min_flashvtxdistance = distance;
+        index_min_flashvtxdistance = s;
+      }
+    }
+
+    if (index_max_length != -1) {
+      auto shower = other_showers.at(index_max_length);
+      ubxsec_event->slc_othershowers_longest_length[slice] = shower->Length();
+      ubxsec_event->slc_othershowers_longest_startx[slice] = shower->ShowerStart().X();
+      ubxsec_event->slc_othershowers_longest_starty[slice] = shower->ShowerStart().Y();
+      ubxsec_event->slc_othershowers_longest_startz[slice] = shower->ShowerStart().Z();
+      ubxsec_event->slc_othershowers_longest_phi[slice] = UBXSecHelper::GetPhi(shower->Direction());
+      ubxsec_event->slc_othershowers_longest_theta[slice] = UBXSecHelper::GetCosTheta(shower->Direction());
+      ubxsec_event->slc_othershowers_longest_openangle[slice] = shower->OpenAngle();
+
+      shower = other_showers.at(index_max_costheta);
+      ubxsec_event->slc_othershowers_forward_length[slice] = shower->Length();
+      ubxsec_event->slc_othershowers_forward_startx[slice] = shower->ShowerStart().X();
+      ubxsec_event->slc_othershowers_forward_starty[slice] = shower->ShowerStart().Y();
+      ubxsec_event->slc_othershowers_forward_startz[slice] = shower->ShowerStart().Z();
+      ubxsec_event->slc_othershowers_forward_phi[slice] = UBXSecHelper::GetPhi(shower->Direction());
+      ubxsec_event->slc_othershowers_forward_theta[slice] = UBXSecHelper::GetCosTheta(shower->Direction());
+      ubxsec_event->slc_othershowers_forward_openangle[slice] = shower->OpenAngle();
+
+      shower = other_showers.at(index_min_flashvtxdistance);
+      ubxsec_event->slc_othershowers_flashmatch_length[slice] = shower->Length();
+      ubxsec_event->slc_othershowers_flashmatch_startx[slice] = shower->ShowerStart().X();
+      ubxsec_event->slc_othershowers_flashmatch_starty[slice] = shower->ShowerStart().Y();
+      ubxsec_event->slc_othershowers_flashmatch_startz[slice] = shower->ShowerStart().Z();
+      ubxsec_event->slc_othershowers_flashmatch_phi[slice] = UBXSecHelper::GetPhi(shower->Direction());
+      ubxsec_event->slc_othershowers_flashmatch_theta[slice] = UBXSecHelper::GetCosTheta(shower->Direction());
+      ubxsec_event->slc_othershowers_flashmatch_openangle[slice] = shower->OpenAngle();
+    } else {
+      ubxsec_event->slc_othershowers_longest_length[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_startx[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_starty[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_startz[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_phi[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_theta[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_openangle[slice] = -1;
+
+      ubxsec_event->slc_othershowers_forward_length[slice] = -1;
+      ubxsec_event->slc_othershowers_forward_startx[slice] = -1;
+      ubxsec_event->slc_othershowers_forward_starty[slice] = -1;
+      ubxsec_event->slc_othershowers_forward_startz[slice] = -1;
+      ubxsec_event->slc_othershowers_forward_phi[slice] = -1;
+      ubxsec_event->slc_othershowers_forward_theta[slice] = -1;
+      ubxsec_event->slc_othershowers_forward_openangle[slice] = -1;
+
+      ubxsec_event->slc_othershowers_flashmatch_length[slice] = -1;
+      ubxsec_event->slc_othershowers_flashmatch_startx[slice] = -1;
+      ubxsec_event->slc_othershowers_flashmatch_starty[slice] = -1;
+      ubxsec_event->slc_othershowers_flashmatch_startz[slice] = -1;
+      ubxsec_event->slc_othershowers_flashmatch_phi[slice] = -1;
+      ubxsec_event->slc_othershowers_flashmatch_theta[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_openangle[slice] = -1;
+    }
+
+
+
     // Muon Candidate
     _muon_finder.Reset();
     _muon_finder.SetTracks(track_v_v[slice]);
@@ -1389,6 +1513,13 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_muoncandidate_linearity[slice] = r;
       ubxsec_event->slc_muoncandidate_perc_used_hits_in_cluster[slice] = ratio;
       ubxsec_event->slc_muoncandidate_maxscatteringangle[slice] = max_angle;
+
+
+
+
+
+      muon_candidate_track_per_slice_v.at(slice) = candidate_track;
+      muon_candidate_pfparticle_per_slice_v.at(slice) = candidate_pfp;
 
 
     } else {
@@ -1662,11 +1793,19 @@ void UBXSec::produce(art::Event & e) {
     selectionResultVector->emplace_back(std::move(selection_result));
     util::CreateAssn(*this, e, *selectionResultVector, out_tpcobj_v, *assnOutSelectionResultTPCObject);
 
+    // For the TPCNeutrinoID Filter
+    util::CreateAssn(*this, e, muon_candidate_track_per_slice_v.at(slice_index), neutrino_candidate_vertex_per_slice_v.at(slice_index), *vertexTrackAssociations);
+    util::CreateAssn(*this, e, muon_candidate_pfparticle_per_slice_v.at(slice_index), neutrino_candidate_vertex_per_slice_v.at(slice_index), *vertexPFParticleAssociations);
+
   }
 
 
   e.put(std::move(selectionResultVector));
   e.put(std::move(assnOutSelectionResultTPCObject));
+
+  e.put(std::move(vertexTrackAssociations));
+  e.put(std::move(vertexPFParticleAssociations));
+
 
   if(_debug) std::cout << "********** UBXSec ends" << std::endl;
 

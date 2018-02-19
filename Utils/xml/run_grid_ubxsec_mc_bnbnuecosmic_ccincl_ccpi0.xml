@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+
+<!-- Production Project -->
+
+<!DOCTYPE project [
+<!ENTITY release "v06_26_01_11">
+<!ENTITY releasetag "e10:prof">
+<!ENTITY name "ubxsec_mc_bnbnuecosmic_ccincl_ccpi0">
+<!ENTITY tag "ubxsec">
+<!ENTITY file_type "mc">
+<!ENTITY run_type "physics">
+<!ENTITY PNFSpath "/pnfs/uboone/persistent/users/mdeltutt/">
+<!ENTITY ubxsec_version "mcc8.6_ccincl_ccpi0_run1">
+]>
+
+
+<project name="&name;">
+
+  <!-- Group -->
+  <group>uboone</group>
+
+  <!-- Project size -->
+  <numevents>50000</numevents>
+
+  <!-- Operating System -->
+  <os>SL5,SL6</os>
+
+  <!-- Batch resources -->
+  <resource>DEDICATED,OPPORTUNISTIC</resource>
+
+  <!-- Larsoft information -->
+  <larsoft>
+    <tag>&release;</tag>
+    <qual>&releasetag;</qual>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_ccincl_ccpi0_run1.tgz</local>
+  </larsoft>
+
+  <!-- Project stages -->
+
+  <stage name="ubxsec">
+    <fcl>run_ubxsec_ccpi0_mc_bnbcosmic.fcl</fcl>
+    <inputdef>prodgenie_bnb_intrinsic_nue_cosmic_uboone_mcc8.6_reco2_dev</inputdef>
+    <schema>root</schema>
+    <!--<inputlist>&PNFSpath;bnb_cosmic_files_mcc8.3.list</inputlist>-->
+    <defname>&name;_&tag;_ana</defname>
+    <maxfilesperjob>10</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_mc_bnbnuecosmic</outdir>
+    <workdir>/uboone/app/users/mdeltutt/grid_workdir_ubxsec_mc_bnbnuecosmic</workdir>
+    <numjobs>700</numjobs>
+    <datatier>ubana</datatier>
+    <memory>3000</memory>
+    <jobsub> --expected-lifetime=20h -Q </jobsub>
+    <disk>70GB</disk>
+  </stage>
+
+  <!-- file type -->
+  <filetype>&file_type;</filetype>
+
+  <!-- run type -->
+  <runtype>&run_type;</runtype>
+
+</project>

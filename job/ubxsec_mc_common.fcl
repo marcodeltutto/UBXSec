@@ -12,6 +12,7 @@
 #include "time_memory_tracker_microboone.fcl"
 #include "photpropservices_microboone.fcl"
 #include "calibration_microboone.fcl"
+#include "tpcneutrinoidfilter_microboone.fcl"
 
 #include "ubxsec_mc.fcl"
 
@@ -81,7 +82,7 @@ physics:
  filters:
  {
    @table::ubxsec_mc_filter 
-   tpcneutrinoidfilter_ccpi0: @local::microboone_tpcneutrinoidfilter  #CCPi0 Filter
+   tpcneutrinoidfilterccpi0: @local::microboone_tpcneutrinoidfilter  #CCPi0 Filter
  }
 
  analyzers:

@@ -89,7 +89,7 @@ ubxsec_mc_flashmatch:
 
 ubxsec_mc_filter: 
 {
-   tpcneutrinoidfilter_numuccinc:  @local::microboone_tpcneutrinoidfilter   
+   tpcneutrinoidfilternumuccinc:  @local::microboone_tpcneutrinoidfilter   
 }
 
 ubxsec_mc_ana:
@@ -124,7 +124,7 @@ ubxsec_mc_producers: [ #saturationTest,
                        CandidateConsistency,
                        UBXSec ] 
 
-ubxsec_mc_filters: [ tpcneutrinoidfilter 
+ubxsec_mc_filters: [ tpcneutrinoidfilternumuccinc 
                    ]
 
 ubxsec_mc_analyzers: [ SimpleAna #, CosmicTaggerAna 
@@ -179,10 +179,10 @@ ubxsec_mc_flashmatch.NeutrinoFlashMatch.TrackModule:             "pandoraNu::UBX
 
 
 # Set Filter properties
-ubxsec_mc_filter.tpcneutrinoidfilter.VertexModuleLabelVec:          [ "pandoraNu::UBXSec" ]
-ubxsec_mc_filter.tpcneutrinoidfilter.VtxTrackAssnModuleLabelVec:    [ "UBXSec::UBXSec" ]
-ubxsec_mc_filter.tpcneutrinoidfilter.Cluster2DCosmicProducerLabel:  ""
-ubxsec_mc_filter.tpcneutrinoidfilter.Cluster2DCosmicClusterAssns:   ""
+ubxsec_mc_filter.tpcneutrinoidfilternumuccinc.VertexModuleLabelVec:          [ "pandoraNu::UBXSec" ]
+ubxsec_mc_filter.tpcneutrinoidfilternumuccinc.VtxTrackAssnModuleLabelVec:    [ "UBXSec::UBXSec" ]
+ubxsec_mc_filter.tpcneutrinoidfilternumuccinc.Cluster2DCosmicProducerLabel:  ""
+ubxsec_mc_filter.tpcneutrinoidfilternumuccinc.Cluster2DCosmicClusterAssns:   ""
 
 
 END_PROLOG

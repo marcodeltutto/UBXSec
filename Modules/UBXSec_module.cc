@@ -670,7 +670,7 @@ void UBXSec::produce(art::Event & e) {
   ::art::Handle<std::vector<recob::OpFlash>> beamflash_h;
   e.getByLabel(_opflash_producer_beam,beamflash_h);
   if( !beamflash_h.isValid() || beamflash_h->empty() ) {
-    std::cerr << __PRETTY_FUNCTION__ << "Don't have good flashes." << std::endl;
+    std::cout << "[UBXSec] Don't have good flashes." << std::endl;
   }
 
   ubxsec_event->nbeamfls = beamflash_h->size();

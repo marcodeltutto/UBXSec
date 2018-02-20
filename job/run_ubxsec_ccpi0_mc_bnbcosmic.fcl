@@ -43,8 +43,8 @@ physics.producers.NuMuCCSelectionII.NuMuCCSelectionIIAlg.TrackModuleLabel: "pand
 physics.producers.NuMuCCSelectionII.NuMuCCSelectionIIAlg.VertexModuleLabel: "pandoraNu::McRecoStage2"
 physics.producers.NuMuCCSelectionII.NuMuCCSelectionIIAlg.CalorimetryModuleLabel: "pandoraNucalo::McRecoStage2"
 
-physics.filters.tpcneutrinoidfilterccpi0.VertexModuleLabelVec:                    ["pandoraNu"]
-physics.filters.tpcneutrinoidfilterccpi0.VtxTrackAssnModuleLabelVec:              ["NuMuCCSelectionII"]
+physics.filters.tpcneutrinoidfilterccpi0.VertexModuleLabelVec:                    ["pandoraNu::McRecoStage2"]
+physics.filters.tpcneutrinoidfilterccpi0.VtxTrackAssnModuleLabelVec:              ["NuMuCCSelectionII::UBXSec"]
 physics.filters.tpcneutrinoidfilterccpi0.Cluster2DCosmicProducerLabel:            ""
 physics.filters.tpcneutrinoidfilterccpi0.Cluster2DCosmicClusterAssns:             ""
 

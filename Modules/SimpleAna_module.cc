@@ -73,6 +73,7 @@ private:
   int _run, _subrun, _event;
   bool _status_ccpi0, _status_ccincl;
   double _bnb_correction;
+  double _nu_energy;
 };
 
 
@@ -90,7 +91,7 @@ SimpleAna::SimpleAna(fhicl::ParameterSet const & p)
   _tree->Branch("bnb_correction",  &_bnb_correction,   "bnb_correction/D");
   _tree->Branch("status_ccincl",   &_status_ccincl,    "status_ccincl/O");
   _tree->Branch("status_ccpi0",    &_status_ccpi0,     "status_ccpi0/O");
-
+  _tree->Branch("nu_energy",       &_nu_energy,        "nu_energy/D");
 }
 
 void SimpleAna::analyze(art::Event const & e)
@@ -175,6 +176,8 @@ void SimpleAna::analyze(art::Event const & e)
     right_flavour = true;
   else 
     right_flavour = false;
+
+  _nu_energy = mclist[iList]->GetNeutrino().Nu().E();
 
 
   //

@@ -1771,12 +1771,16 @@ void UBXSec::produce(art::Event & e) {
 
     selection_result.SetSelectionStatus(false);
 
+    ubxsec_event->is_selected = false;
+
     selectionResultVector->emplace_back(std::move(selection_result));
     //util::CreateAssn(*this, e, *selectionResultVector, tpcobj_v, *assnOutSelectionResultTPCObject);
 
   } else {
 
     selection_result.SetSelectionStatus(true);
+
+    ubxsec_event->is_selected = true;
 
     // Grab the selected TPCObject
     std::vector<art::Ptr<ubana::TPCObject>> tpcobj_v;

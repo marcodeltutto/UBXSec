@@ -47,7 +47,8 @@ void UBXSecEvent::Init()
   genie_mult = _default_value;
   genie_mult_ch = _default_value;
   bnb_weight = _default_value;
-  
+  is_selected = false;
+
   mc_muon_contained = _default_value;
   is_swtriggered = _default_value;
   vtx_resolution = _default_value;
@@ -92,6 +93,13 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_longesttrack_phi.resize(vsize, _default_value);
   slc_longesttrack_theta.resize(vsize, _default_value);
   slc_longesttrack_iscontained.resize(vsize, _default_value);
+  slc_longestshower_length.resize(vsize, _default_value);
+  slc_longestshower_phi.resize(vsize, _default_value);
+  slc_longestshower_theta.resize(vsize, _default_value);
+  slc_longestshower_openangle.resize(vsize, _default_value);
+  slc_longestshower_startx.resize(vsize, _default_value);
+  slc_longestshower_starty.resize(vsize, _default_value);
+  slc_longestshower_startz.resize(vsize, _default_value);
   slc_muoncandidate_exists.resize(vsize, _default_value);
   slc_muoncandidate_length.resize(vsize, _default_value);
   slc_muoncandidate_phi.resize(vsize, _default_value);
@@ -139,6 +147,30 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_geocosmictag.resize(vsize, false);
   slc_consistency.resize(vsize, true);
   slc_consistency_score.resize(vsize, 0.);
+
+  slc_othershowers_longest_length.resize(vsize, _default_value); 
+  slc_othershowers_longest_startx.resize(vsize, _default_value); 
+  slc_othershowers_longest_starty.resize(vsize, _default_value); 
+  slc_othershowers_longest_startz.resize(vsize, _default_value); 
+  slc_othershowers_longest_phi.resize(vsize, _default_value); 
+  slc_othershowers_longest_theta.resize(vsize, _default_value); 
+  slc_othershowers_longest_openangle.resize(vsize, _default_value); 
+
+  slc_othershowers_forward_length.resize(vsize, _default_value); 
+  slc_othershowers_forward_startx.resize(vsize, _default_value); 
+  slc_othershowers_forward_starty.resize(vsize, _default_value); 
+  slc_othershowers_forward_startz.resize(vsize, _default_value); 
+  slc_othershowers_forward_phi.resize(vsize, _default_value); 
+  slc_othershowers_forward_theta.resize(vsize, _default_value); 
+  slc_othershowers_forward_openangle.resize(vsize, _default_value); 
+  
+  slc_othershowers_flashmatch_length.resize(vsize, _default_value); 
+  slc_othershowers_flashmatch_startx.resize(vsize, _default_value); 
+  slc_othershowers_flashmatch_starty.resize(vsize, _default_value); 
+  slc_othershowers_flashmatch_startz.resize(vsize, _default_value); 
+  slc_othershowers_flashmatch_phi.resize(vsize, _default_value); 
+  slc_othershowers_flashmatch_theta.resize(vsize, _default_value); 
+  slc_othershowers_flashmatch_openangle.resize(vsize, _default_value); 
 
 }
 

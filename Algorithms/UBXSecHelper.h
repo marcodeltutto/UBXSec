@@ -221,6 +221,13 @@ class UBXSecHelper {
   static bool GetLongestTrackFromTPCObj(lar_pandora::TrackVector track_v, recob::Track & out_track);
 
   /**
+   *  @brief Gets the longest shower from a TPC object, returns false if there are no showers in the TPC object
+   *
+   *  @param shower_v the TPC object (vector of showers)
+   *  @param out_shower the longest shower  */
+  static bool GetLongestShowerFromTPCObj(lar_pandora::ShowerVector shower_v, recob::Shower & out_shower);
+
+  /**
    *  @brief Returns true if all the tracks passed are fully contained 
    *
    *  @param tracks a vector of recob::Track  */
@@ -253,6 +260,18 @@ class UBXSecHelper {
    *  @param track the recob::Track 
    *  @param tpcobj_nu_vtx the recob::Vertex neutrino vertex */
   static double GetCorrectedCosTheta(recob::Track t, recob::Vertex tpcobj_nu_vtx);
+
+  /**
+   *  @brief Returns the value of the phi angle
+   *
+   *  @param dir the direction */
+  static double GetPhi(TVector3 dir);
+
+  /**
+   *  @brief Returns the value of the cos(theta) angle
+   *
+   *  @param dir the direction */
+  static double GetCosTheta(TVector3 dir);
 
   /**
    *  @brief Returns true if the point passed is close to a dead region

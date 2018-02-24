@@ -12,20 +12,25 @@ namespace ubana {
 
   void NuMuCCEventSelection::Configure(fhicl::ParameterSet const& pset)
   {
-    _deltax_cut_down          = pset.get< double > ( "DeltaXCutDown" );
-    _deltax_cut_up            = pset.get< double > ( "DeltaXCutUp" );
-    _deltaz_cut_down          = pset.get< double > ( "DeltaZCutDown" );
-    _deltaz_cut_up            = pset.get< double > ( "DeltaZCutUp" );
-    _flsmatch_score_cut       = pset.get< double > ( "FlsMatchScoreCut" );
-    _vtxcheck_angle_cut_down  = pset.get< double > ( "VtxCheckAngleCutDown" );
-    _vtxcheck_angle_cut_up    = pset.get< double > ( "VtxCheckAngleCutUp" );
-    _mcs_length_cut           = pset.get< double > ( "MCSLengthCut" );
-    _ntrack_cut               = pset.get< double > ( "NTrackCut" );
-    _pe_cut                   = pset.get< double > ( "PECut" );
-    _beamSpillStarts          = pset.get< double > ( "BeamSpillStarts" );
-    _beamSpillEnds            = pset.get< double > ( "BeamSpillEnds" );
+    _deltax_cut_down                   = pset.get< double > ( "DeltaXCutDown" );
+    _deltax_cut_up                     = pset.get< double > ( "DeltaXCutUp" );
+    _deltaz_cut_down                   = pset.get< double > ( "DeltaZCutDown" );
+    _deltaz_cut_up                     = pset.get< double > ( "DeltaZCutUp" );
+    _flsmatch_score_cut                = pset.get< double > ( "FlsMatchScoreCut" );
+    _vtxcheck_angle_cut_down           = pset.get< double > ( "VtxCheckAngleCutDown" );
+    _vtxcheck_angle_cut_up             = pset.get< double > ( "VtxCheckAngleCutUp" );
+    _mcs_length_cut                    = pset.get< double > ( "MCSLengthCut" );
+    _ntrack_cut                        = pset.get< double > ( "NTrackCut" );
+    _pe_cut                            = pset.get< double > ( "PECut" );
+    _beamSpillStarts                   = pset.get< double > ( "BeamSpillStarts" );
+    _beamSpillEnds                     = pset.get< double > ( "BeamSpillEnds" );
+    _residuals_std_down_cut            = pset.get< double > ( "ResidualsStdCutDown" );
+    _residuals_std_up_cut              = pset.get< double > ( "ResidualsStdCutUp" );
+    _residuals_mean_down_cut           = pset.get< double > ( "ResidualsMeanCutDown" );
+    _residuals_mean_up_cut             = pset.get< double > ( "ResidualsMeanCutUp" );
+    _perc_used_hits_in_cluster_cut     = pset.get< double > ( "PercUsedHitsCut" );
 
-    _verbose                  = pset.get< bool > ( "Verbose" );
+    _verbose                           = pset.get< bool > ( "Verbose" );
 
     _configured = true;
   }
@@ -33,19 +38,24 @@ namespace ubana {
   void NuMuCCEventSelection::PrintConfig() {
 
     std::cout << "--- NuMuCCEventSelection configuration:" << std::endl;
-    std::cout << "---   _deltax_cut_down          = " << _deltax_cut_down << std::endl;
-    std::cout << "---   _deltax_cut_up            = " << _deltax_cut_up << std::endl;
-    std::cout << "---   _deltaz_cut_down          = " << _deltaz_cut_down << std::endl;
-    std::cout << "---   _deltaz_cut_up            = " << _deltaz_cut_up << std::endl;
-    std::cout << "---   _flsmatch_score_cut       = " << _flsmatch_score_cut << std::endl;
-    std::cout << "---   _vtxcheck_angle_cut_down  = " << _vtxcheck_angle_cut_down << std::endl;
-    std::cout << "---   _vtxcheck_angle_cut_up    = " << _vtxcheck_angle_cut_up << std::endl;
-    std::cout << "---   _mcs_length_cut           = " << _mcs_length_cut << std::endl;
-    std::cout << "---   _ntrack_cut               = " << _ntrack_cut << std::endl;
-    std::cout << "---   _pe_cut                   = " << _pe_cut << std::endl;
-    std::cout << "---   _beamSpillStarts          = " << _beamSpillStarts << std::endl;
-    std::cout << "---   _beamSpillEnds            = " << _beamSpillEnds << std::endl;
-    std::cout << "---   _verbose                  = " << _verbose << std::endl;
+    std::cout << "---   _deltax_cut_down                   = " << _deltax_cut_down << std::endl;
+    std::cout << "---   _deltax_cut_up                     = " << _deltax_cut_up << std::endl;
+    std::cout << "---   _deltaz_cut_down                   = " << _deltaz_cut_down << std::endl;
+    std::cout << "---   _deltaz_cut_up                     = " << _deltaz_cut_up << std::endl;
+    std::cout << "---   _flsmatch_score_cut                = " << _flsmatch_score_cut << std::endl;
+    std::cout << "---   _vtxcheck_angle_cut_down           = " << _vtxcheck_angle_cut_down << std::endl;
+    std::cout << "---   _vtxcheck_angle_cut_up             = " << _vtxcheck_angle_cut_up << std::endl;
+    std::cout << "---   _mcs_length_cut                    = " << _mcs_length_cut << std::endl;
+    std::cout << "---   _ntrack_cut                        = " << _ntrack_cut << std::endl;
+    std::cout << "---   _residuals_std_down_cut            = " << _residuals_std_down_cut << std::endl;
+    std::cout << "---   _residuals_std_up_cut              = " << _residuals_std_up_cut << std::endl;
+    std::cout << "---   _residuals_mean_down_cut           = " << _residuals_mean_down_cut << std::endl;
+    std::cout << "---   _residuals_mean_up_cut             = " << _residuals_mean_up_cut << std::endl;
+    std::cout << "---   _perc_used_hits_in_cluster_cut     = " << _perc_used_hits_in_cluster_cut << std::endl;
+    std::cout << "---   _pe_cut                            = " << _pe_cut << std::endl;
+    std::cout << "---   _beamSpillStarts                   = " << _beamSpillStarts << std::endl;
+    std::cout << "---   _beamSpillEnds                     = " << _beamSpillEnds << std::endl;
+    std::cout << "---   _verbose                           = " << _verbose << std::endl;
   }
 
   void NuMuCCEventSelection::SetEvent(UBXSecEvent* ubxsec_event) {
@@ -182,7 +192,7 @@ namespace ubana {
       failure_map["flash_match"] = true;
     }
     
-    if (score_max <= _flsmatch_score_cut) {
+    if (score_max <= _flsmatch_score_cut || std::isinf(score_max)) {
       reason = "fail_flash_match_score";
       failure_map["flash_match_score"] = false;
     } else {
@@ -190,13 +200,14 @@ namespace ubana {
     }
 
     // Delta X
-    if(_ubxsec_event->slc_flsmatch_qllx.at(scl_ll_max) - _ubxsec_event->slc_flsmatch_tpcx.at(scl_ll_max) > _deltax_cut_up) {
+    double deltax = _ubxsec_event->slc_flsmatch_qllx.at(scl_ll_max) - _ubxsec_event->slc_flsmatch_tpcx.at(scl_ll_max);
+    if(deltax > _deltax_cut_up) {
       reason = "fail_flash_match_deltax_up";
       failure_map["flash_match_deltax_up"] = false;
     } else {
       failure_map["flash_match_deltax_up"] = true;
     }
-    if(_ubxsec_event->slc_flsmatch_qllx.at(scl_ll_max) - _ubxsec_event->slc_flsmatch_tpcx.at(scl_ll_max) < _deltax_cut_down) {
+    if(deltax < _deltax_cut_down) {
       reason = "fail_flash_match_deltax_down";
       failure_map["flash_match_deltax_down"] = false;
     } else {
@@ -204,13 +215,14 @@ namespace ubana {
     }
 
     // DeltaZ
-    if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) > _deltaz_cut_up) {
+    double deltaz = _ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill);
+    if(deltaz > _deltaz_cut_up) {
       reason = "fail_flash_match_deltaz_up";
       failure_map["flash_match_deltaz_up"] = false;
     } else {
       failure_map["flash_match_deltaz_up"] = true;
     }
-    if(_ubxsec_event->slc_flsmatch_hypoz.at(scl_ll_max) - _ubxsec_event->beamfls_z.at(flashInBeamSpill) < _deltaz_cut_down) {
+    if(deltaz < _deltaz_cut_down) {
       reason = "fail_flash_match_deltaz_down";
       failure_map["flash_match_deltaz_down"] = false;
     } else {
@@ -218,7 +230,10 @@ namespace ubana {
     }
 
     // FV
-    if(_ubxsec_event->slc_nuvtx_fv.at(scl_ll_max) == 0) {
+    bool in_fv = _ubxsec_event->slc_nuvtx_fv.at(scl_ll_max) == 1
+                 && (_ubxsec_event->slc_nuvtx_z.at(scl_ll_max) < 675 
+                     || _ubxsec_event->slc_nuvtx_z.at(scl_ll_max) > 775);
+    if(!in_fv) {
       reason = "fail_fiducial_volume";
       failure_map["fiducial_volume"] = false;
     } else {
@@ -233,7 +248,7 @@ namespace ubana {
       failure_map["vertex_check_up"] = true;
     }
     if(_ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) < _vtxcheck_angle_cut_down 
-       && _ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) !=-9999 ) {
+       && _ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) != -9999) {
       reason = "fail_vertex_check_down";
       failure_map["vertex_check_down"] = false;
     } else {
@@ -281,6 +296,43 @@ namespace ubana {
     } else {
       failure_map["mip_consistency"] = true;
     }
+
+    // Hit Residuals STD Cut
+    if (_ubxsec_event->slc_muoncandidate_residuals_std.at(scl_ll_max) > _residuals_std_up_cut) {
+      reason = "fail_residuals_std_up";
+      failure_map["residuals_std_up"] = false;
+    } else {
+      failure_map["residuals_std_up"] = true;
+    }
+    if (_ubxsec_event->slc_muoncandidate_residuals_std.at(scl_ll_max) < _residuals_std_down_cut) {
+      reason = "fail_residuals_std_down";
+      failure_map["residuals_std_down"] = false;
+    } else {
+      failure_map["residuals_std_down"] = true;
+    }
+
+    // Hit Residuals Mean Cut
+    if (_ubxsec_event->slc_muoncandidate_residuals_mean.at(scl_ll_max) > _residuals_mean_up_cut) {
+      reason = "fail_residuals_mean_up";
+      failure_map["residuals_mean_up"] = false;
+    } else {
+      failure_map["residuals_mean_up"] = true;
+    }
+    if (_ubxsec_event->slc_muoncandidate_residuals_mean.at(scl_ll_max) < _residuals_mean_down_cut) {
+      reason = "fail_residuals_mean_down";
+      failure_map["residuals_mean_down"] = false;
+    } else {
+      failure_map["residuals_mean_down"] = true;
+    }
+
+    // Percental of used hits in cluster Cut
+    if (_ubxsec_event->slc_muoncandidate_perc_used_hits_in_cluster.at(scl_ll_max) < _perc_used_hits_in_cluster_cut) {
+      reason = "fail_perc_used_hits_in_cluster";
+      failure_map["perc_used_hits_in_cluster"] = false; 
+    } else {
+      failure_map["perc_used_hits_in_cluster"] = true; 
+    }
+
 
     slice_index = scl_ll_max;
 

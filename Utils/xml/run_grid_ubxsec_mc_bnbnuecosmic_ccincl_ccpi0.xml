@@ -3,14 +3,14 @@
 <!-- Production Project -->
 
 <!DOCTYPE project [
-<!ENTITY release "v06_26_01_10">
+<!ENTITY release "v06_26_01_11">
 <!ENTITY releasetag "e10:prof">
-<!ENTITY name "ubxsec_mc_bnbnuecosmic">
+<!ENTITY name "ubxsec_mc_bnbnuecosmic_ccincl_ccpi0">
 <!ENTITY tag "ubxsec">
 <!ENTITY file_type "mc">
 <!ENTITY run_type "physics">
 <!ENTITY PNFSpath "/pnfs/uboone/persistent/users/mdeltutt/">
-<!ENTITY ubxsec_version "mcc8.6_stopmu_test20">
+<!ENTITY ubxsec_version "mcc8.6_ccincl_ccpi0_run1">
 ]>
 
 
@@ -32,13 +32,13 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test20.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_ccincl_ccpi0_run1.tgz</local>
   </larsoft>
 
   <!-- Project stages -->
 
   <stage name="ubxsec">
-    <fcl>run_ubxsec_mc_bnbcosmic.fcl</fcl>
+    <fcl>run_ubxsec_ccpi0_mc_bnbcosmic.fcl</fcl>
     <inputdef>prodgenie_bnb_intrinsic_nue_cosmic_uboone_mcc8.6_reco2_dev</inputdef>
     <schema>root</schema>
     <!--<inputlist>&PNFSpath;bnb_cosmic_files_mcc8.3.list</inputlist>-->

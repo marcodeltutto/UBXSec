@@ -11,6 +11,8 @@
 #include "caldata_microboone.fcl" 
 #include "time_memory_tracker_microboone.fcl"
 #include "photpropservices_microboone.fcl"
+#include "calibration_microboone.fcl"
+#include "tpcneutrinoidfilter_microboone.fcl"
 
 #include "ubxsec_mc.fcl"
 
@@ -72,7 +74,15 @@ physics:
  {
    @table::ubxsec_mc_reco
    @table::ubxsec_mc_flashmatch
+   NuMuCCSelectionII: @local::microboone_tpcNeutrinoID  #CCPi0 Selection 
+   Calorimetry: @local::microboone_calibrationdedx
    #@table::ubxsec_acpt
+ }
+
+ filters:
+ {
+   @table::ubxsec_mc_filter 
+   tpcneutrinoidfilterccpi0: @local::microboone_tpcneutrinoidfilter  #CCPi0 Filter
  }
 
  analyzers:

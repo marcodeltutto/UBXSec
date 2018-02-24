@@ -276,6 +276,8 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
 void ACPTTagger::produce(art::Event & e)
 {
 
+  if (_debug) std::cout << "[ACPTTagger] Starts. " << _anodeTime << std::endl;
+
   if (_create_tree) {
     _run    = e.id().run();
     _subrun = e.id().subRun();
@@ -322,6 +324,7 @@ void ACPTTagger::produce(art::Event & e)
   if (_debug) { std::cout << "Loading ophits from producer " << _ophit_producer << std::endl; }
   art::Handle<std::vector<recob::OpHit>> ophit_h;
   e.getByLabel(_ophit_producer, ophit_h);
+  ophit_v.clear();
   art::fill_ptr_vector(ophit_v, ophit_h);
 
   // make sure ophits look good
@@ -731,6 +734,8 @@ void ACPTTagger::produce(art::Event & e)
   e.put(std::move(assnOutCosmicTagPFParticle));
 
   if (_create_tree) _tree1->Fill();
+
+  if (_debug) std::cout << "[ACPTTagger] Ends. " << _anodeTime << std::endl;
 }
 
 

@@ -178,9 +178,10 @@ ubana::TPCObjectMaker::TPCObjectMaker(fhicl::ParameterSet const & p)
   if (_do_filter) _tpcobj_filter = new ubana::TPCObjectFilter();
 
   produces< std::vector<ubana::TPCObject>>();
-  produces< art::Assns<ubana::TPCObject,   recob::Track>>();
-  produces< art::Assns<ubana::TPCObject,   recob::Shower>>();
-  produces< art::Assns<ubana::TPCObject,   recob::PFParticle>>();
+  produces< art::Assns<ubana::TPCObject, recob::Track>>();
+  produces< art::Assns<ubana::TPCObject, recob::Shower>>();
+  produces< art::Assns<ubana::TPCObject, recob::PFParticle>>();
+  produces< art::Assns<ubana::TPCObject, recob::Vertex>>();
 }
 
 void ubana::TPCObjectMaker::produce(art::Event & e){
@@ -199,6 +200,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
   std::unique_ptr< art::Assns<ubana::TPCObject, recob::Track>>      assnOutTPCObjectTrack  (new art::Assns<ubana::TPCObject, recob::Track>      );
   std::unique_ptr< art::Assns<ubana::TPCObject, recob::Shower>>     assnOutTPCObjectShower (new art::Assns<ubana::TPCObject, recob::Shower>     );
   std::unique_ptr< art::Assns<ubana::TPCObject, recob::PFParticle>> assnOutTPCObjectPFP    (new art::Assns<ubana::TPCObject, recob::PFParticle> );
+  std::unique_ptr< art::Assns<ubana::TPCObject, recob::Vertex>>     assnOutTPCObjectVertex (new art::Assns<ubana::TPCObject, recob::Vertex> );
 
   // Get the needed services
   //::art::ServiceHandle<cheat::BackTracker> bt;
@@ -341,10 +343,13 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
     obj.SetPFPs(pfp_v);
 
     // Set vertex
+    std::vector<art::Ptr<recob::Vertex>> vtx_v;
     art::Ptr<recob::PFParticle> pfp = this->GetNuPFP(pfp_v_v[i]);
     auto iter = pfParticleToVertexMap.find(pfp);
     if (iter != pfParticleToVertexMap.end()) {
       obj.SetVertex(*(iter->second[0]));
+      vtx_v.resize(1);
+      vtx_v.at(0) = iter->second[0];
     }
 
     // Set origin
@@ -373,6 +378,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
     util::CreateAssn(*this, e, *tpcObjectVector, track_v_v[i],  *assnOutTPCObjectTrack);
     util::CreateAssn(*this, e, *tpcObjectVector, shower_v_v[i], *assnOutTPCObjectShower);
     util::CreateAssn(*this, e, *tpcObjectVector, pfp_v_v[i],    *assnOutTPCObjectPFP);
+    util::CreateAssn(*this, e, *tpcObjectVector, vtx_v,         *assnOutTPCObjectVertex);
   }
 
 
@@ -382,6 +388,7 @@ void ubana::TPCObjectMaker::produce(art::Event & e){
   e.put(std::move(assnOutTPCObjectTrack));
   e.put(std::move(assnOutTPCObjectShower));
   e.put(std::move(assnOutTPCObjectPFP));
+  e.put(std::move(assnOutTPCObjectVertex));
 
 
   if (_debug) std::cout << "[TPCObjectMaker] Ends" << std::endl;

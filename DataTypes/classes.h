@@ -5,6 +5,7 @@
 
 #include "lardataobj/RecoBase/Track.h"
 #include "lardataobj/RecoBase/PFParticle.h"
+#include "lardataobj/RecoBase/Vertex.h"
 #include "lardataobj/AnalysisBase/FlashMatch.h"
 
 #include "uboone/UBXSec/DataTypes/FlashMatch.h"
@@ -51,6 +52,8 @@ template class art::Assns<ubana::TPCObject,recob::Track,void>;
 template class art::Assns<recob::Track,ubana::TPCObject,void>;
 template class art::Assns<ubana::TPCObject,recob::Shower,void>;
 template class art::Assns<recob::Shower,ubana::TPCObject,void>;
+template class art::Assns<ubana::TPCObject,recob::Vertex,void>;
+template class art::Assns<recob::Vertex,ubana::TPCObject,void>;
 template class art::Assns<ubana::TPCObject,ubana::FlashMatch,void>;
 template class art::Assns<ubana::FlashMatch,ubana::TPCObject,void>;
 template class art::Assns<ubana::TPCObject,anab::CosmicTag,void>;
@@ -62,6 +65,8 @@ template class art::Wrapper<art::Assns<recob::Track,ubana::TPCObject,void> >;
 template class art::Wrapper<art::Assns<ubana::TPCObject,recob::Track,void> >;
 template class art::Wrapper<art::Assns<recob::Shower,ubana::TPCObject,void> >;
 template class art::Wrapper<art::Assns<ubana::TPCObject,recob::Shower,void> >;
+template class art::Wrapper<art::Assns<recob::Vertex,ubana::TPCObject,void> >;
+template class art::Wrapper<art::Assns<ubana::TPCObject,recob::Vertex,void> >;
 template class art::Wrapper<art::Assns<ubana::TPCObject,ubana::FlashMatch,void> >;
 template class art::Wrapper<art::Assns<ubana::FlashMatch,ubana::TPCObject,void> >;
 template class art::Wrapper<art::Assns<ubana::TPCObject,anab::CosmicTag,void> >;

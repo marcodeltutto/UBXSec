@@ -1,0 +1,52 @@
+#include "ubxsec_mc_common.fcl"
+
+process_name: UBXSec
+
+services.TFileService.fileName: "ubxsec_output_mc_bnbcosmic.root"
+
+physics.reco:          [ @sequence::ubxsec_mc_producers , @sequence::ubxsec_mc_filters ] # NuMu CC Inclusive Analysis and NuMu CC Inclusive Filter 
+physics.reco2:         [ NuMuCCSelectionII,               tpcneutrinoidfilterccpi0 ]     # CCPi0 Analysis and CCPi0 Filter
+physics.trigger_paths: [ reco , reco2 ]
+physics.ana:           [ @sequence::ubxsec_mc_analyzers ]
+physics.stream1:       [ out1 ]
+physics.end_paths:     [ ana, stream1 ]
+
+outputs.out1.fileName: "%ifb_%tc_ubxsec.root"
+outputs.out1.dataTier: "ubxsec"
+#outputs.out1.SelectEvents: [ reco ]
+
+source.inputCommands: ["keep *_*_*_*"]
+
+physics.producers.pandoraCosmicTrackPFPart.FlashTimeVetoStart: 3.20
+physics.producers.pandoraCosmicTrackPFPart.FlashTimeVetoEnd:   4.80
+
+physics.producers.NeutrinoFlashMatch.FlashVetoTimeStart: 3.20
+physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   4.80
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillStarts: 3.20 
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillEnds:   4.80
+
+physics.producers.UBXSec.BeamSpillStart:                 3.20
+physics.producers.UBXSec.BeamSpillEnd:                   4.80
+
+
+
+# CCPi0 Analysis
+
+physics.producers.NuMuCCSelectionII.NeutrinoIDAlgName:                         "NuMuCCSelectionIIAlg"
+  
+physics.producers.Calorimetry.CaloAlg: @local::microboone_calorimetryalgmcc84mc
+
+physics.producers.NuMuCCSelectionII.NuMuCCSelectionIIAlg.BeamMin : 3.2
+physics.producers.NuMuCCSelectionII.NuMuCCSelectionIIAlg.BeamMax : 4.8 
+physics.producers.NuMuCCSelectionII.NuMuCCSelectionIIAlg.GainCorrections:  @local::microboone_calibrationdedx.CaloAlg.CalAreaConstants
+physics.producers.NuMuCCSelectionII.NuMuCCSelectionIIAlg.TrackModuleLabel: "pandoraNu::McRecoStage2"
+physics.producers.NuMuCCSelectionII.NuMuCCSelectionIIAlg.VertexModuleLabel: "pandoraNu::McRecoStage2"
+physics.producers.NuMuCCSelectionII.NuMuCCSelectionIIAlg.CalorimetryModuleLabel: "pandoraNucalo::McRecoStage2"
+
+physics.filters.tpcneutrinoidfilterccpi0.VertexModuleLabelVec:                    ["pandoraNu::McRecoStage2"]
+physics.filters.tpcneutrinoidfilterccpi0.VtxTrackAssnModuleLabelVec:              ["NuMuCCSelectionII::UBXSec"]
+physics.filters.tpcneutrinoidfilterccpi0.Cluster2DCosmicProducerLabel:            ""
+physics.filters.tpcneutrinoidfilterccpi0.Cluster2DCosmicClusterAssns:             ""
+
+
+

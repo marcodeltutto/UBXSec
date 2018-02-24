@@ -192,7 +192,7 @@ namespace ubana {
       failure_map["flash_match"] = true;
     }
     
-    if (score_max <= _flsmatch_score_cut && !std::isinf(score_max)) {
+    if (score_max <= _flsmatch_score_cut || std::isinf(score_max)) {
       reason = "fail_flash_match_score";
       failure_map["flash_match_score"] = false;
     } else {

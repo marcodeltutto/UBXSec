@@ -3,6 +3,7 @@ var searchData=
   ['calculatedqds',['CalculatedQds',['../classubana_1_1StoppingMuonTaggerHelper.html#a7e758722bf205acfc3c2d4b73fa1ddd1',1,'ubana::StoppingMuonTaggerHelper']]],
   ['calculatelocallinearity',['CalculateLocalLinearity',['../classubana_1_1StoppingMuonTaggerHelper.html#a6ee2f2a92f71be01b7b939c5db4aa835',1,'ubana::StoppingMuonTaggerHelper']]],
   ['candidate_5fflash_5ftime',['candidate_flash_time',['../classUBXSecEvent.html#a84ab9cf932fabd0e1d9762ac07c75407',1,'UBXSecEvent']]],
+  ['candidate_5fflash_5fz',['candidate_flash_z',['../classUBXSecEvent.html#af5f3d50c4b146e63f9cf72d15ec1a958',1,'UBXSecEvent']]],
   ['candidateconsistency',['CandidateConsistency',['../classCandidateConsistency.html',1,'']]],
   ['ccnc',['ccnc',['../classUBXSecEvent.html#a6a55ef25451d4a8206055d588b052caf',1,'UBXSecEvent']]],
   ['clear',['Clear',['../classubxsec_1_1ACPTAlgo.html#a749010492996f04d6c67a614647f7fe8',1,'ubxsec::ACPTAlgo::Clear()'],['../classubana_1_1StoppingMuonTaggerHelper.html#ab554ede892bc39f2b14d467bec986848',1,'ubana::StoppingMuonTaggerHelper::Clear()'],['../classubana_1_1TrackQuality.html#adfa289c8c8863cb916399d03e12f0a8d',1,'ubana::TrackQuality::Clear()'],['../classubxsec_1_1VertexCheck.html#abb5969f8c850d1191248bddd91ec49d1',1,'ubxsec::VertexCheck::Clear()']]],

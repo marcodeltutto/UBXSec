@@ -161,6 +161,9 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <tr class="memitem:a76b009afef0cc69f281ca3215a901f35"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a76b009afef0cc69f281ca3215a901f35">GetLongestTrackFromTPCObj</a> (lar_pandora::TrackVector track_v, recob::Track &amp;out_track)</td></tr>
 <tr class="memdesc:a76b009afef0cc69f281ca3215a901f35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the longest track from a TPC object, returns false if there are no tracks in the TPC object.  <a href="#a76b009afef0cc69f281ca3215a901f35">More...</a><br/></td></tr>
 <tr class="separator:a76b009afef0cc69f281ca3215a901f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05bd763ee858e0933e1f33b8346d2206"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a05bd763ee858e0933e1f33b8346d2206">GetLongestShowerFromTPCObj</a> (lar_pandora::ShowerVector shower_v, recob::Shower &amp;out_shower)</td></tr>
+<tr class="memdesc:a05bd763ee858e0933e1f33b8346d2206"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the longest shower from a TPC object, returns false if there are no showers in the TPC object.  <a href="#a05bd763ee858e0933e1f33b8346d2206">More...</a><br/></td></tr>
+<tr class="separator:a05bd763ee858e0933e1f33b8346d2206"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44c8ae9d98197e81da26aeae26c70f0a"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a44c8ae9d98197e81da26aeae26c70f0a">TracksAreContained</a> (std::vector&lt; recob::Track &gt; tracks)</td></tr>
 <tr class="memdesc:a44c8ae9d98197e81da26aeae26c70f0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if all the tracks passed are fully contained.  <a href="#a44c8ae9d98197e81da26aeae26c70f0a">More...</a><br/></td></tr>
 <tr class="separator:a44c8ae9d98197e81da26aeae26c70f0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -176,6 +179,12 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>GetRecoToTrueM
 <tr class="memitem:aefae2cc8a7598aa54848247ad228371e"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#aefae2cc8a7598aa54848247ad228371e">GetCorrectedCosTheta</a> (recob::Track t, recob::Vertex tpcobj_nu_vtx)</td></tr>
 <tr class="memdesc:aefae2cc8a7598aa54848247ad228371e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the cos(theta) angle for the track considering the nu vertex.  <a href="#aefae2cc8a7598aa54848247ad228371e">More...</a><br/></td></tr>
 <tr class="separator:aefae2cc8a7598aa54848247ad228371e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeea3b8e3a90b506b790085c3841390d7"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#aeea3b8e3a90b506b790085c3841390d7">GetPhi</a> (TVector3 dir)</td></tr>
+<tr class="memdesc:aeea3b8e3a90b506b790085c3841390d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the phi angle.  <a href="#aeea3b8e3a90b506b790085c3841390d7">More...</a><br/></td></tr>
+<tr class="separator:aeea3b8e3a90b506b790085c3841390d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a636d7b4464a041a41595e317baac126d"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a636d7b4464a041a41595e317baac126d">GetCosTheta</a> (TVector3 dir)</td></tr>
+<tr class="memdesc:a636d7b4464a041a41595e317baac126d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the cos(theta) angle.  <a href="#a636d7b4464a041a41595e317baac126d">More...</a><br/></td></tr>
+<tr class="separator:a636d7b4464a041a41595e317baac126d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7df598dfbdfdb620737fd69297e67faf"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecHelper.html#a7df598dfbdfdb620737fd69297e67faf">PointIsCloseToDeadRegion</a> (double *reco_nu_vtx, int plane_no)</td></tr>
 <tr class="memdesc:a7df598dfbdfdb620737fd69297e67faf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the point passed is close to a dead region.  <a href="#a7df598dfbdfdb620737fd69297e67faf">More...</a><br/></td></tr>
 <tr class="separator:a7df598dfbdfdb620737fd69297e67faf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -406,6 +415,38 @@ static double&#160;</td><td class="memItemRight" valign="bottom"><b>GetSTD</b> (
 
 </div>
 </div>
+<a class="anchor" id="a636d7b4464a041a41595e317baac126d"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double UBXSecHelper::GetCosTheta </td>
+          <td>(</td>
+          <td class="paramtype">TVector3&#160;</td>
+          <td class="paramname"><em>dir</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the value of the cos(theta) angle. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dir</td><td>the direction </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a3fd25ef568b54aded55d6c1b6a8593fa"></a>
 <div class="memitem">
 <div class="memproto">
@@ -432,6 +473,49 @@ static double&#160;</td><td class="memItemRight" valign="bottom"><b>GetSTD</b> (
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pe</td><td>a vector of PEs per OpDet </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a05bd763ee858e0933e1f33b8346d2206"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool UBXSecHelper::GetLongestShowerFromTPCObj </td>
+          <td>(</td>
+          <td class="paramtype">lar_pandora::ShowerVector&#160;</td>
+          <td class="paramname"><em>shower_v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">recob::Shower &amp;&#160;</td>
+          <td class="paramname"><em>out_shower</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the longest shower from a TPC object, returns false if there are no showers in the TPC object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">shower_v</td><td>the TPC object (vector of showers) </td></tr>
+    <tr><td class="paramname">out_shower</td><td>the longest shower </td></tr>
   </table>
   </dd>
 </dl>
@@ -742,6 +826,38 @@ static double&#160;</td><td class="memItemRight" valign="bottom"><b>GetSTD</b> (
     <tr><td class="paramname">px</td><td></td></tr>
     <tr><td class="paramname">py</td><td></td></tr>
     <tr><td class="paramname">pz</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="aeea3b8e3a90b506b790085c3841390d7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double UBXSecHelper::GetPhi </td>
+          <td>(</td>
+          <td class="paramtype">TVector3&#160;</td>
+          <td class="paramname"><em>dir</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the value of the phi angle. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dir</td><td>the direction </td></tr>
   </table>
   </dd>
 </dl>

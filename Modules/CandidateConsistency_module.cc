@@ -403,8 +403,10 @@ void CandidateConsistency::produce(art::Event & e)
 
         bool is_linear = true;
         for (size_t l = 2; l < linearity_v.size()-2; l++) {
-          if (linearity_v.at(l) < _linearity_threshold_track)
+          if (linearity_v.at(l) < _linearity_threshold_track){
+            if(_debug) std::cout << "[CandidateConsistency] linearity below threshold at hit n " << l << std::endl;
             is_linear = false;
+          }
         }
 
         // Calculate dqds average of first 5 hits

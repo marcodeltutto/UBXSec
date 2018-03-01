@@ -266,6 +266,10 @@ void FindDeadRegions::CreateBWires() {
 
   std::cout << "[FindDeadRegions] Now creating BWires" << std::endl;
 
+  BWires_U.clear();
+  BWires_V.clear();
+  BWires_Y.clear();
+
   bool isGoodChannel;
 
   isGoodChannel = true;

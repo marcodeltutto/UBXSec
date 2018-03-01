@@ -47,7 +47,8 @@ void UBXSecEvent::Init()
   genie_mult = _default_value;
   genie_mult_ch = _default_value;
   bnb_weight = _default_value;
-  
+  is_selected = false;
+
   mc_muon_contained = _default_value;
   is_swtriggered = _default_value;
   vtx_resolution = _default_value;

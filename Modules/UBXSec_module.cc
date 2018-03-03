@@ -739,6 +739,7 @@ void UBXSec::produce(art::Event & e) {
       }
 
       ubxsec_event->ccnc            = mclist[iList]->GetNeutrino().CCNC();
+      ubxsec_event->mode            = mclist[iList]->GetNeutrino().Mode();
       ubxsec_event->nupdg           = mclist[iList]->GetNeutrino().Nu().PdgCode();
       ubxsec_event->nu_e            = mclist[iList]->GetNeutrino().Nu().E();
       ubxsec_event->lep_costheta    = mclist[iList]->GetNeutrino().Lepton().Pz() / mclist[iList]->GetNeutrino().Lepton().P();
@@ -1093,7 +1094,7 @@ void UBXSec::produce(art::Event & e) {
     double slice_vtx_xyz[3];
     slice_vtx.XYZ(slice_vtx_xyz);
     ubxsec_event->slc_passed_min_vertex_quality[slice] = true;
-    if (deadRegionsFinder.NearDeadReg2P(slice_vtx_xyz[1], slice_vtx_xyz[2], 5.0))
+    if (deadRegionsFinder.NearDeadReg2P(slice_vtx_xyz[1], slice_vtx_xyz[2], _minimumDistDeadReg))
       ubxsec_event->slc_passed_min_vertex_quality[slice] = false;
 
     // Channel status

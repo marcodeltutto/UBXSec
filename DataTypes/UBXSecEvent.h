@@ -51,6 +51,7 @@ class UBXSecEvent /*: public TObject*/{
   Double_t        fm_score; ///< Not used
   Int_t           fv; ///< Is 1 if the true neutrino vertex is in the fiducial volume
   Int_t           ccnc; ///< Is 0 if CC, 1 if NC
+  Int_t           mode; ///< Iteraction mode: 0=Quasi-elastic or Elastic, 1=Resonant (RES), 2=DIS, 3=Coherent production, 10=MEC
   Int_t           nupdg; ///< Neutrino flavour (pdg code)
   Bool_t          is_signal; ///< Is trues if the event is a true numu cc in FV
   Double_t        nu_e; ///< Stores the true neutrino energy

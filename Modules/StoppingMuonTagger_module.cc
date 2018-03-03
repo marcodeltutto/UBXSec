@@ -121,7 +121,7 @@ private:
   ::trkf::TrajectoryMCSFitter _mcs_fitter;
   ::recob::MCSFitResult _result;
 
-  /// Takes a pointer to a point, and, if outside the dector, puts it at the det border
+  /// Takes a pointer to a point, and, if outside the dector, puts it at the detector border
   void ContainPoint(double * point);
 
   /// Takes a recob::Track and returns true if is a stopping muon according to MCS algo
@@ -132,13 +132,13 @@ private:
   std::string _cluster_producer;
   std::string _track_producer;
 
-  double _coplanar_cut = 5.;
+  double _coplanar_cut = 5.; ///< If a track start X and end X difference is below this value, is consiered to be coplanar to a collection plane wire 
 
-  bool _use_mcs;
-  double _mcs_delta_ll_cut = -5.;
+  bool _use_mcs; ///< If true, uses mcs fit to reject cosmics
+  double _mcs_delta_ll_cut = -5.; ///< Cut on MCS delta loglikelihood (used if _use_mcs is true)
 
-  bool _debug;
-  bool _create_tree;
+  bool _debug; ///< Debug flag
+  bool _create_tree; ///< If true, creates a tree with mcs delta ll info, to make plots
 
   TH1D * _h_nstopmu;
   TH1D * _h_stopmu_type;
@@ -168,7 +168,7 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p)
   _tpcobject_producer = p.get<std::string>("TPCObjectProducer",  "TPCObjectMaker::UBXSec");
   _pfp_producer       = p.get<std::string>("PFParticleProducer", "pandoraNu::UBXSec");
   _cluster_producer   = p.get<std::string>("ClusterProducer",    "pandoraNu::UBXSec");
-  _track_producer     = p.get<std::string>("TrackProducer",    "pandoraNu::UBXSec");
+  _track_producer     = p.get<std::string>("TrackProducer",      "pandoraNu::UBXSec");
  
   _use_mcs            = p.get<bool>("UseMCS", false);
   _mcs_delta_ll_cut   = p.get<double>("MCSDeltaLLCut", -5.);

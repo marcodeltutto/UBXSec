@@ -39,7 +39,7 @@
 
   <stage name="ubxsec">
     <fcl>run_ubxsec_data_extbnb.fcl</fcl>
-    <inputdef>prod_reco_optfilter_extbnb_v11_mcc8a</inputdef>
+    <inputdef>prod_reco_optfilter_extbnb_v11_mcc8_dev</inputdef>
     <schema>root</schema>
     <defname>&name;_&tag;_ana</defname>
     <maxfilesperjob>7</maxfilesperjob>

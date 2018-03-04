@@ -52,7 +52,7 @@ for jentry in xrange( entriesPOT ):
 file.close()
 
 
-os.system('/uboone/app/users/zarko/getDataInfo.py --run-subrun-list runsubrun_list.txt')
+os.system('/uboone/app/users/zarko/getDataInfo.py -v2 --run-subrun-list runsubrun_list.txt')
 os.system('rm runsubrun_list.txt')
 
 

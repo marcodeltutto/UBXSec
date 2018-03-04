@@ -1280,6 +1280,7 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_othershowers_longest_openangle[slice] = -1;
     }
 
+    std::cout << "[UBXSec] Shower info saved." << std::endl;
 
 
     // Muon Candidate

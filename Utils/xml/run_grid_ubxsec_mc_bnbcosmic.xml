@@ -10,7 +10,7 @@
 <!ENTITY file_type "mc">
 <!ENTITY run_type "physics">
 <!ENTITY PNFSpath "/pnfs/uboone/persistent/users/mdeltutt/">
-<!ENTITY ubxsec_version "mcc8.6_stopmu_test21">
+<!ENTITY ubxsec_version "mcc8.6_stopmu_test22">
 ]>
 
 
@@ -32,7 +32,7 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test21.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test22.tgz</local>
   </larsoft>
 
   <!-- Project stages -->
@@ -49,7 +49,7 @@
     <numjobs>500</numjobs>
     <datatier>ubana</datatier>
     <memory>3000</memory>
-    <jobsub> --expected-lifetime=20h -q --generate-email-summary </jobsub>
+    <jobsub> --jobsub-server=jobsub-dev.fnal.gov --expected-lifetime=20h -q --generate-email-summary </jobsub>
     <disk>60GB</disk>
   </stage>
 

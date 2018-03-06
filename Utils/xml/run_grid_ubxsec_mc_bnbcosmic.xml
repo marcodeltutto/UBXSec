@@ -49,7 +49,7 @@
     <numjobs>500</numjobs>
     <datatier>ubana</datatier>
     <memory>3000</memory>
-    <jobsub> --jobsub-server=jobsub-dev.fnal.gov --expected-lifetime=20h -q --generate-email-summary </jobsub>
+    <jobsub>  --expected-lifetime=20h -q --generate-email-summary </jobsub>
     <disk>60GB</disk>
   </stage>
 

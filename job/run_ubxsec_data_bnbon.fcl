@@ -14,14 +14,14 @@ outputs.out1.fileName: "%ifb_%tc_ubxsec.root"
 outputs.out1.dataTier: "ubxsec"
 source.inputCommands: ["keep *_*_*_*"]
 
-physics.producers.pandoraCosmicTrackPFPart.FlashTimeVetoStart: 3.30
-physics.producers.pandoraCosmicTrackPFPart.FlashTimeVetoEnd:   4.90
+
 
 physics.producers.NeutrinoFlashMatch.FlashVetoTimeStart: 3.30
 physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   4.90
 
 physics.producers.UBXSec.BeamSpillStart:                 3.30
 physics.producers.UBXSec.BeamSpillEnd:                   4.90
+
 physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillStarts: 3.30
 physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillEnds:   4.90
 

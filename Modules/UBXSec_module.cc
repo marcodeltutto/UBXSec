@@ -1184,6 +1184,7 @@ void UBXSec::produce(art::Event & e) {
     //_slc_maxdistance_vtxtrack = UBXSecHelper::GetMaxTrackVertexDistance();
 
     // Other showers in the event
+    std::cout << "[UBXSec] Debug 1." << std::endl;
     std::vector<art::Ptr<recob::Shower>> other_showers;
     bool ignore_shower = false;
     for (size_t s = 0; s < _shower_v.size(); s++) {
@@ -1203,8 +1204,10 @@ void UBXSec::produce(art::Event & e) {
       other_showers.push_back(_shower_v.at(s));
     }
 
+    std::cout << "[UBXSec] Debug 2." << std::endl;
+
     double max_length = -1, index_max_length = -1;
-    double max_costheta = -1, index_max_costheta = -1;
+    double max_costheta = -1e9, index_max_costheta = -1;
     double min_flashvtxdistance = 1e9, index_min_flashvtxdistance = -1;
 
     for (size_t s = 0; s < other_showers.size(); s++) {
@@ -1227,6 +1230,8 @@ void UBXSec::produce(art::Event & e) {
       }
     }
 
+    std::cout << "[UBXSec] Debug 3." << std::endl;
+
     if (index_max_length != -1) {
       auto shower = other_showers.at(index_max_length);
       ubxsec_event->slc_othershowers_longest_length[slice] = shower->Length();
@@ -1237,6 +1242,7 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_othershowers_longest_theta[slice] = UBXSecHelper::GetCosTheta(shower->Direction());
       ubxsec_event->slc_othershowers_longest_openangle[slice] = shower->OpenAngle();
 
+      std::cout << "[UBXSec] Debug 4." << std::endl;
       shower = other_showers.at(index_max_costheta);
       ubxsec_event->slc_othershowers_forward_length[slice] = shower->Length();
       ubxsec_event->slc_othershowers_forward_startx[slice] = shower->ShowerStart().X();
@@ -1246,6 +1252,7 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_othershowers_forward_theta[slice] = UBXSecHelper::GetCosTheta(shower->Direction());
       ubxsec_event->slc_othershowers_forward_openangle[slice] = shower->OpenAngle();
 
+      std::cout << "[UBXSec] Debug 5." << std::endl;
       shower = other_showers.at(index_min_flashvtxdistance);
       ubxsec_event->slc_othershowers_flashmatch_length[slice] = shower->Length();
       ubxsec_event->slc_othershowers_flashmatch_startx[slice] = shower->ShowerStart().X();

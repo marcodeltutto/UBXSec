@@ -67,11 +67,12 @@ private:
   std::string _track_producer;
   std::string _t0_reco_producer;
   std::string _opflash_producer_beam;
-  //std::string _opflash_producer_cosmic;
-  //double _flash_trange_start;
-  //double _flash_trange_end;
+
   size_t _num_tracks;
   std::vector<double> _gain_correction;
+
+  bool _do_opdet_swap;
+  std::vector<double> _opdet_swap_map;
 
   TTree* _tree1;
   int _run, _subrun, _event, _matchid;
@@ -88,16 +89,16 @@ private:
 
 FlashMatchCalib::FlashMatchCalib(fhicl::ParameterSet const & p)
   :
-  EDAnalyzer(p)  // ,
- // More initializers here.
+  EDAnalyzer(p)  
 {
   _track_producer          = p.get<std::string>("TrackProducer", "pandoraCosmic");
-  _t0_reco_producer         = p.get<std::string>("T0RecoProducer", "pandoraCosmicT0RecoBeam");
+  _t0_reco_producer        = p.get<std::string>("T0RecoProducer", "pandoraCosmicT0RecoBeam");
   _opflash_producer_beam   = p.get<std::string>("BeamOpFlashProducer");
-  //_opflash_producer_cosmic = p.get<std::string>("CosmicOpFlashProducer");
-  //_flash_trange_start      = p.get<double>("FlashVetoTimeStart");
-  //_flash_trange_end        = p.get<double>("FlashVetoTimeEnd");
+
   _gain_correction         = p.get<std::vector<double> >("GainCorrection");
+
+  _do_opdet_swap           = p.get<double>("DoOpDetSwap", false);
+  _opdet_swap_map          = p.get<std::vector<double> >("OpDetSwapMap");
   
   ::art::ServiceHandle<geo::Geometry> geo;
   ::art::ServiceHandle<geo::UBOpReadoutMap> ub_geo;
@@ -105,6 +106,15 @@ FlashMatchCalib::FlashMatchCalib(fhicl::ParameterSet const & p)
   if(geo->NOpDets() != _gain_correction.size()) {
     std::cout << "GainCorrection array size is " << _gain_correction.size() << " != # OpDet " << geo->NOpDets() << std::endl;
     throw std::exception();
+  }
+
+  if(geo->NOpDets() != _opdet_swap_map.size()) {
+    std::cout << "OpDetSwapMap array size is " << _opdet_swap_map.size() << " != # OpDet " << geo->NOpDets() << std::endl;
+    throw std::exception();
+  }
+
+  for (size_t i = 0; i < geo->NOpDets(); i++) {
+    std::cout << "[FlashMatchCalib] OpDet " << i << " remapped to OpDet " << _opdet_swap_map.at(i) << std::endl;
   }
   
   _mgr.Configure(p.get<flashana::Config_t>("FlashMatchConfig"));
@@ -160,28 +170,18 @@ void FlashMatchCalib::analyze(art::Event const & e)
   std::vector<art::Ptr<anab::T0>> t0_v;
   art::fill_ptr_vector(t0_v, t0_h);
 
-  //std::set<art::Ptr<recob::OpFlash> > cosmic_flash_s;
   std::set<art::Ptr<recob::OpFlash> > beam_flash_s;
   art::Handle<std::vector<recob::OpFlash> > beam_flash_h;
-  //art::Handle<std::vector<recob::OpFlash> > cosmic_flash_h;
   e.getByLabel(_opflash_producer_beam,beam_flash_h);
-  //e.getByLabel(_opflash_producer_cosmic,cosmic_flash_h);
   if(beam_flash_h.isValid()) {
     for(size_t i=0; i<beam_flash_h->size(); ++i) {
       art::Ptr<recob::OpFlash> flash_ptr(beam_flash_h,i);
       beam_flash_s.insert(flash_ptr);
     }
   }
-  /*
-  if(cosmic_flash_h.isValid()) {
-    for(size_t i=0; i<cosmic_flash_h->size(); ++i) {
-      art::Ptr<recob::OpFlash> flash_ptr(cosmic_flash_h,i);
-      cosmic_flash_s.insert(flash_ptr);
-    }
-  }
-  */
 
-  if(/*cosmic_flash_s.empty() &&*/ beam_flash_s.empty()) {
+
+  if(beam_flash_s.empty()) {
     std::cout << "No OpFlash found..." << std::endl;
     return;
   }
@@ -235,6 +235,11 @@ void FlashMatchCalib::analyze(art::Event const & e)
     f.pe_err_v.resize(geo->NOpDets());
     for (unsigned int i = 0; i < f.pe_v.size(); i++) {
       unsigned int opdet = geo->OpDetFromOpChannel(i);
+      if (_do_opdet_swap) {
+        for (size_t od = 0; od < geo->NOpDets(); od++) {
+          opdet = _opdet_swap_map.at(od);
+        }
+      }
       if(beam_flash) {
         f.pe_v[opdet] = flash_ptr->PE(i) / _gain_correction[i];
         f.pe_err_v[opdet] = sqrt(flash_ptr->PE(i) / _gain_correction[i]);

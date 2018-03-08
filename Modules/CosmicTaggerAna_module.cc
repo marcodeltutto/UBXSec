@@ -44,9 +44,16 @@
 #include "lardataobj/RecoBase/Track.h"
 #include "lardataobj/RecoBase/Cluster.h"
 #include "lardataobj/RecoBase/Hit.h"
-#include "larsim/MCCheater/BackTracker.h"
+//#include "larsim/MCCheater/BackTracker.h"
 #include "lardataobj/AnalysisBase/CosmicTag.h"
 #include "lardata/Utilities/AssociationUtil.h"
+#include "uboone/UBXSec/DataTypes/MCGhost.h"
+#include "larcore/Geometry/Geometry.h"
+#include "nusimdata/SimulationBase/MCParticle.h"
+#include "nusimdata/SimulationBase/MCTruth.h"
+
+#include "uboone/UBXSec/Algorithms/UBXSecHelper.h"
+#include "uboone/UBXSec/Algorithms/FiducialVolume.h"
 
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
@@ -74,6 +81,8 @@ public:
 
 private:
 
+  ::ubana::FiducialVolume _fiducial_volume;
+
   std::string _hitfinderLabel;
   std::string _pfp_producer;
   std::string _geantModuleLabel;
@@ -82,6 +91,7 @@ private:
   std::string _cosmic_geo_tag_producer;
   std::string _cosmic_acpt_tag_producer;
   std::string _cosmic_stopmu_tag_producer;
+  std::string _mc_ghost_producer;
   double _cosmic_flash_tag_score_cut; ///< Score cut used in the analysis to consider the PFP as cosmic (applied to flash tagger)
   double _cosmic_geo_tag_score_cut;   ///< Score cut used in the analysis to consider the PFP as cosmic (applied to geo tagger)
   double _cosmic_acpt_tag_score_cut;  ///< Score cut used in the analysis to consider the PFP as cosmic (applied to acpt tagger)
@@ -92,39 +102,8 @@ private:
 
   const simb::Origin_t NEUTRINO_ORIGIN = simb::kBeamNeutrino;
 
-  /// Maps used for PFParticle truth matching
-  typedef std::map< art::Ptr<recob::PFParticle>, unsigned int > RecoParticleToNMatchedHits;
-  typedef std::map< art::Ptr<simb::MCParticle>,  RecoParticleToNMatchedHits > ParticleMatchingMap;
-  typedef std::set< art::Ptr<recob::PFParticle> > PFParticleSet;
-  typedef std::set< art::Ptr<simb::MCParticle> >  MCParticleSet;
-
-  /**
-   *  @brief Perform matching between true and reconstructed particles
-   *
-   *  @param recoParticlesToHits the mapping from reconstructed particles to hits
-   *  @param trueHitsToParticles the mapping from hits to true particles
-   *  @param matchedParticles the output matches between reconstructed and true particles
-   *  @param matchedHits the output matches between reconstructed particles and hits
-   */
-  void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles,
-       lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits) const;
-   /**
-   *  @brief Perform matching between true and reconstructed particles
-   *
-   *  @param recoParticlesToHits the mapping from reconstructed particles to hits
-   *  @param trueHitsToParticles the mapping from hits to true particles
-   *  @param matchedParticles the output matches between reconstructed and true particles
-   *  @param matchedHits the output matches between reconstructed particles and hits
-   *  @param recoVeto the veto list for reconstructed particles
-   *  @param trueVeto the veto list for true particles
-   */
-  void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles,
-               lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits, PFParticleSet &recoVeto, MCParticleSet &trueVeto) const;
-
-
   void GetTaggedPFP(art::Event const & e, std::string cosmictag_producer, double score_cut, lar_pandora::PFParticleVector & pfpTaggedOut, std::vector<int> & tagid_v);
   int PFPInCommon(lar_pandora::PFParticleVector taggedPFP, lar_pandora::PFParticleVector pfpGeoTagged);
-  bool InFV(double * nu_vertex_xyz);
  
   TTree* _tree1;
   int _run, _subrun, _event;
@@ -152,6 +131,9 @@ CosmicTaggerAna::CosmicTaggerAna(fhicl::ParameterSet const & p)
   :
   EDAnalyzer(p) 
 {
+
+  ::art::ServiceHandle<geo::Geometry> geo;
+
   _pfp_producer               = p.get<std::string>("PFParticleProducer");
   _hitfinderLabel             = p.get<std::string>("HitProducer");
   _geantModuleLabel           = p.get<std::string>("GeantModule");
@@ -160,6 +142,7 @@ CosmicTaggerAna::CosmicTaggerAna(fhicl::ParameterSet const & p)
   _cosmic_geo_tag_producer    = p.get<std::string>("CosmicGeoTagProducer");
   _cosmic_acpt_tag_producer   = p.get<std::string>("CosmicACPTTagProducer");
   _cosmic_stopmu_tag_producer = p.get<std::string>("CosmicStopMuTagProducer");
+  _mc_ghost_producer           = p.get<std::string>("MCGhostProducer");
   _cosmic_flash_tag_score_cut = p.get<double>("CosmicFlashTagScoreCut");
   _cosmic_geo_tag_score_cut   = p.get<double>("CosmicGeoTagScoreCut");
   _cosmic_acpt_tag_score_cut  = p.get<double>("CosmicACPTTagScoreCut");
@@ -190,6 +173,13 @@ CosmicTaggerAna::CosmicTaggerAna(fhicl::ParameterSet const & p)
   _tree1->Branch("n_pfp_stopmu_tagged",  &_n_pfp_stopmu_tagged,  "n_pfp_stopmu_tagged/I");
   _tree1->Branch("nu_pfp_stopmu_tagged", &_nu_pfp_stopmu_tagged, "nu_pfp_stopmu_tagged/I");
   _tree1->Branch("nu_pfp_is_reco",       &_nu_pfp_is_reco,       "nu_pfp_is_reco/O");
+
+  _fiducial_volume.Configure(p.get<fhicl::ParameterSet>("FiducialVolumeSettings"), 
+                             geo->DetHalfHeight(),
+                             2.*geo->DetHalfWidth(),
+                             geo->DetLength());
+
+  if (_debug) _fiducial_volume.PrintConfig();
 }
 
 void CosmicTaggerAna::analyze(art::Event const & e)
@@ -205,12 +195,10 @@ void CosmicTaggerAna::analyze(art::Event const & e)
   _ccnc   = -1;
   _pdg    = -1;
 
-  art::ServiceHandle<cheat::BackTracker> bt;
+  //art::ServiceHandle<cheat::BackTracker> bt;
 
-  // *******************
-  // Pandora MCParticle to PFParticle matching
-  // *******************
 
+/*
   // --- Collect hits
   lar_pandora::HitVector hitVector;
   lar_pandora::LArPandoraHelper::CollectHits(e, _hitfinderLabel, hitVector);
@@ -257,76 +245,98 @@ void CosmicTaggerAna::analyze(art::Event const & e)
 
   if (_debug)
     std::cout << "  TrueEvents: " << truthToParticles.size() << std::endl;
+*/
 
-  lar_pandora::MCParticlesToPFParticles matchedParticles;    // This is a map: MCParticle to matched PFParticle
-  lar_pandora::MCParticlesToHits        matchedParticleHits;
+  // Get PFP
+  art::Handle<std::vector<recob::PFParticle> > pfp_h;
+  e.getByLabel(_pfp_producer,pfp_h);
+  if(!pfp_h.isValid()){
+    std::cout << "[UBXSec] PFP product " << _pfp_producer << " not found..." << std::endl;
+    //throw std::exception();
+  }
+  if(pfp_h->empty()) {
+    std::cout << "[UBXSec] PFP " << _pfp_producer << " is empty." << std::endl;
+  }
+  std::vector<art::Ptr<recob::PFParticle>> pfp_v;
+  art::fill_ptr_vector(pfp_v, pfp_h);
 
-  // --- Do the matching
-  this->GetRecoToTrueMatches(recoParticlesToHits, 
-                             trueHitsToParticles, 
-                             matchedParticles, 
-                             matchedParticleHits);
+
+  // Get Ghosts
+  art::Handle<std::vector<ubana::MCGhost> > ghost_h;
+  e.getByLabel(_mc_ghost_producer,ghost_h);
+  if(!ghost_h.isValid()){
+    std::cout << "[UBXSec] MCGhost product " << _mc_ghost_producer << " not found..." << std::endl;
+    //throw std::exception();
+  }
+  art::FindManyP<ubana::MCGhost>   mcghost_from_pfp   (pfp_h,   e, _mc_ghost_producer);
+  art::FindManyP<simb::MCParticle> mcpar_from_mcghost (ghost_h, e, _mc_ghost_producer); 
 
 
   // *******************
   // Save PFP with neutrino origin
   // *******************
 
-  std::vector<art::Ptr<recob::PFParticle>> taggedPFP;
-  std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP;
+  //std::vector<art::Ptr<recob::PFParticle>> taggedPFP;
+  //std::vector<art::Ptr<recob::PFParticle>> neutrinoOriginPFP;
+
+  int n_neutrinoOriginPFP = 0;
 
   _nu_pfp_is_reco = false;
 
   // Loop over true particle and find the neutrino related ones
-  for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
-             iter1 != iterEnd1; ++iter1) {
+  for (auto p : pfp_v) {
 
-     art::Ptr<simb::MCParticle>  mc_par = iter1->first;   // The MCParticle 
-     art::Ptr<recob::PFParticle> pf_par = iter1->second;  // The matched PFParticle
+    art::Ptr<simb::MCParticle>  mc_par;      // The MCParticle 
+    art::Ptr<recob::PFParticle> pf_par = p;  // The matched PFParticle
 
-     const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
-     if (!mc_truth) continue;  
-     if (mc_truth->Origin() == NEUTRINO_ORIGIN) {
-       if (_debug) {
-         std::cout << "Neutrino related track found." << std::endl;
-         std::cout << "Process (0==CC, 1==NC) " << mc_truth->GetNeutrino().CCNC()         << std::endl;
-         std::cout << "Neutrino PDG           " << mc_truth->GetNeutrino().Nu().PdgCode() << std::endl;
-         std::cout << "PDG  " << mc_par->PdgCode() << std::endl;
-         std::cout << "Mass " << mc_par->Mass()    << std::endl;
-         std::cout << "Proc " << mc_par->Process() << std::endl;
-         std::cout << "Vx   " << mc_par->Vx()      << std::endl;
-         std::cout << "Vy   " << mc_par->Vy()      << std::endl;
-         std::cout << "Vz   " << mc_par->Vz()      << std::endl;
-         std::cout << "T    " << mc_par->T()       << std::endl;
-         double timeCorrection = 343.75;
-         std::cout << "Remeber a time correction of " << timeCorrection << std::endl;
-       }    
-       if (_debug) {
-         std::cout << "  The related PFP: " << std::endl;
-         std::cout << "  has ID: " << pf_par->Self() << std::endl;
-         //std::cout << "  Vx " << mc_par->Vx() << std::endl;
-         //std::cout << "  Vy " << mc_par->Vy() << std::endl;
-         //std::cout << "  Vz " << mc_par->Vz() << std::endl;
-       }
+    auto mcghosts = mcghost_from_pfp.at(p.key());
+    if (mcghosts.size() == 0) 
+      continue;
+    mc_par = mcpar_from_mcghost.at(mcghosts.at(0).key()).at(0);
 
-       // esclude neutrons, as they may travel away and be tagged as out-of-time, 
+    const art::Ptr<simb::MCTruth> mc_truth = UBXSecHelper::TrackIDToMCTruth(e, "largeant", mc_par->TrackId());
+    if (!mc_truth) continue;  
+    if (mc_truth->Origin() == NEUTRINO_ORIGIN) {
+      if (_debug) {
+        std::cout << "Neutrino related track found." << std::endl;
+        std::cout << "Process (0==CC, 1==NC) " << mc_truth->GetNeutrino().CCNC()         << std::endl;
+        std::cout << "Neutrino PDG           " << mc_truth->GetNeutrino().Nu().PdgCode() << std::endl;
+        std::cout << "PDG  " << mc_par->PdgCode() << std::endl;
+        std::cout << "Mass " << mc_par->Mass()    << std::endl;
+        std::cout << "Proc " << mc_par->Process() << std::endl;
+        std::cout << "Vx   " << mc_par->Vx()      << std::endl;
+        std::cout << "Vy   " << mc_par->Vy()      << std::endl;
+        std::cout << "Vz   " << mc_par->Vz()      << std::endl;
+        std::cout << "T    " << mc_par->T()       << std::endl;
+        double timeCorrection = 343.75;
+        std::cout << "Remeber a time correction of " << timeCorrection << std::endl;
+      }    
+      if (_debug) {
+        std::cout << "  The related PFP: " << std::endl;
+        std::cout << "  has ID: " << pf_par->Self() << std::endl;
+        //std::cout << "  Vx " << mc_par->Vx() << std::endl;
+        //std::cout << "  Vy " << mc_par->Vy() << std::endl;
+        //std::cout << "  Vz " << mc_par->Vz() << std::endl;
+      }
+
+      // esclude neutrons, as they may travel away and be tagged as out-of-time, 
        // but we don't really care about those
        //if (mc_par->PdgCode() != 2112) neutrinoOriginPFP.emplace_back(pf_par);
        // actually only consider muons and electrons
-       if (mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13 || 
-           mc_par->PdgCode() == 12 || mc_par->PdgCode() == -12) {
-         neutrinoOriginPFP.emplace_back(pf_par);
-         _nu_pfp_is_reco = true;
-       }
+      if (mc_par->PdgCode() == 13 || mc_par->PdgCode() == -13 || 
+          mc_par->PdgCode() == 12 || mc_par->PdgCode() == -12) {
+        n_neutrinoOriginPFP++;
+        _nu_pfp_is_reco = true;
+      }
 
-       _ccnc = mc_truth->GetNeutrino().CCNC();
-       _pdg  = mc_truth->GetNeutrino().Nu().PdgCode();
-       _nu_e = mc_truth->GetNeutrino().Nu().E();
-       double pos[3] = {mc_truth->GetNeutrino().Nu().Vx(), mc_truth->GetNeutrino().Nu().Vy(), mc_truth->GetNeutrino().Nu().Vz()};
-       _fv   = (this->InFV(pos) ? 1 : 0);
-     }
+      _ccnc = mc_truth->GetNeutrino().CCNC();
+      _pdg  = mc_truth->GetNeutrino().Nu().PdgCode();
+      _nu_e = mc_truth->GetNeutrino().Nu().E();
+      double pos[3] = {mc_truth->GetNeutrino().Nu().Vx(), mc_truth->GetNeutrino().Nu().Vy(), mc_truth->GetNeutrino().Nu().Vz()};
+      _fv   = _fiducial_volume.InFV(pos);
+    }
   }
-  if (_debug) std::cout << "Neutrino related PFPs in this event: " << neutrinoOriginPFP.size() << std::endl;
+  if (_debug) std::cout << "Neutrino related PFPs in this event: " << n_neutrinoOriginPFP << std::endl;
 
 
   _nu_pfp_tagged_total = 0;
@@ -342,17 +352,25 @@ void CosmicTaggerAna::analyze(art::Event const & e)
   if (_debug) std::cout << pfpFlashTagged.size() << " PFP have been flash tagged." << std::endl;
   _n_pfp_flash_tagged = pfpFlashTagged.size();
 
-   // geo Loop through the taggedPFP and see if there is a neutrino related one
+  // geo Loop through the taggedPFP and see if there is a neutrino related one
   _nu_pfp_flash_tagged = 0;
   for (unsigned int i = 0; i < pfpFlashTagged.size(); i++) {
-    for (unsigned int j = 0; j < neutrinoOriginPFP.size(); j++) {
-      if(pfpFlashTagged[i] == neutrinoOriginPFP[j]) {
-        if (_debug) std::cout << ">>>>>>>>>>>>>>>>> A neutrino related PFP (with ID " << neutrinoOriginPFP[j]->Self() << ") was tagged by the flash tagger with tag " << tagid_v[i] << std::endl;
-        _nu_pfp_flash_tagged = 1;
-        _nu_pfp_tagged_total = 1;
+    auto mcghosts = mcghost_from_pfp.at(pfpFlashTagged.at(i).key());
+    if (mcghosts.size() > 0) {
+      art::Ptr<simb::MCParticle> mcpar = mcpar_from_mcghost.at(mcghosts.at(0).key()).at(0);
+      const auto mc_truth = UBXSecHelper::TrackIDToMCTruth(e, "largeant", mcpar->TrackId());
+      if (mc_truth) {
+        if (mc_truth->Origin() == simb::kBeamNeutrino &&
+           (mcpar->PdgCode() == 13 || mcpar->PdgCode() == -13 || 
+            mcpar->PdgCode() == 12 || mcpar->PdgCode() == -12)) {
+          if (_debug) std::cout << ">>>>>>>>>>>>>>>>> A neutrino related PFP (with ID " << pfpFlashTagged.at(i)->Self() << ") was tagged by the flash tagger with tag " << tagid_v[i] << std::endl;
+          _nu_pfp_flash_tagged = 1;
+          _nu_pfp_tagged_total = 1;
+        }
       }
     }
   }
+
 
 
 
@@ -368,11 +386,18 @@ void CosmicTaggerAna::analyze(art::Event const & e)
    // Loop through the taggedPFP and see if there is a neutrino related one
   _nu_pfp_geo_tagged = 0;
   for (unsigned int i = 0; i < pfpGeoTagged.size(); i++) {
-    for (unsigned int j = 0; j < neutrinoOriginPFP.size(); j++) {
-      if(pfpGeoTagged[i] == neutrinoOriginPFP[j]) {
-        if (_debug) std::cout << ">>>>>>>>>>>>>>>>> A neutrino related PFP (with ID " << neutrinoOriginPFP[j]->Self() << ") was tagged by the geo tagger with tag " << tagid_v[i] << std::endl;
-        _nu_pfp_geo_tagged = 1;
-        _nu_pfp_tagged_total = 1;
+    auto mcghosts = mcghost_from_pfp.at(pfpGeoTagged.at(i).key());
+    if (mcghosts.size() > 0) {
+      art::Ptr<simb::MCParticle> mcpar = mcpar_from_mcghost.at(mcghosts.at(0).key()).at(0);
+      const auto mc_truth = UBXSecHelper::TrackIDToMCTruth(e, "largeant", mcpar->TrackId());
+      if (mc_truth) {
+        if (mc_truth->Origin() == simb::kBeamNeutrino &&
+           (mcpar->PdgCode() == 13 || mcpar->PdgCode() == -13 || 
+            mcpar->PdgCode() == 12 || mcpar->PdgCode() == -12)) { 
+          if (_debug) std::cout << ">>>>>>>>>>>>>>>>> A neutrino related PFP (with ID " << pfpFlashTagged.at(i)->Self() << ") was tagged by the geo tagger with tag " << tagid_v[i] << std::endl;
+          _nu_pfp_geo_tagged = 1;
+          _nu_pfp_tagged_total = 1;
+        }
       }
     }
   }
@@ -392,11 +417,18 @@ void CosmicTaggerAna::analyze(art::Event const & e)
    // Loop through the taggedPFP and see if there is a neutrino related one
   _nu_pfp_acpt_tagged = 0;
   for (unsigned int i = 0; i < pfpACPTTagged.size(); i++) {
-    for (unsigned int j = 0; j < neutrinoOriginPFP.size(); j++) {
-      if(pfpACPTTagged[i] == neutrinoOriginPFP[j]) {
-        if (_debug) std::cout << ">>>>>>>>>>>>>>>>> ACPT A neutrino related PFP (with ID " << neutrinoOriginPFP[j]->Self() << ") was tagged by the acpt tagger with tag " << tagid_v[i] << std::endl;
-        _nu_pfp_acpt_tagged = 1;
-        _nu_pfp_tagged_total = 1;
+    auto mcghosts = mcghost_from_pfp.at(pfpACPTTagged.at(i).key());
+    if (mcghosts.size() > 0) {
+      art::Ptr<simb::MCParticle> mcpar = mcpar_from_mcghost.at(mcghosts.at(0).key()).at(0);
+      const auto mc_truth = UBXSecHelper::TrackIDToMCTruth(e, "largeant", mcpar->TrackId());
+      if (mc_truth) {
+        if (mc_truth->Origin() == simb::kBeamNeutrino &&
+           (mcpar->PdgCode() == 13 || mcpar->PdgCode() == -13 || 
+            mcpar->PdgCode() == 12 || mcpar->PdgCode() == -12)) { 
+          if (_debug) std::cout << ">>>>>>>>>>>>>>>>> ACPT A neutrino related PFP (with ID " << pfpFlashTagged.at(i)->Self() << ") was tagged by the acpt tagger with tag " << tagid_v[i] << std::endl;
+          _nu_pfp_acpt_tagged = 1;
+          _nu_pfp_tagged_total = 1;
+        }
       }
     }
   }
@@ -421,11 +453,18 @@ void CosmicTaggerAna::analyze(art::Event const & e)
    // Loop through the taggedPFP and see if there is a neutrino related one
   _nu_pfp_stopmu_tagged = 0;
   for (unsigned int i = 0; i < pfpStopMuTagged.size(); i++) {
-    for (unsigned int j = 0; j < neutrinoOriginPFP.size(); j++) {
-      if(pfpStopMuTagged[i] == neutrinoOriginPFP[j]) {
-        if (_debug) std::cout << ">>>>>>>>>>>>>>>>> STOPMU A neutrino related PFP (with ID " << neutrinoOriginPFP[j]->Self() << ") was tagged by the stopmu tagger with tag " << tagid_v[i] << std::endl;
-        _nu_pfp_stopmu_tagged = 1;
-        _nu_pfp_tagged_total = 1;
+    auto mcghosts = mcghost_from_pfp.at(pfpStopMuTagged.at(i).key());
+    if (mcghosts.size() > 0) {
+      art::Ptr<simb::MCParticle> mcpar = mcpar_from_mcghost.at(mcghosts.at(0).key()).at(0);
+      const auto mc_truth = UBXSecHelper::TrackIDToMCTruth(e, "largeant", mcpar->TrackId());
+      if (mc_truth) {
+        if (mc_truth->Origin() == simb::kBeamNeutrino &&
+           (mcpar->PdgCode() == 13 || mcpar->PdgCode() == -13 || 
+            mcpar->PdgCode() == 12 || mcpar->PdgCode() == -12)) { 
+          if (_debug) std::cout << ">>>>>>>>>>>>>>>>> STOPMU A neutrino related PFP (with ID " << pfpFlashTagged.at(i)->Self() << ") was tagged by the stopmu tagger with tag " << tagid_v[i] << std::endl;
+          _nu_pfp_stopmu_tagged = 1;
+          _nu_pfp_tagged_total = 1;
+        }
       }
     }
   }
@@ -434,95 +473,6 @@ void CosmicTaggerAna::analyze(art::Event const & e)
 }
 
 
-
-//------------------------------------------------------------------------------------------------------------------------------------------
-
-void CosmicTaggerAna::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, 
-                                                const lar_pandora::HitsToMCParticles &trueHitsToParticles,
-                                                lar_pandora::MCParticlesToPFParticles &matchedParticles, 
-                                                lar_pandora::MCParticlesToHits &matchedHits) const
-{   
-  PFParticleSet recoVeto; MCParticleSet trueVeto;
-    
-  this->GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedHits, recoVeto, trueVeto);
-}
-
-//------------------------------------------------------------------------------------------------------------------------------------------
-
-void CosmicTaggerAna::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, 
-                                                const lar_pandora::HitsToMCParticles &trueHitsToParticles,
-                                                lar_pandora::MCParticlesToPFParticles &matchedParticles, 
-                                                lar_pandora::MCParticlesToHits &matchedHits, 
-                                                PFParticleSet &vetoReco, 
-                                                MCParticleSet &vetoTrue) const
-{
-    bool foundMatches(false);
-
-    for (lar_pandora::PFParticlesToHits::const_iterator iter1 = recoParticlesToHits.begin(), iterEnd1 = recoParticlesToHits.end();
-        iter1 != iterEnd1; ++iter1)
-    {
-        const art::Ptr<recob::PFParticle> recoParticle = iter1->first;
-        if (vetoReco.count(recoParticle) > 0)
-            continue;
-
-        const lar_pandora::HitVector &hitVector = iter1->second;
-
-        lar_pandora::MCParticlesToHits truthContributionMap;
-
-        for (lar_pandora::HitVector::const_iterator iter2 = hitVector.begin(), iterEnd2 = hitVector.end(); iter2 != iterEnd2; ++iter2)
-        {
-            const art::Ptr<recob::Hit> hit = *iter2;
-
-            lar_pandora::HitsToMCParticles::const_iterator iter3 = trueHitsToParticles.find(hit);
-            if (trueHitsToParticles.end() == iter3)
-                continue;
-
-            const art::Ptr<simb::MCParticle> trueParticle = iter3->second;
-            if (vetoTrue.count(trueParticle) > 0)
-                continue;
-
-            truthContributionMap[trueParticle].push_back(hit);
-        }
-
-        lar_pandora::MCParticlesToHits::const_iterator mIter = truthContributionMap.end();
-
-        for (lar_pandora::MCParticlesToHits::const_iterator iter4 = truthContributionMap.begin(), iterEnd4 = truthContributionMap.end();
-            iter4 != iterEnd4; ++iter4)
-        {
-            if ((truthContributionMap.end() == mIter) || (iter4->second.size() > mIter->second.size()))
-            {
-                mIter = iter4;
-            }
-        }
-
-        if (truthContributionMap.end() != mIter)
-        {
-            const art::Ptr<simb::MCParticle> trueParticle = mIter->first;
-
-            lar_pandora::MCParticlesToHits::const_iterator iter5 = matchedHits.find(trueParticle);
-
-            if ((matchedHits.end() == iter5) || (mIter->second.size() > iter5->second.size()))
-            {
-                matchedParticles[trueParticle] = recoParticle;
-                matchedHits[trueParticle] = mIter->second;
-                foundMatches = true;
-            }
-        }
-    }
-
-    if (!foundMatches)
-        return;
-
-    for (lar_pandora::MCParticlesToPFParticles::const_iterator pIter = matchedParticles.begin(), pIterEnd = matchedParticles.end();
-        pIter != pIterEnd; ++pIter)
-    {
-        vetoTrue.insert(pIter->first);
-        vetoReco.insert(pIter->second);
-    }
-
-    if (_recursiveMatching)
-        this->GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedHits, vetoReco, vetoTrue);
-}
 
 
 
@@ -598,25 +548,5 @@ int CosmicTaggerAna::PFPInCommon(lar_pandora::PFParticleVector taggedPFP, lar_pa
 }
 
 
-//______________________________________________________________________________________________________________________________________
-bool CosmicTaggerAna::InFV(double * nu_vertex_xyz){
 
-  double x = nu_vertex_xyz[0];
-  double y = nu_vertex_xyz[1];
-  double z = nu_vertex_xyz[2];
-
-  //This defines our current settings for the fiducial volume
-  double FVx = 256.35;
-  double FVy = 233;
-  double FVz = 1036.8;
-  double borderx = 10.;
-  double bordery = 20.;
-  double borderz = 10.;
-  //double cryoradius = 191.61;
-  //double cryoz = 1086.49 + 2*67.63;
-
-  if(x < (FVx - borderx) && (x > borderx) && (y < (FVy/2. - bordery)) && (y > (-FVy/2. + bordery)) && (z < (FVz - borderz)) && (z > borderz)) return true;
-  return false;
-
-}
 DEFINE_ART_MODULE(CosmicTaggerAna)

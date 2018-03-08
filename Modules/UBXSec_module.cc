@@ -1149,8 +1149,11 @@ void UBXSec::produce(art::Event & e) {
       totq += hit3d.q; 
     }
     double charge_center[3] = {sumx / totq, sumy / totq, sumz / totq};
+    std::cout << "[UBXSec] Debug a." << std::endl;
 
     int this_opch = UBXSecHelper::GetClosestPMT(charge_center);
+
+    std::cout << "[UBXSec] Debug b." << std::endl;
 
     // Look at the opHits from this pmt
     int n_intime_ophits = 0;
@@ -1168,6 +1171,8 @@ void UBXSec::produce(art::Event & e) {
         n_intime_pe += _pecalib.BeamPE(opdet,ophit.Area(),ophit.Amplitude());
       }     
     } // end loop ophit
+
+    std::cout << "[UBXSec] Debug c." << std::endl;
 
     ubxsec_event->slc_n_intime_pe_closestpmt[slice] = n_intime_pe;
 
@@ -1737,10 +1742,6 @@ void UBXSec::produce(art::Event & e) {
  
 
 
-  if(_debug) std::cout << "[UBXSec] Filling tree now." << std::endl;
-  _tree1->Fill();
-
-
 
 
   // *********************
@@ -1812,6 +1813,8 @@ void UBXSec::produce(art::Event & e) {
 
   }
 
+  if(_debug) std::cout << "[UBXSec] Filling tree now." << std::endl;
+  _tree1->Fill();
 
   e.put(std::move(selectionResultVector));
   e.put(std::move(assnOutSelectionResultTPCObject));

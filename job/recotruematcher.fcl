@@ -19,6 +19,13 @@ RecoTrueMatcher: {
   FiducialVolumeSettings: @local::UBXSecFiducialVolumeSettings 
 }
 
-microboone_recotruematcher: @local::RecoTrueMatcher
+microboone_recotruematcher_pandoranu: @local::RecoTrueMatcher
+
+microboone_recotruematcher_pandoracosmic: @local::RecoTrueMatcher
+microboone_recotruematcher_pandoracosmic.PFParticleProducer: "pandoraCosmic"
+microboone_recotruematcher_pandoracosmic.HitProducer:        "gaushit"
+microboone_recotruematcher_pandoracosmic.GeantModule:        "largeant"
+microboone_recotruematcher_pandoracosmic.SpacePointProducer: "pandoraCosmic"
+microboone_recotruematcher_pandoracosmic.MCPHitAssProducer:  "gaushitTruthMatch"
 
 END_PROLOG

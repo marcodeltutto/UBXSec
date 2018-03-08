@@ -49,6 +49,7 @@ ubxsec_data_reco:
 {
 
   pandoraCosmicTPCObj:            @local::TPCObjectMakerCosmic
+  RecoTrueMatcherCosmic:          @local::microboone_recotruematcher_pandoracosmic
 
   pandoraCosmicTrackPFPart:       @local::microboone_cosmicpfparticletagger
   pandoraCosmicFlashTag:          @local::microboone_cosmicpfpflashtagger
@@ -67,7 +68,7 @@ ubxsec_data_reco:
 
 ubxsec_data_flashmatch:
 {
-   RecoTrueMatcher:               @local::RecoTrueMatcher
+   RecoTrueMatcher:               @local::microboone_recotruematcher_pandoranu
 
    TPCObjectMaker:                @local::TPCObjectMaker
 
@@ -90,6 +91,7 @@ ubxsec_data_ana:
 
 
 ubxsec_data_producers: [ pandoraCosmicTPCObj,
+                         RecoTrueMatcherCosmic,
                          pandoraCosmicTrackPFPart,
                          pandoraCosmicFlashTag,
                          pandoraCosmicACPTTagger,

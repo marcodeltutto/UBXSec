@@ -343,7 +343,7 @@ void CosmicTaggerAna::analyze(art::Event const & e)
 
 
   // *******************
-  // GEO
+  // Flash
   // *******************
 
   lar_pandora::PFParticleVector pfpFlashTagged;
@@ -375,7 +375,7 @@ void CosmicTaggerAna::analyze(art::Event const & e)
 
 
   // ****
-  // Geo/Time
+  // Geometry
   // ****
 
   lar_pandora::PFParticleVector pfpGeoTagged;
@@ -394,7 +394,7 @@ void CosmicTaggerAna::analyze(art::Event const & e)
         if (mc_truth->Origin() == simb::kBeamNeutrino &&
            (mcpar->PdgCode() == 13 || mcpar->PdgCode() == -13 || 
             mcpar->PdgCode() == 12 || mcpar->PdgCode() == -12)) { 
-          if (_debug) std::cout << ">>>>>>>>>>>>>>>>> A neutrino related PFP (with ID " << pfpFlashTagged.at(i)->Self() << ") was tagged by the geo tagger with tag " << tagid_v[i] << std::endl;
+          if (_debug) std::cout << ">>>>>>>>>>>>>>>>> A neutrino related PFP (with ID " << pfpGeoTagged.at(i)->Self() << ") was tagged by the geo tagger with tag " << tagid_v[i] << std::endl;
           _nu_pfp_geo_tagged = 1;
           _nu_pfp_tagged_total = 1;
         }
@@ -404,6 +404,9 @@ void CosmicTaggerAna::analyze(art::Event const & e)
 
   _geo_flash_incommon = this->PFPInCommon(pfpFlashTagged, pfpGeoTagged);
   if (_debug) std::cout << _geo_flash_incommon << " PFP are in common between geo and flash tagger" << std::endl;
+
+
+
 
   // ****
   // ACPT
@@ -425,7 +428,7 @@ void CosmicTaggerAna::analyze(art::Event const & e)
         if (mc_truth->Origin() == simb::kBeamNeutrino &&
            (mcpar->PdgCode() == 13 || mcpar->PdgCode() == -13 || 
             mcpar->PdgCode() == 12 || mcpar->PdgCode() == -12)) { 
-          if (_debug) std::cout << ">>>>>>>>>>>>>>>>> ACPT A neutrino related PFP (with ID " << pfpFlashTagged.at(i)->Self() << ") was tagged by the acpt tagger with tag " << tagid_v[i] << std::endl;
+          if (_debug) std::cout << ">>>>>>>>>>>>>>>>> ACPT A neutrino related PFP (with ID " << pfpACPTTagged.at(i)->Self() << ") was tagged by the acpt tagger with tag " << tagid_v[i] << std::endl;
           _nu_pfp_acpt_tagged = 1;
           _nu_pfp_tagged_total = 1;
         }
@@ -438,6 +441,9 @@ void CosmicTaggerAna::analyze(art::Event const & e)
 
   _acpt_geo_incommon = this->PFPInCommon(pfpGeoTagged, pfpACPTTagged);
   if (_debug) std::cout << _acpt_geo_incommon << " PFP are in common between acpt and geo tagger" << std::endl;
+
+
+
 
 
 
@@ -461,7 +467,7 @@ void CosmicTaggerAna::analyze(art::Event const & e)
         if (mc_truth->Origin() == simb::kBeamNeutrino &&
            (mcpar->PdgCode() == 13 || mcpar->PdgCode() == -13 || 
             mcpar->PdgCode() == 12 || mcpar->PdgCode() == -12)) { 
-          if (_debug) std::cout << ">>>>>>>>>>>>>>>>> STOPMU A neutrino related PFP (with ID " << pfpFlashTagged.at(i)->Self() << ") was tagged by the stopmu tagger with tag " << tagid_v[i] << std::endl;
+          if (_debug) std::cout << ">>>>>>>>>>>>>>>>> STOPMU A neutrino related PFP (with ID " << pfpStopMuTagged.at(i)->Self() << ") was tagged by the stopmu tagger with tag " << tagid_v[i] << std::endl;
           _nu_pfp_stopmu_tagged = 1;
           _nu_pfp_tagged_total = 1;
         }
@@ -525,15 +531,16 @@ void CosmicTaggerAna::GetTaggedPFP(art::Event const & e, std::string cosmictag_p
 
 }
 //____________________________________________________________________________________________
-int CosmicTaggerAna::PFPInCommon(lar_pandora::PFParticleVector taggedPFP, lar_pandora::PFParticleVector pfpGeoTagged){
+int CosmicTaggerAna::PFPInCommon(lar_pandora::PFParticleVector first, lar_pandora::PFParticleVector second){
 
   int nInCommon = 0;
 
-  for (unsigned int flash = 0; flash < taggedPFP.size(); flash++){
 
-    for (unsigned int geo = 0; geo < pfpGeoTagged.size(); geo++){
+  for (unsigned int f = 0; f < first.size(); f++){
+
+    for (unsigned int s = 0; s < second.size(); s++){
  
-      if(taggedPFP[flash] == pfpGeoTagged[geo]) {
+      if(first.at(f) == second.at(s)) {
 
         nInCommon++;
 

@@ -175,5 +175,14 @@ void UBXSecEvent::ResizeVectors(int vsize) {
 
 }
 
+
+void UBXSecEvent::ResetGenieEventWeightVectors() {
+
+  evtwgt_funcname.clear();
+  evtwgt_weight.clear();
+  evtwgt_nweight.clear();
+
+}
+
 #endif
 

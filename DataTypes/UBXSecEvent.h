@@ -189,6 +189,11 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   tvtx_z; ///< True neutrino vertex Z (cm)
   
   Double_t        pot; ///< Not used
+
+  Int_t evtwgt_nfunc; ///< Number of functions used for GENIE reweighting
+  vector<std::string> evtwgt_funcname; ///< Names of the functions used for GENIE reweighting
+  vector<int> evtwgt_nweight; ///< Number of weights per function name used for GENIE reweighting
+  vector<vector<double>> evtwgt_weight; ///< Weights per function name used for GENIE reweighting
  
   int _default_value = -9999; ///< Default value 
 
@@ -196,6 +201,7 @@ class UBXSecEvent /*: public TObject*/{
   virtual ~UBXSecEvent();
   void Init();
   void ResizeVectors(int); 
+  void ResetGenieEventWeightVectors();
 
 };
 

@@ -1,6 +1,10 @@
 #include "ubflashfinder.fcl"
 #include "ubflashcalib.fcl"
 #include "T0RecoAnodeCathodePiercing.fcl"
+#include "opticaldetectormodules_microboone.fcl"
+#include "correct_saturation.fcl"
+
+#include "genie_eventweight_microboone_ubxsec.fcl"
 
 #include "tpcobjectmaker.fcl"
 #include "neutrinomcflash.fcl"
@@ -20,10 +24,6 @@
 #include "geocosmictagger.fcl"
 #include "stoppingmuontagger.fcl"
 #include "candidateconsistency.fcl"
-
-#include "opticaldetectormodules_microboone.fcl"
-#include "ubflashfinder.fcl"
-#include "correct_saturation.fcl"
 
 #include "mcsfitproducer.fcl"
 
@@ -80,6 +80,8 @@ ubxsec_mc_flashmatch:
 
    CandidateConsistency:           @local::CandidateConsistency_mc
 
+   genieeventweight:               @local::genie_microboone_eventweight_ubxsec
+
    UBXSec:                         @local::UBXSec_mc
 
 }
@@ -117,6 +119,7 @@ ubxsec_mc_producers: [ pandoraCosmicTPCObj,
                        NeutrinoMCFlash, 
                        NeutrinoFlashMatch,
                        CandidateConsistency,
+                       genieeventweight,
                        UBXSec ] 
 
 ubxsec_mc_filters: [ tpcneutrinoidfilternumuccinc 

@@ -62,12 +62,14 @@ namespace ubana{
     double _det_width;
     double _det_length;
 
-    double _border_x_low;
-    double _border_x_high;
-    double _border_y_low;
-    double _border_y_high;
-    double _border_z_low;        
-    double _border_z_high;
+    std::vector<double> _border_x_low;
+    std::vector<double> _border_x_high;
+    std::vector<double> _border_y_low;
+    std::vector<double> _border_y_high;
+    std::vector<double> _border_z_low;        
+    std::vector<double> _border_z_high;
+
+    size_t _n_fv;
 
     bool _configured = false;
   };

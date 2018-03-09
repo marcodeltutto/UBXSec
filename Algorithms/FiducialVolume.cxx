@@ -42,15 +42,18 @@ namespace ubana {
 
     std::cout << "--- FiducialVolume configuration:" << std::endl;
     std::cout << "---   Number of fiducial volumes = " << _n_fv << std::endl;
-    std::cout << "---   _border_x_low    = " << _border_x_low << std::endl;
-    std::cout << "---   _border_x_high   = " << _border_x_high << std::endl;
-    std::cout << "---   _border_y_low    = " << _border_y_low << std::endl;
-    std::cout << "---   _border_y_high   = " << _border_y_high << std::endl;
-    std::cout << "---   _border_z_low    = " << _border_z_low << std::endl;
-    std::cout << "---   _border_z_high   = " << _border_z_high << std::endl;
     std::cout << "---   _det_half_height = " << _det_half_height << std::endl;
     std::cout << "---   _det_width       = " << _det_width << std::endl;
     std::cout << "---   _det_length      = " << _det_length << std::endl;
+    for (size_t i = 0; i < _n_fv; i++) {
+      std::cout << "---   Fiducial volume number " << i << std::endl;
+      std::cout << "---     _border_x_low    = " << _border_x_low.at(i) << std::endl;
+      std::cout << "---     _border_x_high   = " << _border_x_high.at(i) << std::endl;
+      std::cout << "---     _border_y_low    = " << _border_y_low.at(i) << std::endl;
+      std::cout << "---     _border_y_high   = " << _border_y_high.at(i) << std::endl;
+      std::cout << "---     _border_z_low    = " << _border_z_low.at(i) << std::endl;
+      std::cout << "---     _border_z_high   = " << _border_z_high.at(i) << std::endl;
+    }
 
   }
 

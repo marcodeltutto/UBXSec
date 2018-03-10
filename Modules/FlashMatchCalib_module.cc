@@ -72,7 +72,7 @@ private:
   std::vector<double> _gain_correction;
 
   bool _do_opdet_swap;
-  std::vector<double> _opdet_swap_map;
+  std::vector<int> _opdet_swap_map;
 
   TTree* _tree1;
   int _run, _subrun, _event, _matchid;
@@ -97,8 +97,8 @@ FlashMatchCalib::FlashMatchCalib(fhicl::ParameterSet const & p)
 
   _gain_correction         = p.get<std::vector<double> >("GainCorrection");
 
-  _do_opdet_swap           = p.get<double>("DoOpDetSwap", false);
-  _opdet_swap_map          = p.get<std::vector<double> >("OpDetSwapMap");
+  _do_opdet_swap           = p.get<bool>("DoOpDetSwap", false);
+  _opdet_swap_map          = p.get<std::vector<int> >("OpDetSwapMap");
   
   ::art::ServiceHandle<geo::Geometry> geo;
   ::art::ServiceHandle<geo::UBOpReadoutMap> ub_geo;
@@ -236,9 +236,7 @@ void FlashMatchCalib::analyze(art::Event const & e)
     for (unsigned int i = 0; i < f.pe_v.size(); i++) {
       unsigned int opdet = geo->OpDetFromOpChannel(i);
       if (_do_opdet_swap) {
-        for (size_t od = 0; od < geo->NOpDets(); od++) {
-          opdet = _opdet_swap_map.at(od);
-        }
+          opdet = _opdet_swap_map.at(opdet);
       }
       if(beam_flash) {
         f.pe_v[opdet] = flash_ptr->PE(i) / _gain_correction[i];

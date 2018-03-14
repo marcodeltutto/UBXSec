@@ -91,7 +91,7 @@ namespace ubana {
     bool _configured = false;
 
     bool _debug      = false;
-    bool _verbose    = true;
+    bool _verbose    = false;
 
   };
 }

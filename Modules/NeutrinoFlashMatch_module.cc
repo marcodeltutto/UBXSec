@@ -202,7 +202,7 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
   _mgr.Reset();
   _result.clear();
-  if(_debug) _mgr.PrintConfig();
+  _mgr.PrintConfig();
 
   // Get Beam Flashes from the ART event
   ::art::Handle<std::vector<recob::OpFlash>> beamflash_h;
@@ -246,10 +246,6 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     beam_flashes.resize(nBeamFlashes);
     beam_flashes[nBeamFlashes-1] = f;
 
-    if (_debug && nBeamFlashes==1) {
-      _beam_flash_spec.resize(f.pe_v.size());
-      _beam_flash_spec = f.pe_v;
-    } 
   } // flash loop
 
   // Don't waste other time if there are no flashes in the beam spill
@@ -264,8 +260,8 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
   // If more than one beam flash, take the one with more PEs
   if (nBeamFlashes > 1) {
-    std::cout << "More than one beam flash in this event." << std::endl;
-    std::cout << "Taking beam flash with more PEs." << std::endl;
+    if (_debug) std::cout << "More than one beam flash in this event." << std::endl;
+    if (_debug) std::cout << "Taking beam flash with more PEs." << std::endl;
 
     // Sort flashes by length
     std::sort(beam_flashes.begin(), beam_flashes.end(),
@@ -278,6 +274,8 @@ void NeutrinoFlashMatch::produce(art::Event & e)
 
   // Emplace flash to Flash Matching Manager
   ::flashana::Flash_t f = beam_flashes[0];
+  _beam_flash_spec.resize(f.pe_v.size());
+  _beam_flash_spec = f.pe_v;
   _mgr.Emplace(std::move(f));
 
 
@@ -342,8 +340,10 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     std::vector<art::Ptr<recob::Shower>> tpcObjSho_v     = tpcobjToShowers.at(tpcObj);
     std::vector<art::Ptr<recob::PFParticle>> tpcObjPfp_v = tpcobjToPFPs.at(tpcObj);
 
-    std::cout << "[NeutrinoFlashMatch] Emplacing TPCObj " << tpcObj << std::endl;
-    for (auto t : tpcObjTrk_v) std::cout << "[NeutrinoFlashMatch] \t Track x start, end is " << t->Vertex().X() << ", " << t->End().X() << std::endl;
+    if(_debug) {
+      std::cout << "[NeutrinoFlashMatch] Emplacing TPCObj " << tpcObj << std::endl;
+      for (auto t : tpcObjTrk_v) std::cout << "[NeutrinoFlashMatch] \t Track x start, end is " << t->Vertex().X() << ", " << t->End().X() << std::endl;
+    }
 
     // Get QCluster for this TPC Object
     flashana::QCluster_t qcluster;
@@ -377,13 +377,12 @@ void NeutrinoFlashMatch::produce(art::Event & e)
   // Save the results
   // ********************
   
-  if(_debug) {
-    std::cout << "[NeutrinoFlashMatch] Number of matches: " << _result.size() << std::endl;
-    _hypo_flash_spec.resize(_result.size());
-    _run    = e.id().run();
-    _subrun = e.id().subRun();
-    _event  = e.id().event();
-  }
+  if(_debug) std::cout << "[NeutrinoFlashMatch] Number of matches: " << _result.size() << std::endl;
+  _hypo_flash_spec.resize(_result.size());
+  _run    = e.id().run();
+  _subrun = e.id().subRun();
+  _event  = e.id().event();
+  
 
   _score.resize(_result.size());
   _t0.resize(_result.size()); 
@@ -411,10 +410,9 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     tpcobj_v.at(0) = the_tpcobj;
 
     // Get hypo spec
-    if(_debug){
-      _hypo_flash_spec[_matchid].resize(geo->NOpDets());
-      for(size_t pmt=0; pmt<_hypo_flash_spec[_matchid].size(); ++pmt) _hypo_flash_spec[_matchid][pmt] = match.hypothesis[pmt];
-    }
+    _hypo_flash_spec[_matchid].resize(geo->NOpDets());
+    for(size_t pmt=0; pmt<_hypo_flash_spec[_matchid].size(); ++pmt) _hypo_flash_spec[_matchid][pmt] = match.hypothesis[pmt];
+    
     _xfixed_hypo_spec = xfixed_hypo_v[_matchid].pe_v; 
     _xfixed_chi2      = xfixed_chi2_v[_matchid];
     _xfixed_ll        = xfixed_ll_v[_matchid];

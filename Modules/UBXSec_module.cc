@@ -1190,11 +1190,8 @@ void UBXSec::produce(art::Event & e) {
       totq += hit3d.q; 
     }
     double charge_center[3] = {sumx / totq, sumy / totq, sumz / totq};
-    std::cout << "[UBXSec] Debug a." << std::endl;
 
     int this_opch = UBXSecHelper::GetClosestPMT(charge_center);
-
-    std::cout << "[UBXSec] Debug b." << std::endl;
 
     // Look at the opHits from this pmt
     int n_intime_ophits = 0;
@@ -1213,8 +1210,6 @@ void UBXSec::produce(art::Event & e) {
       }     
     } // end loop ophit
 
-    std::cout << "[UBXSec] Debug c." << std::endl;
-
     ubxsec_event->slc_n_intime_pe_closestpmt[slice] = n_intime_pe;
 
     /*for (size_t oh = 0; oh < ophit_cosmic_h->size(); oh++) {
@@ -1230,7 +1225,6 @@ void UBXSec::produce(art::Event & e) {
     //_slc_maxdistance_vtxtrack = UBXSecHelper::GetMaxTrackVertexDistance();
 
     // Other showers in the event
-    std::cout << "[UBXSec] Debug 1." << std::endl;
     std::vector<art::Ptr<recob::Shower>> other_showers;
     bool ignore_shower = false;
     for (size_t s = 0; s < _shower_v.size(); s++) {
@@ -1249,8 +1243,6 @@ void UBXSec::produce(art::Event & e) {
      
       other_showers.push_back(_shower_v.at(s));
     }
-
-    std::cout << "[UBXSec] Debug 2." << std::endl;
 
     double max_length = -1, index_max_length = -1;
     double max_costheta = -1e9, index_max_costheta = -1;
@@ -1276,8 +1268,6 @@ void UBXSec::produce(art::Event & e) {
       }
     }
 
-    std::cout << "[UBXSec] Debug 3." << std::endl;
-
     if (index_max_length != -1) {
       auto shower = other_showers.at(index_max_length);
       ubxsec_event->slc_othershowers_longest_length[slice] = shower->Length();
@@ -1296,8 +1286,6 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_othershowers_longest_theta[slice] = -1;
       ubxsec_event->slc_othershowers_longest_openangle[slice] = -1;      
     }
-
-    std::cout << "[UBXSec] Debug 4." << std::endl;
     if (index_max_costheta != -1) {
       auto shower = other_showers.at(index_max_costheta);
       ubxsec_event->slc_othershowers_forward_length[slice] = shower->Length();
@@ -1316,8 +1304,6 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_othershowers_forward_theta[slice] = -1;
       ubxsec_event->slc_othershowers_forward_openangle[slice] = -1;
     }
-
-    std::cout << "[UBXSec] Debug 5., index_min_flashvtxdistance is " << index_min_flashvtxdistance << std::endl;
     if (index_min_flashvtxdistance != -1) {
       auto shower = other_showers.at(index_min_flashvtxdistance);
       ubxsec_event->slc_othershowers_flashmatch_length[slice] = shower->Length();

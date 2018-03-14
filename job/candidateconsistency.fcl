@@ -19,7 +19,7 @@ CandidateConsistency: {
   DqDsAverageThreshold:    90000
   GoodChannelStatus:       4
   
-  DebugMode:             true
+  DebugMode:               false
 
   CosmicTagManager: @local::cosmictag_config_mc
 

@@ -5,12 +5,12 @@
 <!DOCTYPE project [
 <!ENTITY release "v06_26_01_10">
 <!ENTITY releasetag "e10:prof">
-<!ENTITY name "ubxsec_mc_bnbcosmic_dl_p00">
+<!ENTITY name "ubxsec_mc_bnbcosmic_dl_p03">
 <!ENTITY tag "ubxsec">
 <!ENTITY file_type "mc">
 <!ENTITY run_type "physics">
 <!ENTITY PNFSpath "/pnfs/uboone/persistent/users/mdeltutt/">
-<!ENTITY ubxsec_version "mcc8.6_stopmu_test24_dl_p00">
+<!ENTITY ubxsec_version "mcc8.6_stopmu_test28_dl_p03">
 ]>
 
 
@@ -32,14 +32,14 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test27.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test28.tgz</local>
   </larsoft>
 
   <!-- Project stages -->
 
   <stage name="ubxsec">
     <fcl>run_ubxsec_mc_bnbcosmic.fcl</fcl>
-    <inputdef>tmw_20171209_prodgenie_bnb_nu_cosmic_uboone_mcc8.4_reco2_p00</inputdef>
+    <inputdef>tmw_20171209_prodgenie_bnb_nu_cosmic_uboone_mcc8.4_reco2_p03</inputdef>
     <schema>root</schema>
     <!--<inputlist>&PNFSpath;bnb_cosmic_files_mcc8.3.list</inputlist>-->
     <defname>&name;_&tag;_ana</defname>

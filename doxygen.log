@@ -244,12 +244,12 @@ Generating code for file /home/travis/build/marco/home/travis/build/marcodeltutt
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicFlashMatch_module.cc:71: warning: Member GetTrajectory(std::vector< art::Ptr< recob::Track >>,::geoalgo::Trajectory &) (function) of class CosmicFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicFlashMatch_module.cc:72: warning: Member Trial(std::vector< art::Ptr< recob::Track >> track_v, flashana::Flash_t flashBeam, double &_chi2, double &_ll) (function) of class CosmicFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicFlashMatch_module.cc:75: warning: Member produce(art::Event &e) override (function) of class CosmicFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:62: warning: Member CosmicTaggerAna(fhicl::ParameterSet const &p) (function) of class CosmicTaggerAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:67: warning: Member CosmicTaggerAna(CosmicTaggerAna const &)=delete (function) of class CosmicTaggerAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:68: warning: Member CosmicTaggerAna(CosmicTaggerAna &&)=delete (function) of class CosmicTaggerAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:69: warning: Member operator=(CosmicTaggerAna const &)=delete (function) of class CosmicTaggerAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:70: warning: Member operator=(CosmicTaggerAna &&)=delete (function) of class CosmicTaggerAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:73: warning: Member analyze(art::Event const &e) override (function) of class CosmicTaggerAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:69: warning: Member CosmicTaggerAna(fhicl::ParameterSet const &p) (function) of class CosmicTaggerAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:74: warning: Member CosmicTaggerAna(CosmicTaggerAna const &)=delete (function) of class CosmicTaggerAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:75: warning: Member CosmicTaggerAna(CosmicTaggerAna &&)=delete (function) of class CosmicTaggerAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:76: warning: Member operator=(CosmicTaggerAna const &)=delete (function) of class CosmicTaggerAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:77: warning: Member operator=(CosmicTaggerAna &&)=delete (function) of class CosmicTaggerAna is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTaggerAna_module.cc:80: warning: Member analyze(art::Event const &e) override (function) of class CosmicTaggerAna is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:49: warning: Member CosmicTrackHitTagger(fhicl::ParameterSet const &p) (function) of class CosmicTrackHitTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:54: warning: Member CosmicTrackHitTagger(CosmicTrackHitTagger const &)=delete (function) of class CosmicTrackHitTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/CosmicTrackHitTagger_module.cc:55: warning: Member CosmicTrackHitTagger(CosmicTrackHitTagger &&)=delete (function) of class CosmicTrackHitTagger is not documented.
@@ -323,9 +323,10 @@ Generating code for file /home/travis/build/marco/home/travis/build/marcodeltutt
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:139: warning: Member operator=(UBXSec &&)=delete (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:142: warning: Member produce(art::Event &e) override (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:143: warning: Member endSubRun(art::SubRun &sr) override (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:196: warning: Member Init() (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:197: warning: Member ResizeVectors(int) (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:137: warning: Member slc_muoncandidate_mip_consistency2 (variable) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:202: warning: Member Init() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:203: warning: Member ResizeVectors(int) (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:204: warning: Member ResetGenieEventWeightVectors() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:138: warning: Member slc_muoncandidate_mip_consistency2 (variable) of class UBXSecEvent is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:72: warning: Member GetRecoToTrueMatches(art::Event const &e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits) (function) of class UBXSecHelper is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:305: warning: Member GetDqDxVector(std::vector< art::Ptr< anab::Calorimetry >> calos, int plane_no=2) (function) of class UBXSecHelper is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:307: warning: Member GetDqDxTruncatedMean(std::vector< art::Ptr< anab::Calorimetry >> calos, int plane_no=2) (function) of class UBXSecHelper is not documented.
@@ -459,7 +460,8 @@ Generating docs for compound ub/home/travis/build/marcodeltutto/UBXSec/Algorithm
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FiducialVolume.h:68: warning: Member _border_y_high (variable) of class ubana::FiducialVolume is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FiducialVolume.h:69: warning: Member _border_z_low (variable) of class ubana::FiducialVolume is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/FiducialVolume.h:70: warning: Member _border_z_high (variable) of class ubana::FiducialVolume is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/FiducialVolume.h:72: warning: Member _configured (variable) of class ubana::FiducialVolume is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/FiducialVolume.h:72: warning: Member _n_fv (variable) of class ubana::FiducialVolume is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Algorithms/FiducialVolume.h:74: warning: Member _configured (variable) of class ubana::FiducialVolume is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:77: warning: Member _tracks (variable) of class ubana::MuonCandidateFinder is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:78: warning: Member _track_to_pid (variable) of class ubana::MuonCandidateFinder is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/MuonCandidateFinder.h:80: warning: Member _use_pida_cut (variable) of class ubana::MuonCandidateFinder is not documented.
@@ -586,5 +588,5 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-lookup cache used 474/65536 hits=2061 misses=490
+lookup cache used 476/65536 hits=2049 misses=493
 finished...

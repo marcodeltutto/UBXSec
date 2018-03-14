@@ -18,6 +18,9 @@ Data product to store a \hyperlink{classUBXSec}{U\-B\-X\-Sec} Event.
 \item 
 \hypertarget{classUBXSecEvent_a87228eb442b415053b9a9a070d29790b}{void {\bfseries Resize\-Vectors} (int)}\label{classUBXSecEvent_a87228eb442b415053b9a9a070d29790b}
 
+\item 
+\hypertarget{classUBXSecEvent_a41265a7702c054203160d22cc500457e}{void {\bfseries Reset\-Genie\-Event\-Weight\-Vectors} ()}\label{classUBXSecEvent_a41265a7702c054203160d22cc500457e}
+
 \end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
@@ -73,6 +76,9 @@ Data product to store a \hyperlink{classUBXSec}{U\-B\-X\-Sec} Event.
 \hypertarget{classUBXSecEvent_a6a55ef25451d4a8206055d588b052caf}{Int\-\_\-t \hyperlink{classUBXSecEvent_a6a55ef25451d4a8206055d588b052caf}{ccnc}}\label{classUBXSecEvent_a6a55ef25451d4a8206055d588b052caf}
 
 \begin{DoxyCompactList}\small\item\em Is 0 if C\-C, 1 if N\-C. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_ad9e14416b90b2b688ce1ff6361f8448a}{Int\-\_\-t \hyperlink{classUBXSecEvent_ad9e14416b90b2b688ce1ff6361f8448a}{mode}}\label{classUBXSecEvent_ad9e14416b90b2b688ce1ff6361f8448a}
+
+\begin{DoxyCompactList}\small\item\em Iteraction mode\-: 0=Quasi-\/elastic or Elastic, 1=Resonant (R\-E\-S), 2=D\-I\-S, 3=Coherent production, 10=M\-E\-C. \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a61f5c298a7cebb0c5286b4ed4c7a0627}{Int\-\_\-t \hyperlink{classUBXSecEvent_a61f5c298a7cebb0c5286b4ed4c7a0627}{nupdg}}\label{classUBXSecEvent_a61f5c298a7cebb0c5286b4ed4c7a0627}
 
 \begin{DoxyCompactList}\small\item\em Neutrino flavour (pdg code) \end{DoxyCompactList}\item 
@@ -460,6 +466,18 @@ Data product to store a \hyperlink{classUBXSec}{U\-B\-X\-Sec} Event.
 \hypertarget{classUBXSecEvent_ad783d4eedd7be14db4d5b7b9cb2d144a}{Double\-\_\-t \hyperlink{classUBXSecEvent_ad783d4eedd7be14db4d5b7b9cb2d144a}{pot}}\label{classUBXSecEvent_ad783d4eedd7be14db4d5b7b9cb2d144a}
 
 \begin{DoxyCompactList}\small\item\em Not used. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a81ea8ff46aefd7d7ed3353c7c6416d2f}{Int\-\_\-t \hyperlink{classUBXSecEvent_a81ea8ff46aefd7d7ed3353c7c6416d2f}{evtwgt\-\_\-nfunc}}\label{classUBXSecEvent_a81ea8ff46aefd7d7ed3353c7c6416d2f}
+
+\begin{DoxyCompactList}\small\item\em Number of functions used for G\-E\-N\-I\-E reweighting. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a729fecbcaf9884973196b10131a418fe}{vector$<$ std\-::string $>$ \hyperlink{classUBXSecEvent_a729fecbcaf9884973196b10131a418fe}{evtwgt\-\_\-funcname}}\label{classUBXSecEvent_a729fecbcaf9884973196b10131a418fe}
+
+\begin{DoxyCompactList}\small\item\em Names of the functions used for G\-E\-N\-I\-E reweighting. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_aac72a61a5056b4c435590ac5e4b34d67}{vector$<$ int $>$ \hyperlink{classUBXSecEvent_aac72a61a5056b4c435590ac5e4b34d67}{evtwgt\-\_\-nweight}}\label{classUBXSecEvent_aac72a61a5056b4c435590ac5e4b34d67}
+
+\begin{DoxyCompactList}\small\item\em Number of weights per function name used for G\-E\-N\-I\-E reweighting. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a983692b076ec8a489d225698150e8371}{vector$<$ vector$<$ double $>$ $>$ \hyperlink{classUBXSecEvent_a983692b076ec8a489d225698150e8371}{evtwgt\-\_\-weight}}\label{classUBXSecEvent_a983692b076ec8a489d225698150e8371}
+
+\begin{DoxyCompactList}\small\item\em Weights per function name used for G\-E\-N\-I\-E reweighting. \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a88e5ff2c7d0db95750e980740231d80b}{int \hyperlink{classUBXSecEvent_a88e5ff2c7d0db95750e980740231d80b}{\-\_\-default\-\_\-value} = -\/9999}\label{classUBXSecEvent_a88e5ff2c7d0db95750e980740231d80b}
 
 \begin{DoxyCompactList}\small\item\em Default value. \end{DoxyCompactList}\end{DoxyCompactItemize}

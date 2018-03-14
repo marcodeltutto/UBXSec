@@ -6,6 +6,7 @@ var searchData=
   ['mcpfpmatch',['McPfpMatch',['../classMcPfpMatch.html',1,'McPfpMatch'],['../classubana_1_1McPfpMatch.html#aea3e9923fdf8855d5798015b36f2d516',1,'ubana::McPfpMatch::McPfpMatch()']]],
   ['mcpfpmatch',['McPfpMatch',['../classubana_1_1McPfpMatch.html',1,'ubana']]],
   ['mipconsistency',['MIPConsistency',['../classubana_1_1MuonCandidateFinder.html#af622d542c3c3932572dc67588e75bcf6',1,'ubana::MuonCandidateFinder']]],
+  ['mode',['mode',['../classUBXSecEvent.html#ad9e14416b90b2b688ce1ff6361f8448a',1,'UBXSecEvent']]],
   ['muon_5fis_5fflash_5ftagged',['muon_is_flash_tagged',['../classUBXSecEvent.html#a33857278922a2779d3daaf30624a2462',1,'UBXSecEvent']]],
   ['muon_5fis_5freco',['muon_is_reco',['../classUBXSecEvent.html#a429e2c8750cdd32b073548b73c5ebd68',1,'UBXSecEvent']]],
   ['muon_5freco_5feff',['muon_reco_eff',['../classUBXSecEvent.html#aa713bc31919706a03a5a11034dcbda7c',1,'UBXSecEvent']]],

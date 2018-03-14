@@ -126,24 +126,26 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">double</span> _det_width;</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">double</span> _det_length;</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">double</span> _border_x_low;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">double</span> _border_x_high;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">double</span> _border_y_low;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">double</span> _border_y_high;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">double</span> _border_z_low;        </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">double</span> _border_z_high;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    std::vector&lt;double&gt; _border_x_low;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    std::vector&lt;double&gt; _border_x_high;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    std::vector&lt;double&gt; _border_y_low;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    std::vector&lt;double&gt; _border_y_high;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    std::vector&lt;double&gt; _border_z_low;        </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    std::vector&lt;double&gt; _border_z_high;</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">bool</span> _configured = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  };</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;}</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor"></span> <span class="comment">// end of doxygen group </span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
-<div class="ttc" id="classubana_1_1FiducialVolume_html_a7c1752435937f91d70e262d7632b3227"><div class="ttname"><a href="classubana_1_1FiducialVolume.html#a7c1752435937f91d70e262d7632b3227">ubana::FiducialVolume::InFV</a></div><div class="ttdeci">bool InFV(double x, double y, double z)</div><div class="ttdoc">Returns true if the point is in the FV. </div><div class="ttdef"><b>Definition:</b> FiducialVolume.cxx:62</div></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">size_t</span> _n_fv;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">bool</span> _configured = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  };</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;}</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor"></span> <span class="comment">// end of doxygen group </span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="ttc" id="classubana_1_1FiducialVolume_html_a7c1752435937f91d70e262d7632b3227"><div class="ttname"><a href="classubana_1_1FiducialVolume.html#a7c1752435937f91d70e262d7632b3227">ubana::FiducialVolume::InFV</a></div><div class="ttdeci">bool InFV(double x, double y, double z)</div><div class="ttdoc">Returns true if the point is in the FV. </div><div class="ttdef"><b>Definition:</b> FiducialVolume.cxx:78</div></div>
 <div class="ttc" id="classubana_1_1FiducialVolume_html"><div class="ttname"><a href="classubana_1_1FiducialVolume.html">ubana::FiducialVolume</a></div><div class="ttdef"><b>Definition:</b> FiducialVolume.h:31</div></div>
 <div class="ttc" id="classubana_1_1FiducialVolume_html_a557d2e3c2d7b6151ea0156685bf56d00"><div class="ttname"><a href="classubana_1_1FiducialVolume.html#a557d2e3c2d7b6151ea0156685bf56d00">ubana::FiducialVolume::FiducialVolume</a></div><div class="ttdeci">FiducialVolume()</div><div class="ttdoc">Default constructor. </div><div class="ttdef"><b>Definition:</b> FiducialVolume.cxx:9</div></div>
-<div class="ttc" id="classubana_1_1FiducialVolume_html_a852522fe049681771c7ca9d66f8f8049"><div class="ttname"><a href="classubana_1_1FiducialVolume.html#a852522fe049681771c7ca9d66f8f8049">ubana::FiducialVolume::PrintConfig</a></div><div class="ttdeci">void PrintConfig()</div><div class="ttdoc">Printd the current configuration. </div><div class="ttdef"><b>Definition:</b> FiducialVolume.cxx:29</div></div>
+<div class="ttc" id="classubana_1_1FiducialVolume_html_a852522fe049681771c7ca9d66f8f8049"><div class="ttname"><a href="classubana_1_1FiducialVolume.html#a852522fe049681771c7ca9d66f8f8049">ubana::FiducialVolume::PrintConfig</a></div><div class="ttdeci">void PrintConfig()</div><div class="ttdoc">Printd the current configuration. </div><div class="ttdef"><b>Definition:</b> FiducialVolume.cxx:41</div></div>
 <div class="ttc" id="classubana_1_1FiducialVolume_html_adf150e608c658207370667f6130947a6"><div class="ttname"><a href="classubana_1_1FiducialVolume.html#adf150e608c658207370667f6130947a6">ubana::FiducialVolume::~FiducialVolume</a></div><div class="ttdeci">~FiducialVolume()</div><div class="ttdoc">Default destructor. </div><div class="ttdef"><b>Definition:</b> FiducialVolume.h:39</div></div>
 <div class="ttc" id="classubana_1_1FiducialVolume_html_a1a7d659cde6b1f4b661ca21df6677fd9"><div class="ttname"><a href="classubana_1_1FiducialVolume.html#a1a7d659cde6b1f4b661ca21df6677fd9">ubana::FiducialVolume::Configure</a></div><div class="ttdeci">void Configure(fhicl::ParameterSet const &amp;p, double det_half_height, double det_width, double det_length)</div><div class="ttdoc">Configure function parameters. </div><div class="ttdef"><b>Definition:</b> FiducialVolume.cxx:13</div></div>
 </div><!-- fragment --></div><!-- contents -->

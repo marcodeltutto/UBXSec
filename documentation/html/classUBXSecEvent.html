@@ -104,6 +104,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> ()</td></tr>
 <tr class="memitem:a87228eb442b415053b9a9a070d29790b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a87228eb442b415053b9a9a070d29790b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>ResizeVectors</b> (int)</td></tr>
 <tr class="separator:a87228eb442b415053b9a9a070d29790b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41265a7702c054203160d22cc500457e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41265a7702c054203160d22cc500457e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>ResetGenieEventWeightVectors</b> ()</td></tr>
+<tr class="separator:a41265a7702c054203160d22cc500457e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -175,6 +178,10 @@ Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a6a55ef25451d4a8206055d588b052caf">ccnc</a></td></tr>
 <tr class="memdesc:a6a55ef25451d4a8206055d588b052caf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is 0 if CC, 1 if NC. <br/></td></tr>
 <tr class="separator:a6a55ef25451d4a8206055d588b052caf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9e14416b90b2b688ce1ff6361f8448a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad9e14416b90b2b688ce1ff6361f8448a"></a>
+Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#ad9e14416b90b2b688ce1ff6361f8448a">mode</a></td></tr>
+<tr class="memdesc:ad9e14416b90b2b688ce1ff6361f8448a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iteraction mode: 0=Quasi-elastic or Elastic, 1=Resonant (RES), 2=DIS, 3=Coherent production, 10=MEC. <br/></td></tr>
+<tr class="separator:ad9e14416b90b2b688ce1ff6361f8448a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61f5c298a7cebb0c5286b4ed4c7a0627"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61f5c298a7cebb0c5286b4ed4c7a0627"></a>
 Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a61f5c298a7cebb0c5286b4ed4c7a0627">nupdg</a></td></tr>
 <tr class="memdesc:a61f5c298a7cebb0c5286b4ed4c7a0627"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neutrino flavour (pdg code) <br/></td></tr>
@@ -690,6 +697,22 @@ vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a cla
 Double_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#ad783d4eedd7be14db4d5b7b9cb2d144a">pot</a></td></tr>
 <tr class="memdesc:ad783d4eedd7be14db4d5b7b9cb2d144a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Not used. <br/></td></tr>
 <tr class="separator:ad783d4eedd7be14db4d5b7b9cb2d144a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81ea8ff46aefd7d7ed3353c7c6416d2f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a81ea8ff46aefd7d7ed3353c7c6416d2f"></a>
+Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a81ea8ff46aefd7d7ed3353c7c6416d2f">evtwgt_nfunc</a></td></tr>
+<tr class="memdesc:a81ea8ff46aefd7d7ed3353c7c6416d2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of functions used for GENIE reweighting. <br/></td></tr>
+<tr class="separator:a81ea8ff46aefd7d7ed3353c7c6416d2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a729fecbcaf9884973196b10131a418fe"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a729fecbcaf9884973196b10131a418fe"></a>
+vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a729fecbcaf9884973196b10131a418fe">evtwgt_funcname</a></td></tr>
+<tr class="memdesc:a729fecbcaf9884973196b10131a418fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Names of the functions used for GENIE reweighting. <br/></td></tr>
+<tr class="separator:a729fecbcaf9884973196b10131a418fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac72a61a5056b4c435590ac5e4b34d67"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aac72a61a5056b4c435590ac5e4b34d67"></a>
+vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#aac72a61a5056b4c435590ac5e4b34d67">evtwgt_nweight</a></td></tr>
+<tr class="memdesc:aac72a61a5056b4c435590ac5e4b34d67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of weights per function name used for GENIE reweighting. <br/></td></tr>
+<tr class="separator:aac72a61a5056b4c435590ac5e4b34d67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a983692b076ec8a489d225698150e8371"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a983692b076ec8a489d225698150e8371"></a>
+vector&lt; vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a983692b076ec8a489d225698150e8371">evtwgt_weight</a></td></tr>
+<tr class="memdesc:a983692b076ec8a489d225698150e8371"><td class="mdescLeft">&#160;</td><td class="mdescRight">Weights per function name used for GENIE reweighting. <br/></td></tr>
+<tr class="separator:a983692b076ec8a489d225698150e8371"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88e5ff2c7d0db95750e980740231d80b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88e5ff2c7d0db95750e980740231d80b"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a88e5ff2c7d0db95750e980740231d80b">_default_value</a> = -9999</td></tr>
 <tr class="memdesc:a88e5ff2c7d0db95750e980740231d80b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default value. <br/></td></tr>

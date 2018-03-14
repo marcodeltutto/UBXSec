@@ -5,12 +5,12 @@
 <!DOCTYPE project [
 <!ENTITY release "v06_26_01_10">
 <!ENTITY releasetag "e10:prof">
-<!ENTITY name "ubxsec_data_extbnb_a_fmcalib_mcc8.6_test28_remapping">
+<!ENTITY name "ubxsec_data_extbnb_a_fmcalib_mcc8.6_test30_remappingandy">
 <!ENTITY tag "ubxsec">
 <!ENTITY file_type "data">
 <!ENTITY run_type "physics">
 <!ENTITY PNFSpath "/pnfs/uboone/persistent/users/mdeltutt/">
-<!ENTITY this_version "mcc8.6_flashmatch_test28_remapping">
+<!ENTITY this_version "mcc8.6_flashmatch_test30_remappingandy">
 ]>
 
 
@@ -32,7 +32,7 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test28.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test30.tgz</local>
   </larsoft>
 
   <!-- Project stages -->

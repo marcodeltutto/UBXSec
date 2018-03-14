@@ -573,7 +573,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
       cosmictag::SimpleCluster processed_cluster = _ct_manager.GetCluster();
 
       // Michel algo
-      //((cosmictag::StopMuMichel*)(_ct_manager.GetCustomAlgo("StopMuMichel")))->PrintConfig();
+      if (_debug) ((cosmictag::StopMuMichel*)(_ct_manager.GetCustomAlgo("StopMuMichel")))->PrintConfig();
       ct_result_michel = ((cosmictag::StopMuMichel*)(_ct_manager.GetCustomAlgo("StopMuMichel")))->IsStopMuMichel(processed_cluster);
       if(_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (michel)? " << (ct_result_michel ? "YES" : "NO") << std::endl;
 
@@ -581,7 +581,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
       // Bragg algo
       bool vtx_in_fv = _fiducial_volume.InFV(highest_point);
-      //((cosmictag::StopMuBragg*)(_ct_manager.GetCustomAlgo("StopMuBragg")))->PrintConfig();
+      if (_debug) ((cosmictag::StopMuBragg*)(_ct_manager.GetCustomAlgo("StopMuBragg")))->PrintConfig();
       ct_result_bragg = ((cosmictag::StopMuBragg*)(_ct_manager.GetCustomAlgo("StopMuBragg")))->IsStopMuBragg(processed_cluster) && !vtx_in_fv;
       if(_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (bragg)? " << (ct_result_bragg ? "YES" : "NO") << std::endl;
 

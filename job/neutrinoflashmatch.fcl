@@ -10,7 +10,7 @@ NeutrinoFlashMatch: {
   TrackModule:              "pandoraNu::UBXSec"
   TPCObjectModule:          "TPCObjectMaker"
   NeutrinoMCFlashModule:    "NeutrinoMCFlash"
-  DebugMode:                true
+  DebugMode:                false
   BeamOpFlashProducer:      "simpleFlashBeam"
   FlashVetoTimeStart:       3.2
   FlashVetoTimeEnd:         4.8

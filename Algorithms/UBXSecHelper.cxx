@@ -1005,7 +1005,13 @@ bool UBXSecHelper::PointIsCloseToDeadRegion(double *reco_nu_vtx, int plane_no){
   }
 
   // Get nearest channel
-  raw::ChannelID_t ch = geo->NearestChannel(reco_nu_vtx, plane_no);
+  raw::ChannelID_t ch;
+  try {
+    ch = geo->NearestChannel(reco_nu_vtx, plane_no);
+  } catch(cet::exception &e) {
+    std::cout << "[UBXSecHelper::PointIsCloseToDeadRegion] Cant' find nearest channel (catched exception)" << std::endl;
+    return false;
+  }
 
   // Get channel status
   const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();

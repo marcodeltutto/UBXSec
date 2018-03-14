@@ -10,7 +10,7 @@
 <!ENTITY file_type "mc">
 <!ENTITY run_type "physics">
 <!ENTITY PNFSpath "/pnfs/uboone/persistent/users/mdeltutt/">
-<!ENTITY ubxsec_version "mcc8.6_stopmu_test20">
+<!ENTITY ubxsec_version "rob_failure_test_3"> <!--mcc8.6_stopmu_test20-->
 ]>
 
 
@@ -32,7 +32,7 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.6_stopmu_test20.tgz</local>
+    <local>&PNFSpath;Tarballs/rob_failure_test.tgz</local> <!--uboonecode_ubxsec_MCC8.6_stopmu_test20.tgz-->
   </larsoft>
 
   <!-- Project stages -->
@@ -43,13 +43,13 @@
     <schema>root</schema>
     <!--<inputlist>&PNFSpath;bnb_cosmic_files_mcc8.3.list</inputlist>-->
     <defname>&name;_&tag;_ana</defname>
-    <maxfilesperjob>10</maxfilesperjob>
+    <maxfilesperjob>1</maxfilesperjob> <!--10-->
     <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_mc_bnbnuecosmic</outdir>
     <workdir>/uboone/app/users/mdeltutt/grid_workdir_ubxsec_mc_bnbnuecosmic</workdir>
-    <numjobs>700</numjobs>
+    <numjobs>400</numjobs> <!--700-->
     <datatier>ubana</datatier>
     <memory>3000</memory>
-    <jobsub> --expected-lifetime=20h -Q </jobsub>
+    <jobsub> --expected-lifetime=20h -q --generate-email-summary </jobsub>
     <disk>70GB</disk>
   </stage>
 

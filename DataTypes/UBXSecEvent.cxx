@@ -39,6 +39,7 @@ void UBXSecEvent::Init()
   fm_score = _default_value;
   fv = _default_value;
   ccnc = _default_value;
+  mode = _default_value;
   nupdg = _default_value;
   is_signal = false;
   nu_e = _default_value;
@@ -171,6 +172,15 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_othershowers_flashmatch_phi.resize(vsize, _default_value); 
   slc_othershowers_flashmatch_theta.resize(vsize, _default_value); 
   slc_othershowers_flashmatch_openangle.resize(vsize, _default_value); 
+
+}
+
+
+void UBXSecEvent::ResetGenieEventWeightVectors() {
+
+  evtwgt_funcname.clear();
+  evtwgt_weight.clear();
+  evtwgt_nweight.clear();
 
 }
 

@@ -256,7 +256,7 @@ namespace ubana {
     _hit_to_mcps_map = hit_to_mcps_map;
     _pfp_to_hits_map = pfp_to_hits_map;
 
-    std::cout << "hit_to_mcps_map size " << hit_to_mcps_map.size() << std::endl;
+    if (_debug) std::cout << "hit_to_mcps_map size " << hit_to_mcps_map.size() << std::endl;
 
     _configured = true;
   }

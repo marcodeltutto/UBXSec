@@ -156,7 +156,7 @@ private:
   ::trkf::TrackMomentumCalculator _trk_mom_calculator;
 
   // Database to understand particle pdg
-  const TDatabasePDG* _database_pdg;
+  const TDatabasePDG* _database_pdg = TDatabasePDG::Instance();
 
   // Detector info service
   ::detinfo::DetectorProperties const* fDetectorProperties;
@@ -182,6 +182,7 @@ private:
   std::string _mcsfitresult_pi_producer;
   std::string _calorimetry_producer;
   std::string _eventweight_producer;
+  std::string _genie_eventweight_producer;
   bool _debug = true;                   ///< Debug mode
   int _minimumHitRequirement;           ///< Minimum number of hits in at least a plane for a track
   double _minimumDistDeadReg;           ///< Minimum distance the track end points can have to a dead region
@@ -282,6 +283,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _mcsfitresult_pi_producer       = p.get<std::string>("MCSFitResultPiProducer");
   _calorimetry_producer           = p.get<std::string>("CalorimetryProducer");
   _eventweight_producer           = p.get<std::string>("EventWeightProducer");
+  _genie_eventweight_producer     = p.get<std::string>("GenieEventWeightProducer");
 
   _use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
   _minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
@@ -315,9 +317,20 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
 
   _trk_mom_calculator.SetMinLength(_min_track_len);
 
-  _database_pdg = new TDatabasePDG;
-
   fDetectorProperties = lar::providerFrom<detinfo::DetectorPropertiesService>(); 
+/*
+  auto index = gROOT->GetListOfSpecials()->IndexOf(_database_pdg);
+  if (index == -1)
+    _database_pdg = new TDatabasePDG;
+  else 
+    _database_pdg = (TDatabasePDG*)gROOT->GetListOfSpecials()->At(index);
+
+  
+  if (!TDatabasePDG::fgInstance)
+    _database_pdg = TDatabasePDG::fgInstance;
+  else 
+    _database_pdg = new TDatabasePDG;
+*/
 
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
@@ -650,6 +663,34 @@ void UBXSec::produce(art::Event & e) {
   }
 
   ubxsec_event->bnb_weight = bnb_weight;
+
+  // GENIE reweigthing (systematics)
+  ubxsec_event->ResetGenieEventWeightVectors();
+  if (_is_mc) {
+    art::Handle<std::vector<evwgh::MCEventWeight>> genieeventweight_h;
+    e.getByLabel(_genie_eventweight_producer, genieeventweight_h);
+    if(!genieeventweight_h.isValid()){
+      std::cout << "[UBXSec] MCEventWeight for GENIE reweight, product " << _eventweight_producer << " not found..." << std::endl;
+      //throw std::exception();
+    }  
+    std::vector<art::Ptr<evwgh::MCEventWeight>> genieeventweight_v;
+    art::fill_ptr_vector(genieeventweight_v, genieeventweight_h);
+    if (genieeventweight_v.size() > 0) {
+      art::Ptr<evwgh::MCEventWeight> evt_wgt = genieeventweight_v.at(0); // Just for the first nu interaction
+      std::map<std::string, std::vector<double>> evtwgt_map = evt_wgt->fWeight;
+      int countFunc = 0;
+      // loop over the map and save the name of the function and the vector of weights for each function
+      for(auto it : evtwgt_map) {
+        std::string func_name = it.first;
+        std::vector<double> weight_v = it.second; 
+        ubxsec_event->evtwgt_funcname.push_back(func_name);
+        ubxsec_event->evtwgt_weight.push_back(weight_v);
+        ubxsec_event->evtwgt_nweight.push_back(weight_v.size());
+        countFunc++;
+      }
+      ubxsec_event->evtwgt_nfunc = countFunc;
+    }
+  }
   
   // pandoraCosmic PFPs (for cosmic removal studies)
   art::Handle<std::vector<recob::PFParticle>> pfp_cosmic_h;
@@ -739,6 +780,7 @@ void UBXSec::produce(art::Event & e) {
       }
 
       ubxsec_event->ccnc            = mclist[iList]->GetNeutrino().CCNC();
+      ubxsec_event->mode            = mclist[iList]->GetNeutrino().Mode();
       ubxsec_event->nupdg           = mclist[iList]->GetNeutrino().Nu().PdgCode();
       ubxsec_event->nu_e            = mclist[iList]->GetNeutrino().Nu().E();
       ubxsec_event->lep_costheta    = mclist[iList]->GetNeutrino().Lepton().Pz() / mclist[iList]->GetNeutrino().Lepton().P();
@@ -1093,7 +1135,7 @@ void UBXSec::produce(art::Event & e) {
     double slice_vtx_xyz[3];
     slice_vtx.XYZ(slice_vtx_xyz);
     ubxsec_event->slc_passed_min_vertex_quality[slice] = true;
-    if (deadRegionsFinder.NearDeadReg2P(slice_vtx_xyz[1], slice_vtx_xyz[2], 5.0))
+    if (deadRegionsFinder.NearDeadReg2P(slice_vtx_xyz[1], slice_vtx_xyz[2], _minimumDistDeadReg))
       ubxsec_event->slc_passed_min_vertex_quality[slice] = false;
 
     // Channel status
@@ -1203,7 +1245,7 @@ void UBXSec::produce(art::Event & e) {
     }
 
     double max_length = -1, index_max_length = -1;
-    double max_costheta = -1, index_max_costheta = -1;
+    double max_costheta = -1e9, index_max_costheta = -1;
     double min_flashvtxdistance = 1e9, index_min_flashvtxdistance = -1;
 
     for (size_t s = 0; s < other_showers.size(); s++) {
@@ -1235,8 +1277,17 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_othershowers_longest_phi[slice] = UBXSecHelper::GetPhi(shower->Direction());
       ubxsec_event->slc_othershowers_longest_theta[slice] = UBXSecHelper::GetCosTheta(shower->Direction());
       ubxsec_event->slc_othershowers_longest_openangle[slice] = shower->OpenAngle();
-
-      shower = other_showers.at(index_max_costheta);
+    } else {
+      ubxsec_event->slc_othershowers_longest_length[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_startx[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_starty[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_startz[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_phi[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_theta[slice] = -1;
+      ubxsec_event->slc_othershowers_longest_openangle[slice] = -1;      
+    }
+    if (index_max_costheta != -1) {
+      auto shower = other_showers.at(index_max_costheta);
       ubxsec_event->slc_othershowers_forward_length[slice] = shower->Length();
       ubxsec_event->slc_othershowers_forward_startx[slice] = shower->ShowerStart().X();
       ubxsec_event->slc_othershowers_forward_starty[slice] = shower->ShowerStart().Y();
@@ -1244,8 +1295,17 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_othershowers_forward_phi[slice] = UBXSecHelper::GetPhi(shower->Direction());
       ubxsec_event->slc_othershowers_forward_theta[slice] = UBXSecHelper::GetCosTheta(shower->Direction());
       ubxsec_event->slc_othershowers_forward_openangle[slice] = shower->OpenAngle();
-
-      shower = other_showers.at(index_min_flashvtxdistance);
+    } else {
+      ubxsec_event->slc_othershowers_forward_length[slice] = -1;
+      ubxsec_event->slc_othershowers_forward_startx[slice] = -1;
+      ubxsec_event->slc_othershowers_forward_starty[slice] = -1;
+      ubxsec_event->slc_othershowers_forward_startz[slice] = -1;
+      ubxsec_event->slc_othershowers_forward_phi[slice] = -1;
+      ubxsec_event->slc_othershowers_forward_theta[slice] = -1;
+      ubxsec_event->slc_othershowers_forward_openangle[slice] = -1;
+    }
+    if (index_min_flashvtxdistance != -1) {
+      auto shower = other_showers.at(index_min_flashvtxdistance);
       ubxsec_event->slc_othershowers_flashmatch_length[slice] = shower->Length();
       ubxsec_event->slc_othershowers_flashmatch_startx[slice] = shower->ShowerStart().X();
       ubxsec_event->slc_othershowers_flashmatch_starty[slice] = shower->ShowerStart().Y();
@@ -1254,22 +1314,6 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_othershowers_flashmatch_theta[slice] = UBXSecHelper::GetCosTheta(shower->Direction());
       ubxsec_event->slc_othershowers_flashmatch_openangle[slice] = shower->OpenAngle();
     } else {
-      ubxsec_event->slc_othershowers_longest_length[slice] = -1;
-      ubxsec_event->slc_othershowers_longest_startx[slice] = -1;
-      ubxsec_event->slc_othershowers_longest_starty[slice] = -1;
-      ubxsec_event->slc_othershowers_longest_startz[slice] = -1;
-      ubxsec_event->slc_othershowers_longest_phi[slice] = -1;
-      ubxsec_event->slc_othershowers_longest_theta[slice] = -1;
-      ubxsec_event->slc_othershowers_longest_openangle[slice] = -1;
-
-      ubxsec_event->slc_othershowers_forward_length[slice] = -1;
-      ubxsec_event->slc_othershowers_forward_startx[slice] = -1;
-      ubxsec_event->slc_othershowers_forward_starty[slice] = -1;
-      ubxsec_event->slc_othershowers_forward_startz[slice] = -1;
-      ubxsec_event->slc_othershowers_forward_phi[slice] = -1;
-      ubxsec_event->slc_othershowers_forward_theta[slice] = -1;
-      ubxsec_event->slc_othershowers_forward_openangle[slice] = -1;
-
       ubxsec_event->slc_othershowers_flashmatch_length[slice] = -1;
       ubxsec_event->slc_othershowers_flashmatch_startx[slice] = -1;
       ubxsec_event->slc_othershowers_flashmatch_starty[slice] = -1;
@@ -1279,6 +1323,7 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_othershowers_longest_openangle[slice] = -1;
     }
 
+    std::cout << "[UBXSec] Shower info saved." << std::endl;
 
 
     // Muon Candidate
@@ -1728,10 +1773,6 @@ void UBXSec::produce(art::Event & e) {
  
 
 
-  if(_debug) std::cout << "[UBXSec] Filling tree now." << std::endl;
-  _tree1->Fill();
-
-
 
 
   // *********************
@@ -1803,6 +1844,8 @@ void UBXSec::produce(art::Event & e) {
 
   }
 
+  if(_debug) std::cout << "[UBXSec] Filling tree now." << std::endl;
+  _tree1->Fill();
 
   e.put(std::move(selectionResultVector));
   e.put(std::move(assnOutSelectionResultTPCObject));

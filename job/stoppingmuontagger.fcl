@@ -12,8 +12,8 @@ StoppingMuonTagger: {
   ClusterProducer:         "pandoraNu::UBXSec"
   TrackProducer:           "pandoraNu::UBXSec"
 
-  UseMCS:                  false
-  MCSDeltaLLCut:           -0.1
+  UseMCS:                  true
+  MCSDeltaLLCut:           -5
 
   DebugMode:               false
   CreateTree:              true
@@ -53,7 +53,6 @@ StoppingMuonTagger: {
     pStep: 0.01
     angResol: 3.0
   }
-
 
   FiducialVolumeSettings:  @local::UBXSecFiducialVolumeSettings  
 }

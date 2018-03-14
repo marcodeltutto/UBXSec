@@ -137,8 +137,8 @@ namespace ubana {
     if (length > 1000)
       return true;
 
-    if (length < 0) {
-      std::cout << "[MuonCandidateFinder] Track length < 0?!" << std::endl;
+    if (length <= 0) {
+      std::cout << "[MuonCandidateFinder] Track length <= 0?!" << std::endl;
       return false;
     }
 

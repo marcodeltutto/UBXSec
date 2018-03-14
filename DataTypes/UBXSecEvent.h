@@ -51,6 +51,7 @@ class UBXSecEvent /*: public TObject*/{
   Double_t        fm_score; ///< Not used
   Int_t           fv; ///< Is 1 if the true neutrino vertex is in the fiducial volume
   Int_t           ccnc; ///< Is 0 if CC, 1 if NC
+  Int_t           mode; ///< Iteraction mode: 0=Quasi-elastic or Elastic, 1=Resonant (RES), 2=DIS, 3=Coherent production, 10=MEC
   Int_t           nupdg; ///< Neutrino flavour (pdg code)
   Bool_t          is_signal; ///< Is trues if the event is a true numu cc in FV
   Double_t        nu_e; ///< Stores the true neutrino energy
@@ -188,6 +189,11 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   tvtx_z; ///< True neutrino vertex Z (cm)
   
   Double_t        pot; ///< Not used
+
+  Int_t evtwgt_nfunc; ///< Number of functions used for GENIE reweighting
+  vector<std::string> evtwgt_funcname; ///< Names of the functions used for GENIE reweighting
+  vector<int> evtwgt_nweight; ///< Number of weights per function name used for GENIE reweighting
+  vector<vector<double>> evtwgt_weight; ///< Weights per function name used for GENIE reweighting
  
   int _default_value = -9999; ///< Default value 
 
@@ -195,6 +201,7 @@ class UBXSecEvent /*: public TObject*/{
   virtual ~UBXSecEvent();
   void Init();
   void ResizeVectors(int); 
+  void ResetGenieEventWeightVectors();
 
 };
 

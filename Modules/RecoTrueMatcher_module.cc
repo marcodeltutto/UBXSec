@@ -167,7 +167,7 @@ void RecoTrueMatcher::produce(art::Event & e)
   //if (_verbose)
     //this->PrintInfo(matched_pfp_to_mcp_map);
 
-  std::cout << "[RecoTrueMatcher] Generating " << matched_pfp_to_mcp_map.size() << " MCGhosts." << std::endl;
+  if(_debug) std::cout << "[RecoTrueMatcher] Generating " << matched_pfp_to_mcp_map.size() << " MCGhosts." << std::endl;
 
   for (auto const& iter : matched_pfp_to_mcp_map) {
 

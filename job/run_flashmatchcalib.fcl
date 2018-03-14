@@ -21,7 +21,7 @@ services:
 {
   scheduler:               { defaultExceptions: false }    # Make all uncaught exceptions fatal.
   # Load the service that manages root files for histograms.
-    TFileService: { fileName: "flashmatchcalib_output.root" }
+    TFileService: { fileName: "flashmatchcalib_output_flat_%tc.root" }
     TimeTracker:             @local::microboone_time_tracker
     MemoryTracker:           @local::microboone_memory_tracker
     RandomNumberGenerator:   {} #ART native random number generator                                                                                          
@@ -89,7 +89,7 @@ physics:
 
 physics.analyzers.flashmatchcalib.FlashMatchConfig.QLLMatch.ZPenaltyThreshold:        1000
 physics.analyzers.flashmatchcalib.FlashMatchConfig.QLLMatch.XPenaltyThreshold:        1000
-physics.analyzers.flashmatchcalib.FlashMatchConfig.PhotonLibHypothesis.CCVCorrection: [ 1.03010428,  1.12247025,  1.05450943,  1.06359997,  0.92496701,  1.2578555, 1.43642184,  0.97097869,  1.21723329,  0.8386987,   1.3381655,   1.25068641,  1.40546547,  1.09691199,  1.09919327,  1.19272144,  0.89838785,  1.01445028,  1.27903301,  1.09130308,  1.31567592,  1.0577623,  1.21757927,  1.11874269,  1.18458922,  1.20015619,  1.15704964,  1.35078128,  1.04760561,  1.13483661,  0.95729313,  0.84910329]
+#physics.analyzers.flashmatchcalib.FlashMatchConfig.PhotonLibHypothesis.CCVCorrection: [ 1.03010428,  1.12247025,  1.05450943,  1.06359997,  0.92496701,  1.2578555, 1.43642184,  0.97097869,  1.21723329,  0.8386987,   1.3381655,   1.25068641,  1.40546547,  1.09691199,  1.09919327,  1.19272144,  0.89838785,  1.01445028,  1.27903301,  1.09130308,  1.31567592,  1.0577623,  1.21757927,  1.11874269,  1.18458922,  1.20015619,  1.15704964,  1.35078128,  1.04760561,  1.13483661,  0.95729313,  0.84910329]
 
 #block to define where the output goes.  if you defined a filter in the physics
 #block and put it in the trigger_paths then you need to put a SelectEvents: {SelectEvents: [XXX]}
@@ -99,7 +99,7 @@ outputs:
  out1:
  {
    module_type: RootOutput
-   fileName:    "FlashMatchCalibArtRootOut.root"
+   fileName:    "%ifb_%tc_fashmatchcalib.root"
    dataTier:    "reco"
    compressionLevel: 1
    outputCommands: [

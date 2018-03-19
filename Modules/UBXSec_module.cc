@@ -672,23 +672,24 @@ void UBXSec::produce(art::Event & e) {
     if(!genieeventweight_h.isValid()){
       std::cout << "[UBXSec] MCEventWeight for GENIE reweight, product " << _eventweight_producer << " not found..." << std::endl;
       //throw std::exception();
-    }  
-    std::vector<art::Ptr<evwgh::MCEventWeight>> genieeventweight_v;
-    art::fill_ptr_vector(genieeventweight_v, genieeventweight_h);
-    if (genieeventweight_v.size() > 0) {
-      art::Ptr<evwgh::MCEventWeight> evt_wgt = genieeventweight_v.at(0); // Just for the first nu interaction
-      std::map<std::string, std::vector<double>> evtwgt_map = evt_wgt->fWeight;
-      int countFunc = 0;
-      // loop over the map and save the name of the function and the vector of weights for each function
-      for(auto it : evtwgt_map) {
-        std::string func_name = it.first;
-        std::vector<double> weight_v = it.second; 
-        ubxsec_event->evtwgt_funcname.push_back(func_name);
-        ubxsec_event->evtwgt_weight.push_back(weight_v);
-        ubxsec_event->evtwgt_nweight.push_back(weight_v.size());
-        countFunc++;
+    } else {
+      std::vector<art::Ptr<evwgh::MCEventWeight>> genieeventweight_v;
+      art::fill_ptr_vector(genieeventweight_v, genieeventweight_h);
+      if (genieeventweight_v.size() > 0) {
+        art::Ptr<evwgh::MCEventWeight> evt_wgt = genieeventweight_v.at(0); // Just for the first nu interaction
+        std::map<std::string, std::vector<double>> evtwgt_map = evt_wgt->fWeight;
+        int countFunc = 0;
+        // loop over the map and save the name of the function and the vector of weights for each function
+        for(auto it : evtwgt_map) {
+          std::string func_name = it.first;
+          std::vector<double> weight_v = it.second;
+          ubxsec_event->evtwgt_funcname.push_back(func_name);
+          ubxsec_event->evtwgt_weight.push_back(weight_v);
+          ubxsec_event->evtwgt_nweight.push_back(weight_v.size());
+          countFunc++;
+        }
+        ubxsec_event->evtwgt_nfunc = countFunc;
       }
-      ubxsec_event->evtwgt_nfunc = countFunc;
     }
   }
   

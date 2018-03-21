@@ -50,10 +50,12 @@
 #include "lardataobj/RecoBase/OpHit.h"
 #include "lardataobj/RecoBase/OpFlash.h"
 #include "lardataobj/RecoBase/Track.h"
+#include "lardataobj/RecoBase/Vertex.h"
 #include "lardataobj/RecoBase/Shower.h"
 #include "lardataobj/RecoBase/Cluster.h"
 #include "lardataobj/RecoBase/Hit.h"
 #include "lardataobj/RecoBase/SpacePoint.h"
+#include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 #include "uboone/UBXSec/DataTypes/FlashMatch.h"
 #include "uboone/UBXSec/DataTypes/MCGhost.h"
 #include "lardataobj/AnalysisBase/T0.h"
@@ -72,7 +74,6 @@
 //Algorithms include
 #include "uboone/LLBasicTool/GeoAlgo/GeoTrajectory.h"
 #include "uboone/UBXSec/Algorithms/FiducialVolume.h"
-#include "uboone/UBXSec/Algorithms/StoppingMuonTaggerHelper.h"
 #include "uboone/UBXSec/HitCosmicTag/Base/DataTypes.h"
 #include "uboone/UBXSec/HitCosmicTag/Base/CosmicTagManager.h"
 #include "uboone/UBXSec/HitCosmicTag/Algorithms/StopMuMichel.h"
@@ -115,8 +116,6 @@ private:
   ::detinfo::DetectorProperties const* fDetectorProperties;
 
   ::ubana::FiducialVolume _fiducial_volume;
-
-  ::ubana::StoppingMuonTaggerHelper _helper;
 
   ::trkf::TrajectoryMCSFitter _mcs_fitter;
   ::recob::MCSFitResult _result;
@@ -163,6 +162,7 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p)
                              2.*geo->DetHalfWidth(),
                              geo->DetLength());
 
+  std::cout << "[StoppingMuonTagger] FV: " << std::endl;
   _fiducial_volume.PrintConfig();
 
   _tpcobject_producer = p.get<std::string>("TPCObjectProducer",  "TPCObjectMaker::UBXSec");
@@ -174,11 +174,6 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p)
   _mcs_delta_ll_cut   = p.get<double>("MCSDeltaLLCut", -5.);
 
   _coplanar_cut       = p.get<double>("CoplanarCut",   5.);
-  
-
-  _helper.Configure(p.get<fhicl::ParameterSet>("AlgorithmConfiguration"));
-
-  _helper.PrintConfig();
 
   _debug = p.get<bool>("DebugMode", false);
   _create_tree = p.get<bool>("CreateTree", true);
@@ -527,7 +522,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
     bool is_cosmic = false;
 
     //
-    // Part I: Running with highest point as start hit
+    // Running with highest point as start hit
     //
 
     _ct_manager.Reset();
@@ -567,7 +562,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
       if (_debug) _ct_manager.PrintClusterStatus();
 
-      if (_debug) _ct_manager.PrintOnFile(i);
+      //if (_debug) _ct_manager.PrintOnFile(i);
 
 
       cosmictag::SimpleCluster processed_cluster = _ct_manager.GetCluster();
@@ -600,70 +595,6 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
 
     //
-    // Part II: Running with outfv point as start hit
-    //
-    /*
-
-
-    if (use_outfv_point) {
-
-      if(_debug) std::cout << "[StoppingMuonTagger] SECOND PART USING OUTFV VERTEX AS STARTING POINT" << std::endl;
-
-      _ct_manager.Reset();
-
-      // Emplacing simple hits to the manager
-      cosmictag::SimpleCluster sc_2(simple_hit_v);
-      _ct_manager.Emplace(std::move(sc_2));
-
-      // Emplace the start hit
-      _ct_manager.SetStartHit(std::move(start_outfv));
-
-      if (collection_coplanar) {
-        if (_debug) std::cout << "[StoppingMuonTagger] This object is collection coplanar" << std::endl;
-        _ct_manager.CollectionCoplanar(true);
-      }
-
-      // Running the cluster analyser
-      passed = _ct_manager.Run();
-
-      ct_result_michel = false;
-      ct_result_bragg = false;
-      ct_result_simplemip = false;
-
-      if (passed) {
-
-        _ct_manager.PrintClusterStatus();
-
-        cosmictag::SimpleCluster processed_cluster = _ct_manager.GetCluster();
-
-        // Michel algo
-        //((cosmictag::StopMuMichel*)(_ct_manager.GetCustomAlgo("StopMuMichel")))->PrintConfig();
-        ct_result_michel = ((cosmictag::StopMuMichel*)(_ct_manager.GetCustomAlgo("StopMuMichel")))->IsStopMuMichel(processed_cluster);
-        if(_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (michel)? " << (ct_result_michel ? "YES" : "NO") << std::endl;
-
-
-        // Bragg algo
-        bool vtx_in_fv = _fiducial_volume.InFV(highest_point);
-        //((cosmictag::StopMuBragg*)(_ct_manager.GetCustomAlgo("StopMuBragg")))->PrintConfig();
-        ct_result_bragg = ((cosmictag::StopMuBragg*)(_ct_manager.GetCustomAlgo("StopMuBragg")))->IsStopMuBragg(processed_cluster) && !vtx_in_fv;
-        if(_debug) std::cout << "[StoppingMuonTagger] Is stopping muon (bragg)? " << (ct_result_bragg ? "YES" : "NO") << std::endl;
-
-
-        // CosmicSimpleMIP
-        //((cosmictag::CosmicSimpleMIP*)(_ct_manager.GetCustomAlgo("CosmicSimpleMIP")))->PrintConfig();
-        ct_result_simplemip = ((cosmictag::CosmicSimpleMIP*)(_ct_manager.GetCustomAlgo("CosmicSimpleMIP")))->IsCosmicSimpleMIP(processed_cluster);
-        if(_debug) std::cout << "[StoppingMuonTagger] Is simple MIP? " << (ct_result_simplemip ? "YES" : "NO") << std::endl;
-
-      }
-
-      if (ct_result_michel || ct_result_bragg || ct_result_simplemip)
-        is_cosmic = true;
-
-    }
-    */
-
-
-    //
     // Also try with the MCS fitter
     //
 
@@ -673,7 +604,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
       result_mcs = this->IsStopMuMCS(primary_track_v.at(0), delta_ll);
     }
 
-    if (_debug) std::cout << "[StoppingMuonTagger] MCS thinks " << (result_mcs ? "is" : "is not") << " a stopping muon" << std::endl;
+    if (_debug) std::cout << "[StoppingMuonTagger] MCS thinks " << (result_mcs ? "is" : "is not") << " a stopping muon." << std::endl;
     
     if(_create_tree) {
       _origin = tpcobj->GetOrigin();

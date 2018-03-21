@@ -105,9 +105,6 @@ private:
 
 RecoTrueMatcher::RecoTrueMatcher(fhicl::ParameterSet const & p) {
 
-  std::cout << "[RecoTrueMatcher] Initialize" << std::endl;
-
-
   ::art::ServiceHandle<geo::Geometry> geo;
 
   _pfp_producer                   = p.get<std::string>("PFParticleProducer");
@@ -130,7 +127,6 @@ RecoTrueMatcher::RecoTrueMatcher(fhicl::ParameterSet const & p) {
   produces< art::Assns<simb::MCParticle, ubana::MCGhost>>();
   produces< art::Assns<recob::PFParticle, ubana::MCGhost>>();
 
-  std::cout << "[RecoTrueMatcher] End Initialize" << std::endl;
 }
 
 void RecoTrueMatcher::produce(art::Event & e)

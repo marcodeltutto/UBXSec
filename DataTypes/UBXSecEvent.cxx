@@ -176,11 +176,27 @@ void UBXSecEvent::ResizeVectors(int vsize) {
 }
 
 
-void UBXSecEvent::ResetGenieEventWeightVectors() {
+void UBXSecEvent::ResetGenieEventWeightVectorsPM1() {
 
-  evtwgt_funcname.clear();
-  evtwgt_weight.clear();
-  evtwgt_nweight.clear();
+  evtwgt_genie_pm1_funcname.clear();
+  evtwgt_genie_pm1_weight.clear();
+  evtwgt_genie_pm1_nweight.clear();
+
+}
+
+void UBXSecEvent::ResetGenieEventWeightVectorsMultisim() {
+
+  evtwgt_genie_multisim_funcname.clear();
+  evtwgt_genie_multisim_weight.clear();
+  evtwgt_genie_multisim_nweight.clear();
+
+}
+
+void UBXSecEvent::ResetFluxEventWeightVectorsMultisim() {
+
+  evtwgt_flux_multisim_funcname.clear();
+  evtwgt_flux_multisim_weight.clear();
+  evtwgt_flux_multisim_nweight.clear();
 
 }
 

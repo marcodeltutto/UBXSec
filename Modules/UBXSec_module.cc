@@ -182,7 +182,9 @@ private:
   std::string _mcsfitresult_pi_producer;
   std::string _calorimetry_producer;
   std::string _eventweight_producer;
-  std::string _genie_eventweight_producer;
+  std::string _genie_eventweight_pm1_producer;
+  std::string _genie_eventweight_multisim_producer;
+  std::string _flux_eventweight_multisim_producer;
   bool _debug = true;                   ///< Debug mode
   int _minimumHitRequirement;           ///< Minimum number of hits in at least a plane for a track
   double _minimumDistDeadReg;           ///< Minimum distance the track end points can have to a dead region
@@ -193,6 +195,8 @@ private:
   double _geo_cosmic_score_cut;         ///< Cut on the score of the pandoraNu geo cosmic tagger
   double _tolerance_track_multiplicity; ///< Tolerance to consider a track coming from the nu reco vertex
   double _min_track_len;                ///< Min track length for momentum calculation
+  bool _make_ophit_csv;                 ///< If true makea a csv file with ophit info
+  bool _make_pida_csv;                  ///< If true makea a csv file with pida/tracklength info
 
   // Constants
   const simb::Origin_t NEUTRINO_ORIGIN = simb::kBeamNeutrino;
@@ -283,7 +287,9 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _mcsfitresult_pi_producer       = p.get<std::string>("MCSFitResultPiProducer");
   _calorimetry_producer           = p.get<std::string>("CalorimetryProducer");
   _eventweight_producer           = p.get<std::string>("EventWeightProducer");
-  _genie_eventweight_producer     = p.get<std::string>("GenieEventWeightProducer");
+  _genie_eventweight_pm1_producer = p.get<std::string>("GenieEventWeightPMOneProducer");
+  _genie_eventweight_multisim_producer = p.get<std::string>("GenieEventWeightMultisimProducer");
+  _flux_eventweight_multisim_producer = p.get<std::string>("FluxEventWeightMultisimProducer");
 
   _use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
   _minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
@@ -297,6 +303,9 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _tolerance_track_multiplicity   = p.get<double>("ToleranceTrackMultiplicity", 5.);
 
   _min_track_len                  = p.get<double>("MinTrackLength", 0.1);
+
+  _make_ophit_csv                 = p.get<bool>("MakeOpHitCSV", false);
+  _make_pida_csv                  = p.get<bool>("MakePIDACSV", false);
 
   _pecalib.Configure(p.get<fhicl::ParameterSet>("PECalib"));
 
@@ -417,11 +426,11 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _sr_tree->Branch("endtime",            &_sr_endtime,            "endtime/D");
   _sr_tree->Branch("pot",                &_sr_pot,                "pot/D");
 
-  _csvfile.open ("pida_trklen.csv", std::ofstream::out | std::ofstream::trunc);
-  _csvfile << "pida,trklen,y" << std::endl;
+  if(_make_pida_csv) _csvfile.open ("pida_trklen.csv", std::ofstream::out | std::ofstream::trunc);
+  if(_make_pida_csv) _csvfile << "pida,trklen,y" << std::endl;
 
-  _csvfile2.open("ophit.csv", std::ofstream::out | std::ofstream::trunc);
-  _csvfile2 << "ophit,opdet,time,pe" << std::endl;
+  if(_make_ophit_csv) _csvfile2.open("ophit.csv", std::ofstream::out | std::ofstream::trunc);
+  if(_make_ophit_csv) _csvfile2 << "ophit,opdet,time,pe" << std::endl;
 
   _run_subrun_list_file.open ("run_subrub_list.txt", std::ofstream::out | std::ofstream::trunc);
 
@@ -664,33 +673,95 @@ void UBXSec::produce(art::Event & e) {
 
   ubxsec_event->bnb_weight = bnb_weight;
 
-  // GENIE reweigthing (systematics)
-  ubxsec_event->ResetGenieEventWeightVectors();
+  // GENIE reweigthing (systematics - pm1sigma)
+  ubxsec_event->ResetGenieEventWeightVectorsPM1();
   if (_is_mc) {
     art::Handle<std::vector<evwgh::MCEventWeight>> genieeventweight_h;
-    e.getByLabel(_genie_eventweight_producer, genieeventweight_h);
+    e.getByLabel(_genie_eventweight_pm1_producer, genieeventweight_h);
     if(!genieeventweight_h.isValid()){
-      std::cout << "[UBXSec] MCEventWeight for GENIE reweight, product " << _eventweight_producer << " not found..." << std::endl;
+      std::cout << "[UBXSec] MCEventWeight for GENIE reweight pm1sigma, product " << _genie_eventweight_pm1_producer << " not found..." << std::endl;
       //throw std::exception();
-    }  
-    std::vector<art::Ptr<evwgh::MCEventWeight>> genieeventweight_v;
-    art::fill_ptr_vector(genieeventweight_v, genieeventweight_h);
-    if (genieeventweight_v.size() > 0) {
-      art::Ptr<evwgh::MCEventWeight> evt_wgt = genieeventweight_v.at(0); // Just for the first nu interaction
-      std::map<std::string, std::vector<double>> evtwgt_map = evt_wgt->fWeight;
-      int countFunc = 0;
-      // loop over the map and save the name of the function and the vector of weights for each function
-      for(auto it : evtwgt_map) {
-        std::string func_name = it.first;
-        std::vector<double> weight_v = it.second; 
-        ubxsec_event->evtwgt_funcname.push_back(func_name);
-        ubxsec_event->evtwgt_weight.push_back(weight_v);
-        ubxsec_event->evtwgt_nweight.push_back(weight_v.size());
-        countFunc++;
+    } else {
+      std::vector<art::Ptr<evwgh::MCEventWeight>> genieeventweight_v;
+      art::fill_ptr_vector(genieeventweight_v, genieeventweight_h);
+      if (genieeventweight_v.size() > 0) {
+        art::Ptr<evwgh::MCEventWeight> evt_wgt = genieeventweight_v.at(0); // Just for the first nu interaction
+        std::map<std::string, std::vector<double>> evtwgt_map = evt_wgt->fWeight;
+        int countFunc = 0;
+        // loop over the map and save the name of the function and the vector of weights for each function
+        for(auto it : evtwgt_map) {
+          std::string func_name = it.first;
+          std::vector<double> weight_v = it.second; 
+          ubxsec_event->evtwgt_genie_pm1_funcname.push_back(func_name);
+          ubxsec_event->evtwgt_genie_pm1_weight.push_back(weight_v);
+          ubxsec_event->evtwgt_genie_pm1_nweight.push_back(weight_v.size());
+          countFunc++;
+        }
+        ubxsec_event->evtwgt_genie_pm1_nfunc = countFunc;
       }
-      ubxsec_event->evtwgt_nfunc = countFunc;
     }
   }
+
+  // GENIE reweigthing (systematics - multisim)
+  ubxsec_event->ResetGenieEventWeightVectorsMultisim();
+  if (_is_mc) {
+    art::Handle<std::vector<evwgh::MCEventWeight>> genieeventweight_h;
+    e.getByLabel(_genie_eventweight_multisim_producer, genieeventweight_h);
+    if(!genieeventweight_h.isValid()){
+      std::cout << "[UBXSec] MCEventWeight for GENIE reweight multisim, product " << _genie_eventweight_multisim_producer << " not found..." << std::endl;
+      //throw std::exception();
+    } else {
+      std::vector<art::Ptr<evwgh::MCEventWeight>> genieeventweight_v;
+      art::fill_ptr_vector(genieeventweight_v, genieeventweight_h);
+      if (genieeventweight_v.size() > 0) {
+        art::Ptr<evwgh::MCEventWeight> evt_wgt = genieeventweight_v.at(0); // Just for the first nu interaction
+        std::map<std::string, std::vector<double>> evtwgt_map = evt_wgt->fWeight;
+        int countFunc = 0;
+        // loop over the map and save the name of the function and the vector of weights for each function
+        for(auto it : evtwgt_map) {
+          std::string func_name = it.first;
+          std::vector<double> weight_v = it.second; 
+          ubxsec_event->evtwgt_genie_multisim_funcname.push_back(func_name);
+          ubxsec_event->evtwgt_genie_multisim_weight.push_back(weight_v);
+          ubxsec_event->evtwgt_genie_multisim_nweight.push_back(weight_v.size());
+          countFunc++;
+        }
+        ubxsec_event->evtwgt_genie_multisim_nfunc = countFunc;
+      }
+    }
+  }
+
+  // FLUX reweigthing (systematics - multisim)
+  ubxsec_event->ResetFluxEventWeightVectorsMultisim();
+  if (_is_mc) {
+    art::Handle<std::vector<evwgh::MCEventWeight>> fluxeventweight_h;
+    e.getByLabel(_flux_eventweight_multisim_producer, fluxeventweight_h);
+    if(!fluxeventweight_h.isValid()){
+      std::cout << "[UBXSec] MCEventWeight for FLUX reweight multisim, product " << _flux_eventweight_multisim_producer << " not found..." << std::endl;
+      //throw std::exception();
+    } else {
+      std::vector<art::Ptr<evwgh::MCEventWeight>> fluxeventweight_v;
+      art::fill_ptr_vector(fluxeventweight_v, fluxeventweight_h);
+      if (fluxeventweight_v.size() > 0) {
+        art::Ptr<evwgh::MCEventWeight> evt_wgt = fluxeventweight_v.at(0); // Just for the first nu interaction
+        std::map<std::string, std::vector<double>> evtwgt_map = evt_wgt->fWeight;
+        int countFunc = 0;
+        // loop over the map and save the name of the function and the vector of weights for each function
+        for(auto it : evtwgt_map) {
+          std::string func_name = it.first;
+          std::vector<double> weight_v = it.second; 
+          ubxsec_event->evtwgt_flux_multisim_funcname.push_back(func_name);
+          ubxsec_event->evtwgt_flux_multisim_weight.push_back(weight_v);
+          ubxsec_event->evtwgt_flux_multisim_nweight.push_back(weight_v.size());
+          countFunc++;
+        }
+        ubxsec_event->evtwgt_flux_multisim_nfunc = countFunc;
+      }
+    }
+  }
+
+
+  
   
   // pandoraCosmic PFPs (for cosmic removal studies)
   art::Handle<std::vector<recob::PFParticle>> pfp_cosmic_h;
@@ -1202,7 +1273,7 @@ void UBXSec::produce(art::Event & e) {
       //std::cout << "OpHit::  OpDet: " << opdet
       //          << ", PeakTime: " << ophit.PeakTime()
       //          << ", PE: " << _pecalib.BeamPE(opdet,ophit.Area(),ophit.Amplitude()) << std::endl;
-      _csvfile2 << oh << "," << opdet << "," << ophit.PeakTime() << "," << _pecalib.BeamPE(opdet,ophit.Area(),ophit.Amplitude()) << std::endl;
+      if(_make_ophit_csv) _csvfile2 << oh << "," << opdet << "," << ophit.PeakTime() << "," << _pecalib.BeamPE(opdet,ophit.Area(),ophit.Amplitude()) << std::endl;
       if (ophit.OpChannel() != this_opch) continue;
       if (ophit.PeakTime() > _beam_spill_start && ophit.PeakTime() < _beam_spill_end) {
         n_intime_ophits ++;
@@ -1637,11 +1708,11 @@ void UBXSec::produce(art::Event & e) {
             if (pdg == 13) {
               _h_pida_muon->Fill(pid->PIDA());
               _h_pida_len_muon->Fill(pid->PIDA(), track->Length());
-              if( pid->PIDA() > 0 && pid->PIDA() < 50. ) _csvfile << pid->PIDA() << "," << track->Length() << "," << "1" << std::endl;
+              if( pid->PIDA() > 0 && pid->PIDA() < 50. && _make_pida_csv) _csvfile << pid->PIDA() << "," << track->Length() << "," << "1" << std::endl;
             } else if (pdg == 2212) {
               _h_pida_proton->Fill(pid->PIDA());
               _h_pida_len_proton->Fill(pid->PIDA(), track->Length());
-              if( pid->PIDA() > 0 && pid->PIDA() < 50. ) _csvfile << pid->PIDA() << "," << track->Length() << "," << "0" << std::endl;
+              if( pid->PIDA() > 0 && pid->PIDA() < 50. && _make_pida_csv) _csvfile << pid->PIDA() << "," << track->Length() << "," << "0" << std::endl;
             } else if (pdg == 211) {
               _h_pida_pion->Fill(pid->PIDA());
               _h_pida_len_pion->Fill(pid->PIDA(), track->Length());

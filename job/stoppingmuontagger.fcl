@@ -54,7 +54,7 @@ StoppingMuonTagger: {
     angResol: 3.0
   }
 
-  FiducialVolumeSettings:  @local::UBXSecFiducialVolumeSettings  
+  FiducialVolumeSettings:  @local::UBXSecFiducialVolumeCosmicSettings  
 }
 
 microboone_cosmicstoppingmutagger: @local::StoppingMuonTagger

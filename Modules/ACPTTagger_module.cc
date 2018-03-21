@@ -161,7 +161,7 @@ private:
   //std::ofstream _csvfile;
   TTree* _tree1;
   int _run, _subrun, _event;
-  bool _sw_trigger;
+  //bool _sw_trigger;
   double _drift_vel;
   std::vector<double> _trk_x_up, _trk_x_down, _trk_len, _trk_z_center;
   std::vector<double> _dt_u_anode, _dz_u_anode, _dt_d_anode, _dz_d_anode;
@@ -240,7 +240,7 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
     _tree1->Branch("run",           &_run,                 "run/I");
     _tree1->Branch("subrun",        &_subrun,              "subrun/I");
     _tree1->Branch("event",         &_event,               "event/I");
-    _tree1->Branch("sw_trigger",    &_sw_trigger,          "sw_trigger/O");
+    //_tree1->Branch("sw_trigger",    &_sw_trigger,          "sw_trigger/O");
     _tree1->Branch("drift_vel",     &_drift_vel,           "drift_vel/D");
     _tree1->Branch("trk_x_up",      "std::vector<double>", &_trk_x_up);
     _tree1->Branch("trk_x_down",    "std::vector<double>", &_trk_x_down);
@@ -294,16 +294,16 @@ void ACPTTagger::produce(art::Event & e)
   std::unique_ptr< art::Assns<recob::PFParticle, anab::CosmicTag>> assnOutCosmicTagPFParticle(new art::Assns<recob::PFParticle, anab::CosmicTag>);
 
   // sw trigger
-  art::Handle<raw::ubdaqSoftwareTriggerData> softwareTriggerHandle;
-  e.getByLabel(_swtrigger_producer, softwareTriggerHandle);
+  //art::Handle<raw::ubdaqSoftwareTriggerData> softwareTriggerHandle;
+  //e.getByLabel(_swtrigger_producer, softwareTriggerHandle);
 
-  if (!softwareTriggerHandle.isValid() || softwareTriggerHandle.failedToGet()){
+  //if (!softwareTriggerHandle.isValid() || softwareTriggerHandle.failedToGet()){
     //std::cerr << "Failed to get software trigget data product with label " << _swtrigger_producer << std::endl;
-  } else {
-    std::vector<std::string> algoNames = softwareTriggerHandle->getListOfAlgorithms();
-    size_t trigger = 0;
-    _sw_trigger = softwareTriggerHandle->passedAlgo(algoNames[trigger]);
-  }
+  //} else {
+    //std::vector<std::string> algoNames = softwareTriggerHandle->getListOfAlgorithms();
+    //size_t trigger = 0;
+    //_sw_trigger = softwareTriggerHandle->passedAlgo(algoNames[trigger]);
+  //}
 
   // load Flash
   if (_debug) { std::cout << "Loading flashes from producer " << _flash_producer << std::endl; }

@@ -49,7 +49,7 @@
     <bookdir>/uboone/data/grid_bookdir/ubxsec_&ubxsec_version;_mc_bnbcosmic</bookdir>
     <numjobs>500</numjobs>
     <datatier>ubana</datatier>
-    <memory>3000</memory>
+    <memory>6000</memory>
     <jobsub>  --expected-lifetime=20h -q --generate-email-summary </jobsub>
     <disk>60GB</disk>
   </stage>

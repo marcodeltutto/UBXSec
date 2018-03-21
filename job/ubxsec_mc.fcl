@@ -122,9 +122,9 @@ ubxsec_mc_producers: [ pandoraCosmicTPCObj,
                        NeutrinoMCFlash, 
                        NeutrinoFlashMatch,
                        CandidateConsistency,
-                       genieeventweightpm1,
-                       genieeventweightmultisim,
-                       fluxeventweightmultisim,
+                       #genieeventweightpm1,
+                       #genieeventweightmultisim,
+                       #fluxeventweightmultisim,
                        UBXSec ] 
 
 ubxsec_mc_filters: [ tpcneutrinoidfilternumuccinc 

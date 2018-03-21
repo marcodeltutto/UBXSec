@@ -310,12 +310,12 @@ Generating code for file /home/travis/build/marco/home/travis/build/marcodeltutt
 /home/travis/build/marcodeltutto/UBXSec/Modules/SimpleAna_module.cc:63: warning: Member operator=(SimpleAna const &)=delete (function) of class SimpleAna is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/SimpleAna_module.cc:64: warning: Member operator=(SimpleAna &&)=delete (function) of class SimpleAna is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/SimpleAna_module.cc:67: warning: Member analyze(art::Event const &e) override (function) of class SimpleAna is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:97: warning: Member StoppingMuonTagger(fhicl::ParameterSet const &p) (function) of class StoppingMuonTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:102: warning: Member StoppingMuonTagger(StoppingMuonTagger const &)=delete (function) of class StoppingMuonTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:103: warning: Member StoppingMuonTagger(StoppingMuonTagger &&)=delete (function) of class StoppingMuonTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:104: warning: Member operator=(StoppingMuonTagger const &)=delete (function) of class StoppingMuonTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:105: warning: Member operator=(StoppingMuonTagger &&)=delete (function) of class StoppingMuonTagger is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:108: warning: Member produce(art::Event &e) override (function) of class StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:98: warning: Member StoppingMuonTagger(fhicl::ParameterSet const &p) (function) of class StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:103: warning: Member StoppingMuonTagger(StoppingMuonTagger const &)=delete (function) of class StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:104: warning: Member StoppingMuonTagger(StoppingMuonTagger &&)=delete (function) of class StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:105: warning: Member operator=(StoppingMuonTagger const &)=delete (function) of class StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:106: warning: Member operator=(StoppingMuonTagger &&)=delete (function) of class StoppingMuonTagger is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/StoppingMuonTagger_module.cc:109: warning: Member produce(art::Event &e) override (function) of class StoppingMuonTagger is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:131: warning: Member UBXSec(fhicl::ParameterSet const &p) (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:136: warning: Member UBXSec(UBXSec const &)=delete (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:137: warning: Member UBXSec(UBXSec &&)=delete (function) of class UBXSec is not documented.
@@ -323,9 +323,11 @@ Generating code for file /home/travis/build/marco/home/travis/build/marcodeltutt
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:139: warning: Member operator=(UBXSec &&)=delete (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:142: warning: Member produce(art::Event &e) override (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:143: warning: Member endSubRun(art::SubRun &sr) override (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:202: warning: Member Init() (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:203: warning: Member ResizeVectors(int) (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:204: warning: Member ResetGenieEventWeightVectors() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:212: warning: Member Init() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:213: warning: Member ResizeVectors(int) (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:214: warning: Member ResetGenieEventWeightVectorsPM1() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:215: warning: Member ResetGenieEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:216: warning: Member ResetFluxEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
 /home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:138: warning: Member slc_muoncandidate_mip_consistency2 (variable) of class UBXSecEvent is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:72: warning: Member GetRecoToTrueMatches(art::Event const &e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits) (function) of class UBXSecHelper is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:305: warning: Member GetDqDxVector(std::vector< art::Ptr< anab::Calorimetry >> calos, int plane_no=2) (function) of class UBXSecHelper is not documented.
@@ -588,5 +590,5 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-lookup cache used 476/65536 hits=2049 misses=493
+lookup cache used 477/65536 hits=2060 misses=494
 finished...

@@ -32,6 +32,8 @@
 
 #include "ubxsec_settings.fcl"
 
+#include "tpcneutrinoidfilter_microboone.fcl"
+
 
 BEGIN_PROLOG
 #
@@ -84,6 +86,11 @@ ubxsec_data_flashmatch:
    UBXSec:                        @local::UBXSec_data
 }
 
+ubxsec_data_filter: 
+{
+   tpcneutrinoidfilternumuccinc:  @local::microboone_tpcneutrinoidfilter   
+}
+
 ubxsec_data_ana:
 {
    CosmicTaggerAna : @local::CosmicTaggerAna
@@ -109,6 +116,9 @@ ubxsec_data_producers: [ pandoraCosmicTPCObj,
                          NeutrinoFlashMatch,
                          CandidateConsistency,
                          UBXSec ] 
+
+ubxsec_data_filters: [ tpcneutrinoidfilternumuccinc 
+                     ]
 
 ubxsec_data_analyzers: [ #CosmicTaggerAna 
                        ]
@@ -159,5 +169,11 @@ ubxsec_data_flashmatch.NeutrinoFlashMatch.TrackModule:             "pandoraNu::U
 ubxsec_data_reco.UBXSec.UseGENIEInfo:                               false
 ubxsec_data_reco.UBXSec.POTSummaryProducer:                         "beamdata"
 ubxsec_data_reco.UBXSec.POTSummaryInstance:                         "bnbETOR860"
+
+# Set Filter properties
+ubxsec_data_filter.tpcneutrinoidfilternumuccinc.VertexModuleLabelVec:          [ "pandoraNu::UBXSec" ]
+ubxsec_data_filter.tpcneutrinoidfilternumuccinc.VtxTrackAssnModuleLabelVec:    [ "UBXSec::UBXSec" ]
+ubxsec_data_filter.tpcneutrinoidfilternumuccinc.Cluster2DCosmicProducerLabel:  ""
+ubxsec_data_filter.tpcneutrinoidfilternumuccinc.Cluster2DCosmicClusterAssns:   ""
 
 END_PROLOG

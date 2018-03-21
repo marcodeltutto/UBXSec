@@ -77,6 +77,11 @@ physics:
    @table::ubxsec_data_flashmatch
  }
 
+ filters:
+ {
+   @table::ubxsec_data_filter 
+ }
+
  analyzers:
  {
    @table::ubxsec_data_ana

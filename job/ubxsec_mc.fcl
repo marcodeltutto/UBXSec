@@ -5,6 +5,7 @@
 #include "correct_saturation.fcl"
 
 #include "genie_eventweight_microboone_ubxsec.fcl"
+#include "eventweight_microboone_MCC8.fcl"
 
 #include "tpcobjectmaker.fcl"
 #include "neutrinomcflash.fcl"
@@ -80,7 +81,9 @@ ubxsec_mc_flashmatch:
 
    CandidateConsistency:           @local::CandidateConsistency_mc
 
-   genieeventweight:               @local::genie_microboone_eventweight_ubxsec
+   genieeventweightpm1:            @local::genie_microboone_eventweight_ubxsec
+   genieeventweightmultisim:       @local::genie_microboone_eventweight_ubxsec
+   fluxeventweightmultisim:        @local::microboone_eventweight
 
    UBXSec:                         @local::UBXSec_mc
 
@@ -119,7 +122,9 @@ ubxsec_mc_producers: [ pandoraCosmicTPCObj,
                        NeutrinoMCFlash, 
                        NeutrinoFlashMatch,
                        CandidateConsistency,
-                       genieeventweight,
+                       #genieeventweightpm1,
+                       #genieeventweightmultisim,
+                       #fluxeventweightmultisim,
                        UBXSec ] 
 
 ubxsec_mc_filters: [ tpcneutrinoidfilternumuccinc 
@@ -175,6 +180,10 @@ ubxsec_mc_reco.pandoraNuMCSPi.fitter.pIdHypothesis:              211
 
 # Set FlashMatching properties
 ubxsec_mc_flashmatch.NeutrinoFlashMatch.TrackModule:             "pandoraNu::UBXSec"
+
+# Set Reweighting properties
+ubxsec_mc_flashmatch.genieeventweightpm1.weight_functions: [ genie_qema, genie_ncelAxial, genie_ncelEta, genie_qevec, genie_ccresAxial, genie_ccresVector, genie_ncresAxial, genie_ncresVector, genie_cohMA, genie_cohR0, genie_NonResRvp1pi, genie_NonResRvbarp1pi, genie_NonResRvp2pi, genie_NonResRvbarp2pi, genie_ResDecayGamma, genie_ResDecayEta,  genie_ResDecayTheta, genie_NC, genie_DISAth, genie_DISBth, genie_DISCv1u, genie_DISCv2u, genie_AGKYxF, genie_AGKYpT, genie_FormZone, genie_FermiGasModelKf, genie_FermiGasModelSf, genie_IntraNukeNmfp, genie_IntraNukeNcex, genie_IntraNukeNel, genie_IntraNukeNinel, genie_IntraNukeNabs, genie_IntraNukeNpi, genie_IntraNukePImfp, genie_IntraNukePIcex, genie_IntraNukePIel, genie_IntraNukePIinel, genie_IntraNukePIabs, genie_IntraNukePIpi ]
+ubxsec_mc_flashmatch.genieeventweightmultisim.weight_functions: [ genie_all ]
 
 
 # Set Filter properties

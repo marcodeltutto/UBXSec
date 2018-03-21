@@ -229,31 +229,20 @@ namespace ubana {
       failure_map["flash_match_deltaz_down"] = true;
     }
 
-    // FV
-    bool in_fv = _ubxsec_event->slc_nuvtx_fv.at(scl_ll_max) == 1
-                 && (_ubxsec_event->slc_nuvtx_z.at(scl_ll_max) < 675 
-                     || _ubxsec_event->slc_nuvtx_z.at(scl_ll_max) > 775);
-    if(!in_fv) {
-      reason = "fail_fiducial_volume";
-      failure_map["fiducial_volume"] = false;
-    } else {
-      failure_map["fiducial_volume"] = true;
-    }
-
     // Vertex Check   
-    if(_ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) > _vtxcheck_angle_cut_up) {
-      reason = "fail_vertex_check_up";
-      failure_map["vertex_check_up"] = false;
-    } else {
-      failure_map["vertex_check_up"] = true;
-    }
-    if(_ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) < _vtxcheck_angle_cut_down 
-       && _ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) != -9999) {
-      reason = "fail_vertex_check_down";
-      failure_map["vertex_check_down"] = false;
-    } else {
-      failure_map["vertex_check_down"] = true;
-    }
+    //if(_ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) > _vtxcheck_angle_cut_up) {
+    //  reason = "fail_vertex_check_up";
+    //  failure_map["vertex_check_up"] = false;
+    //} else {
+    //  failure_map["vertex_check_up"] = true;
+    //}
+    //if(_ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) < _vtxcheck_angle_cut_down 
+    //   && _ubxsec_event->slc_vtxcheck_angle.at(scl_ll_max) != -9999) {
+    //  reason = "fail_vertex_check_down";
+    //  failure_map["vertex_check_down"] = false;
+    //} else {
+    //  failure_map["vertex_check_down"] = true;
+    //}
 
     // N Track
     if(_ubxsec_event->slc_ntrack.at(scl_ll_max) < _ntrack_cut) {
@@ -264,20 +253,20 @@ namespace ubana {
     }
 
     // Track Quality
-    if(!_ubxsec_event->slc_passed_min_track_quality.at(scl_ll_max)) {
-      reason = "fail_track quality";
-      failure_map["track_quality"] = false;
-    } else {
-      failure_map["track_quality"] = true;
-    }
+    //if(!_ubxsec_event->slc_passed_min_track_quality.at(scl_ll_max)) {
+    //  reason = "fail_track quality";
+    //  failure_map["track_quality"] = false;
+    //} else {
+    //  failure_map["track_quality"] = true;
+    //}
     
     // Vertex Quality
-    if(!_ubxsec_event->slc_passed_min_vertex_quality.at(scl_ll_max)) {
-      reason = "fail_vertex_quality";
-      failure_map["vertex_quality"] = false;
-    } else {
-      failure_map["vertex_quality"] = true;
-    }
+    //if(!_ubxsec_event->slc_passed_min_vertex_quality.at(scl_ll_max)) {
+    //  reason = "fail_vertex_quality";
+    //  failure_map["vertex_quality"] = false;
+    //} else {
+    //  failure_map["vertex_quality"] = true;
+    //}
 
     // MCS-Length Quality Cut
     if(_ubxsec_event->slc_muoncandidate_contained.at(scl_ll_max) 
@@ -295,6 +284,17 @@ namespace ubana {
       failure_map["mip_consistency"] = false;
     } else {
       failure_map["mip_consistency"] = true;
+    }
+
+    // FV
+    bool in_fv = _ubxsec_event->slc_nuvtx_fv.at(scl_ll_max) == 1
+                 && (_ubxsec_event->slc_nuvtx_z.at(scl_ll_max) < 675 
+                     || _ubxsec_event->slc_nuvtx_z.at(scl_ll_max) > 775);
+    if(!in_fv) {
+      reason = "fail_fiducial_volume";
+      failure_map["fiducial_volume"] = false;
+    } else {
+      failure_map["fiducial_volume"] = true;
     }
 
     // Hit Residuals STD Cut

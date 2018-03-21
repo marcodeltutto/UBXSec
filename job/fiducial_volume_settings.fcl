@@ -14,4 +14,18 @@ UBXSecFiducialVolumeSettings: {
 
 }
 
+UBXSecFiducialVolumeCosmicSettings: {
+
+  # First entry are the borders for the first volume, 
+  # second entry for the second fiducial volume
+
+  BorderXLow:   [10.]
+  BorderXHigh:  [10.]
+  BorderYLow:   [30.]
+  BorderYHigh:  [30.]
+  BorderZLow:   [20.]
+  BorderZHigh:  [20.]
+
+}
+
 END_PROLOG

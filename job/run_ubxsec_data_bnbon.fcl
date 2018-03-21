@@ -4,7 +4,7 @@ process_name: UBXSec
 
 services.TFileService.fileName: "ubxsec_output_data_bnbon.root"
 
-physics.reco:          [ @sequence::ubxsec_data_producers ]
+physics.reco:          [ @sequence::ubxsec_data_producers , @sequence::ubxsec_data_filters ]
 physics.trigger_paths: [ reco ]
 physics.ana:           [ @sequence::ubxsec_data_analyzers ]
 physics.stream1:       [ out1 ]
@@ -12,8 +12,9 @@ physics.end_paths:     [ ana, stream1 ]
 
 outputs.out1.fileName: "%ifb_%tc_ubxsec.root"
 outputs.out1.dataTier: "ubxsec"
-source.inputCommands: ["keep *_*_*_*"]
+#outputs.out1.SelectEvents: [ reco ]
 
+source.inputCommands: ["keep *_*_*_*"]
 
 
 physics.producers.NeutrinoFlashMatch.FlashVetoTimeStart: 3.30

@@ -26,7 +26,9 @@ UBXSec: {
   MCSFitResultPiProducer:       "pandoraNuMCSPi"
   CalorimetryProducer:          "pandoraNucalo"
   EventWeightProducer:          "eventweight"
-  GenieEventWeightProducer:     "genieeventweight::UBXSec"
+  GenieEventWeightPMOneProducer: "genieeventweightpm1::UBXSec"
+  GenieEventWeightMultisimProducer: "genieeventweightmultisim::UBXSec"
+  FluxEventWeightMultisimProducer: "fluxeventweightmultisim::UBXSec"
 
   UseGENIEInfo:                 true
   MinimumHitRequirement:        3
@@ -36,6 +38,9 @@ UBXSec: {
   ToleranceTrackMultiplicity:   5.
 
   MinTrackLength:               0.1
+
+  MakeOpHitCSV:                 false
+  MakePIDACSV:                  false
 
   PECalib:                      @local::SPECalib
 

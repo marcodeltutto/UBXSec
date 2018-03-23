@@ -147,6 +147,7 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_muoncandidate_perc_used_hits_in_cluster; ///< Number of used hits in the cluster to make the track
   vector<double>   slc_muoncandidate_maxscatteringangle; ///< Maximum scattering angle along track
 
+/*
   vector<double>   slc_othershowers_longest_length; ///< Length of longest shower not in the TPCObject
   vector<double>   slc_othershowers_longest_startx; ///< Start x of longest shower not in the TPCObject
   vector<double>   slc_othershowers_longest_starty; ///< Start y of longest shower not in the TPCObject
@@ -170,6 +171,7 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_othershowers_flashmatch_phi; ///< Phi of most flash matched shower not in the TPCObject
   vector<double>   slc_othershowers_flashmatch_theta; ///< CosTheta of most flash matched shower not in the TPCObject
   vector<double>   slc_othershowers_flashmatch_openangle; ///< Opening angle of most flash matched shower not in the TPCObject
+  */
 
   Int_t            nbeamfls; ///< Number of beam flashes in the event
   vector<double>   beamfls_time; ///< Time of the beam flash

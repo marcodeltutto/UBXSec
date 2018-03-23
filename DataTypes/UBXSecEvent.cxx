@@ -149,6 +149,7 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_consistency.resize(vsize, true);
   slc_consistency_score.resize(vsize, 0.);
 
+/*
   slc_othershowers_longest_length.resize(vsize, _default_value); 
   slc_othershowers_longest_startx.resize(vsize, _default_value); 
   slc_othershowers_longest_starty.resize(vsize, _default_value); 
@@ -172,7 +173,7 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_othershowers_flashmatch_phi.resize(vsize, _default_value); 
   slc_othershowers_flashmatch_theta.resize(vsize, _default_value); 
   slc_othershowers_flashmatch_openangle.resize(vsize, _default_value); 
-
+*/
 }
 
 

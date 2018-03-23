@@ -12,7 +12,7 @@ physics.end_paths:     [ ana, stream1 ]
 
 outputs.out1.fileName: "%ifb_%tc_ubxsec.root"
 outputs.out1.dataTier: "ubxsec"
-#outputs.out1.SelectEvents: [ reco ]
+outputs.out1.SelectEvents: [ reco ]
 
 source.inputCommands: ["keep *_*_*_*"]
 

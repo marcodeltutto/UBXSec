@@ -121,6 +121,9 @@ private:
   bool _use_tracks;      ///< If true, uses tracks to get start and end points of a PFP
   bool _use_spacepoints; ///< If true, uses spacepoints to get start and end points of a PFP
   bool _use_hits;        ///< If true, uses hits on the collection plane to get start x and end x points of a PFP 
+  bool _use_y_plane;     ///< If true, and _use_hits is true, uses hits in the y plane
+  bool _use_u_plane;     ///< If true, and _use_hits is true, uses hits in the u plane
+  bool _use_v_plane;     ///< If true, and _use_hits is true, uses hits in the v plane
   bool _merge_planes;    ///< If true, merges hits from 3 planes (works if _use_hits is true, otherwise ignored)
   bool _use_ophits;      ///< If tagging fails with flashes, also tries with OpHits
 
@@ -189,6 +192,9 @@ ACPTTagger::ACPTTagger(fhicl::ParameterSet const & p) {
   _use_tracks            = p.get<bool>("UseTracks", true);
   _use_spacepoints       = p.get<bool>("UseSpacePoints", false);
   _use_hits              = p.get<bool>("UseHits", false);
+  _use_y_plane           = p.get<bool>("UseYPlane", true);
+  _use_u_plane           = p.get<bool>("UseUPlane", true);
+  _use_v_plane           = p.get<bool>("UseVPlane", true);
   _merge_planes          = p.get<bool>("MergePlanes", false);
   _use_ophits            = p.get<bool>("UseOpHits", false);
 
@@ -478,41 +484,47 @@ void ACPTTagger::produce(art::Event & e)
         double z_start=0, z_end=0;
 
         // Plane 2
-        this->SortHitPoints(hit_v, pts, hp, 2);
-        if (pts.size() == 2) {
-          z_start = pts.at(0).Z();
-          z_end = pts.at(1).Z();
-          if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for hits on plane 2" << std::endl;
-          highest_points.push_back(pts[0]);
-          lowest_points.push_back(pts[1]);
-        } else {
-          if(_debug) std::cout << "[ACPTTagger] \t Not enough hits on plane 2" << std::endl;
+        if (_use_y_plane) {
+          this->SortHitPoints(hit_v, pts, hp, 2);
+          if (pts.size() == 2) {
+            z_start = pts.at(0).Z();
+            z_end = pts.at(1).Z();
+            if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for hits on plane 2" << std::endl;
+            highest_points.push_back(pts[0]);
+            lowest_points.push_back(pts[1]);
+          } else {
+            if(_debug) std::cout << "[ACPTTagger] \t Not enough hits on plane 2" << std::endl;
+          }
         }
 
         // Plane 1
-        this->SortHitPoints(hit_v, pts, hp, 1);
-        if (pts.size() == 2) {
-          // Hack z pos 
-          pts.at(0).SetZ(z_start);
-          pts.at(1).SetZ(z_end);
-          if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for hits on plane 1" << std::endl;
-          highest_points.push_back(pts[0]);
-          lowest_points.push_back(pts[1]);
-        } else {
-          if(_debug) std::cout << "[ACPTTagger] \t Not enough hits on plane 1" << std::endl;
+        if (_use_u_plane) {
+          this->SortHitPoints(hit_v, pts, hp, 1);
+          if (pts.size() == 2) {
+            // Hack z pos 
+            pts.at(0).SetZ(z_start);
+            pts.at(1).SetZ(z_end);
+            if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for hits on plane 1" << std::endl;
+            highest_points.push_back(pts[0]);
+            lowest_points.push_back(pts[1]);
+          } else {
+            if(_debug) std::cout << "[ACPTTagger] \t Not enough hits on plane 1" << std::endl;
+          }
         }
 
         // Plane 0
-        this->SortHitPoints(hit_v, pts, hp, 0);
-        if (pts.size() == 2) {
-          // Hack z pos 
-          pts.at(0).SetZ(z_start);
-          pts.at(1).SetZ(z_end);
-          if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for hits on plane 0" << std::endl;
-          highest_points.push_back(pts[0]);
-          lowest_points.push_back(pts[1]);
-        } else {
-          if(_debug) std::cout << "[ACPTTagger] \t Not enough hits on plane 0" << std::endl;
+        if (_use_v_plane) {
+          this->SortHitPoints(hit_v, pts, hp, 0);
+          if (pts.size() == 2) {
+            // Hack z pos 
+            pts.at(0).SetZ(z_start);
+            pts.at(1).SetZ(z_end);
+           if(_debug) std::cout << "[ACPTTagger] \t Empacing end points for hits on plane 0" << std::endl;
+            highest_points.push_back(pts[0]);
+            lowest_points.push_back(pts[1]);
+          } else {
+            if(_debug) std::cout << "[ACPTTagger] \t Not enough hits on plane 0" << std::endl;
+          }
         }
       }
 

@@ -126,6 +126,9 @@ private:
   bool _use_genie_info;                ///<
   bool _use_showers_as_tracks;         ///< If true makes tracks out of showers and passes them to the matcher
 
+  bool _do_opdet_swap;                 ///< If true swaps reconstructed OpDets according to _opdet_swap_map
+  std::vector<int> _opdet_swap_map;    ///< The OpDet swap map for reco flashes
+
   std::vector<::flashana::Flash_t>    beam_flashes;
 
   ::flashana::FlashMatchManager       _mgr;
@@ -157,6 +160,8 @@ NeutrinoFlashMatch::NeutrinoFlashMatch(fhicl::ParameterSet const & p)
   _flash_trange_end        = p.get<double>     ("FlashVetoTimeEnd",      5);
   _use_genie_info          = p.get<bool>       ("UseGENIEInfo",          true); 
   _use_showers_as_tracks   = p.get<bool>       ("UseShowersAsTracks",    false);
+  _do_opdet_swap           = p.get<bool>("DoOpDetSwap", false);
+  _opdet_swap_map          = p.get<std::vector<int> >("OpDetSwapMap");
 
   _mgr.Configure(p.get<flashana::Config_t>("FlashMatchConfig"));
 
@@ -198,6 +203,9 @@ void NeutrinoFlashMatch::produce(art::Event & e)
   std::unique_ptr< art::Assns<ubana::FlashMatch, recob::PFParticle>> assnOutFlashMatchPFParticle(new art::Assns<ubana::FlashMatch, recob::PFParticle>);
   std::unique_ptr< art::Assns<ubana::FlashMatch, ubana::TPCObject>>  assnOutFlashMatchTPCObject (new art::Assns<ubana::FlashMatch, ubana::TPCObject>);
 
+  if (_do_opdet_swap && e.isRealData()) {
+    std::cout << "[NeutrinoFlashMatch] WARNING!!! Swapping OpDets. I hope you know what you are doing." << std::endl;
+  }        
   ::art::ServiceHandle<geo::Geometry> geo;
 
   _mgr.Reset();
@@ -238,6 +246,9 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     f.pe_err_v.resize(geo->NOpDets());
     for (unsigned int i = 0; i < f.pe_v.size(); i++) {
       unsigned int opdet = geo->OpDetFromOpChannel(i);
+      if (_do_opdet_swap && e.isRealData()) {
+        opdet = _opdet_swap_map.at(opdet);
+      }
       f.pe_v[opdet] = flash.PE(i);
       f.pe_err_v[opdet] = sqrt(flash.PE(i));
     }

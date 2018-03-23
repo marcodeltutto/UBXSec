@@ -20,7 +20,7 @@ CosmicTaggerAna: {
   CosmicStopMuTagScoreCut:0.99
   DebugMode:              true
 
-  FiducialVolumeSettings:  @local::UBXSecFiducialVolumeSettings
+  FiducialVolumeSettings:  @local::UBXSecFiducialVolumeCosmicSettings
 }
 
 END_PROLOG

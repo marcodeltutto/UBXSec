@@ -692,6 +692,7 @@ void UBXSec::produce(art::Event & e) {
         for(auto it : evtwgt_map) {
           std::string func_name = it.first;
           std::vector<double> weight_v = it.second; 
+          //std::vector<float> weight_v_float (weight_v.begin(), weight_v.end());
           ubxsec_event->evtwgt_genie_pm1_funcname.push_back(func_name);
           ubxsec_event->evtwgt_genie_pm1_weight.push_back(weight_v);
           ubxsec_event->evtwgt_genie_pm1_nweight.push_back(weight_v.size());
@@ -721,6 +722,7 @@ void UBXSec::produce(art::Event & e) {
         for(auto it : evtwgt_map) {
           std::string func_name = it.first;
           std::vector<double> weight_v = it.second; 
+          //std::vector<float> weight_v_float (weight_v.begin(), weight_v.end());
           ubxsec_event->evtwgt_genie_multisim_funcname.push_back(func_name);
           ubxsec_event->evtwgt_genie_multisim_weight.push_back(weight_v);
           ubxsec_event->evtwgt_genie_multisim_nweight.push_back(weight_v.size());
@@ -750,6 +752,7 @@ void UBXSec::produce(art::Event & e) {
         for(auto it : evtwgt_map) {
           std::string func_name = it.first;
           std::vector<double> weight_v = it.second; 
+          //std::vector<float> weight_v_float (weight_v.begin(), weight_v.end());
           ubxsec_event->evtwgt_flux_multisim_funcname.push_back(func_name);
           ubxsec_event->evtwgt_flux_multisim_weight.push_back(weight_v);
           ubxsec_event->evtwgt_flux_multisim_nweight.push_back(weight_v.size());
@@ -1296,6 +1299,7 @@ void UBXSec::produce(art::Event & e) {
     //_slc_maxdistance_vtxtrack = UBXSecHelper::GetMaxTrackVertexDistance();
 
     // Other showers in the event
+    /*
     std::vector<art::Ptr<recob::Shower>> other_showers;
     bool ignore_shower = false;
     for (size_t s = 0; s < _shower_v.size(); s++) {
@@ -1395,6 +1399,7 @@ void UBXSec::produce(art::Event & e) {
     }
 
     std::cout << "[UBXSec] Shower info saved." << std::endl;
+    */
 
 
     // Muon Candidate

@@ -17,6 +17,9 @@ ACPTTagger: {
   UseTracks:             false
   UseSpacePoints:        false
   UseHits:               true
+  UseYPlane:             true
+  UseUPlane:             true
+  UseVPlane:             true
   MergePlanes:           true
   UseOpHits:             true
 

@@ -285,13 +285,13 @@ Generating code for file /home/travis/build/marco/home/travis/build/marcodeltutt
 /home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoFlashMatch_module.cc:85: warning: Member NeutrinoFlashMatch(NeutrinoFlashMatch &&)=delete (function) of class NeutrinoFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoFlashMatch_module.cc:86: warning: Member operator=(NeutrinoFlashMatch const &)=delete (function) of class NeutrinoFlashMatch is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoFlashMatch_module.cc:87: warning: Member operator=(NeutrinoFlashMatch &&)=delete (function) of class NeutrinoFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoFlashMatch_module.cc:115: warning: Member produce(art::Event &e) override (function) of class NeutrinoFlashMatch is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:57: warning: Member NeutrinoMCFlash(fhicl::ParameterSet const &p) (function) of class NeutrinoMCFlash is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:62: warning: Member NeutrinoMCFlash(NeutrinoMCFlash const &)=delete (function) of class NeutrinoMCFlash is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:63: warning: Member NeutrinoMCFlash(NeutrinoMCFlash &&)=delete (function) of class NeutrinoMCFlash is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:64: warning: Member operator=(NeutrinoMCFlash const &)=delete (function) of class NeutrinoMCFlash is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:65: warning: Member operator=(NeutrinoMCFlash &&)=delete (function) of class NeutrinoMCFlash is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:68: warning: Member produce(art::Event &e) override (function) of class NeutrinoMCFlash is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoFlashMatch_module.cc:121: warning: Member produce(art::Event &e) override (function) of class NeutrinoFlashMatch is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:63: warning: Member NeutrinoMCFlash(fhicl::ParameterSet const &p) (function) of class NeutrinoMCFlash is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:68: warning: Member NeutrinoMCFlash(NeutrinoMCFlash const &)=delete (function) of class NeutrinoMCFlash is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:69: warning: Member NeutrinoMCFlash(NeutrinoMCFlash &&)=delete (function) of class NeutrinoMCFlash is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:70: warning: Member operator=(NeutrinoMCFlash const &)=delete (function) of class NeutrinoMCFlash is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:71: warning: Member operator=(NeutrinoMCFlash &&)=delete (function) of class NeutrinoMCFlash is not documented.
+/home/travis/build/marcodeltutto/UBXSec/Modules/NeutrinoMCFlash_module.cc:74: warning: Member produce(art::Event &e) override (function) of class NeutrinoMCFlash is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/PhotonActivity_module.cc:42: warning: Member PhotonActivity(fhicl::ParameterSet const &p) (function) of class PhotonActivity is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/PhotonActivity_module.cc:47: warning: Member PhotonActivity(PhotonActivity const &)=delete (function) of class PhotonActivity is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/PhotonActivity_module.cc:48: warning: Member PhotonActivity(PhotonActivity &&)=delete (function) of class PhotonActivity is not documented.
@@ -323,12 +323,14 @@ Generating code for file /home/travis/build/marco/home/travis/build/marcodeltutt
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:139: warning: Member operator=(UBXSec &&)=delete (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:142: warning: Member produce(art::Event &e) override (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:143: warning: Member endSubRun(art::SubRun &sr) override (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:214: warning: Member Init() (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:215: warning: Member ResizeVectors(int) (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:216: warning: Member ResetGenieEventWeightVectorsPM1() (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:217: warning: Member ResetGenieEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:218: warning: Member ResetFluxEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:138: warning: Member slc_muoncandidate_mip_consistency2 (variable) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:199: warning: Member Init() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:200: warning: Member ResizeVectors(int) (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:201: warning: Member ResizeGenieTruthVectors(int) (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:202: warning: Member ResetGenieEventWeightVectorsPM1() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:203: warning: Member ResetGenieEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:204: warning: Member ResetGenieModelsEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:205: warning: Member ResetFluxEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:144: warning: Member slc_muoncandidate_mip_consistency2 (variable) of class UBXSecEvent is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:72: warning: Member GetRecoToTrueMatches(art::Event const &e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits) (function) of class UBXSecHelper is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:305: warning: Member GetDqDxVector(std::vector< art::Ptr< anab::Calorimetry >> calos, int plane_no=2) (function) of class UBXSecHelper is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:307: warning: Member GetDqDxTruncatedMean(std::vector< art::Ptr< anab::Calorimetry >> calos, int plane_no=2) (function) of class UBXSecHelper is not documented.
@@ -498,8 +500,6 @@ Generating docs for compound ub/home/travis/build/marcodeltutto/UBXSec/Algorithm
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/NuMuCCEventSelection.h:72: warning: Member _ntrack_cut (variable) of class ubana::NuMuCCEventSelection is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/NuMuCCEventSelection.h:73: warning: Member _residuals_std_down_cut (variable) of class ubana::NuMuCCEventSelection is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/NuMuCCEventSelection.h:74: warning: Member _residuals_std_up_cut (variable) of class ubana::NuMuCCEventSelection is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/NuMuCCEventSelection.h:75: warning: Member _residuals_mean_down_cut (variable) of class ubana::NuMuCCEventSelection is not documented.
-/home/travis/build/marcodeltutto/UBXSec/Algorithms/NuMuCCEventSelection.h:76: warning: Member _residuals_mean_up_cut (variable) of class ubana::NuMuCCEventSelection is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/NuMuCCEventSelection.h:77: warning: Member _perc_used_hits_in_cluster_cut (variable) of class ubana::NuMuCCEventSelection is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/NuMuCCEventSelection.h:79: warning: Member _pe_cut (variable) of class ubana::NuMuCCEventSelection is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/NuMuCCEventSelection.h:80: warning: Member _beamSpillStarts (variable) of class ubana::NuMuCCEventSelection is not documented.
@@ -590,5 +590,5 @@ Generating file index...
 Generating file member index...
 Generating example index...
 finalizing index lists...
-lookup cache used 477/65536 hits=2060 misses=494
+lookup cache used 480/65536 hits=2086 misses=497
 finished...

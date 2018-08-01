@@ -15,6 +15,7 @@ var searchData=
   ['getdeadregionhisto3p',['GetDeadRegionHisto3P',['../classFindDeadRegions.html#abb378991861e7fdef4cd94a27d52ec07',1,'FindDeadRegions::GetDeadRegionHisto3P()'],['../classFindDeadRegions.html#a50de57c6d1792a6f2a93df8a44ba840a',1,'FindDeadRegions::GetDeadRegionHisto3P(TH2F *)']]],
   ['getdistance',['GetDistance',['../classubxsec_1_1ACPTAlgo.html#ab08b8c49e6376227fa9bf2175912eca0',1,'ubxsec::ACPTAlgo::GetDistance()'],['../classubxsec_1_1VertexCheck.html#a2cf14a77ddd16b2fd282e2748ed4a3d9',1,'ubxsec::VertexCheck::GetDistance()']]],
   ['getfailurereason',['GetFailureReason',['../classubana_1_1SelectionResult.html#abfd85000aca03d3cd347cde67f7b7e4b',1,'ubana::SelectionResult']]],
+  ['getflashlocation',['GetFlashLocation',['../classNeutrinoFlashMatch.html#a744d4b00dfaaadf0c451652092e01b85',1,'NeutrinoFlashMatch']]],
   ['getflashzcenter',['GetFlashZCenter',['../classUBXSecHelper.html#a3fd25ef568b54aded55d6c1b6a8593fa',1,'UBXSecHelper']]],
   ['getlongestshowerfromtpcobj',['GetLongestShowerFromTPCObj',['../classUBXSecHelper.html#a05bd763ee858e0933e1f33b8346d2206',1,'UBXSecHelper']]],
   ['getlongesttrackfromtpcobj',['GetLongestTrackFromTPCObj',['../classUBXSecHelper.html#a76b009afef0cc69f281ca3215a901f35',1,'UBXSecHelper']]],

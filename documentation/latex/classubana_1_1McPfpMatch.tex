@@ -18,7 +18,9 @@ void \hyperlink{classubana_1_1McPfpMatch_a0f07649a58ade64a2a127846231cd7c8}{Conf
 void \hyperlink{classubana_1_1McPfpMatch_af0f60c86d087ee5c99a73170cf03b200}{Configure} (art\-::\-Event const \&e, std\-::string \-\_\-pfp\-\_\-producer, std\-::string \-\_\-spacepoint\-\_\-producer, std\-::string \-\_\-hitfinder\-\_\-producer, std\-::string \-\_\-geant\-\_\-producer, std\-::string \-\_\-hit\-\_\-mcp\-\_\-producer, lar\-\_\-pandora\-::\-L\-Ar\-Pandora\-Helper\-::\-Daughter\-Mode daughter\-Mode)
 \begin{DoxyCompactList}\small\item\em Configure function parameters. \end{DoxyCompactList}\item 
 void \hyperlink{classubana_1_1McPfpMatch_a44436a82315246fb67b42f8542fb327c}{Get\-Reco\-To\-True\-Matches} (lar\-\_\-pandora\-::\-P\-F\-Particles\-To\-M\-C\-Particles \&matched\-Particles)
-\begin{DoxyCompactList}\small\item\em Returns matching between true and reconstructed particles. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Returns matching between true and reconstructed particles. \end{DoxyCompactList}\item 
+void \hyperlink{classubana_1_1McPfpMatch_ac998d64cc35ba464976eafe6a1543274}{Override\-Real\-Data} (bool option)
+\begin{DoxyCompactList}\small\item\em If calles. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -111,6 +113,22 @@ Returns matching between true and reconstructed particles.
 
 \begin{DoxyParams}{Parameters}
 {\em matched\-Particles} & the output matches between reconstructed and true particles \\
+\hline
+\end{DoxyParams}
+\hypertarget{classubana_1_1McPfpMatch_ac998d64cc35ba464976eafe6a1543274}{\index{ubana\-::\-Mc\-Pfp\-Match@{ubana\-::\-Mc\-Pfp\-Match}!Override\-Real\-Data@{Override\-Real\-Data}}
+\index{Override\-Real\-Data@{Override\-Real\-Data}!ubana::McPfpMatch@{ubana\-::\-Mc\-Pfp\-Match}}
+\subsubsection[{Override\-Real\-Data}]{\setlength{\rightskip}{0pt plus 5cm}void ubana\-::\-Mc\-Pfp\-Match\-::\-Override\-Real\-Data (
+\begin{DoxyParamCaption}
+\item[{bool}]{option}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classubana_1_1McPfpMatch_ac998d64cc35ba464976eafe6a1543274}
+
+
+If calles. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em option} & It true, considers the event as M\-C always \\
 \hline
 \end{DoxyParams}
 

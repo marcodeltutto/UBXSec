@@ -1,5 +1,9 @@
 var searchData=
 [
+  ['sce_5fcorr_5fx',['sce_corr_x',['../classUBXSecEvent.html#ab4b9884593f36f28932d283f48fa1c43',1,'UBXSecEvent']]],
+  ['sce_5fcorr_5fy',['sce_corr_y',['../classUBXSecEvent.html#af00760d1a8cc63d2c71f13a6a95c6982',1,'UBXSecEvent']]],
+  ['sce_5fcorr_5fz',['sce_corr_z',['../classUBXSecEvent.html#a458269123d7dd4085f071252f3f5741c',1,'UBXSecEvent']]],
+  ['selected_5fslice',['selected_slice',['../classUBXSecEvent.html#ae930518dc565c14fb73272cbcd45201c',1,'UBXSecEvent']]],
   ['selectionresult',['SelectionResult',['../classubana_1_1SelectionResult.html',1,'ubana']]],
   ['setchannelstatus',['SetChannelStatus',['../classFindDeadRegions.html#ac66a2e50bc8138b3f62284a319e1a60f',1,'FindDeadRegions']]],
   ['setevent',['SetEvent',['../classubana_1_1NuMuCCEventSelection.html#aab2612c63b22127e3d3909c8fdd8b9b7',1,'ubana::NuMuCCEventSelection']]],

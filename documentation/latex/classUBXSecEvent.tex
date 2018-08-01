@@ -19,10 +19,16 @@ Data product to store a \hyperlink{classUBXSec}{U\-B\-X\-Sec} Event.
 \hypertarget{classUBXSecEvent_a87228eb442b415053b9a9a070d29790b}{void {\bfseries Resize\-Vectors} (int)}\label{classUBXSecEvent_a87228eb442b415053b9a9a070d29790b}
 
 \item 
+\hypertarget{classUBXSecEvent_ad5715e19d69fe2815cdd650b7639c70a}{void {\bfseries Resize\-Genie\-Truth\-Vectors} (int)}\label{classUBXSecEvent_ad5715e19d69fe2815cdd650b7639c70a}
+
+\item 
 \hypertarget{classUBXSecEvent_a6b37b5a9d26a367edbe0a8fc0a69c103}{void {\bfseries Reset\-Genie\-Event\-Weight\-Vectors\-P\-M1} ()}\label{classUBXSecEvent_a6b37b5a9d26a367edbe0a8fc0a69c103}
 
 \item 
 \hypertarget{classUBXSecEvent_a95f1ed351bf03ff7cd59106d9af67548}{void {\bfseries Reset\-Genie\-Event\-Weight\-Vectors\-Multisim} ()}\label{classUBXSecEvent_a95f1ed351bf03ff7cd59106d9af67548}
+
+\item 
+\hypertarget{classUBXSecEvent_a91cd626260843b5ab8535ccd06302f2c}{void {\bfseries Reset\-Genie\-Models\-Event\-Weight\-Vectors\-Multisim} ()}\label{classUBXSecEvent_a91cd626260843b5ab8535ccd06302f2c}
 
 \item 
 \hypertarget{classUBXSecEvent_a4544b8b5f596e1fd314476ddc240ad56}{void {\bfseries Reset\-Flux\-Event\-Weight\-Vectors\-Multisim} ()}\label{classUBXSecEvent_a4544b8b5f596e1fd314476ddc240ad56}
@@ -79,6 +85,9 @@ Data product to store a \hyperlink{classUBXSec}{U\-B\-X\-Sec} Event.
 \hypertarget{classUBXSecEvent_a3b05f41e3b302767d921996aed6f0d87}{Int\-\_\-t \hyperlink{classUBXSecEvent_a3b05f41e3b302767d921996aed6f0d87}{fv}}\label{classUBXSecEvent_a3b05f41e3b302767d921996aed6f0d87}
 
 \begin{DoxyCompactList}\small\item\em Is 1 if the true neutrino vertex is in the fiducial volume. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_afec3a80a452246fad1cbe8482dcf9d59}{Int\-\_\-t \hyperlink{classUBXSecEvent_afec3a80a452246fad1cbe8482dcf9d59}{fv\-\_\-sce}}\label{classUBXSecEvent_afec3a80a452246fad1cbe8482dcf9d59}
+
+\begin{DoxyCompactList}\small\item\em Is 1 if the true neutrino vertex is in the fiducial volume (takes into account the sce correction) \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a6a55ef25451d4a8206055d588b052caf}{Int\-\_\-t \hyperlink{classUBXSecEvent_a6a55ef25451d4a8206055d588b052caf}{ccnc}}\label{classUBXSecEvent_a6a55ef25451d4a8206055d588b052caf}
 
 \begin{DoxyCompactList}\small\item\em Is 0 if C\-C, 1 if N\-C. \end{DoxyCompactList}\item 
@@ -112,6 +121,18 @@ Data product to store a \hyperlink{classUBXSec}{U\-B\-X\-Sec} Event.
 \hypertarget{classUBXSecEvent_a6af1830fbdf3bb5df9087095941cf8ec}{Bool\-\_\-t \hyperlink{classUBXSecEvent_a6af1830fbdf3bb5df9087095941cf8ec}{is\-\_\-selected}}\label{classUBXSecEvent_a6af1830fbdf3bb5df9087095941cf8ec}
 
 \begin{DoxyCompactList}\small\item\em True if event passed numu cc inclusive selection. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_ae930518dc565c14fb73272cbcd45201c}{Int\-\_\-t \hyperlink{classUBXSecEvent_ae930518dc565c14fb73272cbcd45201c}{selected\-\_\-slice}}\label{classUBXSecEvent_ae930518dc565c14fb73272cbcd45201c}
+
+\begin{DoxyCompactList}\small\item\em The index of the selected slice. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_ab4b9884593f36f28932d283f48fa1c43}{Double\-\_\-t \hyperlink{classUBXSecEvent_ab4b9884593f36f28932d283f48fa1c43}{sce\-\_\-corr\-\_\-x}}\label{classUBXSecEvent_ab4b9884593f36f28932d283f48fa1c43}
+
+\begin{DoxyCompactList}\small\item\em Space charge correction to be applied to the true nu vertex (to be summed on x) \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_af00760d1a8cc63d2c71f13a6a95c6982}{Double\-\_\-t \hyperlink{classUBXSecEvent_af00760d1a8cc63d2c71f13a6a95c6982}{sce\-\_\-corr\-\_\-y}}\label{classUBXSecEvent_af00760d1a8cc63d2c71f13a6a95c6982}
+
+\begin{DoxyCompactList}\small\item\em Space charge correction to be applied to the true nu vertex (to be summed on y) \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a458269123d7dd4085f071252f3f5741c}{Double\-\_\-t \hyperlink{classUBXSecEvent_a458269123d7dd4085f071252f3f5741c}{sce\-\_\-corr\-\_\-z}}\label{classUBXSecEvent_a458269123d7dd4085f071252f3f5741c}
+
+\begin{DoxyCompactList}\small\item\em Space charge correction to be applied to the true nu vertex (to be summed on z) \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a350303f94db8bcfdbc2e517713d7ebf9}{Int\-\_\-t \hyperlink{classUBXSecEvent_a350303f94db8bcfdbc2e517713d7ebf9}{mc\-\_\-muon\-\_\-contained}}\label{classUBXSecEvent_a350303f94db8bcfdbc2e517713d7ebf9}
 
 \begin{DoxyCompactList}\small\item\em Is 1 if the true mc muon is fully contained. \end{DoxyCompactList}\item 
@@ -433,6 +454,18 @@ Data product to store a \hyperlink{classUBXSec}{U\-B\-X\-Sec} Event.
 \hypertarget{classUBXSecEvent_a61918cf3a435989606553867c7ade9ae}{vector$<$ vector$<$ double $>$ $>$ \hyperlink{classUBXSecEvent_a61918cf3a435989606553867c7ade9ae}{evtwgt\-\_\-genie\-\_\-multisim\-\_\-weight}}\label{classUBXSecEvent_a61918cf3a435989606553867c7ade9ae}
 
 \begin{DoxyCompactList}\small\item\em Weights per function name used for G\-E\-N\-I\-E reweighting (multisim) \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_ad8d17cd44e668c11eec8802e3e3bc2c3}{Int\-\_\-t \hyperlink{classUBXSecEvent_ad8d17cd44e668c11eec8802e3e3bc2c3}{evtwgt\-\_\-genie\-\_\-models\-\_\-multisim\-\_\-nfunc}}\label{classUBXSecEvent_ad8d17cd44e668c11eec8802e3e3bc2c3}
+
+\begin{DoxyCompactList}\small\item\em Number of functions used for G\-E\-N\-I\-E Models reweighting (multisim) \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a018d13c6cad75386a88fa19f545a242c}{vector$<$ std\-::string $>$ \hyperlink{classUBXSecEvent_a018d13c6cad75386a88fa19f545a242c}{evtwgt\-\_\-genie\-\_\-models\-\_\-multisim\-\_\-funcname}}\label{classUBXSecEvent_a018d13c6cad75386a88fa19f545a242c}
+
+\begin{DoxyCompactList}\small\item\em Names of the functions used for G\-E\-N\-I\-E Models reweighting (multisim) \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_ae182cfc4b3c05140927035838db25931}{vector$<$ int $>$ \hyperlink{classUBXSecEvent_ae182cfc4b3c05140927035838db25931}{evtwgt\-\_\-genie\-\_\-models\-\_\-multisim\-\_\-nweight}}\label{classUBXSecEvent_ae182cfc4b3c05140927035838db25931}
+
+\begin{DoxyCompactList}\small\item\em Number of weights per function name used for G\-E\-N\-I\-E Models reweighting (multisim) \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a7ed17743c9088365329dae3edfded289}{vector$<$ vector$<$ double $>$ $>$ \hyperlink{classUBXSecEvent_a7ed17743c9088365329dae3edfded289}{evtwgt\-\_\-genie\-\_\-models\-\_\-multisim\-\_\-weight}}\label{classUBXSecEvent_a7ed17743c9088365329dae3edfded289}
+
+\begin{DoxyCompactList}\small\item\em Weights per function name used for G\-E\-N\-I\-E Models reweighting (multisim) \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_abcfe89b2434fdd4bf0f6a355daf5ec25}{Int\-\_\-t \hyperlink{classUBXSecEvent_abcfe89b2434fdd4bf0f6a355daf5ec25}{evtwgt\-\_\-flux\-\_\-multisim\-\_\-nfunc}}\label{classUBXSecEvent_abcfe89b2434fdd4bf0f6a355daf5ec25}
 
 \begin{DoxyCompactList}\small\item\em Number of functions used for F\-L\-U\-X reweighting (multisim) \end{DoxyCompactList}\item 

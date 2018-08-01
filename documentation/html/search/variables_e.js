@@ -1,5 +1,9 @@
 var searchData=
 [
+  ['sce_5fcorr_5fx',['sce_corr_x',['../classUBXSecEvent.html#ab4b9884593f36f28932d283f48fa1c43',1,'UBXSecEvent']]],
+  ['sce_5fcorr_5fy',['sce_corr_y',['../classUBXSecEvent.html#af00760d1a8cc63d2c71f13a6a95c6982',1,'UBXSecEvent']]],
+  ['sce_5fcorr_5fz',['sce_corr_z',['../classUBXSecEvent.html#a458269123d7dd4085f071252f3f5741c',1,'UBXSecEvent']]],
+  ['selected_5fslice',['selected_slice',['../classUBXSecEvent.html#ae930518dc565c14fb73272cbcd45201c',1,'UBXSecEvent']]],
   ['slc_5facpt_5foutoftime',['slc_acpt_outoftime',['../classUBXSecEvent.html#afd52675b8ca60af2941105f9739909a4',1,'UBXSecEvent']]],
   ['slc_5fconsistency',['slc_consistency',['../classUBXSecEvent.html#a549ad5d4e82d19528f79d0074cd4a7d4',1,'UBXSecEvent']]],
   ['slc_5fconsistency_5fscore',['slc_consistency_score',['../classUBXSecEvent.html#af7293625860342c3e57b02da4cacf863',1,'UBXSecEvent']]],

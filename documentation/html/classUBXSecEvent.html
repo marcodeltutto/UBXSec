@@ -104,12 +104,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> ()</td></tr>
 <tr class="memitem:a87228eb442b415053b9a9a070d29790b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a87228eb442b415053b9a9a070d29790b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>ResizeVectors</b> (int)</td></tr>
 <tr class="separator:a87228eb442b415053b9a9a070d29790b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5715e19d69fe2815cdd650b7639c70a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad5715e19d69fe2815cdd650b7639c70a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>ResizeGenieTruthVectors</b> (int)</td></tr>
+<tr class="separator:ad5715e19d69fe2815cdd650b7639c70a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b37b5a9d26a367edbe0a8fc0a69c103"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b37b5a9d26a367edbe0a8fc0a69c103"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>ResetGenieEventWeightVectorsPM1</b> ()</td></tr>
 <tr class="separator:a6b37b5a9d26a367edbe0a8fc0a69c103"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95f1ed351bf03ff7cd59106d9af67548"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a95f1ed351bf03ff7cd59106d9af67548"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>ResetGenieEventWeightVectorsMultisim</b> ()</td></tr>
 <tr class="separator:a95f1ed351bf03ff7cd59106d9af67548"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91cd626260843b5ab8535ccd06302f2c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a91cd626260843b5ab8535ccd06302f2c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>ResetGenieModelsEventWeightVectorsMultisim</b> ()</td></tr>
+<tr class="separator:a91cd626260843b5ab8535ccd06302f2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4544b8b5f596e1fd314476ddc240ad56"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4544b8b5f596e1fd314476ddc240ad56"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>ResetFluxEventWeightVectorsMultisim</b> ()</td></tr>
 <tr class="separator:a4544b8b5f596e1fd314476ddc240ad56"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -180,6 +186,10 @@ Double_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a3b05f41e3b302767d921996aed6f0d87">fv</a></td></tr>
 <tr class="memdesc:a3b05f41e3b302767d921996aed6f0d87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is 1 if the true neutrino vertex is in the fiducial volume. <br/></td></tr>
 <tr class="separator:a3b05f41e3b302767d921996aed6f0d87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afec3a80a452246fad1cbe8482dcf9d59"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afec3a80a452246fad1cbe8482dcf9d59"></a>
+Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#afec3a80a452246fad1cbe8482dcf9d59">fv_sce</a></td></tr>
+<tr class="memdesc:afec3a80a452246fad1cbe8482dcf9d59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is 1 if the true neutrino vertex is in the fiducial volume (takes into account the sce correction) <br/></td></tr>
+<tr class="separator:afec3a80a452246fad1cbe8482dcf9d59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a55ef25451d4a8206055d588b052caf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6a55ef25451d4a8206055d588b052caf"></a>
 Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a6a55ef25451d4a8206055d588b052caf">ccnc</a></td></tr>
 <tr class="memdesc:a6a55ef25451d4a8206055d588b052caf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is 0 if CC, 1 if NC. <br/></td></tr>
@@ -224,6 +234,22 @@ Double_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 Bool_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a6af1830fbdf3bb5df9087095941cf8ec">is_selected</a></td></tr>
 <tr class="memdesc:a6af1830fbdf3bb5df9087095941cf8ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if event passed numu cc inclusive selection. <br/></td></tr>
 <tr class="separator:a6af1830fbdf3bb5df9087095941cf8ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae930518dc565c14fb73272cbcd45201c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae930518dc565c14fb73272cbcd45201c"></a>
+Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#ae930518dc565c14fb73272cbcd45201c">selected_slice</a></td></tr>
+<tr class="memdesc:ae930518dc565c14fb73272cbcd45201c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The index of the selected slice. <br/></td></tr>
+<tr class="separator:ae930518dc565c14fb73272cbcd45201c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4b9884593f36f28932d283f48fa1c43"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab4b9884593f36f28932d283f48fa1c43"></a>
+Double_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#ab4b9884593f36f28932d283f48fa1c43">sce_corr_x</a></td></tr>
+<tr class="memdesc:ab4b9884593f36f28932d283f48fa1c43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Space charge correction to be applied to the true nu vertex (to be summed on x) <br/></td></tr>
+<tr class="separator:ab4b9884593f36f28932d283f48fa1c43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af00760d1a8cc63d2c71f13a6a95c6982"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af00760d1a8cc63d2c71f13a6a95c6982"></a>
+Double_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#af00760d1a8cc63d2c71f13a6a95c6982">sce_corr_y</a></td></tr>
+<tr class="memdesc:af00760d1a8cc63d2c71f13a6a95c6982"><td class="mdescLeft">&#160;</td><td class="mdescRight">Space charge correction to be applied to the true nu vertex (to be summed on y) <br/></td></tr>
+<tr class="separator:af00760d1a8cc63d2c71f13a6a95c6982"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a458269123d7dd4085f071252f3f5741c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a458269123d7dd4085f071252f3f5741c"></a>
+Double_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a458269123d7dd4085f071252f3f5741c">sce_corr_z</a></td></tr>
+<tr class="memdesc:a458269123d7dd4085f071252f3f5741c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Space charge correction to be applied to the true nu vertex (to be summed on z) <br/></td></tr>
+<tr class="separator:a458269123d7dd4085f071252f3f5741c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a350303f94db8bcfdbc2e517713d7ebf9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a350303f94db8bcfdbc2e517713d7ebf9"></a>
 Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a350303f94db8bcfdbc2e517713d7ebf9">mc_muon_contained</a></td></tr>
 <tr class="memdesc:a350303f94db8bcfdbc2e517713d7ebf9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is 1 if the true mc muon is fully contained. <br/></td></tr>
@@ -651,6 +677,22 @@ vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class=
 vector&lt; vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a61918cf3a435989606553867c7ade9ae">evtwgt_genie_multisim_weight</a></td></tr>
 <tr class="memdesc:a61918cf3a435989606553867c7ade9ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Weights per function name used for GENIE reweighting (multisim) <br/></td></tr>
 <tr class="separator:a61918cf3a435989606553867c7ade9ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8d17cd44e668c11eec8802e3e3bc2c3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8d17cd44e668c11eec8802e3e3bc2c3"></a>
+Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#ad8d17cd44e668c11eec8802e3e3bc2c3">evtwgt_genie_models_multisim_nfunc</a></td></tr>
+<tr class="memdesc:ad8d17cd44e668c11eec8802e3e3bc2c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of functions used for GENIE Models reweighting (multisim) <br/></td></tr>
+<tr class="separator:ad8d17cd44e668c11eec8802e3e3bc2c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a018d13c6cad75386a88fa19f545a242c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a018d13c6cad75386a88fa19f545a242c"></a>
+vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a018d13c6cad75386a88fa19f545a242c">evtwgt_genie_models_multisim_funcname</a></td></tr>
+<tr class="memdesc:a018d13c6cad75386a88fa19f545a242c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Names of the functions used for GENIE Models reweighting (multisim) <br/></td></tr>
+<tr class="separator:a018d13c6cad75386a88fa19f545a242c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae182cfc4b3c05140927035838db25931"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae182cfc4b3c05140927035838db25931"></a>
+vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#ae182cfc4b3c05140927035838db25931">evtwgt_genie_models_multisim_nweight</a></td></tr>
+<tr class="memdesc:ae182cfc4b3c05140927035838db25931"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of weights per function name used for GENIE Models reweighting (multisim) <br/></td></tr>
+<tr class="separator:ae182cfc4b3c05140927035838db25931"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ed17743c9088365329dae3edfded289"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7ed17743c9088365329dae3edfded289"></a>
+vector&lt; vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a7ed17743c9088365329dae3edfded289">evtwgt_genie_models_multisim_weight</a></td></tr>
+<tr class="memdesc:a7ed17743c9088365329dae3edfded289"><td class="mdescLeft">&#160;</td><td class="mdescRight">Weights per function name used for GENIE Models reweighting (multisim) <br/></td></tr>
+<tr class="separator:a7ed17743c9088365329dae3edfded289"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abcfe89b2434fdd4bf0f6a355daf5ec25"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abcfe89b2434fdd4bf0f6a355daf5ec25"></a>
 Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#abcfe89b2434fdd4bf0f6a355daf5ec25">evtwgt_flux_multisim_nfunc</a></td></tr>
 <tr class="memdesc:abcfe89b2434fdd4bf0f6a355daf5ec25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of functions used for FLUX reweighting (multisim) <br/></td></tr>

@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<!-- Production Project -->
+
+<!DOCTYPE project [
+<!ENTITY release "v06_26_01_13">
+<!ENTITY releasetag "e10:prof">
+<!ENTITY name "ubxsec_data_overlay_mcc8.9_test10">
+<!ENTITY tag "ubxsec">
+<!ENTITY file_type "data">
+<!ENTITY run_type "physics">
+<!ENTITY PNFSpath "/pnfs/uboone/resilient/users/mdeltutt/">
+<!ENTITY ubxsec_version "mcc8.9_test10">
+]>
+
+
+<project name="&name;">
+
+  <!-- Group -->
+  <group>uboone</group>
+
+  <!-- Project size -->
+  <!--<numevents>544808</numevents>-->
+  <numevents>800</numevents>
+
+  <!-- Operating System -->
+  <os>SL5,SL6</os>
+
+  <!-- Batch resources -->
+  <resource>DEDICATED,OPPORTUNISTIC,OFFSITE</resource>
+
+  <!-- Larsoft information -->
+  <larsoft>
+    <tag>&release;</tag>
+    <qual>&releasetag;</qual>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.9_test10.tgz</local>
+  </larsoft>
+
+  <!-- Project stages -->
+
+  <stage name="ubxsec">
+    <fcl>run_ubxsec_data_overlay.fcl</fcl>
+    <!--<inputdef>prod_reco_optfilter_bnb_ccinclusive_v13_mcc8_gooodruns_v4s</inputdef>-->
+    <inputlist>/pnfs/uboone/resilient/users/mdeltutt/FileLists/files_overlay_adi_v1.txt</inputlist>
+    <schema>root</schema>
+    <defname>&name;_&tag;_ana</defname>
+    <maxfilesperjob>10</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_data_overlay</outdir>
+    <workdir>&PNFSpath;grid_workdir/grid_workdir_ubxsec_&ubxsec_version;_data_overlay</workdir>
+    <bookdir>/uboone/data/users/mdeltutt/grid_bookdir/ubxsec_&ubxsec_version;_data_overlay</bookdir>
+    <numjobs>195</numjobs> 
+    <datatier>ubana</datatier>
+    <jobsub> --expected-lifetime=24h --mail_never --generate-email-summary </jobsub>
+    <memory>3500</memory>
+    <disk>30GB</disk>
+  </stage>
+
+  <!-- file type -->
+  <filetype>&file_type;</filetype>
+
+  <!-- run type -->
+  <runtype>&run_type;</runtype>
+
+</project>

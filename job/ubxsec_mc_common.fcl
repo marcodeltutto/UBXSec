@@ -31,6 +31,7 @@ services:
   @table::microboone_simulation_services
   #BackTracker:             @local::microboone_backtracker
   SpaceCharge:             @local::microboone_spacecharge
+  @table::microboone_services_reco
 }
 
 services.PmtGainService.PmtGainProvider.UseDB:                   false

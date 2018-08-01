@@ -16,7 +16,7 @@ TPCObjectMaker: {
   UsePremadeMCPHitAss:        true
   FilterObjects:              true
   PandorCosmicMode:           false
-  Debug:                      true
+  Debug:                      false
 }
 
 

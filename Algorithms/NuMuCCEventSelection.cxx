@@ -26,8 +26,8 @@ namespace ubana {
     _beamSpillEnds                     = pset.get< double > ( "BeamSpillEnds" );
     _residuals_std_down_cut            = pset.get< double > ( "ResidualsStdCutDown" );
     _residuals_std_up_cut              = pset.get< double > ( "ResidualsStdCutUp" );
-    _residuals_mean_down_cut           = pset.get< double > ( "ResidualsMeanCutDown" );
-    _residuals_mean_up_cut             = pset.get< double > ( "ResidualsMeanCutUp" );
+    // _residuals_mean_down_cut           = pset.get< double > ( "ResidualsMeanCutDown" );
+    // _residuals_mean_up_cut             = pset.get< double > ( "ResidualsMeanCutUp" );
     _perc_used_hits_in_cluster_cut     = pset.get< double > ( "PercUsedHitsCut" );
 
     _verbose                           = pset.get< bool > ( "Verbose" );
@@ -49,8 +49,8 @@ namespace ubana {
     std::cout << "---   _ntrack_cut                        = " << _ntrack_cut << std::endl;
     std::cout << "---   _residuals_std_down_cut            = " << _residuals_std_down_cut << std::endl;
     std::cout << "---   _residuals_std_up_cut              = " << _residuals_std_up_cut << std::endl;
-    std::cout << "---   _residuals_mean_down_cut           = " << _residuals_mean_down_cut << std::endl;
-    std::cout << "---   _residuals_mean_up_cut             = " << _residuals_mean_up_cut << std::endl;
+    // std::cout << "---   _residuals_mean_down_cut           = " << _residuals_mean_down_cut << std::endl;
+    // std::cout << "---   _residuals_mean_up_cut             = " << _residuals_mean_up_cut << std::endl;
     std::cout << "---   _perc_used_hits_in_cluster_cut     = " << _perc_used_hits_in_cluster_cut << std::endl;
     std::cout << "---   _pe_cut                            = " << _pe_cut << std::endl;
     std::cout << "---   _beamSpillStarts                   = " << _beamSpillStarts << std::endl;
@@ -288,8 +288,8 @@ namespace ubana {
 
     // FV
     bool in_fv = _ubxsec_event->slc_nuvtx_fv.at(scl_ll_max) == 1
-                 && (_ubxsec_event->slc_nuvtx_z.at(scl_ll_max) < 675 
-                     || _ubxsec_event->slc_nuvtx_z.at(scl_ll_max) > 775);
+                 /*&& (_ubxsec_event->slc_nuvtx_z.at(scl_ll_max) < 675 
+                     || _ubxsec_event->slc_nuvtx_z.at(scl_ll_max) > 775)*/;
     if(!in_fv) {
       reason = "fail_fiducial_volume";
       failure_map["fiducial_volume"] = false;
@@ -312,18 +312,18 @@ namespace ubana {
     }
 
     // Hit Residuals Mean Cut
-    if (_ubxsec_event->slc_muoncandidate_residuals_mean.at(scl_ll_max) > _residuals_mean_up_cut) {
-      reason = "fail_residuals_mean_up";
-      failure_map["residuals_mean_up"] = false;
-    } else {
-      failure_map["residuals_mean_up"] = true;
-    }
-    if (_ubxsec_event->slc_muoncandidate_residuals_mean.at(scl_ll_max) < _residuals_mean_down_cut) {
-      reason = "fail_residuals_mean_down";
-      failure_map["residuals_mean_down"] = false;
-    } else {
-      failure_map["residuals_mean_down"] = true;
-    }
+    // if (_ubxsec_event->slc_muoncandidate_residuals_mean.at(scl_ll_max) > _residuals_mean_up_cut) {
+    //   reason = "fail_residuals_mean_up";
+    //   failure_map["residuals_mean_up"] = false;
+    // } else {
+    //   failure_map["residuals_mean_up"] = true;
+    // }
+    // if (_ubxsec_event->slc_muoncandidate_residuals_mean.at(scl_ll_max) < _residuals_mean_down_cut) {
+    //   reason = "fail_residuals_mean_down";
+    //   failure_map["residuals_mean_down"] = false;
+    // } else {
+    //   failure_map["residuals_mean_down"] = true;
+    // }
 
     // Percental of used hits in cluster Cut
     if (_ubxsec_event->slc_muoncandidate_perc_used_hits_in_cluster.at(scl_ll_max) < _perc_used_hits_in_cluster_cut) {

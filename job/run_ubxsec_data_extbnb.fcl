@@ -14,16 +14,20 @@ outputs.out1.fileName: "%ifb_%tc_ubxsec.root"
 outputs.out1.dataTier: "ubxsec"
 outputs.out1.SelectEvents: [ reco ]
 
-source.inputCommands: ["keep *_*_*_*"]
+#source.inputCommands: ["keep *_*_*_*", "drop *_simpleFlashBeam_*_*"]
 
 
-physics.producers.NeutrinoFlashMatch.FlashVetoTimeStart: 3.65
-physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   5.25
 
-physics.producers.UBXSec.BeamSpillStart:                 3.65
-physics.producers.UBXSec.BeamSpillEnd:                   5.25
+beam_start: 3.60 #3.65
+beam_end:   5.40 #5.25
 
-physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillStarts: 3.65
-physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillEnds:   5.25
+physics.producers.NeutrinoFlashMatch.FlashVetoTimeStart: @local::beam_start
+physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   @local::beam_end
+
+physics.producers.UBXSec.BeamSpillStart:                 @local::beam_start
+physics.producers.UBXSec.BeamSpillEnd:                   @local::beam_end
+
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillStarts: @local::beam_start
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillEnds:   @local::beam_end
 
 physics.producers.UBXSec.UseGENIEInfo:                   false

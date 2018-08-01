@@ -36,6 +36,7 @@
 #include "canvas/Utilities/InputTag.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
+#include "art/Framework/Services/Optional/TFileService.h"
 
 #include "nusimdata/SimulationBase/MCTruth.h"
 #include "nusimdata/SimulationBase/MCParticle.h"
@@ -46,6 +47,11 @@
 
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "larcore/Geometry/Geometry.h"
+
+#include "TVector3.h"
+#include "TTree.h"
+#include "TH1D.h"
+#include "TRandom3.h"
 
 #include <memory>
 
@@ -74,6 +80,18 @@ private:
   std::string _simphot_label;
   bool        _debug;
 
+  TRandom3 random;
+
+  int _run, _subrun, _event;
+  int _pe_total = 0;
+  int _pe_scintillation = 0;
+  int _pe_cherenkov = 0;
+  std::vector<double> _cherenkov_time_v;
+  std::vector<int> _cherenkov_pmt_v;
+  std::vector<double> _scintillation_time_v;
+  std::vector<int> _scintillation_pmt_v;
+  TTree* _tree1;
+
   void GetFlashLocation(std::vector<double>, double&, double&, double&, double&);
 
 };
@@ -86,12 +104,29 @@ NeutrinoMCFlash::NeutrinoMCFlash(fhicl::ParameterSet const & p)
   _simphot_label = p.get<std::string>("SimPhotProduct", "largeant");    
   _debug         = p.get<bool>       ("DebugMode",      false);
 
+  art::ServiceHandle<art::TFileService> fs;
+  _tree1 = fs->make<TTree>("tree","");
+  _tree1->Branch("run",                  &_run,                "run/I");
+  _tree1->Branch("subrun",               &_subrun,             "subrun/I");
+  _tree1->Branch("event",                &_event,              "event/I");
+  _tree1->Branch("pe_total",             &_pe_total,           "pe_total/I");
+  _tree1->Branch("pe_scintillation",     &_pe_scintillation,   "pe_scintillation/I");
+  _tree1->Branch("pe_cherenkov",         &_pe_cherenkov,       "pe_cherenkov/I");
+  _tree1->Branch("cherenkov_time_v",     "std::vector<double>", &_cherenkov_time_v);
+  _tree1->Branch("cherenkov_pmt_v",      "std::vector<int>",    &_cherenkov_pmt_v);
+  _tree1->Branch("scintillation_time_v", "std::vector<double>", &_scintillation_time_v);
+  _tree1->Branch("scintillation_pmt_v",  "std::vector<int>",    &_scintillation_pmt_v);
+
   produces< std::vector<recob::OpFlash> >();
 }
 
 void NeutrinoMCFlash::produce(art::Event & e)
 {
   if (_debug) std::cout << "***** NeutrinoMCFlash starts." << std::endl;
+
+  _run    = e.id().run();
+  _subrun = e.id().subRun();
+  _event  = e.id().event();
 
   // produce OpFlash data-product to be filled within module
   std::unique_ptr< std::vector<recob::OpFlash> > opflashes(new std::vector<recob::OpFlash>);
@@ -188,6 +223,11 @@ void NeutrinoMCFlash::produce(art::Event & e)
   std::cout << "[NeutrinoMCFlash] Neutrino G4 interaction time: "  << nuTime << std::endl; 
 
   std::vector<std::vector<double> > pmt_v(1,std::vector<double>(geo->NOpDets(),0));
+  _pe_total = _pe_cherenkov = _pe_scintillation = 0;
+  _cherenkov_time_v.clear();
+  _cherenkov_pmt_v.clear();
+  _scintillation_time_v.clear();
+  _scintillation_pmt_v.clear();
 
   for(size_t opdet=0; opdet<32; ++opdet) {
 
@@ -206,6 +246,29 @@ void NeutrinoMCFlash::produce(art::Event & e)
         //if (_debug) std::cout << " photon time " << oneph.Time << std::endl;
         if (_debug) std::cout << " photon time " << ts->G4ToElecTime(oneph.Time) - trig_time << std::endl;
         pmt_v[0][opdet2opch[opdet]] += 1;
+
+        _pe_total ++;
+        if (oneph.SetInSD) {
+
+          // QE 
+          double qe = 1;
+          double wl = 1.2398e3/(oneph.Energy * 1.e6);
+          std::cout << "Energy: " << oneph.Energy * 1.e6 << ", Wavelength: " << wl << std::endl;
+          if (wl < 300) qe = 0.0093;
+          else qe = 0.09;
+
+          if(random.Uniform(1.) < qe) {
+            _pe_cherenkov ++;
+            _cherenkov_time_v.push_back(oneph.Time);
+            _cherenkov_pmt_v.push_back(opdet);
+          }
+          
+        }
+        else {
+          _pe_scintillation ++;
+          _scintillation_time_v.push_back(oneph.Time);
+          _scintillation_pmt_v.push_back(opdet);
+        }
       }
     }
   }
@@ -220,9 +283,15 @@ void NeutrinoMCFlash::produce(art::Event & e)
                        pmt_v[0],                                   // pe per pmt
                        0, 0, 1,                                    // this are just default values
                        Ycenter, Ywidth, Zcenter, Zwidth);          // flash location
+
+  std::cout << "[NeutrinoMCFlash] MC Flash Time: "  << flash.Time() << std::endl;
+  std::cout << "[NeutrinoMCFlash] MC Flash PE:   "  << flash.TotalPE() << std::endl;
+
   opflashes->emplace_back(std::move(flash));
 
   e.put(std::move(opflashes));
+
+  _tree1->Fill();
 
   if (_debug) std::cout << "***** NeutrinoMCFlash ends." << std::endl;
 

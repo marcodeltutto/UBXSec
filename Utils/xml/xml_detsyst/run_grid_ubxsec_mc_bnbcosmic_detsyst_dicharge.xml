@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<!-- Production Project -->
+
+<!DOCTYPE project [
+<!ENTITY release "v06_26_01_13">
+<!ENTITY releasetag "e10:prof">
+<!ENTITY name "ubxsec_mc_bnbcosmic_mcc8.9_detsyst_dicharge">
+<!ENTITY outdefname "ubxsec_mc_bnbcosmic_mcc89_detsyst_dicharge">
+<!ENTITY tag "ubxsec">
+<!ENTITY file_type "mc">
+<!ENTITY run_type "physics">
+<!ENTITY PNFSpath "/pnfs/uboone/resilient/users/mdeltutt/">
+<!ENTITY ubxsec_version "mcc8.9_detsyst_dicharge">
+]>
+
+
+<project name="&name;">
+
+  <!-- Group -->
+  <group>uboone</group>
+
+  <!-- Project size -->
+  <numevents>50000</numevents>
+
+  <!-- Operating System -->
+  <os>SL5,SL6</os>
+
+  <!-- Batch resources -->
+  <resource>DEDICATED,OPPORTUNISTIC</resource>
+
+  <!-- Larsoft information -->
+  <larsoft>
+    <tag>&release;</tag>
+    <qual>&releasetag;</qual>
+    <!--<local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.7_test7.tgz</local>-->
+  </larsoft>
+
+  <!-- Project stages -->
+
+  <stage name="ubxsec">
+    <fcl>run_ubxsec_mc_bnbcosmic.fcl</fcl>
+    <inputdef>zennamo_v1_BNBCosmics_detsyst_dicharge</inputdef>
+    <schema>root</schema>
+    <!--<inputlist>&PNFSpath;bnb_cosmic_files_mcc8.3.list</inputlist>-->
+    <defname>mdeltutt_&name;</defname>
+    <maxfilesperjob>5</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_mc_bnbcosmic</outdir>
+    <workdir>&PNFSpath;grid_workdir/grid_workdir_ubxsec_&ubxsec_version;_mc_bnbcosmic</workdir>
+    <bookdir>/uboone/data/users/mdeltutt/grid_bookdir/ubxsec_&ubxsec_version;_mc_bnbcosmic</bookdir>
+    <numjobs>190</numjobs>
+    <datatier>reconstructed</datatier>
+    <memory>6000</memory>
+    <jobsub>  --expected-lifetime=20h -q --generate-email-summary </jobsub>
+    <disk>60GB</disk>
+  </stage>
+
+  <!-- file type -->
+  <filetype>&file_type;</filetype>
+
+  <!-- run type -->
+  <runtype>&run_type;</runtype>
+
+</project>

@@ -50,6 +50,7 @@ class UBXSecEvent /*: public TObject*/{
   Double_t        muon_tag_score; ///< Not used
   Double_t        fm_score; ///< Not used
   Int_t           fv; ///< Is 1 if the true neutrino vertex is in the fiducial volume
+  Int_t           fv_sce; ///< Is 1 if the true neutrino vertex is in the fiducial volume (takes into account the sce correction)
   Int_t           ccnc; ///< Is 0 if CC, 1 if NC
   Int_t           mode; ///< Iteraction mode: 0=Quasi-elastic or Elastic, 1=Resonant (RES), 2=DIS, 3=Coherent production, 10=MEC
   Int_t           nupdg; ///< Neutrino flavour (pdg code)
@@ -61,6 +62,11 @@ class UBXSecEvent /*: public TObject*/{
   Int_t           genie_mult_ch; ///< Number of stable charged GENIE final state particles
   Double_t        bnb_weight; ///< BNB correction weight to correct nue flux
   Bool_t          is_selected; ///< True if event passed numu cc inclusive selection
+  Int_t           selected_slice; ///< The index of the selected slice
+
+  Double_t        sce_corr_x; ///< Space charge correction to be applied to the true nu vertex (to be summed on x)
+  Double_t        sce_corr_y; ///< Space charge correction to be applied to the true nu vertex (to be summed on y)
+  Double_t        sce_corr_z; ///< Space charge correction to be applied to the true nu vertex (to be summed on z)
 
   Int_t           mc_muon_contained; ///< Is 1 if the true mc muon is fully contained
   Int_t           is_swtriggered; ///< Is true if the event passed the software trigger
@@ -147,32 +153,6 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_muoncandidate_perc_used_hits_in_cluster; ///< Number of used hits in the cluster to make the track
   vector<double>   slc_muoncandidate_maxscatteringangle; ///< Maximum scattering angle along track
 
-/*
-  vector<double>   slc_othershowers_longest_length; ///< Length of longest shower not in the TPCObject
-  vector<double>   slc_othershowers_longest_startx; ///< Start x of longest shower not in the TPCObject
-  vector<double>   slc_othershowers_longest_starty; ///< Start y of longest shower not in the TPCObject
-  vector<double>   slc_othershowers_longest_startz; ///< Start z of longest shower not in the TPCObject
-  vector<double>   slc_othershowers_longest_phi; ///< Phi of longest shower not in the TPCObject
-  vector<double>   slc_othershowers_longest_theta; ///< CosTheta of longest shower not in the TPCObject
-  vector<double>   slc_othershowers_longest_openangle; ///< Opening angle of longest shower not in the TPCObject
-
-  vector<double>   slc_othershowers_forward_length; ///< Length of most forward shower not in the TPCObject
-  vector<double>   slc_othershowers_forward_startx; ///< Start x of most forward shower not in the TPCObject
-  vector<double>   slc_othershowers_forward_starty; ///< Start y of most forward shower not in the TPCObject
-  vector<double>   slc_othershowers_forward_startz; ///< Start z of most forward shower not in the TPCObject
-  vector<double>   slc_othershowers_forward_phi; ///< Phi of most forward shower not in the TPCObject
-  vector<double>   slc_othershowers_forward_theta; ///< CosTheta of most forward shower not in the TPCObject
-  vector<double>   slc_othershowers_forward_openangle; ///< Opening angle of most forward shower not in the TPCObject
-
-  vector<double>   slc_othershowers_flashmatch_length; ///< Length of most flash matched shower not in the TPCObject
-  vector<double>   slc_othershowers_flashmatch_startx; ///< Start x of most flash matched shower not in the TPCObject
-  vector<double>   slc_othershowers_flashmatch_starty; ///< Start y of most flash matched shower not in the TPCObject
-  vector<double>   slc_othershowers_flashmatch_startz; ///< Start z of most flash matched shower not in the TPCObject
-  vector<double>   slc_othershowers_flashmatch_phi; ///< Phi of most flash matched shower not in the TPCObject
-  vector<double>   slc_othershowers_flashmatch_theta; ///< CosTheta of most flash matched shower not in the TPCObject
-  vector<double>   slc_othershowers_flashmatch_openangle; ///< Opening angle of most flash matched shower not in the TPCObject
-  */
-
   Int_t            nbeamfls; ///< Number of beam flashes in the event
   vector<double>   beamfls_time; ///< Time of the beam flash
   vector<double>   beamfls_pe; ///< PE of the beam flash
@@ -201,6 +181,11 @@ class UBXSecEvent /*: public TObject*/{
   vector<std::string> evtwgt_genie_multisim_funcname; ///< Names of the functions used for GENIE reweighting (multisim)
   vector<int> evtwgt_genie_multisim_nweight; ///< Number of weights per function name used for GENIE reweighting (multisim)
   vector<vector<double>> evtwgt_genie_multisim_weight; ///< Weights per function name used for GENIE reweighting (multisim)
+
+  Int_t evtwgt_genie_models_multisim_nfunc; ///< Number of functions used for GENIE Models reweighting (multisim)
+  vector<std::string> evtwgt_genie_models_multisim_funcname; ///< Names of the functions used for GENIE Models reweighting (multisim)
+  vector<int> evtwgt_genie_models_multisim_nweight; ///< Number of weights per function name used for GENIE Models reweighting (multisim)
+  vector<vector<double>> evtwgt_genie_models_multisim_weight; ///< Weights per function name used for GENIE Models reweighting (multisim)
  
   Int_t evtwgt_flux_multisim_nfunc; ///< Number of functions used for FLUX reweighting (multisim)
   vector<std::string> evtwgt_flux_multisim_funcname; ///< Names of the functions used for FLUX reweighting (multisim)
@@ -213,8 +198,10 @@ class UBXSecEvent /*: public TObject*/{
   virtual ~UBXSecEvent();
   void Init();
   void ResizeVectors(int); 
+  void ResizeGenieTruthVectors(int); 
   void ResetGenieEventWeightVectorsPM1();
   void ResetGenieEventWeightVectorsMultisim();
+  void ResetGenieModelsEventWeightVectorsMultisim();
   void ResetFluxEventWeightVectorsMultisim();
 
 };

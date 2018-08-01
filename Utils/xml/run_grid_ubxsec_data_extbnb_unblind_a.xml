@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+
+<!-- Production Project -->
+
+<!DOCTYPE project [
+<!ENTITY release "v06_26_01_18">
+<!ENTITY releasetag "e10:prof">
+<!ENTITY name "ubxsec_data_extbnb_a_ubcodev06_26_01_18__v11">
+<!ENTITY tag "ubxsec">
+<!ENTITY file_type "data">
+<!ENTITY run_type "physics">
+<!ENTITY PNFSpath "/pnfs/uboone/resilient/users/mdeltutt/">
+<!ENTITY ubxsec_version "ubcodev06_26_01_18__v11">
+]>
+
+
+<project name="&name;">
+
+  <!-- Group -->
+  <group>uboone</group>
+
+  <!-- Project size -->
+  <numevents>1000</numevents>
+
+  <!-- Operating System -->
+  <os>SL5,SL6</os>
+
+  <!-- Batch resources -->
+  <resource>DEDICATED,OPPORTUNISTIC,OFFSITE</resource>
+
+  <!-- Larsoft information -->
+  <larsoft>
+    <tag>&release;</tag>
+    <qual>&releasetag;</qual>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_ubcodev06_26_01_18__v11.tgz</local>
+  </larsoft>
+
+  <!-- Project stages -->
+
+  <stage name="ubxsec">
+    <fcl>run_ubxsec_data_extbnb.fcl</fcl>
+    <inputdef>prod_reco_optfilter_extbnb_v12_mcc8_gooodruns_v4s</inputdef>
+    <schema>root</schema>
+    <defname>&name;_&tag;_ana</defname>
+    <maxfilesperjob>20</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_data_extbnb_a</outdir>
+    <workdir>&PNFSpath;grid_workdir/grid_workdir_ubxsec_&ubxsec_version;_data_extbnb_a</workdir>
+    <bookdir>/uboone/data/users/mdeltutt/grid_bookdir/ubxsec_&ubxsec_version;_data_extbnb_a</bookdir>
+    <numjobs>600</numjobs>
+    <datatier>ubana</datatier>
+    <memory>3500</memory>
+    <jobsub> --expected-lifetime=24h --mail_never --generate-email-summary </jobsub>
+    <disk>40GB</disk>
+  </stage>
+
+  <!-- file type -->
+  <filetype>&file_type;</filetype>
+
+  <!-- run type -->
+  <runtype>&run_type;</runtype>
+
+</project>

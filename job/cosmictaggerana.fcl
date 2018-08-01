@@ -1,3 +1,4 @@
+#include "fiducial_volume_settings.fcl"
 
 BEGIN_PROLOG
 #

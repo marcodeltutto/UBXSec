@@ -111,6 +111,12 @@ public:
    */
   flashana::Flash_t Trial(std::vector<art::Ptr<recob::Track>> track_v, flashana::Flash_t flashBeam, double & _chi2, double & _ll); 
 
+  /**
+   *  @brief Calculates flash position
+   *
+   */
+  void GetFlashLocation(std::vector<double>, double&, double&, double&, double&);
+
   // Required functions.
   void produce(art::Event & e) override;
 
@@ -238,10 +244,6 @@ void NeutrinoFlashMatch::produce(art::Event & e)
     // Construct a Flash_t
     ::flashana::Flash_t f;
     f.x = f.x_err = 0;
-    f.y = flash.YCenter();
-    f.z = flash.ZCenter();
-    f.y_err = flash.YWidth();
-    f.z_err = flash.ZWidth();
     f.pe_v.resize(geo->NOpDets());
     f.pe_err_v.resize(geo->NOpDets());
     for (unsigned int i = 0; i < f.pe_v.size(); i++) {
@@ -252,6 +254,12 @@ void NeutrinoFlashMatch::produce(art::Event & e)
       f.pe_v[opdet] = flash.PE(i);
       f.pe_err_v[opdet] = sqrt(flash.PE(i));
     }
+    double Ycenter, Zcenter, Ywidth, Zwidth;
+    GetFlashLocation(f.pe_v, Ycenter, Zcenter, Ywidth, Zwidth); 
+    f.y = Ycenter;
+    f.z = Zcenter;
+    f.y_err = Ywidth;
+    f.z_err = Zwidth;
     f.time = flash.Time();
     f.idx = nBeamFlashes-1;
     beam_flashes.resize(nBeamFlashes);
@@ -662,6 +670,51 @@ flashana::Flash_t NeutrinoFlashMatch::Trial(std::vector<art::Ptr<recob::Track>> 
   //std::cout << "------------ ------------ >>>>> TRIAL, -loglikelihood is: " << _ll << std::endl;
 
   return flashHypo;
+}
+
+void NeutrinoFlashMatch::GetFlashLocation(std::vector<double> pePerOpDet, 
+                                          double& Ycenter, 
+                                          double& Zcenter, 
+                                          double& Ywidth, 
+                                          double& Zwidth)
+{
+
+  // Reset variables
+  Ycenter = Zcenter = 0.;
+  Ywidth  = Zwidth  = -999.;
+  double totalPE = 0.;
+  double sumy = 0., sumz = 0., sumy2 = 0., sumz2 = 0.;
+
+  for (unsigned int opdet = 0; opdet < pePerOpDet.size(); opdet++) {
+
+    if (opdet > 31 && opdet < 200){
+      //  std::cout << "Ignoring channel " << opch << " as it's not a real channel" << std::endl;                                                                                             
+      continue;
+    }
+
+    // Get physical detector location for this opChannel
+    double PMTxyz[3];
+    ::art::ServiceHandle<geo::Geometry> geo;
+    geo->OpDetGeoFromOpDet(opdet).GetCenter(PMTxyz);
+
+    // Add up the position, weighting with PEs
+    sumy    += pePerOpDet[opdet]*PMTxyz[1];
+    sumy2   += pePerOpDet[opdet]*PMTxyz[1]*PMTxyz[1];
+    sumz    += pePerOpDet[opdet]*PMTxyz[2];
+    sumz2   += pePerOpDet[opdet]*PMTxyz[2]*PMTxyz[2];
+
+    totalPE += pePerOpDet[opdet];
+  }
+
+  Ycenter = sumy/totalPE;
+  Zcenter = sumz/totalPE;
+
+  // This is just sqrt(<x^2> - <x>^2)
+  if ( (sumy2*totalPE - sumy*sumy) > 0. ) 
+    Ywidth = std::sqrt(sumy2*totalPE - sumy*sumy)/totalPE;
+  
+  if ( (sumz2*totalPE - sumz*sumz) > 0. ) 
+    Zwidth = std::sqrt(sumz2*totalPE - sumz*sumz)/totalPE;
 }
 
 

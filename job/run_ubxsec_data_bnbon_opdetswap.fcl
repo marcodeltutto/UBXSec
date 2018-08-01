@@ -1,0 +1,37 @@
+#include "ubxsec_data_common.fcl"
+
+process_name: UBXSec
+
+services.TFileService.fileName: "ubxsec_output_data_bnbon.root"
+
+physics.reco:          [ @sequence::ubxsec_data_producers , @sequence::ubxsec_data_filters ]
+physics.trigger_paths: [ reco ]
+physics.ana:           [ @sequence::ubxsec_data_analyzers ]
+physics.stream1:       [ out1 ]
+physics.end_paths:     [ ana, stream1 ]
+
+outputs.out1.fileName: "%ifb_%tc_ubxsec.root"
+outputs.out1.dataTier: "reconstructed"
+outputs.out1.SelectEvents: [ reco ]
+
+source.inputCommands: ["keep *_*_*_*" ]
+
+
+
+beam_start: 3.20 #3.30
+beam_end:   5.00 #4.90
+
+physics.producers.NeutrinoFlashMatch.FlashVetoTimeStart: @local::beam_start
+physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   @local::beam_end
+
+physics.producers.UBXSec.BeamSpillStart:                 @local::beam_start
+physics.producers.UBXSec.BeamSpillEnd:                   @local::beam_end
+
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillStarts: @local::beam_start
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillEnds:   @local::beam_end
+
+physics.producers.UBXSec.UseGENIEInfo:                   false
+
+physics.producers.pandoraCosmicFlashTag.DoOpDetSwap: true
+physics.producers.NeutrinoFlashMatch.DoOpDetSwap:    true
+physics.producers.UBXSec.DoOpDetSwap:                true

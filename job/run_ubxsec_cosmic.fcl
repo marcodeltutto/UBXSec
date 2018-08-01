@@ -1,4 +1,4 @@
-#include "run_ubxsec.fcl"
+#include "run_ubxsec_mc_bnbcosmic.fcl"
 
 services.TFileService.fileName: "ubxsec_output_cosmic.root"
 

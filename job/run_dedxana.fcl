@@ -16,7 +16,6 @@
 
 #include "neutrinomcflash.fcl"
 #include "neutrinoflashmatch.fcl"
-#include "neutrinoflashmatchana.fcl"
 
 process_name : NeutrinoFlashMatch      #The process name must NOT contain any underscores
 

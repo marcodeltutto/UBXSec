@@ -510,7 +510,7 @@ void CandidateConsistency::produce(art::Event & e)
       if (passed) {
         _ct_manager.PrintClusterStatus();
       } else {
-        std::cout << "Not passed" << std::endl;
+        if(_debug) std::cout << "[CandidateConsistency] Not passed" << std::endl;
         continue;
       }
 
@@ -544,9 +544,10 @@ void CandidateConsistency::produce(art::Event & e)
       std::vector<double> linearity_v = processed_cluster._linearity_v;
       bool linearity_failed = false;
       for (size_t l = 2; l < linearity_v.size()-2; l++) {
-        if (linearity_v.at(l) < _linearity_threshold)
+        if (linearity_v.at(l) < _linearity_threshold) {
           if(_debug) std::cout << "[CandidateConsistency] Linearity is below threshold: " << linearity_v.at(l) << std::endl;
           linearity_failed = true;
+	}
       }
 
       // If we have a shower, with low dqds, and whose hits

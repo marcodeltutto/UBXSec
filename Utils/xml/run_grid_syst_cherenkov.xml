@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+
+<!-- Production Project -->
+
+<!DOCTYPE project [
+<!ENTITY release "v06_26_01_18">
+<!ENTITY releasetag "e10:prof">
+<!ENTITY name "prod_syst_cherenkov_ubcodev06_26_01_18__v8">
+<!ENTITY outdefname "prod_syst_cherenkov_ubcodev06_26_01_18__v8">
+<!ENTITY tag "ubxsec">
+<!ENTITY file_type "mc">
+<!ENTITY run_type "physics">
+<!ENTITY PNFSpath "/pnfs/uboone/resilient/users/mdeltutt/">
+<!ENTITY ubxsec_version "ubcodev06_26_01_18__v8">
+]>
+
+
+<project name="&name;">
+
+  <!-- Group -->
+  <group>uboone</group>
+
+  <!-- Project size -->
+  <numevents>10000</numevents>
+
+  <!-- Operating System -->
+  <os>SL5,SL6</os>
+
+  <!-- Batch resources -->
+  <resource>DEDICATED,OPPORTUNISTIC</resource>
+
+  <!-- Larsoft information -->
+  <larsoft>
+    <tag>&release;</tag>
+    <qual>&releasetag;</qual>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_ubcodev06_26_01_18__v8.tgz</local>
+  </larsoft>
+
+  <!-- Project stages -->
+
+  <stage name="g4">
+    <fcl>standard_g4_uboone_cherenkov.fcl</fcl>
+    <inputdef>prodgenie_bnb_nu_cosmic_uboone_detsyst_CV_mcc8.11_sim</inputdef>
+    <schema>root</schema>
+    <!--<inputlist>&PNFSpath;bnb_cosmic_files_mcc8.3.list</inputlist>-->
+    <defname>mdeltutt_&name;_180323</defname>
+    <maxfilesperjob>1</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/prod_syst_cherenkov_&ubxsec_version;_g4</outdir>
+    <workdir>&PNFSpath;grid_workdir/grid_workdir_prod_syst_cherenkov_&ubxsec_version;_g4</workdir>
+    <bookdir>/uboone/data/users/mdeltutt/grid_bookdir/prod_syst_cherenkov_&ubxsec_version;_g4</bookdir>
+    <numjobs>200</numjobs>
+    <datatier>reconstructed</datatier>
+    <memory>6000</memory>
+    <jobsub>  --expected-lifetime=48h -q --generate-email-summary </jobsub>
+    <disk>10GB</disk>
+  </stage>
+
+  <stage name="detsim">
+    <fcl>standard_detsim_uboone.fcl</fcl>
+    <schema>root</schema>
+    <defname>mdeltutt_&name;_180323</defname>
+    <maxfilesperjob>1</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/prod_syst_cherenkov_&ubxsec_version;_detsim</outdir>
+    <workdir>&PNFSpath;grid_workdir/grid_workdir_prod_syst_cherenkov_&ubxsec_version;_detsim</workdir>
+    <bookdir>/uboone/data/users/mdeltutt/grid_bookdir/prod_syst_cherenkov_&ubxsec_version;_detsim</bookdir>
+    <numjobs>200</numjobs>
+    <datatier>reconstructed</datatier>
+    <memory>3000</memory>
+    <jobsub>  --expected-lifetime=20h -q --generate-email-summary </jobsub>
+    <disk>10GB</disk>
+  </stage>
+
+  <stage name="reco1">
+    <fcl>reco_uboone_mcc8_driver_stage1.fcl</fcl>
+    <schema>root</schema>
+    <defname>mdeltutt_&name;_180323</defname>
+    <maxfilesperjob>1</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/prod_syst_cherenkov_&ubxsec_version;_reco1</outdir>
+    <workdir>&PNFSpath;grid_workdir/grid_workdir_prod_syst_cherenkov_&ubxsec_version;_reco1</workdir>
+    <bookdir>/uboone/data/users/mdeltutt/grid_bookdir/prod_syst_cherenkov_&ubxsec_version;_reco1</bookdir>
+    <numjobs>200</numjobs>
+    <datatier>reconstructed</datatier>
+    <memory>3000</memory>
+    <jobsub>  --expected-lifetime=20h -q --generate-email-summary </jobsub>
+    <disk>10GB</disk>
+  </stage>
+
+  <stage name="reco2">
+    <fcl>reco_uboone_mcc8_driver_stage2.fcl</fcl>
+    <schema>root</schema>
+    <defname>mdeltutt_&name;_180323</defname>
+    <maxfilesperjob>1</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/prod_syst_cherenkov_&ubxsec_version;_reco2</outdir>
+    <workdir>&PNFSpath;grid_workdir/grid_workdir_prod_syst_cherenkov_&ubxsec_version;_reco2</workdir>
+    <bookdir>/uboone/data/users/mdeltutt/grid_bookdir/prod_syst_cherenkov_&ubxsec_version;_reco2</bookdir>
+    <numjobs>200</numjobs>
+    <datatier>reconstructed</datatier>
+    <memory>3000</memory>
+    <jobsub>  --expected-lifetime=20h -q --generate-email-summary </jobsub>
+    <disk>10GB</disk>
+  </stage>
+
+  <stage name="ubxsec">
+    <fcl>run_ubxsec_mc_bnbcosmic.fcl</fcl>
+    <schema>root</schema>
+    <defname>mdeltutt_&name;_180323</defname>
+    <maxfilesperjob>1</maxfilesperjob>
+    <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/prod_syst_cherenkov_&ubxsec_version;_ubxsec</outdir>
+    <workdir>&PNFSpath;grid_workdir/grid_workdir_prod_syst_cherenkov_&ubxsec_version;_ubxsec</workdir>
+    <bookdir>/uboone/data/users/mdeltutt/grid_bookdir/prod_syst_cherenkov_&ubxsec_version;_ubxsec</bookdir>
+    <numjobs>200</numjobs>
+    <datatier>reconstructed</datatier>
+    <memory>4000</memory>
+    <jobsub>  --expected-lifetime=20h -q --generate-email-summary </jobsub>
+    <disk>10GB</disk>
+  </stage>
+
+
+
+  <!-- file type -->
+  <filetype>&file_type;</filetype>
+
+  <!-- run type -->
+  <runtype>&run_type;</runtype>
+
+</project>

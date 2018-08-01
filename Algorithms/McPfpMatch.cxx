@@ -97,7 +97,7 @@ namespace ubana {
     lar_pandora::MCParticlesToHits    trueParticlesToHits;
     lar_pandora::HitsToMCParticles    hit_to_mcps_map;
 
-    if (!e.isRealData()) {
+    if (!_is_data) {
       lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geant_producer, trueParticleVector);
       lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geant_producer, truthToParticles, particlesToTruth);
       lar_pandora::LArPandoraHelper::BuildMCParticleHitMaps(e, 
@@ -147,6 +147,13 @@ namespace ubana {
                              std::string _hit_mcp_producer,
                              lar_pandora::LArPandoraHelper::DaughterMode daughterMode) {
 
+
+    _is_data = e.isRealData();
+
+    if (_override_real_data) {
+      _is_data = false;
+    }
+
     // Collect hits
     lar_pandora::HitVector hitVector;
     //lar_pandora::LArPandoraHelper::CollectHits(e, _hitfinder_producer, hitVector);
@@ -187,7 +194,7 @@ namespace ubana {
     lar_pandora::MCParticlesToHits    trueParticlesToHits;
     lar_pandora::HitsToMCParticles    hit_to_mcps_map;
 
-    if (!e.isRealData()) {
+    if (!_is_data) {
       lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geant_producer, trueParticleVector);
       lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geant_producer, truthToParticles, particlesToTruth);
 

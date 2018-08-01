@@ -72,8 +72,8 @@ namespace ubana{
     double _ntrack_cut;
     double _residuals_std_down_cut;
     double _residuals_std_up_cut;
-    double _residuals_mean_down_cut;
-    double _residuals_mean_up_cut;
+    // double _residuals_mean_down_cut;
+    // double _residuals_mean_up_cut;
     double _perc_used_hits_in_cluster_cut;
 
     double _pe_cut;

@@ -3,9 +3,11 @@
 #include "T0RecoAnodeCathodePiercing.fcl"
 #include "opticaldetectormodules_microboone.fcl"
 #include "correct_saturation.fcl"
+#include "calibration_microboone.fcl"
 
 #include "genie_eventweight_microboone_ubxsec.fcl"
 #include "flux_eventweight_microboone_ubxsec.fcl"
+##include "eventweight_microboone_models.fcl"
 
 #include "tpcobjectmaker.fcl"
 #include "neutrinomcflash.fcl"
@@ -35,6 +37,8 @@
 
 #include "tpcneutrinoidfilter_microboone.fcl"
 
+#include "mctrutht0matching.fcl"
+
 BEGIN_PROLOG
 #
 # Module configuration
@@ -53,6 +57,8 @@ ubxsec_mc_reco:
   pandoraCosmicStoppingMu:        @local::microboone_cosmicstoppingmutagger_mc
   pandoraCosmicHitRemoval:        @local::microboone_crhitremoval
 
+  #crHitRemovalTruthMatch:         @local::standard_mcparticlehitmatching
+
   pandoraNu:                      @local::microboone_pandora
   #pandoraNuAll:                   @local::microboone_pandora
 
@@ -60,6 +66,8 @@ ubxsec_mc_reco:
 
   pandoraNucalo:                  @local::microboone_calomc
   pandoraNupid:                   @local::microboone_chi2pid
+  pandoraNucali:                  @local::microboone_calibrationdedx
+  pandoraNucalipid:               @local::microboone_chi2pid
 
   pandoraNuMCSMu:                 @local::mcsfitproducer
   pandoraNuMCSPi:                 @local::mcsfitproducer
@@ -83,6 +91,7 @@ ubxsec_mc_flashmatch:
 
    genieeventweightpm1:            @local::genie_microboone_eventweight_ubxsec
    genieeventweightmultisim:       @local::genie_microboone_eventweight_ubxsec
+   #geniemodelseventweightmultisim: @local::microboone_eventweight
    fluxeventweightmultisim:        @local::flux_microboone_eventweight_ubxsec
 
    UBXSec:                         @local::UBXSec_mc
@@ -109,10 +118,13 @@ ubxsec_mc_producers: [ pandoraCosmicTPCObj,
                        pandoraCosmicACPTTagger,
                        pandoraCosmicStoppingMu,
                        pandoraCosmicHitRemoval,
+                       #crHitRemovalTruthMatch,
                        pandoraNu,
                        #pandoraNuAll,
                        pandoraNucalo,
                        pandoraNupid,
+                       #pandoraNucali,
+                       #pandoraNucalipid,
                        pandoraNuMCSMu,
                        pandoraNuMCSPi,
                        RecoTrueMatcher, 
@@ -122,9 +134,10 @@ ubxsec_mc_producers: [ pandoraCosmicTPCObj,
                        NeutrinoMCFlash, 
                        NeutrinoFlashMatch,
                        CandidateConsistency,
-                       genieeventweightpm1,
-                       genieeventweightmultisim,
-                       fluxeventweightmultisim,
+                       #genieeventweightpm1,
+                       #genieeventweightmultisim,
+                       ##geniemodelseventweightmultisim,
+                       #fluxeventweightmultisim,
                        UBXSec ] 
 
 ubxsec_mc_filters: [ tpcneutrinoidfilternumuccinc 
@@ -157,9 +170,17 @@ ubxsec_mc_reco.pandoraCosmicHitRemoval.EndTickPadding:           75
 ubxsec_mc_reco.pandoraCosmicHitRemoval.CopyHitMCParticleAssns:   true
 ubxsec_mc_reco.pandoraCosmicHitRemoval.HitMCParticleAssnLabel:   "gaushitTruthMatch"
 
+#ubxsec_mc_reco.crHitRemovalTruthMatch.OverrideRealData:                          true
+#ubxsec_mc_reco.crHitRemovalTruthMatch.HitParticleAssociations:                   @local::IndirectHitParticleAssnsTool
+#ubxsec_mc_reco.crHitRemovalTruthMatch.HitParticleAssociations.HitPartAssnsLabel: "gaushitTruthMatch"
+#ubxsec_mc_reco.crHitRemovalTruthMatch.HitParticleAssociations.HitModuleLabel:    "pandoraCosmicHitRemoval::UBXSec"
+
 ubxsec_mc_reco.pandoraNu.GeantModuleLabel:                       "largeant"
 ubxsec_mc_reco.pandoraNu.HitFinderModuleLabel:                   "pandoraCosmicHitRemoval::UBXSec"
 ubxsec_mc_reco.pandoraNu.ConfigFile:                             "PandoraSettings_MicroBooNE_Neutrino.xml"
+
+ubxsec_mc_reco.RecoTrueMatcherCosmic.OverrideRealData:           true # to make overlay work
+ubxsec_mc_reco.RecoTrueMatcher.OverrideRealData:                 true # to make overlay work
 
 #ubxsec_mc_reco.pandoraNuAll.GeantModuleLabel:                    "largeant"
 #ubxsec_mc_reco.pandoraNuAll.HitFinderModuleLabel:                "gaushit"
@@ -172,6 +193,13 @@ ubxsec_mc_reco.pandoraNucalo.FlipTrack_dQdx:                     false
 
 ubxsec_mc_reco.pandoraNupid.CalorimetryModuleLabel:              "pandoraNucalo::UBXSec"
 ubxsec_mc_reco.pandoraNupid.TrackModuleLabel:                    "pandoraNu::UBXSec"
+
+ubxsec_mc_reco.pandoraNucali.TrackModuleLabel:                   "pandoraNu::UBXSec"
+ubxsec_mc_reco.pandoraNucali.CalorimetryModuleLabel:             "pandoraNucalo::UBXSec"
+
+ubxsec_mc_reco.pandoraNucalipid.CalorimetryModuleLabel:          "pandoraNucali::UBXSec"
+ubxsec_mc_reco.pandoraNucalipid.TrackModuleLabel:                "pandoraNu::UBXSec"
+ubxsec_mc_reco.pandoraNucalipid.Chi2PIDAlg.UseMedian:            true
 
 ubxsec_mc_reco.pandoraNuMCSMu.inputs.inputLabel:                 "pandoraNu::UBXSec"
 

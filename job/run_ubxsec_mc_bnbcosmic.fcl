@@ -11,20 +11,23 @@ physics.stream1:       [ out1 ]
 physics.end_paths:     [ ana, stream1 ]
 
 outputs.out1.fileName: "%ifb_%tc_ubxsec.root"
-outputs.out1.dataTier: "ubxsec"
+outputs.out1.dataTier: "reconstructed"
 outputs.out1.SelectEvents: [ reco ]
 
 source.inputCommands: ["keep *_*_*_*"]
 
 
 
-physics.producers.NeutrinoFlashMatch.FlashVetoTimeStart: 3.20
-physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   4.80
+beam_start: 3.10 #3.20
+beam_end:   4.90 #4.80
 
-physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillStarts: 3.20 
-physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillEnds:   4.80
+physics.producers.NeutrinoFlashMatch.FlashVetoTimeStart: @local::beam_start
+physics.producers.NeutrinoFlashMatch.FlashVetoTimeEnd:   @local::beam_end
 
-physics.producers.UBXSec.BeamSpillStart:                 3.20
-physics.producers.UBXSec.BeamSpillEnd:                   4.80
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillStarts: @local::beam_start 
+physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillEnds:   @local::beam_end
+
+physics.producers.UBXSec.BeamSpillStart:                 @local::beam_start
+physics.producers.UBXSec.BeamSpillEnd:                   @local::beam_end
 
 

@@ -1,4 +1,7 @@
 #include "muoncandidatefinder.fcl"
+#include "ubflashcalib.fcl"
+#include "fiducial_volume_settings.fcl"
+#include "numucc_eventselection_settings.fcl"
 
 BEGIN_PROLOG
 #
@@ -8,7 +11,7 @@ BEGIN_PROLOG
 UBXSec: {
   module_type:                  "UBXSec"
   PFParticleProducer:           "pandoraNu::UBXSec"
-  HitProducer:                  "pandoraCosmicHitRemoval::UBXSec"
+  HitProducer:                  "pandoraCosmicHitRemoval::UBXSec" #"crHitRemovalTruthMatch::UBXSec"
   GeantModule:                  "largeant"
   SpacePointProducer:           "pandoraNu::UBXSec"
   NeutrinoFlashMatchProducer:   "NeutrinoFlashMatch"
@@ -28,11 +31,15 @@ UBXSec: {
   EventWeightProducer:          "eventweight"
   GenieEventWeightPMOneProducer: "genieeventweightpm1::UBXSec"
   GenieEventWeightMultisimProducer: "genieeventweightmultisim::UBXSec"
+  GenieModelsEventWeightMultisimProducer: "geniemodelseventweightmultisim::UBXSec"
   FluxEventWeightMultisimProducer: "fluxeventweightmultisim::UBXSec"
 
   UseGENIEInfo:                 true
   MinimumHitRequirement:        3
   MinimumDistanceToDeadRegion:  5.
+
+  DoOpDetSwap:                  false
+  OpDetSwapMap:                 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 31, 26, 28, 29, 30, 25, 27]
 
   GeoCosmicScoreCut:            0.6
   ToleranceTrackMultiplicity:   5.

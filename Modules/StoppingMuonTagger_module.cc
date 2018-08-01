@@ -126,6 +126,9 @@ private:
   /// Takes a recob::Track and returns true if is a stopping muon according to MCS algo
   bool IsStopMuMCS(art::Ptr<recob::Track> t, double & delta_ll);
 
+  /// Takes a recob::Track and returns true if is a stopping muon according to MCS algo [Bugged version, original]
+  bool IsStopMuMCS_bug(art::Ptr<recob::Track> t, double & delta_ll);
+
   std::string _tpcobject_producer;
   std::string _pfp_producer;
   std::string _cluster_producer;
@@ -135,6 +138,8 @@ private:
 
   bool _use_mcs; ///< If true, uses mcs fit to reject cosmics
   double _mcs_delta_ll_cut = -5.; ///< Cut on MCS delta loglikelihood (used if _use_mcs is true)
+  bool _mcs_upwards_only = false; ///< If true only looks at track that have upper point outside the FV, and lower point in the FV
+  bool _use_mcs_bugged_version = true; ///< If true uses the original version for the MCS tagging, which has a bug, but has been used for the unblinding
 
   bool _debug; ///< Debug flag
   bool _create_tree; ///< If true, creates a tree with mcs delta ll info, to make plots
@@ -172,6 +177,8 @@ StoppingMuonTagger::StoppingMuonTagger(fhicl::ParameterSet const & p)
  
   _use_mcs            = p.get<bool>("UseMCS", false);
   _mcs_delta_ll_cut   = p.get<double>("MCSDeltaLLCut", -5.);
+  _mcs_upwards_only   = p.get<bool>("MCSUpwardsOnly", false);
+  _use_mcs_bugged_version = p.get<bool>("UseMCSBuggedVersion", true);
 
   _coplanar_cut       = p.get<double>("CoplanarCut",   5.);
 
@@ -359,7 +366,7 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
         auto iter4 = pfps_to_tracks.find(p);
         if (iter4 == pfps_to_tracks.end()) {
-          std::cout << "[StoppingMuonTagger] PFParticle in TPCObject not found by pandora !?" << std::endl;
+          if (_debug) std::cout << "[StoppingMuonTagger] PFParticle in TPCObject not found by pandora !?" << std::endl;
           //throw std::exception();
           ignore_this = true;
           continue;
@@ -601,7 +608,8 @@ void StoppingMuonTagger::produce(art::Event & e) {
     bool result_mcs = false;
     double delta_ll;
     if (primary_track_v.size() != 0) { 
-      result_mcs = this->IsStopMuMCS(primary_track_v.at(0), delta_ll);
+      if (_use_mcs_bugged_version) result_mcs = this->IsStopMuMCS_bug(primary_track_v.at(0), delta_ll);
+      else result_mcs = this->IsStopMuMCS(primary_track_v.at(0), delta_ll);
     }
 
     if (_debug) std::cout << "[StoppingMuonTagger] MCS thinks " << (result_mcs ? "is" : "is not") << " a stopping muon." << std::endl;
@@ -673,6 +681,73 @@ void StoppingMuonTagger::produce(art::Event & e) {
 
 
 bool StoppingMuonTagger::IsStopMuMCS(art::Ptr<recob::Track> t, double & delta_ll) {
+
+  delta_ll = -9999;
+
+  TVector3 track_start = t->Vertex();
+  TVector3 track_end   = t->End();
+
+  bool vtx_contained = _fiducial_volume.InFV(t->Vertex());
+  bool end_contained = _fiducial_volume.InFV(t->End());
+
+  // If fully contained, exit
+  if (vtx_contained && end_contained) {
+    if (_debug) std::cout <<"[StoppingMuonTagger] Fully contained, MCS will quit." << std::endl;
+    return false;
+  }
+
+  // If fully uncontained, exit
+  if (!vtx_contained && !end_contained) {
+    if (_debug) std::cout <<"[StoppingMuonTagger] Fully un-contained, MCS will quit." << std::endl;
+    return false;
+  }
+
+  if (_mcs_upwards_only) {
+    if (t->Vertex().Y() > t->End().Y()) {
+      if (end_contained) {
+        if (_debug) std::cout <<"[StoppingMuonTagger] end_contained, MCS will quit." << std::endl;
+         return false;
+      }
+    } else {
+      if (vtx_contained) {
+        if (_debug) std::cout <<"[StoppingMuonTagger] vtx_contained, MCS will quit." << std::endl;
+         return false;
+      }
+    }
+  }
+
+  _result = _mcs_fitter.fitMcs(*t);
+
+  double fwd_ll = _result.fwdLogLikelihood();
+  double bwd_ll = _result.bwdLogLikelihood(); 
+
+  if (_debug) std::cout <<"[StoppingMuonTagger] FWD " << fwd_ll << ", BWD " << bwd_ll << std::endl;
+
+  if (vtx_contained && !end_contained) {
+    delta_ll = fwd_ll - bwd_ll;
+  }
+  else if (!vtx_contained && end_contained){
+    delta_ll = bwd_ll - fwd_ll;
+  }
+  else {
+    std::cout << "[StoppingMuonTagger] Logical internal error." << std::endl;
+    throw std::exception();
+  }
+
+
+  if (delta_ll == -9999)
+    return false;
+
+  if (_debug) std::cout <<"[StoppingMuonTagger] DELTA " << delta_ll << ", cut at " << _mcs_delta_ll_cut << std::endl;
+  if (delta_ll < _mcs_delta_ll_cut)
+    return true;
+  else
+    return false;
+
+}
+
+
+bool StoppingMuonTagger::IsStopMuMCS_bug(art::Ptr<recob::Track> t, double & delta_ll) {
 
   delta_ll = -9999;
 

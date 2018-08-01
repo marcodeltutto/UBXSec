@@ -147,6 +147,9 @@ private:
   /// Prints MC particles from GENIE on the screen
   void PrintMC(std::vector<art::Ptr<simb::MCTruth>> mclist);
 
+  /// Calculates flash position
+  void GetFlashLocation(std::vector<double>, double&, double&, double&, double&);
+
   FindDeadRegions deadRegionsFinder;
   //ubxsec::McPfpMatch mcpfpMatcher;
   ::ubana::FiducialVolume _fiducial_volume;
@@ -158,8 +161,10 @@ private:
   // Database to understand particle pdg
   const TDatabasePDG* _database_pdg = TDatabasePDG::Instance();
 
-  // Detector info service
-  ::detinfo::DetectorProperties const* fDetectorProperties;
+  // Services
+  ::detinfo::DetectorProperties const* _detector_properties;
+  ::detinfo::DetectorClocks const* _detector_clocks;
+  spacecharge::SpaceCharge const* _SCE;
 
   // To be set via fcl parameters
   std::string _hitfinderLabel;
@@ -184,6 +189,7 @@ private:
   std::string _eventweight_producer;
   std::string _genie_eventweight_pm1_producer;
   std::string _genie_eventweight_multisim_producer;
+  std::string _genie_models_eventweight_multisim_producer;
   std::string _flux_eventweight_multisim_producer;
   bool _debug = true;                   ///< Debug mode
   int _minimumHitRequirement;           ///< Minimum number of hits in at least a plane for a track
@@ -197,6 +203,9 @@ private:
   double _min_track_len;                ///< Min track length for momentum calculation
   bool _make_ophit_csv;                 ///< If true makea a csv file with ophit info
   bool _make_pida_csv;                  ///< If true makea a csv file with pida/tracklength info
+
+  bool _do_opdet_swap;                  ///< If true swaps reconstructed OpDets according to _opdet_swap_map
+  std::vector<int> _opdet_swap_map;     ///< The OpDet swap map for reco flashes
 
   // Constants
   const simb::Origin_t NEUTRINO_ORIGIN = simb::kBeamNeutrino;
@@ -259,7 +268,6 @@ private:
   double _sr_pot;
 
   std::ofstream _csvfile, _csvfile2;
-  std::ofstream _run_subrun_list_file;
 };
 
 
@@ -289,6 +297,7 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _eventweight_producer           = p.get<std::string>("EventWeightProducer");
   _genie_eventweight_pm1_producer = p.get<std::string>("GenieEventWeightPMOneProducer");
   _genie_eventweight_multisim_producer = p.get<std::string>("GenieEventWeightMultisimProducer");
+  _genie_models_eventweight_multisim_producer = p.get<std::string>("GenieModelsEventWeightMultisimProducer");
   _flux_eventweight_multisim_producer = p.get<std::string>("FluxEventWeightMultisimProducer");
 
   _use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
@@ -298,6 +307,9 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _beam_spill_start               = p.get<double>("BeamSpillStart", 3.2);
   _beam_spill_end                 = p.get<double>("BeamSpillEnd",   4.8);
   _total_pe_cut                   = p.get<double>("TotalPECut",     50);
+
+  _do_opdet_swap                  = p.get<bool>("DoOpDetSwap", false);
+  _opdet_swap_map                 = p.get<std::vector<int> >("OpDetSwapMap");
 
   _geo_cosmic_score_cut           = p.get<double>("GeoCosmicScoreCut", 0.6);
   _tolerance_track_multiplicity   = p.get<double>("ToleranceTrackMultiplicity", 5.);
@@ -326,20 +338,15 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
 
   _trk_mom_calculator.SetMinLength(_min_track_len);
 
-  fDetectorProperties = lar::providerFrom<detinfo::DetectorPropertiesService>(); 
-/*
-  auto index = gROOT->GetListOfSpecials()->IndexOf(_database_pdg);
-  if (index == -1)
-    _database_pdg = new TDatabasePDG;
-  else 
-    _database_pdg = (TDatabasePDG*)gROOT->GetListOfSpecials()->At(index);
+  _detector_properties = lar::providerFrom<detinfo::DetectorPropertiesService>(); 
+  _detector_clocks = lar::providerFrom<detinfo::DetectorClocksService>();
+  _SCE = lar::providerFrom<spacecharge::SpaceChargeService>();
 
-  
-  if (!TDatabasePDG::fgInstance)
-    _database_pdg = TDatabasePDG::fgInstance;
-  else 
-    _database_pdg = new TDatabasePDG;
-*/
+  std::cout << "E Field: " << _detector_properties->Efield() << std::endl;
+  std::cout << "Temperature: " << _detector_properties->Temperature() << std::endl;
+  std::cout << "Drift Velocity: " << _detector_properties->DriftVelocity(_detector_properties->Efield(), _detector_properties->Temperature())<< std::endl;
+  std::cout << "Sampling Rate: " << _detector_properties->SamplingRate() << std::endl;
+
 
   art::ServiceHandle<art::TFileService> fs;
   _tree1 = fs->make<TTree>("tree","");
@@ -432,9 +439,6 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   if(_make_ophit_csv) _csvfile2.open("ophit.csv", std::ofstream::out | std::ofstream::trunc);
   if(_make_ophit_csv) _csvfile2 << "ophit,opdet,time,pe" << std::endl;
 
-  _run_subrun_list_file.open ("run_subrub_list.txt", std::ofstream::out | std::ofstream::trunc);
-
-
 
 
   produces<std::vector<ubana::SelectionResult>>();
@@ -451,9 +455,13 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
 void UBXSec::produce(art::Event & e) {
 
   if(_debug) std::cout << "********** UBXSec starts" << std::endl;
-  if(_debug) std::cout << "Run: " << e.id().run() << 
+  if(_debug) std::cout << "[UBXSec] Run: " << e.id().run() << 
                           ", subRun: " << e.id().subRun() <<
                           ", event: " << e.id().event()  << std::endl;
+
+  if (_do_opdet_swap && e.isRealData()) {
+    std::cout << "[UBXSec] WARNING!!! Swapping OpDets. I hope you know what you are doing." << std::endl;
+  } 
 
 
   // Instantiate the output
@@ -473,22 +481,22 @@ void UBXSec::produce(art::Event & e) {
   _is_data = e.isRealData();
   _is_mc   = !_is_data;
 
-  if (_use_genie_info && _is_data) {
-    std::cout << "[UBXSec] You have asked to use GENIE info but you are running on a data file.";
-    std::cout << " _use_genie_info will be switched to false." << std::endl;
-    _use_genie_info = false;
-  }
+  // if (_use_genie_info && _is_data) {
+  //   std::cout << "[UBXSec] You have asked to use GENIE info but you are running on a data file.";
+  //   std::cout << " _use_genie_info will be switched to false." << std::endl;
+  //   _use_genie_info = false;
+  // }
 
   //::art::ServiceHandle<cheat::BackTracker> bt;
   ::art::ServiceHandle<geo::Geometry> geo;
 
   // Prepare the dead region finder
-  std::cout << "Recreate ch status map" << std::endl;
+  std::cout << "[UBXSec] Recreate channel status map" << std::endl;
   const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
   for (unsigned int ch = 0; ch < 8256; ch++) {
     deadRegionsFinder.SetChannelStatus(ch, chanFilt.Status(ch));
   }
-  std::cout << "Now force reload BWires" << std::endl;
+  std::cout << "[UBXSec] Now force reload BWires" << std::endl;
   deadRegionsFinder.CreateBWires();
 
   // Use '_detp' to find 'efield' and 'temp'
@@ -733,6 +741,36 @@ void UBXSec::produce(art::Event & e) {
     }
   }
 
+  // GENIE Models reweigthing (systematics - multisim)
+  ubxsec_event->ResetGenieModelsEventWeightVectorsMultisim();
+  if (_is_mc) {
+    art::Handle<std::vector<evwgh::MCEventWeight>> geniemodelseventweight_h;
+    e.getByLabel(_genie_models_eventweight_multisim_producer, geniemodelseventweight_h);
+    if(!geniemodelseventweight_h.isValid()){
+      std::cout << "[UBXSec] MCEventWeight for GENIE Models reweight multisim, product " << _genie_models_eventweight_multisim_producer << " not found..." << std::endl;
+      //throw std::exception();
+    } else {
+      std::vector<art::Ptr<evwgh::MCEventWeight>> geniemodelseventweight_v;
+      art::fill_ptr_vector(geniemodelseventweight_v, geniemodelseventweight_h);
+      if (geniemodelseventweight_v.size() > 0) {
+        art::Ptr<evwgh::MCEventWeight> evt_wgt = geniemodelseventweight_v.at(0); // Just for the first nu interaction
+        std::map<std::string, std::vector<double>> evtwgt_map = evt_wgt->fWeight;
+        int countFunc = 0;
+        // loop over the map and save the name of the function and the vector of weights for each function
+        for(auto it : evtwgt_map) {
+          std::string func_name = it.first;
+          std::vector<double> weight_v = it.second; 
+          //std::vector<float> weight_v_float (weight_v.begin(), weight_v.end());
+          ubxsec_event->evtwgt_genie_models_multisim_funcname.push_back(func_name);
+          ubxsec_event->evtwgt_genie_models_multisim_weight.push_back(weight_v);
+          ubxsec_event->evtwgt_genie_models_multisim_nweight.push_back(weight_v.size());
+          countFunc++;
+        }
+        ubxsec_event->evtwgt_genie_models_multisim_nfunc = countFunc;
+      }
+    }
+  }
+
   // FLUX reweigthing (systematics - multisim)
   ubxsec_event->ResetFluxEventWeightVectorsMultisim();
   if (_is_mc) {
@@ -798,7 +836,7 @@ void UBXSec::produce(art::Event & e) {
     auto const& flash = (*beamflash_h)[n];
     ubxsec_event->beamfls_pe[n]   = flash.TotalPE();
     ubxsec_event->beamfls_time[n] = flash.Time();
-    ubxsec_event->beamfls_z[n]    = flash.ZCenter();
+    //ubxsec_event->beamfls_z[n]    = flash.ZCenter();
 
     ubxsec_event->beamfls_spec[n].resize(32);
     ubxsec_event->candidate_flash_time = 0.;
@@ -807,7 +845,12 @@ void UBXSec::produce(art::Event & e) {
     //if (_debug) std::cout << "[UBXSec] Reco beam flash pe: " << std::endl;
     for (unsigned int i = 0; i < 32; i++) {
       unsigned int opdet = geo->OpDetFromOpChannel(i);
+      if (_do_opdet_swap && e.isRealData()) {
+        opdet = _opdet_swap_map.at(opdet);
+      }
+ 
       ubxsec_event->beamfls_spec[n][opdet] = flash.PE(i);
+
       if (ubxsec_event->beamfls_time[n] > _beam_spill_start && ubxsec_event->beamfls_time[n] < _beam_spill_end) {
         // Find largest flash above threshold
         if (flash.TotalPE() > _total_pe_cut && flash.TotalPE() > min_pe) { 
@@ -817,8 +860,16 @@ void UBXSec::produce(art::Event & e) {
         }
         //if (_debug) std::cout << "\t PMT " << opdet << ": " << ubxsec_event->beamfls_spec[n][opdet] << std::endl;
       }
-    }
-  }
+    } // OpDet loop
+
+    double Ycenter, Zcenter, Ywidth, Zwidth;
+    GetFlashLocation(ubxsec_event->beamfls_spec[n], Ycenter, Zcenter, Ywidth, Zwidth);
+    ubxsec_event->beamfls_z[n] = Zcenter;
+
+    std::cout << "[UBXSec] Flash time: " << ubxsec_event->beamfls_time[n] << ", Old flash position: " << flash.ZCenter() << std::endl;
+    std::cout << "[UBXSec] Flash time: " << ubxsec_event->beamfls_time[n] << ", New flash position: " << Zcenter << std::endl;
+    std::cout << "[UBXSec] Flash time: " << ubxsec_event->beamfls_time[n] << ", Flash PEs: " << flash.TotalPE() << std::endl;
+  } // flash loop
 
 
   // Check if truth nu is in FV
@@ -829,17 +880,63 @@ void UBXSec::produce(art::Event & e) {
     if (e.getByLabel("generator",mctruthListHandle))
       art::fill_ptr_vector(mclist, mctruthListHandle);
 
-    int iList = 0; // 1 nu int per spill
+    // int iList = 0; // 1 nu int per spill
 
-    if (mclist[iList]->Origin() == NEUTRINO_ORIGIN) {
+    if (_debug) this->PrintMC(mclist); 
 
-      if (_debug) this->PrintMC(mclist); 
+    ubxsec_event->fv = 0;
+    ubxsec_event->fv_sce = 0;
 
+    ubxsec_event->ccnc = -1;
+    ubxsec_event->nupdg = -1;
+    ubxsec_event->nu_e = -1;
+    ubxsec_event->lep_costheta = -9999.;
+    ubxsec_event->true_muon_mom = -9999.;
+
+    ubxsec_event->ResizeGenieTruthVectors(mclist.size());
+
+    for (size_t iList = 0; iList < mclist.size(); iList++) {
+
+      if (mclist.at(iList)->Origin() != NEUTRINO_ORIGIN) {
+        std::cout << "[UBXSec] mclist from generator does not gave neutrino origin?!" << std::endl;
+      }
+
+      // Check if the true neutrino vertex is in the FV
       double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),
                                 mclist[iList]->GetNeutrino().Nu().Vy(),
                                 mclist[iList]->GetNeutrino().Nu().Vz()};
-      if (_fiducial_volume.InFV(truth_nu_vtx)) ubxsec_event->fv = 1;
-      else ubxsec_event->fv = 0;
+      if (_fiducial_volume.InFV(truth_nu_vtx)) {
+        ubxsec_event->fv = 1;
+      }
+
+      // Save the vertex for all neutrinos
+      ubxsec_event->tvtx_x.at(iList) = mclist[iList]->GetNeutrino().Nu().Vx();
+      ubxsec_event->tvtx_y.at(iList) = mclist[iList]->GetNeutrino().Nu().Vy();
+      ubxsec_event->tvtx_z.at(iList) = mclist[iList]->GetNeutrino().Nu().Vz();
+
+      // Look at the space charge correction
+      std::vector<double> sce_corr = _SCE->GetPosOffsets(mclist[iList]->GetNeutrino().Nu().Vx(),
+                                                         mclist[iList]->GetNeutrino().Nu().Vy(),
+                                                         mclist[iList]->GetNeutrino().Nu().Vz());
+
+      double g4Ticks = _detector_clocks->TPCG4Time2Tick(mclist[iList]->GetNeutrino().Nu().T()) 
+                       + _detector_properties->GetXTicksOffset(0,0,0) 
+                       - _detector_properties->TriggerOffset();
+
+      // The following offsets to be summed to the original true vertex
+      double xOffset = _detector_properties->ConvertTicksToX(g4Ticks, 0, 0, 0) - sce_corr.at(0);
+      double yOffset = sce_corr.at(1);
+      double zOffset = sce_corr.at(2);
+
+      ubxsec_event->sce_corr_x = xOffset;
+      ubxsec_event->sce_corr_y = yOffset;
+      ubxsec_event->sce_corr_z = zOffset;
+
+      if (_fiducial_volume.InFV(mclist[iList]->GetNeutrino().Nu().Vx() + xOffset, 
+                                mclist[iList]->GetNeutrino().Nu().Vy() + yOffset, 
+                                mclist[iList]->GetNeutrino().Nu().Vz() + zOffset)) {
+        ubxsec_event->fv_sce = 1;
+      } 
 
       int n_genie_particles = 0;
       int n_genie_particles_charged = 0;
@@ -853,30 +950,27 @@ void UBXSec::produce(art::Event & e) {
         n_genie_particles_charged ++;
       }
 
-      ubxsec_event->ccnc            = mclist[iList]->GetNeutrino().CCNC();
-      ubxsec_event->mode            = mclist[iList]->GetNeutrino().Mode();
-      ubxsec_event->nupdg           = mclist[iList]->GetNeutrino().Nu().PdgCode();
-      ubxsec_event->nu_e            = mclist[iList]->GetNeutrino().Nu().E();
-      ubxsec_event->lep_costheta    = mclist[iList]->GetNeutrino().Lepton().Pz() / mclist[iList]->GetNeutrino().Lepton().P();
-      ubxsec_event->lep_phi         = UBXSecHelper::GetPhi(mclist[iList]->GetNeutrino().Lepton().Px(), 
+      // Only save this if the true neutrino vertex is in the FV
+      if (ubxsec_event->fv == 1) {
+        ubxsec_event->ccnc            = mclist[iList]->GetNeutrino().CCNC();
+        ubxsec_event->mode            = mclist[iList]->GetNeutrino().Mode();
+        ubxsec_event->nupdg           = mclist[iList]->GetNeutrino().Nu().PdgCode();
+        ubxsec_event->nu_e            = mclist[iList]->GetNeutrino().Nu().E();
+        ubxsec_event->lep_costheta    = mclist[iList]->GetNeutrino().Lepton().Pz() / mclist[iList]->GetNeutrino().Lepton().P();
+        ubxsec_event->lep_phi         = UBXSecHelper::GetPhi(mclist[iList]->GetNeutrino().Lepton().Px(), 
                                                            mclist[iList]->GetNeutrino().Lepton().Py(),
                                                            mclist[iList]->GetNeutrino().Lepton().Pz()); 
-      ubxsec_event->genie_mult      = n_genie_particles;
-      ubxsec_event->genie_mult_ch   = n_genie_particles_charged;
-
-      ubxsec_event->tvtx_x.clear(); ubxsec_event->tvtx_x.clear(); ubxsec_event->tvtx_z.clear();
-      for(size_t n = 0; n < mclist.size(); n++ ) {
-        ubxsec_event->tvtx_x.emplace_back(mclist[n]->GetNeutrino().Nu().Vx());
-        ubxsec_event->tvtx_y.emplace_back(mclist[n]->GetNeutrino().Nu().Vy());
-        ubxsec_event->tvtx_z.emplace_back(mclist[n]->GetNeutrino().Nu().Vz());
+        ubxsec_event->genie_mult      = n_genie_particles;
+        ubxsec_event->genie_mult_ch   = n_genie_particles_charged;
       }
+
 
       ubxsec_event->nsignal = 0;
       if(ubxsec_event->nupdg==14 && ubxsec_event->ccnc==0 && ubxsec_event->fv==1) ubxsec_event->nsignal=1; 
 
-      // Also save muon momentum if is signal
+      // Also save muon momentum if is CC interaction
       ubxsec_event->true_muon_mom = -9999.;
-      if (ubxsec_event->nsignal == 1) {
+      if (mclist[iList]->GetNeutrino().CCNC() == 0) {
         for (int p = 0; p < mclist[iList]->NParticles(); p++) {
           auto const & mcp = mclist[iList]->GetParticle(p);
           if (mcp.Mother() != 0) continue;
@@ -884,21 +978,112 @@ void UBXSec::produce(art::Event & e) {
           ubxsec_event->true_muon_mom = mcp.P();
         }
       }
-    } // neutrino origin
-    else {
-      ubxsec_event->ccnc = -1;
-      ubxsec_event->nupdg = -1;
-      ubxsec_event->nu_e = -1;
-      ubxsec_event->lep_costheta = -9999.;
-      ubxsec_event->true_muon_mom = -9999.;
+
     }
-  } else {
-    ubxsec_event->ccnc = -1;
-    ubxsec_event->nupdg = -1;
-    ubxsec_event->nu_e = -1;
-    ubxsec_event->lep_costheta = -9999.;
-    ubxsec_event->true_muon_mom = -9999.;
   }
+
+
+
+
+
+  //   if (mclist[iList]->Origin() == NEUTRINO_ORIGIN) {
+
+  //     if (_debug) this->PrintMC(mclist); 
+
+  //     // Check if the true neutrino vertex is in the FV
+  //     double truth_nu_vtx[3] = {mclist[iList]->GetNeutrino().Nu().Vx(),
+  //                               mclist[iList]->GetNeutrino().Nu().Vy(),
+  //                               mclist[iList]->GetNeutrino().Nu().Vz()};
+  //     if (_fiducial_volume.InFV(truth_nu_vtx)) ubxsec_event->fv = 1;
+  //     else ubxsec_event->fv = 0;
+
+  //     // Look at the space charge correction
+  //     std::vector<double> sce_corr = _SCE->GetPosOffsets(mclist[iList]->GetNeutrino().Nu().Vx(),
+  //                                                        mclist[iList]->GetNeutrino().Nu().Vy(),
+  //                                                        mclist[iList]->GetNeutrino().Nu().Vz());
+
+  //     double g4Ticks = _detector_clocks->TPCG4Time2Tick(mclist[iList]->GetNeutrino().Nu().T()) 
+  //                      + _detector_properties->GetXTicksOffset(0,0,0) 
+  //                      - _detector_properties->TriggerOffset();
+
+  //     // The following offsets to be summed to the original true vertex
+  //     double xOffset = _detector_properties->ConvertTicksToX(g4Ticks, 0, 0, 0) - sce_corr.at(0);
+  //     double yOffset = sce_corr.at(1);
+  //     double zOffset = sce_corr.at(2);
+
+  //     ubxsec_event->sce_corr_x = xOffset;
+  //     ubxsec_event->sce_corr_y = yOffset;
+  //     ubxsec_event->sce_corr_z = zOffset;
+
+  //     if (_fiducial_volume.InFV(mclist[iList]->GetNeutrino().Nu().Vx() + xOffset, 
+  //                               mclist[iList]->GetNeutrino().Nu().Vy() + yOffset, 
+  //                               mclist[iList]->GetNeutrino().Nu().Vz() + zOffset)) {
+  //       ubxsec_event->fv_sce = 1;
+  //     } else {
+  //       ubxsec_event->fv_sce = 0;
+  //     }
+
+  //     int n_genie_particles = 0;
+  //     int n_genie_particles_charged = 0;
+  //     for (int p = 0; p < mclist[iList]->NParticles(); p++) {
+  //       const simb::MCParticle mc_par = mclist[iList]->GetParticle(p);
+  //       if (mc_par.StatusCode() != 1) continue;
+  //       n_genie_particles ++;
+  //       const TParticlePDG* par_pdg = _database_pdg->GetParticle(mc_par.PdgCode());
+  //       if (!par_pdg) continue;
+  //       if (par_pdg->Charge() == 0) continue;
+  //       n_genie_particles_charged ++;
+  //     }
+
+  //     ubxsec_event->ccnc            = mclist[iList]->GetNeutrino().CCNC();
+  //     ubxsec_event->mode            = mclist[iList]->GetNeutrino().Mode();
+  //     ubxsec_event->nupdg           = mclist[iList]->GetNeutrino().Nu().PdgCode();
+  //     ubxsec_event->nu_e            = mclist[iList]->GetNeutrino().Nu().E();
+  //     ubxsec_event->lep_costheta    = mclist[iList]->GetNeutrino().Lepton().Pz() / mclist[iList]->GetNeutrino().Lepton().P();
+  //     ubxsec_event->lep_phi         = UBXSecHelper::GetPhi(mclist[iList]->GetNeutrino().Lepton().Px(), 
+  //                                                          mclist[iList]->GetNeutrino().Lepton().Py(),
+  //                                                          mclist[iList]->GetNeutrino().Lepton().Pz()); 
+  //     ubxsec_event->genie_mult      = n_genie_particles;
+  //     ubxsec_event->genie_mult_ch   = n_genie_particles_charged;
+
+      
+  //     // ubxsec_event->tvtx_x.resize(1); 
+  //     // ubxsec_event->tvtx_x.resize(1); 
+  //     // ubxsec_event->tvtx_z.resize(1);
+  //     // for(size_t n = 0; n < mclist.size(); n++ ) {
+  //     ubxsec_event->tvtx_x.at(0) = mclist[iList]->GetNeutrino().Nu().Vx();
+  //     ubxsec_event->tvtx_y.at(0) = mclist[iList]->GetNeutrino().Nu().Vy();
+  //     ubxsec_event->tvtx_z.at(0) = mclist[iList]->GetNeutrino().Nu().Vz();
+  //     // }
+
+  //     ubxsec_event->nsignal = 0;
+  //     if(ubxsec_event->nupdg==14 && ubxsec_event->ccnc==0 && ubxsec_event->fv==1) ubxsec_event->nsignal=1; 
+
+  //     // Also save muon momentum if is signal
+  //     ubxsec_event->true_muon_mom = -9999.;
+  //     if (ubxsec_event->nsignal == 1) {
+  //       for (int p = 0; p < mclist[iList]->NParticles(); p++) {
+  //         auto const & mcp = mclist[iList]->GetParticle(p);
+  //         if (mcp.Mother() != 0) continue;
+  //         if (mcp.PdgCode() != 13) continue;
+  //         ubxsec_event->true_muon_mom = mcp.P();
+  //       }
+  //     }
+  //   } // neutrino origin
+  //   else {
+  //     ubxsec_event->ccnc = -1;
+  //     ubxsec_event->nupdg = -1;
+  //     ubxsec_event->nu_e = -1;
+  //     ubxsec_event->lep_costheta = -9999.;
+  //     ubxsec_event->true_muon_mom = -9999.;
+  //   }
+  // } else {
+  //   ubxsec_event->ccnc = -1;
+  //   ubxsec_event->nupdg = -1;
+  //   ubxsec_event->nu_e = -1;
+  //   ubxsec_event->lep_costheta = -9999.;
+  //   ubxsec_event->true_muon_mom = -9999.;
+  // }
 
   ubxsec_event->is_signal = false;
   if (ubxsec_event->ccnc == 0 && ubxsec_event->nupdg == 14 && ubxsec_event->fv == 1) {
@@ -926,24 +1111,9 @@ void UBXSec::produce(art::Event & e) {
     std::cout << "[UBXSec] Cannot locate OpHits from ophitCosmic." << std::endl;
   }
 
-  /*art::Handle<std::vector<raw::OpDetWaveform> > waveform_h;
-  e.getByLabel("saturation", "OpdetCosmicHighGain", waveform_h);
-  if(!waveform_h.isValid()) {
-    std::cout << "[UBXSec] Cannot locate OpDetWaveform from saturation." << std::endl;
-  }
-  std::vector<raw::OpDetWaveform> const& waveform_v(*waveform_h);*/
+  std::cout << "[UBXSec] Trigger Time: " << _detector_clocks->TriggerTime() << std::endl;
+  std::cout << "[UBXSec] Tick Period:  " << _detector_clocks->OpticalClock().TickPeriod() << std::endl;
 
-  auto const& detectorClocks (*lar::providerFrom< detinfo::DetectorClocksService >());
-  std::cout << "Trigger Time: " << detectorClocks.TriggerTime() << std::endl;
-  std::cout << "Tick Period:  " << detectorClocks.OpticalClock().TickPeriod() << std::endl;
-
-
-  //std::cout << "Printing waveforms" << std::endl;
-  //for (auto w : waveform_v) {
-  //  std::cout << "timestamp: " << w.TimeStamp() 
-  //            << ", relative time: " << w.TimeStamp() - detectorClocks.TriggerTime() 
-  //            << ", channel: " << geo->OpDetFromOpChannel(w.ChannelNumber())<< std::endl;
-  //}
 
 
   // Check if the muon is reconstructed
@@ -1417,8 +1587,8 @@ void UBXSec::produce(art::Event & e) {
       ubxsec_event->slc_muoncandidate_exists[slice]    = true;
       ubxsec_event->slc_muoncandidate_contained[slice] = fully_contained;
       ubxsec_event->slc_muoncandidate_length[slice]    = candidate_track->Length();
-      ubxsec_event->slc_muoncandidate_phi[slice]       = UBXSecHelper::GetCorrectedPhi((*candidate_track), tpcobj_nu_vtx); 
-      ubxsec_event->slc_muoncandidate_theta[slice]     = UBXSecHelper::GetCorrectedCosTheta((*candidate_track), tpcobj_nu_vtx);
+      ubxsec_event->slc_muoncandidate_phi[slice]       = candidate_track->Phi(); //UBXSecHelper::GetCorrectedPhi((*candidate_track), tpcobj_nu_vtx); 
+      ubxsec_event->slc_muoncandidate_theta[slice]     = candidate_track->Theta(); //UBXSecHelper::GetCorrectedCosTheta((*candidate_track), tpcobj_nu_vtx);
       ubxsec_event->slc_muoncandidate_mom_range[slice] = _trk_mom_calculator.GetTrackMomentum(candidate_track->Length(), 13);
       //ubxsec_event->slc_muoncandidate_mom_mcs[slice]   = _trk_mom_calculator.GetMomentumMultiScatterLLHD(candidate_track);
 
@@ -1545,7 +1715,7 @@ void UBXSec::produce(art::Event & e) {
           if (candidate_track->HasValidPoint(i)) {
             TVector3 trk_pt = candidate_track->LocationAtPoint(i);
             double wire = geo->NearestWire(trk_pt, 2);
-            double time = fDetectorProperties->ConvertXToTicks(trk_pt.X(), geo::PlaneID(0,0,2));
+            double time = _detector_properties->ConvertXToTicks(trk_pt.X(), geo::PlaneID(0,0,2));
             TVector3 p (wire, time, 0.);
             //std::cout << "emplacing track point on wire " << p.X() << ", and time " << p.Y() << std::endl;
             track_v.emplace_back(p);
@@ -1898,6 +2068,7 @@ void UBXSec::produce(art::Event & e) {
     selection_result.SetSelectionStatus(true);
 
     ubxsec_event->is_selected = true;
+    ubxsec_event->selected_slice = slice_index;
 
     // Grab the selected TPCObject
     std::vector<art::Ptr<ubana::TPCObject>> tpcobj_v;
@@ -1941,9 +2112,6 @@ void UBXSec::endSubRun(art::SubRun& sr) {
 
   if (_debug) std::cout << "[UBXSec::endSubRun] Starts" << std::endl;
 
-  // Saving run and subrun number on file so that we can run Zarko's script easily
-  _run_subrun_list_file << sr.run() << " " << sr.subRun() << std::endl;
-
   _sr_run       = sr.run();
   _sr_subrun    = sr.subRun();
   _sr_begintime = sr.beginTime().value();
@@ -1962,7 +2130,7 @@ void UBXSec::endSubRun(art::SubRun& sr) {
       _sr_pot = 0.;
   }
 
-  // Data
+  // Data - Use Zarko's script instead
   if (_is_data) {
     if (_debug) std::cout << "[UBXSec::endSubRun] Getting POT for DATA, producer " << _potsum_producer << ", instance " << _potsum_instance << std::endl;
     if (sr.getByLabel(_potsum_producer, _potsum_instance, potsum_h)){
@@ -1977,6 +2145,9 @@ void UBXSec::endSubRun(art::SubRun& sr) {
 
   if (_debug) std::cout << "[UBXSec::endSubRun] Ends" << std::endl;
 }
+
+
+
 
 void UBXSec::PrintMC(std::vector<art::Ptr<simb::MCTruth>> mclist) {
 
@@ -2023,6 +2194,48 @@ void UBXSec::PrintMC(std::vector<art::Ptr<simb::MCTruth>> mclist) {
   }
 
   std::cout << "[UBXSec] ================= MC Information ================= [UBXSec]" << std::endl;
+}
+
+
+//_______________________________________________________________________________________
+void UBXSec::GetFlashLocation(std::vector<double> pePerOpDet, 
+                              double& Ycenter, 
+                              double& Zcenter, 
+                              double& Ywidth, 
+                              double& Zwidth)
+{
+
+  // Reset variables
+  Ycenter = Zcenter = 0.;
+  Ywidth  = Zwidth  = -999.;
+  double totalPE = 0.;
+  double sumy = 0., sumz = 0., sumy2 = 0., sumz2 = 0.;
+
+  for (unsigned int opdet = 0; opdet < pePerOpDet.size(); opdet++) {
+
+    // Get physical detector location for this opChannel
+    double PMTxyz[3];
+    ::art::ServiceHandle<geo::Geometry> geo;
+    geo->OpDetGeoFromOpDet(opdet).GetCenter(PMTxyz);
+
+    // Add up the position, weighting with PEs
+    sumy    += pePerOpDet[opdet]*PMTxyz[1];
+    sumy2   += pePerOpDet[opdet]*PMTxyz[1]*PMTxyz[1];
+    sumz    += pePerOpDet[opdet]*PMTxyz[2];
+    sumz2   += pePerOpDet[opdet]*PMTxyz[2]*PMTxyz[2];
+
+    totalPE += pePerOpDet[opdet];
+  }
+
+  Ycenter = sumy/totalPE;
+  Zcenter = sumz/totalPE;
+
+  // This is just sqrt(<x^2> - <x>^2)
+  if ( (sumy2*totalPE - sumy*sumy) > 0. ) 
+    Ywidth = std::sqrt(sumy2*totalPE - sumy*sumy)/totalPE;
+  
+  if ( (sumz2*totalPE - sumz*sumz) > 0. ) 
+    Zwidth = std::sqrt(sumz2*totalPE - sumz*sumz)/totalPE;
 }
 
 DEFINE_ART_MODULE(UBXSec)

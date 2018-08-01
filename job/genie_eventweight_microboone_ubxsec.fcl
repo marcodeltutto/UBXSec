@@ -429,7 +429,7 @@ genie_all: {
           random_seed:           1
           #parameter_list:        ["QEMA", "NCELaxial", "NCELeta", "CCResAxial", "CCResVector", "NCResAxial", "NCResVector", "CohMA", "CohR0", "NonResRvp1pi", "NonResRvbarp1pi", "NonResRvp2pi", "NonResRvbarp2pi", "ResDecayGamma", "ResDecayTheta", "NC", "DISAth", "DISBth", "DISCv1u", "DISCv2u", "AGKYxF", "AGKYpT", "FormZone", "FermiGasModelKf", "IntraNukeNmfp", "IntraNukeNcex", "IntraNukeNel", "IntraNukeNinel", "IntraNukeNabs", "IntraNukeNpi", "IntraNukePImfp", "IntraNukePIcex", "IntraNukePIel", "IntraNukePIinel", "IntraNukePIabs", "IntraNukePIpi"]
           parameter_list:        ["QEMA", "NCELaxial", "NCELeta", "CCResAxial", "CCResVector", "NCResAxial", "NCResVector", "CohMA", "CohR0", "NonResRvp1pi", "NonResRvbarp1pi", "NonResRvp2pi", "NonResRvbarp2pi", "ResDecayGamma", "ResDecayTheta", "NC", "AGKYxF", "AGKYpT", "FormZone", "FermiGasModelKf", "IntraNukeNmfp", "IntraNukeNcex", "IntraNukeNel", "IntraNukeNinel", "IntraNukeNabs", "IntraNukeNpi", "IntraNukePImfp", "IntraNukePIcex", "IntraNukePIel", "IntraNukePIinel", "IntraNukePIabs", "IntraNukePIpi"]
-          parameter_sigma:       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]#, 1, 1, 1, 1 ]
+          parameter_sigma:       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
           mode: multisim
           number_of_multisims:   100
         }

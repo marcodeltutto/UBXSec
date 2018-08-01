@@ -3,14 +3,14 @@
 <!-- Production Project -->
 
 <!DOCTYPE project [
-<!ENTITY release "v06_26_01_12">
+<!ENTITY release "v06_26_01_13">
 <!ENTITY releasetag "e10:prof">
-<!ENTITY name "ubxsec_data_extbnb_a_mcc8.7_test6">
+<!ENTITY name "ubxsec_data_extbnb_a_mcc8.9_test8">
 <!ENTITY tag "ubxsec">
 <!ENTITY file_type "data">
 <!ENTITY run_type "physics">
 <!ENTITY PNFSpath "/pnfs/uboone/resilient/users/mdeltutt/">
-<!ENTITY ubxsec_version "mcc8.7_test6">
+<!ENTITY ubxsec_version "mcc8.9_test8">
 ]>
 
 
@@ -32,25 +32,25 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.7_test6.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_MCC8.9_test8.tgz</local>
   </larsoft>
 
   <!-- Project stages -->
 
   <stage name="ubxsec">
-    <fcl>run_ubxsec_data_extbnb.fcl</fcl>
-    <inputdef>mdeltutt_prod_reco_optfilter_extbnb_v11_mcc8_deva</inputdef>
+    <fcl>run_ubxsec_data_extbnb_anaonly.fcl</fcl>
+    <inputdef>prod_reco_optfilter_extbnb_ccinclusive_v13_mcc8_gooodruns_v4s</inputdef>
     <schema>root</schema>
     <defname>&name;_&tag;_ana</defname>
-    <maxfilesperjob>7</maxfilesperjob>
+    <maxfilesperjob>20</maxfilesperjob>
     <outdir>/pnfs/uboone/scratch/users/mdeltutt/&release;/ubxsec_&ubxsec_version;_data_extbnb_a</outdir>
     <workdir>&PNFSpath;grid_workdir/grid_workdir_ubxsec_&ubxsec_version;_data_extbnb_a</workdir>
     <bookdir>/uboone/data/users/mdeltutt/grid_bookdir/ubxsec_&ubxsec_version;_data_extbnb_a</bookdir>
-    <numjobs>996</numjobs>
+    <numjobs>64</numjobs>
     <datatier>ubana</datatier>
-    <memory>3500</memory>
+    <memory>3000</memory>
     <jobsub> --expected-lifetime=24h --mail_never --generate-email-summary </jobsub>
-    <disk>40GB</disk>
+    <disk>30GB</disk>
   </stage>
 
   <!-- file type -->

@@ -79,6 +79,13 @@ namespace ubana {
      *  @param matchedParticles the output matches between reconstructed and true particles
      */  
     void GetRecoToTrueMatches(lar_pandora::PFParticlesToMCParticles & matchedParticles);
+
+    /**
+     *  @brief If calles
+     *
+     *  @param option It true, considers the event as MC always
+     */
+    void OverrideRealData(bool option) {_override_real_data = option;};
   
 
   protected:
@@ -92,6 +99,9 @@ namespace ubana {
 
     bool _debug      = false;
     bool _verbose    = false;
+
+    bool _is_data    = false; ///< If true, we are running over a real data file.
+    bool _override_real_data = false;
 
   };
 }

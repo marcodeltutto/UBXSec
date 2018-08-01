@@ -1109,7 +1109,7 @@ void UBXSecHelper::GetTimeCorrectedPoint(double * point_raw, double * point_corr
 
   double x_offset = interaction_time * drift_velocity;
 
-  std::cout << "X correction is: " << x_offset << std::endl;
+  //std::cout << "[UBXSecHelper::GetTimeCorrectedPoint] X correction is: " << x_offset << std::endl;
 
   point_corrected[0] = point_raw[0] - x_offset;
   point_corrected[1] = point_raw[1];

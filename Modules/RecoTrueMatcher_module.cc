@@ -99,6 +99,8 @@ private:
   bool _verbose;
   bool _use_premade_ass;
 
+  bool _override_real_data; ///< Use this when running on overlay
+
   void PrintInfo(lar_pandora::PFParticlesToMCParticles matched_pfp_to_mcp_map);
 };
 
@@ -114,6 +116,8 @@ RecoTrueMatcher::RecoTrueMatcher(fhicl::ParameterSet const & p) {
   _mcpHitAssLabel                 = p.get<std::string>("MCPHitAssProducer", "pandoraCosmicHitRemoval");
 
   _use_premade_ass                = p.get<bool>("UsePremadeMCPHitAss");
+
+  _override_real_data             = p.get<bool>("OverrideRealData", false);
 
   _debug                          = p.get<bool>("DebugMode");
   _verbose                        = p.get<bool>("Verbose");
@@ -142,6 +146,11 @@ void RecoTrueMatcher::produce(art::Event & e)
 
 
   _is_data = e.isRealData();
+
+  if (_override_real_data) {
+    _is_data = false;
+    _mcpfpMatcher.OverrideRealData(true);
+  }
 
   if (_is_data) {
     std::cout << "[RecoTrueMatcher] Running on a real data file. No MC-PFP matching will be attempted." << std::endl;

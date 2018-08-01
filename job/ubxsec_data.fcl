@@ -1,6 +1,7 @@
 #include "ubflashfinder.fcl"
 #include "ubflashcalib.fcl"
 #include "T0RecoAnodeCathodePiercing.fcl"
+#include "calibration_microboone.fcl"
 
 #include "tpcobjectmaker.fcl"
 #include "neutrinomcflash.fcl"
@@ -34,6 +35,13 @@
 
 #include "tpcneutrinoidfilter_microboone.fcl"
 
+#include "photpropservices_microboone.fcl"
+
+#include "services_microboone.fcl"
+#include "opticaldetectorsim_microboone.fcl"
+#include "opticaldetectormodules_microboone.fcl"
+#include "time_memory_tracker_microboone.fcl"
+
 
 BEGIN_PROLOG
 #
@@ -50,6 +58,8 @@ microboone_reco_data_services:
 ubxsec_data_reco:
 {
 
+  #simpleFlashBeam:                @local::UBFlashBeam
+
   pandoraCosmicTPCObj:            @local::TPCObjectMakerCosmic
   RecoTrueMatcherCosmic:          @local::microboone_recotruematcher_pandoracosmic
 
@@ -63,6 +73,8 @@ ubxsec_data_reco:
 
   pandoraNucalo:                  @local::microboone_calodata
   pandoraNupid:                   @local::microboone_chi2pid
+  pandoraNucali:                  @local::microboone_calibrationdedx
+  pandoraNucalipid:               @local::microboone_chi2pid
 
   pandoraNuMCSMu:                 @local::mcsfitproducer
   pandoraNuMCSPi:                 @local::mcsfitproducer
@@ -97,7 +109,8 @@ ubxsec_data_ana:
 }
 
 
-ubxsec_data_producers: [ pandoraCosmicTPCObj,
+ubxsec_data_producers: [ #simpleFlashBeam,
+                         pandoraCosmicTPCObj,
                          RecoTrueMatcherCosmic,
                          pandoraCosmicTrackPFPart,
                          pandoraCosmicFlashTag,
@@ -107,6 +120,8 @@ ubxsec_data_producers: [ pandoraCosmicTPCObj,
                          pandoraNu,
                          pandoraNucalo,
                          pandoraNupid,
+                         pandoraNucali,
+                         pandoraNucalipid,
                          pandoraNuMCSMu,
                          pandoraNuMCSPi,
                          RecoTrueMatcher,
@@ -120,11 +135,16 @@ ubxsec_data_producers: [ pandoraCosmicTPCObj,
 ubxsec_data_filters: [ tpcneutrinoidfilternumuccinc 
                      ]
 
+ubxsec_data_producers_anaonly: [ UBXSec
+                               ]
+
 ubxsec_data_analyzers: [ #CosmicTaggerAna 
                        ]
 
 
 # Set reco properties
+
+#ubxsec_data_reco.simpleFlashBeam.PECalib: @local::CCVCalib
 
 #ubxsec_data_reco.simpleFlashCosmicTest.AlgoConfig.DebugMode: true
 
@@ -156,6 +176,13 @@ ubxsec_data_reco.pandoraNucalo.Flip_dQdx:                          false
 
 ubxsec_data_reco.pandoraNupid.CalorimetryModuleLabel:              "pandoraNucalo::UBXSec"
 ubxsec_data_reco.pandoraNupid.TrackModuleLabel:                    "pandoraNu::UBXSec"
+
+ubxsec_data_reco.pandoraNucali.TrackModuleLabel:                   "pandoraNu::UBXSec"
+ubxsec_data_reco.pandoraNucali.CalorimetryModuleLabel:             "pandoraNucalo::UBXSec"
+
+ubxsec_data_reco.pandoraNucalipid.CalorimetryModuleLabel:          "pandoraNucali::UBXSec"
+ubxsec_data_reco.pandoraNucalipid.TrackModuleLabel:                "pandoraNu::UBXSec"
+ubxsec_data_reco.pandoraNucalipid.Chi2PIDAlg.UseMedian:            true
 
 ubxsec_data_reco.pandoraNuMCSMu.inputs.inputLabel:                 "pandoraNu::UBXSec"
 

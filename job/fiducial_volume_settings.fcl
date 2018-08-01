@@ -10,7 +10,7 @@ UBXSecFiducialVolumeSettings: {
   BorderYLow:   [35., 35.]
   BorderYHigh:  [35., 35.]
   BorderZLow:   [25., 775.]
-  BorderZHigh:  [220., 85.]
+  BorderZHigh:  [361.8, 85.]
 
 }
 

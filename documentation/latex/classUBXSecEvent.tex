@@ -46,6 +46,9 @@ Data product to store a \hyperlink{classUBXSec}{U\-B\-X\-Sec} Event.
 \hypertarget{classUBXSecEvent_a5833c043eb96d5d41935cd1c6eaec722}{Int\-\_\-t \hyperlink{classUBXSecEvent_a5833c043eb96d5d41935cd1c6eaec722}{event}}\label{classUBXSecEvent_a5833c043eb96d5d41935cd1c6eaec722}
 
 \begin{DoxyCompactList}\small\item\em Event number. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a67aec238c2af79a9b95c1e9ec82e713a}{T\-String \hyperlink{classUBXSecEvent_a67aec238c2af79a9b95c1e9ec82e713a}{file\-\_\-type}}\label{classUBXSecEvent_a67aec238c2af79a9b95c1e9ec82e713a}
+
+\begin{DoxyCompactList}\small\item\em File type (bnbcosmic, dirt, overlay, bnbon, extbnb) \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a429e2c8750cdd32b073548b73c5ebd68}{Bool\-\_\-t \hyperlink{classUBXSecEvent_a429e2c8750cdd32b073548b73c5ebd68}{muon\-\_\-is\-\_\-reco}}\label{classUBXSecEvent_a429e2c8750cdd32b073548b73c5ebd68}
 
 \begin{DoxyCompactList}\small\item\em Is true if the muon from the neutrino interaction is reconstructed. \end{DoxyCompactList}\item 
@@ -318,7 +321,7 @@ Data product to store a \hyperlink{classUBXSec}{U\-B\-X\-Sec} Event.
 \begin{DoxyCompactList}\small\item\em Phi angle for the muon candidate in the T\-P\-C\-Object. \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a8b3d8a8475d7c283fad2d1d4e6a85dca}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a8b3d8a8475d7c283fad2d1d4e6a85dca}{slc\-\_\-muoncandidate\-\_\-theta}}\label{classUBXSecEvent_a8b3d8a8475d7c283fad2d1d4e6a85dca}
 
-\begin{DoxyCompactList}\small\item\em Cos(theta) for the muon candidate in the T\-P\-C\-Object. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Theta angle for the muon candidate in the T\-P\-C\-Object. \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a80cdc2f0c0eaac347f9475e1e04ca68b}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a80cdc2f0c0eaac347f9475e1e04ca68b}{slc\-\_\-muoncandidate\-\_\-mom\-\_\-range}}\label{classUBXSecEvent_a80cdc2f0c0eaac347f9475e1e04ca68b}
 
 \begin{DoxyCompactList}\small\item\em Momentum (by range) of the muon candidate in the T\-P\-C\-Object. \end{DoxyCompactList}\item 
@@ -382,6 +385,42 @@ Data product to store a \hyperlink{classUBXSec}{U\-B\-X\-Sec} Event.
 \hypertarget{classUBXSecEvent_ad1f8e0086022ff8db9be1bbe8860c6d1}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_ad1f8e0086022ff8db9be1bbe8860c6d1}{slc\-\_\-muoncandidate\-\_\-maxscatteringangle}}\label{classUBXSecEvent_ad1f8e0086022ff8db9be1bbe8860c6d1}
 
 \begin{DoxyCompactList}\small\item\em Maximum scattering angle along track. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a2d63a3a483de91148bdcdd93a3d159e7}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a2d63a3a483de91148bdcdd93a3d159e7}{slc\-\_\-muoncandidate\-\_\-truth\-\_\-origin}}\label{classUBXSecEvent_a2d63a3a483de91148bdcdd93a3d159e7}
+
+\begin{DoxyCompactList}\small\item\em Origin (0=Unknown, 1=Neutrino, 2=Cosmic\-Ray, 3=Super\-Nova, 4=Single\-Particle) of the true M\-C\-Particle matched to the reconstructed candidate muon track. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a1c6f1146891691fb93e932e15b39eb8c}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a1c6f1146891691fb93e932e15b39eb8c}{slc\-\_\-muoncandidate\-\_\-truth\-\_\-pdg}}\label{classUBXSecEvent_a1c6f1146891691fb93e932e15b39eb8c}
+
+\begin{DoxyCompactList}\small\item\em Pdg of the true M\-C\-Particle matched to the reconstructed candidate muon track. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a119fa5d8adf0b250fc07faa65a6d0fc4}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a119fa5d8adf0b250fc07faa65a6d0fc4}{slc\-\_\-muoncandidate\-\_\-truth\-\_\-time}}\label{classUBXSecEvent_a119fa5d8adf0b250fc07faa65a6d0fc4}
+
+\begin{DoxyCompactList}\small\item\em Start time of the true M\-C\-Particle matched to the reconstructed candidate muon track. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_af7430018a3d53587216480eab0ff2668}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_af7430018a3d53587216480eab0ff2668}{slc\-\_\-muoncandidate\-\_\-truth\-\_\-startx}}\label{classUBXSecEvent_af7430018a3d53587216480eab0ff2668}
+
+\begin{DoxyCompactList}\small\item\em Start position along X of the true M\-C\-Particle matched to the reconstructed candidate muon track. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a3fa83c6719f6612cb6b03b66810a7f06}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a3fa83c6719f6612cb6b03b66810a7f06}{slc\-\_\-muoncandidate\-\_\-truth\-\_\-starty}}\label{classUBXSecEvent_a3fa83c6719f6612cb6b03b66810a7f06}
+
+\begin{DoxyCompactList}\small\item\em Start position along Y of the true M\-C\-Particle matched to the reconstructed candidate muon track. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a1b238ad98dacb8435a1136c5adb219c9}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a1b238ad98dacb8435a1136c5adb219c9}{slc\-\_\-muoncandidate\-\_\-truth\-\_\-startz}}\label{classUBXSecEvent_a1b238ad98dacb8435a1136c5adb219c9}
+
+\begin{DoxyCompactList}\small\item\em Start position along Z of the true M\-C\-Particle matched to the reconstructed candidate muon track. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_aa5c7381dbd23675b190c06981dbb66ab}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_aa5c7381dbd23675b190c06981dbb66ab}{slc\-\_\-muoncandidate\-\_\-truth\-\_\-endx}}\label{classUBXSecEvent_aa5c7381dbd23675b190c06981dbb66ab}
+
+\begin{DoxyCompactList}\small\item\em End position along X of the true M\-C\-Particle matched to the reconstructed candidate muon track. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_ae5127fc286c32063ea367e0e335d1d78}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_ae5127fc286c32063ea367e0e335d1d78}{slc\-\_\-muoncandidate\-\_\-truth\-\_\-endy}}\label{classUBXSecEvent_ae5127fc286c32063ea367e0e335d1d78}
+
+\begin{DoxyCompactList}\small\item\em End position along Y of the true M\-C\-Particle matched to the reconstructed candidate muon track. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_aa83204003945ef2414fc3ba6ac9c9714}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_aa83204003945ef2414fc3ba6ac9c9714}{slc\-\_\-muoncandidate\-\_\-truth\-\_\-endz}}\label{classUBXSecEvent_aa83204003945ef2414fc3ba6ac9c9714}
+
+\begin{DoxyCompactList}\small\item\em End position along Z of the true M\-C\-Particle matched to the reconstructed candidate muon track. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a3590b020cb2a48b346e3cb5b9fabb8b6}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a3590b020cb2a48b346e3cb5b9fabb8b6}{slc\-\_\-muoncandidate\-\_\-truth\-\_\-px}}\label{classUBXSecEvent_a3590b020cb2a48b346e3cb5b9fabb8b6}
+
+\begin{DoxyCompactList}\small\item\em Momentum along X of the true M\-C\-Particle matched to the reconstructed candidate muon track. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_a6c557bd90281542a287ec6e9c7200fb6}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_a6c557bd90281542a287ec6e9c7200fb6}{slc\-\_\-muoncandidate\-\_\-truth\-\_\-py}}\label{classUBXSecEvent_a6c557bd90281542a287ec6e9c7200fb6}
+
+\begin{DoxyCompactList}\small\item\em Momentum along Y of the true M\-C\-Particle matched to the reconstructed candidate muon track. \end{DoxyCompactList}\item 
+\hypertarget{classUBXSecEvent_ad93aaa4e8ebad9989743ccf73e3cc364}{vector$<$ double $>$ \hyperlink{classUBXSecEvent_ad93aaa4e8ebad9989743ccf73e3cc364}{slc\-\_\-muoncandidate\-\_\-truth\-\_\-pz}}\label{classUBXSecEvent_ad93aaa4e8ebad9989743ccf73e3cc364}
+
+\begin{DoxyCompactList}\small\item\em Momentum along Z of the true M\-C\-Particle matched to the reconstructed candidate muon track. \end{DoxyCompactList}\item 
 \hypertarget{classUBXSecEvent_a2bf72740213db9d50d45c603eb3c549e}{Int\-\_\-t \hyperlink{classUBXSecEvent_a2bf72740213db9d50d45c603eb3c549e}{nbeamfls}}\label{classUBXSecEvent_a2bf72740213db9d50d45c603eb3c549e}
 
 \begin{DoxyCompactList}\small\item\em Number of beam flashes in the event. \end{DoxyCompactList}\item 

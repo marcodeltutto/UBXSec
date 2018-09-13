@@ -134,6 +134,10 @@ Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a5833c043eb96d5d41935cd1c6eaec722">event</a></td></tr>
 <tr class="memdesc:a5833c043eb96d5d41935cd1c6eaec722"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event number. <br/></td></tr>
 <tr class="separator:a5833c043eb96d5d41935cd1c6eaec722"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67aec238c2af79a9b95c1e9ec82e713a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a67aec238c2af79a9b95c1e9ec82e713a"></a>
+TString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a67aec238c2af79a9b95c1e9ec82e713a">file_type</a></td></tr>
+<tr class="memdesc:a67aec238c2af79a9b95c1e9ec82e713a"><td class="mdescLeft">&#160;</td><td class="mdescRight">File type (bnbcosmic, dirt, overlay, bnbon, extbnb) <br/></td></tr>
+<tr class="separator:a67aec238c2af79a9b95c1e9ec82e713a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a429e2c8750cdd32b073548b73c5ebd68"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a429e2c8750cdd32b073548b73c5ebd68"></a>
 Bool_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a429e2c8750cdd32b073548b73c5ebd68">muon_is_reco</a></td></tr>
 <tr class="memdesc:a429e2c8750cdd32b073548b73c5ebd68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is true if the muon from the neutrino interaction is reconstructed. <br/></td></tr>
@@ -496,7 +500,7 @@ vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a cla
 <tr class="separator:a99414e0a0e74aaeac78fa019f53f4760"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b3d8a8475d7c283fad2d1d4e6a85dca"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b3d8a8475d7c283fad2d1d4e6a85dca"></a>
 vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a8b3d8a8475d7c283fad2d1d4e6a85dca">slc_muoncandidate_theta</a></td></tr>
-<tr class="memdesc:a8b3d8a8475d7c283fad2d1d4e6a85dca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cos(theta) for the muon candidate in the TPCObject. <br/></td></tr>
+<tr class="memdesc:a8b3d8a8475d7c283fad2d1d4e6a85dca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Theta angle for the muon candidate in the TPCObject. <br/></td></tr>
 <tr class="separator:a8b3d8a8475d7c283fad2d1d4e6a85dca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80cdc2f0c0eaac347f9475e1e04ca68b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a80cdc2f0c0eaac347f9475e1e04ca68b"></a>
 vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a80cdc2f0c0eaac347f9475e1e04ca68b">slc_muoncandidate_mom_range</a></td></tr>
@@ -581,6 +585,54 @@ vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a cla
 vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#ad1f8e0086022ff8db9be1bbe8860c6d1">slc_muoncandidate_maxscatteringangle</a></td></tr>
 <tr class="memdesc:ad1f8e0086022ff8db9be1bbe8860c6d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum scattering angle along track. <br/></td></tr>
 <tr class="separator:ad1f8e0086022ff8db9be1bbe8860c6d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d63a3a483de91148bdcdd93a3d159e7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2d63a3a483de91148bdcdd93a3d159e7"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a2d63a3a483de91148bdcdd93a3d159e7">slc_muoncandidate_truth_origin</a></td></tr>
+<tr class="memdesc:a2d63a3a483de91148bdcdd93a3d159e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Origin (0=Unknown, 1=Neutrino, 2=CosmicRay, 3=SuperNova, 4=SingleParticle) of the true MCParticle matched to the reconstructed candidate muon track. <br/></td></tr>
+<tr class="separator:a2d63a3a483de91148bdcdd93a3d159e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c6f1146891691fb93e932e15b39eb8c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c6f1146891691fb93e932e15b39eb8c"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a1c6f1146891691fb93e932e15b39eb8c">slc_muoncandidate_truth_pdg</a></td></tr>
+<tr class="memdesc:a1c6f1146891691fb93e932e15b39eb8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pdg of the true MCParticle matched to the reconstructed candidate muon track. <br/></td></tr>
+<tr class="separator:a1c6f1146891691fb93e932e15b39eb8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a119fa5d8adf0b250fc07faa65a6d0fc4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a119fa5d8adf0b250fc07faa65a6d0fc4"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a119fa5d8adf0b250fc07faa65a6d0fc4">slc_muoncandidate_truth_time</a></td></tr>
+<tr class="memdesc:a119fa5d8adf0b250fc07faa65a6d0fc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start time of the true MCParticle matched to the reconstructed candidate muon track. <br/></td></tr>
+<tr class="separator:a119fa5d8adf0b250fc07faa65a6d0fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7430018a3d53587216480eab0ff2668"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af7430018a3d53587216480eab0ff2668"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#af7430018a3d53587216480eab0ff2668">slc_muoncandidate_truth_startx</a></td></tr>
+<tr class="memdesc:af7430018a3d53587216480eab0ff2668"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start position along X of the true MCParticle matched to the reconstructed candidate muon track. <br/></td></tr>
+<tr class="separator:af7430018a3d53587216480eab0ff2668"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fa83c6719f6612cb6b03b66810a7f06"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3fa83c6719f6612cb6b03b66810a7f06"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a3fa83c6719f6612cb6b03b66810a7f06">slc_muoncandidate_truth_starty</a></td></tr>
+<tr class="memdesc:a3fa83c6719f6612cb6b03b66810a7f06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start position along Y of the true MCParticle matched to the reconstructed candidate muon track. <br/></td></tr>
+<tr class="separator:a3fa83c6719f6612cb6b03b66810a7f06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b238ad98dacb8435a1136c5adb219c9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1b238ad98dacb8435a1136c5adb219c9"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a1b238ad98dacb8435a1136c5adb219c9">slc_muoncandidate_truth_startz</a></td></tr>
+<tr class="memdesc:a1b238ad98dacb8435a1136c5adb219c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start position along Z of the true MCParticle matched to the reconstructed candidate muon track. <br/></td></tr>
+<tr class="separator:a1b238ad98dacb8435a1136c5adb219c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5c7381dbd23675b190c06981dbb66ab"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa5c7381dbd23675b190c06981dbb66ab"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#aa5c7381dbd23675b190c06981dbb66ab">slc_muoncandidate_truth_endx</a></td></tr>
+<tr class="memdesc:aa5c7381dbd23675b190c06981dbb66ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">End position along X of the true MCParticle matched to the reconstructed candidate muon track. <br/></td></tr>
+<tr class="separator:aa5c7381dbd23675b190c06981dbb66ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5127fc286c32063ea367e0e335d1d78"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae5127fc286c32063ea367e0e335d1d78"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#ae5127fc286c32063ea367e0e335d1d78">slc_muoncandidate_truth_endy</a></td></tr>
+<tr class="memdesc:ae5127fc286c32063ea367e0e335d1d78"><td class="mdescLeft">&#160;</td><td class="mdescRight">End position along Y of the true MCParticle matched to the reconstructed candidate muon track. <br/></td></tr>
+<tr class="separator:ae5127fc286c32063ea367e0e335d1d78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa83204003945ef2414fc3ba6ac9c9714"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa83204003945ef2414fc3ba6ac9c9714"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#aa83204003945ef2414fc3ba6ac9c9714">slc_muoncandidate_truth_endz</a></td></tr>
+<tr class="memdesc:aa83204003945ef2414fc3ba6ac9c9714"><td class="mdescLeft">&#160;</td><td class="mdescRight">End position along Z of the true MCParticle matched to the reconstructed candidate muon track. <br/></td></tr>
+<tr class="separator:aa83204003945ef2414fc3ba6ac9c9714"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3590b020cb2a48b346e3cb5b9fabb8b6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3590b020cb2a48b346e3cb5b9fabb8b6"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a3590b020cb2a48b346e3cb5b9fabb8b6">slc_muoncandidate_truth_px</a></td></tr>
+<tr class="memdesc:a3590b020cb2a48b346e3cb5b9fabb8b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Momentum along X of the true MCParticle matched to the reconstructed candidate muon track. <br/></td></tr>
+<tr class="separator:a3590b020cb2a48b346e3cb5b9fabb8b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c557bd90281542a287ec6e9c7200fb6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6c557bd90281542a287ec6e9c7200fb6"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a6c557bd90281542a287ec6e9c7200fb6">slc_muoncandidate_truth_py</a></td></tr>
+<tr class="memdesc:a6c557bd90281542a287ec6e9c7200fb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Momentum along Y of the true MCParticle matched to the reconstructed candidate muon track. <br/></td></tr>
+<tr class="separator:a6c557bd90281542a287ec6e9c7200fb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad93aaa4e8ebad9989743ccf73e3cc364"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad93aaa4e8ebad9989743ccf73e3cc364"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#ad93aaa4e8ebad9989743ccf73e3cc364">slc_muoncandidate_truth_pz</a></td></tr>
+<tr class="memdesc:ad93aaa4e8ebad9989743ccf73e3cc364"><td class="mdescLeft">&#160;</td><td class="mdescRight">Momentum along Z of the true MCParticle matched to the reconstructed candidate muon track. <br/></td></tr>
+<tr class="separator:ad93aaa4e8ebad9989743ccf73e3cc364"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2bf72740213db9d50d45c603eb3c549e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2bf72740213db9d50d45c603eb3c549e"></a>
 Int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUBXSecEvent.html#a2bf72740213db9d50d45c603eb3c549e">nbeamfls</a></td></tr>
 <tr class="memdesc:a2bf72740213db9d50d45c603eb3c549e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of beam flashes in the event. <br/></td></tr>

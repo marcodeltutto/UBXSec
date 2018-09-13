@@ -9,7 +9,7 @@ var searchData=
   ['iscosmic',['IsCosmic',['../classubana_1_1CosmicTagByHitIntegral.html#a33a59b4d8c00231b368879a591e80b5c',1,'ubana::CosmicTagByHitIntegral::IsCosmic()'],['../classubana_1_1CosmicTagToolInterface.html#a5363b61b1dfab1e6b9cade4b3eed2c66',1,'ubana::CosmicTagToolInterface::IsCosmic()']]],
   ['iscrossingboundary',['IsCrossingBoundary',['../classUBXSecHelper.html#aef82eb512853d8bd9a40fca00f254b7e',1,'UBXSecHelper']]],
   ['iscrossingtopboundary',['IsCrossingTopBoundary',['../classUBXSecHelper.html#af2924ae512f2c8cc5be6feb2bd21a112',1,'UBXSecHelper']]],
-  ['isselected',['IsSelected',['../classubana_1_1NuMuCCEventSelection.html#af1fce817e5534d638d2a18fbc6ce25dd',1,'ubana::NuMuCCEventSelection']]],
+  ['isselected',['IsSelected',['../classubana_1_1NuMuCCEventSelection.html#a38fa46912387cdcb298ae59dcea7e7ca',1,'ubana::NuMuCCEventSelection']]],
   ['issimplemip',['IsSimpleMIP',['../classubana_1_1StoppingMuonTaggerHelper.html#a1b584e720c5a745f8b170139c1c6910b',1,'ubana::StoppingMuonTaggerHelper']]],
   ['isstopmubragg',['IsStopMuBragg',['../classubana_1_1StoppingMuonTaggerHelper.html#a3ca72062c233ffa1dea221ceecebea25',1,'ubana::StoppingMuonTaggerHelper']]],
   ['isstopmucurvature',['IsStopMuCurvature',['../classubana_1_1StoppingMuonTaggerHelper.html#a7d10fc24ede20dfcf7474794c5c24746',1,'ubana::StoppingMuonTaggerHelper']]],

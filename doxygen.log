@@ -323,14 +323,14 @@ Generating code for file /home/travis/build/marco/home/travis/build/marcodeltutt
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:139: warning: Member operator=(UBXSec &&)=delete (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:142: warning: Member produce(art::Event &e) override (function) of class UBXSec is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Modules/UBXSec_module.cc:143: warning: Member endSubRun(art::SubRun &sr) override (function) of class UBXSec is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:199: warning: Member Init() (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:200: warning: Member ResizeVectors(int) (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:201: warning: Member ResizeGenieTruthVectors(int) (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:202: warning: Member ResetGenieEventWeightVectorsPM1() (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:203: warning: Member ResetGenieEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:204: warning: Member ResetGenieModelsEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:205: warning: Member ResetFluxEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
-/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:144: warning: Member slc_muoncandidate_mip_consistency2 (variable) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:213: warning: Member Init() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:214: warning: Member ResizeVectors(int) (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:215: warning: Member ResizeGenieTruthVectors(int) (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:216: warning: Member ResetGenieEventWeightVectorsPM1() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:217: warning: Member ResetGenieEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:218: warning: Member ResetGenieModelsEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:219: warning: Member ResetFluxEventWeightVectorsMultisim() (function) of class UBXSecEvent is not documented.
+/home/travis/build/marcodeltutto/UBXSec/DataTypes/UBXSecEvent.h:145: warning: Member slc_muoncandidate_mip_consistency2 (variable) of class UBXSecEvent is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:72: warning: Member GetRecoToTrueMatches(art::Event const &e, std::string _pfp_producer, std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel, lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits) (function) of class UBXSecHelper is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:305: warning: Member GetDqDxVector(std::vector< art::Ptr< anab::Calorimetry >> calos, int plane_no=2) (function) of class UBXSecHelper is not documented.
 /home/travis/build/marcodeltutto/UBXSec/Algorithms/UBXSecHelper.h:307: warning: Member GetDqDxTruncatedMean(std::vector< art::Ptr< anab::Calorimetry >> calos, int plane_no=2) (function) of class UBXSecHelper is not documented.

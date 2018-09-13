@@ -73,7 +73,7 @@ ubxsec_data_reco:
 
   pandoraNucalo:                  @local::microboone_calodata
   pandoraNupid:                   @local::microboone_chi2pid
-  pandoraNucali:                  @local::microboone_calibrationdedx
+  pandoraNucali:                  @local::microboone_calibrationdedx_data
   pandoraNucalipid:               @local::microboone_chi2pid
 
   pandoraNuMCSMu:                 @local::mcsfitproducer

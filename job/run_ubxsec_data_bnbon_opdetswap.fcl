@@ -35,3 +35,5 @@ physics.producers.UBXSec.UseGENIEInfo:                   false
 physics.producers.pandoraCosmicFlashTag.DoOpDetSwap: true
 physics.producers.NeutrinoFlashMatch.DoOpDetSwap:    true
 physics.producers.UBXSec.DoOpDetSwap:                true
+
+physics.producers.UBXSec.FileType: "bnbon"

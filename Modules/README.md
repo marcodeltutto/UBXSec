@@ -9,6 +9,8 @@
 * RecoTrueMatching: Performs PFParticle to MCParticle matching
 * TPCObjectMaker: Creates TPCObjects from pandoraNu or pandoraCosmic PFParticle hirerachy
 * UBXSec: Final module that puts all together and does the event selection
+* SimpleAna: A simple analysis module (like a template)
+* CandidateConsistency: Checks the consistency of a TPCObject
 
 ## Deprecated/Unfinished Modules
 
@@ -16,5 +18,5 @@
 * DeDxAna
 * PhotonActivity
 * GeoCosmicTagger: Tags pandoraNu TPCObjects that are through-going
-
+* InTimeStudy
 

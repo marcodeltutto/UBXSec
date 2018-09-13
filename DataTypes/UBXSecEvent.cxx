@@ -25,6 +25,7 @@ void UBXSecEvent::Init()
   run = _default_value;
   subrun = _default_value;
   event = _default_value;
+  file_type = "not_set";
   muon_is_reco = false;
   muon_reco_pur = _default_value;
   muon_reco_eff = _default_value;
@@ -50,7 +51,7 @@ void UBXSecEvent::Init()
   genie_mult_ch = _default_value;
   bnb_weight = _default_value;
   is_selected = false;
-  selected_slice = -1;
+  selected_slice = _default_value;
 
   sce_corr_x = _default_value;
   sce_corr_y = _default_value;
@@ -136,6 +137,20 @@ void UBXSecEvent::ResizeVectors(int vsize) {
   slc_muoncandidate_linearity.resize(vsize, _default_value);
   slc_muoncandidate_perc_used_hits_in_cluster.resize(vsize, _default_value);
   slc_muoncandidate_maxscatteringangle.resize(vsize, _default_value);
+
+  slc_muoncandidate_truth_origin.resize(vsize, _default_value);
+  slc_muoncandidate_truth_pdg.resize(vsize, _default_value);
+  slc_muoncandidate_truth_time.resize(vsize, _default_value);
+  slc_muoncandidate_truth_startx.resize(vsize, _default_value);
+  slc_muoncandidate_truth_starty.resize(vsize, _default_value);
+  slc_muoncandidate_truth_startz.resize(vsize, _default_value);
+  slc_muoncandidate_truth_endx.resize(vsize, _default_value);
+  slc_muoncandidate_truth_endy.resize(vsize, _default_value);
+  slc_muoncandidate_truth_endz.resize(vsize, _default_value);
+  slc_muoncandidate_truth_px.resize(vsize, _default_value);
+  slc_muoncandidate_truth_py.resize(vsize, _default_value);
+  slc_muoncandidate_truth_pz.resize(vsize, _default_value);
+
   slc_acpt_outoftime.resize(vsize, _default_value);
   slc_crosses_top_boundary.resize(vsize, _default_value);
   slc_nuvtx_closetodeadregion_u.resize(vsize, _default_value);

@@ -65,7 +65,7 @@ namespace ubana {
 
   }
 
-  bool NuMuCCEventSelection::IsSelected(size_t & slice_index, std::map<std::string,bool> & failure_map) {
+  bool NuMuCCEventSelection::IsSelected(int & slice_index, std::map<std::string,bool> & failure_map) {
    
     if (_verbose) std::cout << "[NuMuCCEventSelection] Starts. " << std::endl;
 

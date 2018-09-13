@@ -32,4 +32,5 @@ physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillEnds:   @local::beam_e
 
 physics.producers.UBXSec.UseGENIEInfo:                   false
 
+physics.producers.UBXSec.FileType: "bnbon"
 

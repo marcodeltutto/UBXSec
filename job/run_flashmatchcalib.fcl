@@ -100,7 +100,7 @@ outputs:
  {
    module_type: RootOutput
    fileName:    "%ifb_%tc_fashmatchcalib.root"
-   dataTier:    "reco"
+   dataTier:    "reconstructed"
    compressionLevel: 1
    outputCommands: [
             "drop *_*_*_*",

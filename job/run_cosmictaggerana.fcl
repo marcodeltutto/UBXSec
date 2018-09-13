@@ -116,7 +116,7 @@ outputs:
  {
    module_type: RootOutput
    fileName:    "T0Reco.root"
-   dataTier:    "reco"
+   dataTier:    "reconstructed"
    compressionLevel: 1
    outputCommands: [
             "keep *_*_*_*",

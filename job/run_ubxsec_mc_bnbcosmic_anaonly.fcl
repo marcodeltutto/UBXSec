@@ -1,10 +1,10 @@
 #include "ubxsec_mc_common.fcl"
 
-process_name: UBXSec
+process_name: UBXSecAnaOnly
 
 services.TFileService.fileName: "ubxsec_output_mc_bnbcosmic.root"
 
-physics.reco:          [ @sequence::ubxsec_mc_producers , @sequence::ubxsec_mc_filters ]
+physics.reco:          [ @sequence::ubxsec_mc_producers_anaonly ]
 physics.trigger_paths: [ reco ]
 physics.ana:           [ @sequence::ubxsec_mc_analyzers ]
 physics.stream1:       [ out1 ]

@@ -5,12 +5,12 @@
 <!DOCTYPE project [
 <!ENTITY release "v06_26_01_18">
 <!ENTITY releasetag "e10:prof">
-<!ENTITY name "ubxsec_data_extbnb_b_ubcodev06_26_01_18__v11">
+<!ENTITY name "ubxsec_data_extbnb_b_ubcodev06_26_01_20__v17">
 <!ENTITY tag "ubxsec">
 <!ENTITY file_type "data">
 <!ENTITY run_type "physics">
 <!ENTITY PNFSpath "/pnfs/uboone/resilient/users/mdeltutt/">
-<!ENTITY ubxsec_version "ubcodev06_26_01_18__v11">
+<!ENTITY ubxsec_version "ubcodev06_26_01_20__v17">
 ]>
 
 
@@ -32,7 +32,7 @@
   <larsoft>
     <tag>&release;</tag>
     <qual>&releasetag;</qual>
-    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_ubcodev06_26_01_18__v11.tgz</local>
+    <local>&PNFSpath;Tarballs/uboonecode_ubxsec_ubcodev06_26_01_20__v17.tgz</local>
   </larsoft>
 
   <!-- Project stages -->

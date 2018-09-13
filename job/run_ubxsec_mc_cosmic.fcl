@@ -11,7 +11,7 @@ physics.stream1:       [ out1 ]
 physics.end_paths:     [ ana, stream1 ]
 
 outputs.out1.fileName: "%ifb_%tc_ubxsec.root"
-outputs.out1.dataTier: "ubxsec"
+outputs.out1.dataTier: "reconstructed"
 source.inputCommands: ["keep *_*_*_*"]
 
 
@@ -26,3 +26,5 @@ physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillStarts: 3.65
 physics.producers.UBXSec.NuMuCCSelectionSettings.BeamSpillEnds:   5.25
 
 physics.producers.UBXSec.UseGENIEInfo:                   false
+
+physics.producers.UBXSec.FileType: "bnbcosmic"

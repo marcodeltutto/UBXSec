@@ -94,7 +94,7 @@ outputs:
  { 
    module_type: RootOutput
    fileName:    "%ifb_%tc_cosmictrackhittagger.root"
-   dataTier:    "reco"
+   dataTier:    "reconstructed"
    compressionLevel: 1
    outputCommands: [
             "keep *_*_*_*"]

@@ -1,0 +1,7 @@
+#include "run_ubxsec_mc_bnbcosmic.fcl"
+
+process_name: UBXSec
+
+services.TFileService.fileName: "ubxsec_output_mc_dirt.root"
+
+physics.producers.UBXSec.FileType: "dirt"

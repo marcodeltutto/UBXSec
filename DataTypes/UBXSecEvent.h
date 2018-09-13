@@ -37,6 +37,7 @@ class UBXSecEvent /*: public TObject*/{
   Int_t           run; ///< Run number
   Int_t           subrun; ///< Subrun number
   Int_t           event; ///< Event number
+  TString         file_type; ///< File type (bnbcosmic, dirt, overlay, bnbon, extbnb)
   Bool_t          muon_is_reco; ///< Is true if the muon from the neutrino interaction is reconstructed
   Double_t        muon_reco_pur; ///< If reco, stores the reco muon purity
   Double_t        muon_reco_eff; ///< If reco, stores the reco muon efficiency
@@ -130,7 +131,7 @@ class UBXSecEvent /*: public TObject*/{
   vector<bool>     slc_muoncandidate_exists; ///< Is true if we found a muon candidate for the TPCObject
   vector<double>   slc_muoncandidate_length; ///< Track length for the muon candidate in the TPCObject
   vector<double>   slc_muoncandidate_phi; ///< Phi angle for the muon candidate in the TPCObject
-  vector<double>   slc_muoncandidate_theta; ///< Cos(theta) for the muon candidate in the TPCObject
+  vector<double>   slc_muoncandidate_theta; ///< Theta angle for the muon candidate in the TPCObject
   vector<double>   slc_muoncandidate_mom_range; ///< Momentum (by range) of the muon candidate in the TPCObject
   vector<double>   slc_muoncandidate_mom_mcs; ///< Momentum (by MCS) of the muon candidate in the TPCObject
   vector<double>   slc_muoncandidate_mom_mcs_pi; ///<  Momentum (by MCS) of the muon candidate in the TPCObject (using pion hypo)
@@ -152,6 +153,19 @@ class UBXSecEvent /*: public TObject*/{
   vector<double>   slc_muoncandidate_linearity; ///< Linearity of the hit the track is made out of
   vector<double>   slc_muoncandidate_perc_used_hits_in_cluster; ///< Number of used hits in the cluster to make the track
   vector<double>   slc_muoncandidate_maxscatteringangle; ///< Maximum scattering angle along track
+
+  vector<double>   slc_muoncandidate_truth_origin; ///< Origin (0=Unknown, 1=Neutrino, 2=CosmicRay, 3=SuperNova, 4=SingleParticle) of the true MCParticle matched to the reconstructed candidate muon track
+  vector<double>   slc_muoncandidate_truth_pdg; ///< Pdg of the true MCParticle matched to the reconstructed candidate muon track
+  vector<double>   slc_muoncandidate_truth_time; ///< Start time of the true MCParticle matched to the reconstructed candidate muon track
+  vector<double>   slc_muoncandidate_truth_startx; ///< Start position along X of the true MCParticle matched to the reconstructed candidate muon track
+  vector<double>   slc_muoncandidate_truth_starty; ///< Start position along Y of the true MCParticle matched to the reconstructed candidate muon track
+  vector<double>   slc_muoncandidate_truth_startz; ///< Start position along Z of the true MCParticle matched to the reconstructed candidate muon track
+  vector<double>   slc_muoncandidate_truth_endx; ///< End position along X of the true MCParticle matched to the reconstructed candidate muon track
+  vector<double>   slc_muoncandidate_truth_endy; ///< End position along Y of the true MCParticle matched to the reconstructed candidate muon track
+  vector<double>   slc_muoncandidate_truth_endz; ///< End position along Z of the true MCParticle matched to the reconstructed candidate muon track
+  vector<double>   slc_muoncandidate_truth_px; ///< Momentum along X of the true MCParticle matched to the reconstructed candidate muon track
+  vector<double>   slc_muoncandidate_truth_py; ///< Momentum along Y of the true MCParticle matched to the reconstructed candidate muon track
+  vector<double>   slc_muoncandidate_truth_pz; ///< Momentum along Z of the true MCParticle matched to the reconstructed candidate muon track
 
   Int_t            nbeamfls; ///< Number of beam flashes in the event
   vector<double>   beamfls_time; ///< Time of the beam flash

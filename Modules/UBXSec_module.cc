@@ -191,6 +191,7 @@ private:
   std::string _genie_eventweight_multisim_producer;
   std::string _genie_models_eventweight_multisim_producer;
   std::string _flux_eventweight_multisim_producer;
+  std::string _file_type;
   bool _debug = true;                   ///< Debug mode
   int _minimumHitRequirement;           ///< Minimum number of hits in at least a plane for a track
   double _minimumDistDeadReg;           ///< Minimum distance the track end points can have to a dead region
@@ -299,6 +300,8 @@ UBXSec::UBXSec(fhicl::ParameterSet const & p) {
   _genie_eventweight_multisim_producer = p.get<std::string>("GenieEventWeightMultisimProducer");
   _genie_models_eventweight_multisim_producer = p.get<std::string>("GenieModelsEventWeightMultisimProducer");
   _flux_eventweight_multisim_producer = p.get<std::string>("FluxEventWeightMultisimProducer");
+
+  _file_type                      = p.get<std::string>("FileType");
 
   _use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
   _minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
@@ -477,6 +480,8 @@ void UBXSec::produce(art::Event & e) {
   _run = ubxsec_event->run = e.id().run();
   _subrun = ubxsec_event->subrun = e.id().subRun();
   _event = ubxsec_event->event  = e.id().event();
+
+  ubxsec_event->file_type = _file_type; 
 
   _is_data = e.isRealData();
   _is_mc   = !_is_data;
@@ -1824,7 +1829,7 @@ void UBXSec::produce(art::Event & e) {
 
     }
 
-    // Particle ID
+    // True track ass. to reo muon candidate and Particle ID
     auto pfps_from_tpcobj = tpcobjToPFPAssns.at(slice);
 
     for (auto pfp : pfps_from_tpcobj){
@@ -1847,6 +1852,27 @@ void UBXSec::produce(art::Event & e) {
         std::cerr << "[UBXSec] Problem with MCTruth pointer." << std::endl;
         continue;
       }
+  
+      auto these_tracks = tracks_from_pfp.at(pfp.key());
+      if (these_tracks.size() == 0) {
+        ubxsec_event->slc_muoncandidate_truth_pdg[slice] = -8888;
+      }
+      else if (these_tracks.at(0) == candidate_track) {
+        ubxsec_event->slc_muoncandidate_truth_origin[slice] = mc_truth->Origin();
+        ubxsec_event->slc_muoncandidate_truth_pdg[slice]    = mcpars[0]->PdgCode();
+        ubxsec_event->slc_muoncandidate_truth_time[slice]   = mcpars[0]->T();
+        ubxsec_event->slc_muoncandidate_truth_startx[slice] = mcpars[0]->Vx();
+        ubxsec_event->slc_muoncandidate_truth_starty[slice] = mcpars[0]->Vy();
+        ubxsec_event->slc_muoncandidate_truth_startz[slice] = mcpars[0]->Vz();
+        ubxsec_event->slc_muoncandidate_truth_endx[slice]   = mcpars[0]->EndX();
+        ubxsec_event->slc_muoncandidate_truth_endy[slice]   = mcpars[0]->EndY();
+        ubxsec_event->slc_muoncandidate_truth_endz[slice]   = mcpars[0]->EndZ();
+        ubxsec_event->slc_muoncandidate_truth_px[slice]     = mcpars[0]->Px();
+        ubxsec_event->slc_muoncandidate_truth_py[slice]     = mcpars[0]->Py();
+        ubxsec_event->slc_muoncandidate_truth_pz[slice]     = mcpars[0]->Pz();
+      }
+  
+  
       if (mc_truth->Origin() == simb::kBeamNeutrino &&
           mcpars[0]->PdgCode() == 13 && mcpars[0]->Mother() == 0) {
 
@@ -2027,7 +2053,7 @@ void UBXSec::produce(art::Event & e) {
 
   _event_selection.SetEvent(ubxsec_event);
 
-  size_t slice_index;
+  int slice_index;
   std::string reason = "no_failure";
   std::map<std::string,bool> failure_map;
   bool is_selected = _event_selection.IsSelected(slice_index, failure_map);
@@ -2059,6 +2085,7 @@ void UBXSec::produce(art::Event & e) {
     selection_result.SetSelectionStatus(false);
 
     ubxsec_event->is_selected = false;
+    ubxsec_event->selected_slice = -1;
 
     selectionResultVector->emplace_back(std::move(selection_result));
     //util::CreateAssn(*this, e, *selectionResultVector, tpcobj_v, *assnOutSelectionResultTPCObject);

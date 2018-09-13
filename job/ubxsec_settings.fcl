@@ -34,6 +34,8 @@ UBXSec: {
   GenieModelsEventWeightMultisimProducer: "geniemodelseventweightmultisim::UBXSec"
   FluxEventWeightMultisimProducer: "fluxeventweightmultisim::UBXSec"
 
+  FileType:                     "not_set"
+
   UseGENIEInfo:                 true
   MinimumHitRequirement:        3
   MinimumDistanceToDeadRegion:  5.
